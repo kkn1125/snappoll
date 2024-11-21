@@ -23,6 +23,7 @@
     "noFallthroughCasesInSwitch": true,
     "baseUrl": "./",
     "paths": {
+      "@common/*": ["src/common/*"],
       "@components/*": ["src/components/*"],
       "@atoms/*": ["src/components/atoms/*"],
       "@moleculars/*": ["src/components/moleculars/*"],

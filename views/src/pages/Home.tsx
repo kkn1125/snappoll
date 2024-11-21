@@ -9,8 +9,11 @@ import {
 
 const Home = () => {
   return (
-    <Stack>
-      <Typography>title 1</Typography>
+    <Stack gap={3}>
+      {/* first section */}
+      <Typography align="center" fontSize={36} fontWeight={700}>
+        Realtime Poll
+      </Typography>
       <Paper>
         <List>
           <ListItem>

@@ -3,6 +3,6 @@ import { atom } from 'recoil';
 export const sidebarAtom = atom({
   key: 'sidebar',
   default: {
-    opened: false,
+    opened: true,
   },
 });
