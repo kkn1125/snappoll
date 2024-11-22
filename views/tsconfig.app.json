@@ -24,6 +24,7 @@
     "baseUrl": "./",
     "paths": {
       "@common/*": ["src/common/*"],
+      "@hooks/*": ["src/hooks/*"],
       "@components/*": ["src/components/*"],
       "@atoms/*": ["src/components/atoms/*"],
       "@moleculars/*": ["src/components/moleculars/*"],
