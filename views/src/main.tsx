@@ -11,6 +11,9 @@ import { BrowserRouter } from 'react-router-dom';
 import { RecoilRoot } from 'recoil';
 import AppRouter from './routes/AppRouter.js';
 import { PROJECT_BASEPATH } from '@common/variables.js';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import 'dayjs/locale/ko';
 
 const skyColor = '#98cfff';
 const skyColorMain = alpha(skyColor, 0.7);
@@ -20,6 +23,13 @@ const skyColorContrastText =
   getContrastRatio(skyColorMain, '#fff') > 4.5 ? '#fff' : '#111';
 
 const darkTheme = createTheme({
+  components: {
+    MuiTypography: {
+      defaultProps: {
+        component: 'div',
+      },
+    },
+  },
   palette: {
     mode: 'light',
     sky: {
@@ -30,7 +40,7 @@ const darkTheme = createTheme({
     },
   },
   typography: {
-    fontFamily: "'Montserrat', 'Maruburi'",
+    fontFamily: "'Montserrat', 'moneyg', 'Maruburi'",
   },
 });
 
@@ -44,8 +54,10 @@ createRoot(document.getElementById('root')!).render(
           basename={PROJECT_BASEPATH}
           future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
         >
-          <CssBaseline />
-          <AppRouter />
+          <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="ko">
+            <CssBaseline />
+            <AppRouter />
+          </LocalizationProvider>
         </BrowserRouter>
       </QueryClientProvider>
     </RecoilRoot>

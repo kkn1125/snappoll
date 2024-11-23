@@ -14,11 +14,15 @@
     "@emotion/styled": "^11.13.5",
     "@mui/icons-material": "^6.1.8",
     "@mui/material": "^6.1.8",
+    "@mui/x-date-pickers": "^7.22.3",
     "@tanstack/react-query": "^5.61.0",
+    "axios": "^1.7.7",
+    "dayjs": "^1.11.13",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.28.0",
-    "recoil": "^0.7.7"
+    "recoil": "^0.7.7",
+    "uuid": "^11.0.3"
   },
   "devDependencies": {
     "@eslint/js": "^9.13.0",
@@ -26,6 +30,7 @@
     "@types/node": "^22.9.1",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
+    "@types/uuid": "^10.0.0",
     "@vitejs/plugin-react": "^4.3.3",
     "dotenv": "^16.4.5",
     "eslint": "^9.13.0",

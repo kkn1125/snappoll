@@ -10,9 +10,10 @@ async function bootstrap() {
   const { hosts, ports } = whiteList;
   const configService = app.get(ConfigService);
   const common = configService.get<ConfigType<typeof commonConf>>('common');
-
+  const allowList = allowOrigins(hosts, ports);
+  console.log('allowList:', allowList);
   app.enableCors({
-    origin: allowOrigins(hosts, ports),
+    origin: allowList,
   });
   app.setGlobalPrefix('api');
 

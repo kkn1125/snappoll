@@ -28,10 +28,31 @@
   src: url(/fonts/maruburi/MaruBuri-SemiBol.ttf);
 }
 
+@font-face {
+  font-family: 'moneyg';
+  src: url(/fonts/moneygraphy/Moneygraphy-Pixel.ttf);
+}
+@font-face {
+  font-family: 'moneyg';
+  src: url(/fonts/moneygraphy/Moneygraphy-Rounded.ttf);
+}
+
 html,
 body,
 #root {
   height: 100%;
   margin: 0;
   overflow: hidden;
+}
+
+.font-maru {
+  font-family: 'Maruburi', Arial, Helvetica, sans-serif !important;
+}
+
+.font-mont {
+  font-family: 'Montserrat', Arial, Helvetica, sans-serif !important;
+}
+
+.font-moneyg {
+  font-family: 'moneyg', Arial, Helvetica, sans-serif !important;
 }

@@ -10,8 +10,8 @@ const Sidebar: React.FC<SidebarProps> = () => {
         overflowX: 'hidden',
       }}
     >
-      <FlexibleMenu name="New Poll" to="/poll" />
-      <FlexibleMenu name="Quick Vote" to="/vote" />
+      <FlexibleMenu name="New Poll" to="/polls/new" />
+      <FlexibleMenu name="Quick Vote" to="/votes/new" />
     </List>
   );
 };
