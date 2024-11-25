@@ -12,12 +12,13 @@ import {
 } from '@mui/material';
 import { useMutation } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
-import { useState, FormEvent, ChangeEvent } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useState, FormEvent, ChangeEvent, useEffect } from 'react';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
 
 interface LoginProps {}
 const Login: React.FC<LoginProps> = () => {
+  const locate = useLocation();
   const navigate = useNavigate();
   const [modal, setModal] = useState<Partial<Record<string, string>>>({});
   const [errors, setErrors] = useState<Partial<Message<LoginUser>>>({});
@@ -53,6 +54,16 @@ const Login: React.FC<LoginProps> = () => {
       });
     },
   });
+
+  useEffect(() => {
+    window.history.replaceState({}, '');
+    if (locate?.state?.type) {
+      setModal({
+        title: '권한 필요',
+        content: '로그인이 필요한 기능입니다.',
+      });
+    }
+  }, [locate?.state?.type]);
 
   function validateForm() {
     const errors: Partial<Message<LoginUser>> = {};
@@ -111,7 +122,7 @@ const Login: React.FC<LoginProps> = () => {
         )}
       </Portal>
       <Stack component="form" gap={2} onSubmit={handleSubmit} noValidate>
-        <Typography fontSize={32} fontWeight={700}>
+        <Typography fontSize={32} fontWeight={700} align="center">
           로그인
         </Typography>
         <TextField
@@ -141,18 +152,25 @@ const Login: React.FC<LoginProps> = () => {
         />
 
         <Divider />
-        <Button variant="outlined" size="large" type="submit">
+        <Button variant="contained" size="large" type="submit">
           로그인
         </Button>
         <Button
           component={Link}
-          variant="outlined"
+          variant="contained"
           size="large"
           to="/user/signup"
+          color="warning"
         >
           계정이 없어요
         </Button>
-        <Button component={Link} variant="outlined" size="large" to="/">
+        <Button
+          component={Link}
+          variant="contained"
+          size="large"
+          to="/"
+          color="inherit"
+        >
           메인으로
         </Button>
       </Stack>

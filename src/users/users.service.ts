@@ -2,10 +2,31 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from '@database/prisma.service';
+import { first } from 'rxjs';
 
 @Injectable()
 export class UsersService {
   constructor(private readonly prisma: PrismaService) {}
+
+  async getNextUserNumber(username: string) {
+    const first = await this.prisma.user.findFirst({
+      where: {
+        username: {
+          startsWith: username,
+        },
+      },
+      orderBy: { username: 'desc' },
+    });
+    if (first) {
+      const numberString = first.username.replace(/[ㄱ-ㅎ가-힣]+/g, '');
+      if (numberString === '') {
+        return '0000001';
+      } else {
+        return (parseInt(numberString) + 1).toString().padStart(7, '0');
+      }
+    }
+    return '';
+  }
 
   async create(createUserDto: CreateUserDto) {
     if (
@@ -26,6 +47,8 @@ export class UsersService {
 
     const password = this.prisma.encryptPassword(createUserDto.password);
     createUserDto.password = password;
+
+    createUserDto.username += this.getNextUserNumber(createUserDto.username);
 
     return this.prisma.user.create({
       data: createUserDto,

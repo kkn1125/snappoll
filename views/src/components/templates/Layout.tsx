@@ -1,10 +1,10 @@
 import { sidebarAtom } from '@/recoils/sidebar.atom';
 import Footer from '@components/organisms/Footer';
-import GuestHeader from '@components/organisms/GuestHeader';
 import Header from '@components/organisms/Header';
 import Sidebar from '@components/organisms/Sidebar';
-import { Box, Stack, Toolbar } from '@mui/material';
-import { Outlet } from 'react-router-dom';
+import { Stack, Toolbar } from '@mui/material';
+import { useEffect } from 'react';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 
 const sidebarWidth = {
@@ -16,13 +16,21 @@ const scrollSize = 5;
 interface LayoutProps {
   isCrew?: boolean;
 }
-const Layout = ({ isCrew = true }) => {
+const Layout: React.FC<LayoutProps> = ({ isCrew = true }) => {
   const sidebarState = useRecoilValue(sidebarAtom);
+  const locate = useLocation();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!isCrew && locate.pathname.match(/\/polls\/?(.+)|\/votes\/?(.+)/)) {
+      navigate('/');
+    }
+  }, [isCrew, locate.pathname, navigate]);
 
   return (
     <Stack height="inherit">
       {/* header */}
-      <Header isCrew={isCrew}></Header>
+      <Header isCrew={isCrew} />
       <Toolbar />
       <Stack direction="row" flex={1} position="relative" overflow="hidden">
         {/* Sidebar */}

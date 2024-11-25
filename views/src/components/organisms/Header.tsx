@@ -47,6 +47,7 @@ const Header: React.FC<HeaderProps> = ({ isCrew }) => {
         ...(!headerShadowActivate && {
           '--Paper-shadow': '0 0 0 0 #ffffffff !important',
         }),
+        borderBottom: '1px solid #eee',
       }}
     >
       <Toolbar>
@@ -88,25 +89,43 @@ const Header: React.FC<HeaderProps> = ({ isCrew }) => {
                 component="img"
                 src={logoImage}
                 alt="logo"
-                width={40}
-                height={40}
+                width={32}
+                height={32}
               />
-              <Typography fontSize={28} fontWeight={700}>
+              <Typography fontSize={24} fontWeight={700}>
                 {BRAND_NAME}
               </Typography>
             </Stack>
           </Stack>
           <Stack direction="row">
-            <Button size="large" color="inherit">
+            <Button component={Link} size="large" color="inherit" to="/about">
               About
             </Button>
             {isCrew ? (
               <>
-                <Button size="large" color="inherit">
+                <Button
+                  component={Link}
+                  size="large"
+                  color="inherit"
+                  to="/polls"
+                >
                   Polls
                 </Button>
-                <Button size="large" color="inherit">
+                <Button
+                  component={Link}
+                  size="large"
+                  color="inherit"
+                  to="/votes"
+                >
                   Votes
+                </Button>
+                <Button
+                  component={Link}
+                  size="large"
+                  color="inherit"
+                  to="/user/profile"
+                >
+                  Profiles
                 </Button>
               </>
             ) : (

@@ -39,4 +39,8 @@ export class AuthService {
       },
     );
   }
+
+  getMe(email: string) {
+    return this.prisma.user.findUnique({ where: { email } });
+  }
 }

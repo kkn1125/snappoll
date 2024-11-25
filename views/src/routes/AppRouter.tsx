@@ -1,19 +1,19 @@
+import { verifyLogin } from '@/apis/verifyLogin';
+import { tokenAtom } from '@/recoils/token.atom';
 import Layout from '@components/templates/Layout';
+import { Stack, Typography } from '@mui/material';
 import DetailPoll from '@pages/DetailPoll';
 import GuestHome from '@pages/GuestHome';
 import Home from '@pages/Home';
-import Login from '@pages/user/Login';
 import PreviewPoll from '@pages/PreviewPoll';
 import SnapPoll from '@pages/SnapPoll';
 import SnapVote from '@pages/SnapVote';
+import Login from '@pages/user/Login';
 import Signup from '@pages/user/Signup';
-import { useCookies } from 'react-cookie';
-import { Route, Routes, useLocation } from 'react-router-dom';
-import { useRecoilState, useRecoilValue } from 'recoil';
-import { tokenAtom } from '@/recoils/token.atom';
-import { useEffect } from 'react';
 import { useMutation } from '@tanstack/react-query';
-import { verifyLogin } from '@/apis/verifyLogin';
+import { useEffect } from 'react';
+import { Route, Routes, useLocation } from 'react-router-dom';
+import { useRecoilState } from 'recoil';
 
 function AppRouter() {
   const locate = useLocation();
@@ -22,19 +22,42 @@ function AppRouter() {
   const mutation = useMutation({
     mutationKey: ['verify'],
     mutationFn: verifyLogin,
+    retryDelay(failureCount, error) {
+      return Math.min(1000 * Math.pow(2, failureCount - 1), 5000);
+    },
     onSuccess(data, variables, context) {
       setToken({
         token: data.token,
+        userId: data.userId,
         signed: !!data.token,
         expired: false,
       });
-      console.log(1);
+    },
+    onError(error, variables, context) {
+      setToken({
+        token: undefined,
+        userId: undefined,
+        signed: false,
+        expired: true,
+      });
+      // removeCookie('token', { secure: true, httpOnly: true, sameSite: 'lax' });
     },
   });
 
   useEffect(() => {
     mutation.mutate();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [locate.pathname]);
+
+  if (!signed && (mutation.isIdle || mutation.isPending)) {
+    return (
+      <Stack alignItems="center" height="inherit" justifyContent="center">
+        <Typography fontSize={42} fontWeight={700}>
+          Loading...
+        </Typography>
+      </Stack>
+    );
+  }
 
   return (
     <Routes>

@@ -39,8 +39,9 @@ const DetailPoll: React.FC<DetailPollProps> = () => {
 
   async function handleSavePollResult(e: FormEvent) {
     e.preventDefault();
-    if (data && id) {
-      await savePollResult(id, 'test', JSON.stringify(polls));
+    const userId = data?.user?.id;
+    if (data && id && userId) {
+      await savePollResult(id, JSON.stringify(polls));
       navigate('/');
     }
     return false;

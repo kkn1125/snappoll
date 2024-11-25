@@ -1,6 +1,7 @@
 import {
   Button,
   Divider,
+  IconButton,
   MenuItem,
   Paper,
   Select,
@@ -12,6 +13,7 @@ import {
 } from '@mui/material';
 import { Poll } from '@utils/Poll';
 import { ChangeEvent, Dispatch, SetStateAction, useEffect } from 'react';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 interface PollOptionItemProps {
   index: number;
@@ -19,6 +21,7 @@ interface PollOptionItemProps {
   updatePoll: (poll: Poll<PollType['type']>) => void;
   // addErrors: (pollId: string, itemIndex: number, cause: string) => void;
   // deleteErrors: (pollId: string) => void;
+  handleDeletePoll: (pollId: string) => void;
   setErrors: Dispatch<
     SetStateAction<
       Record<
@@ -36,6 +39,7 @@ const PollOptionItem: React.FC<PollOptionItemProps> = ({
   index,
   poll,
   updatePoll,
+  handleDeletePoll,
   setErrors,
   // addErrors,
   // deleteErrors,
@@ -222,6 +226,12 @@ const PollOptionItem: React.FC<PollOptionItemProps> = ({
             />
             필수여부
           </Typography>
+        </Stack>
+        <Divider />
+        <Stack>
+          <IconButton onClick={() => handleDeletePoll(poll.id)}>
+            <DeleteIcon />
+          </IconButton>
         </Stack>
       </Stack>
       <Stack>

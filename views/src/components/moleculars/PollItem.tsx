@@ -93,6 +93,7 @@ const PollItem: React.FC<PollItemProps> = ({
                 </MenuItem>
               ))}
             </Select>
+            {poll.value === 'etc' && <TextField name="etc" value={poll.etc} />}
           </FormControl>
         </Stack>
       );

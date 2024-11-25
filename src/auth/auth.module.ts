@@ -10,5 +10,6 @@ import { AuthController } from './auth.controller';
   imports: [PassportModule, UsersModule],
   providers: [PrismaService, AuthService, LocalStrategy],
   controllers: [AuthController],
+  exports: [AuthService],
 })
 export class AuthModule {}

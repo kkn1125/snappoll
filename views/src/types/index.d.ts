@@ -146,6 +146,7 @@ export declare global {
     description: string;
     expiresAt: Date;
     options: Poll<PollType['type']>;
+    user?: User;
   };
   interface User {
     id: string;
@@ -163,6 +164,7 @@ export declare global {
   type Message<T> = { [k in keyof T]: string };
   interface UserToken {
     token?: string;
+    userId?: string;
     signed: boolean;
     expired: boolean;
   }

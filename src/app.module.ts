@@ -7,18 +7,20 @@ import { PollsModule } from './polls/polls.module';
 import { VotesModule } from './votes/votes.module';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
+import { APP_GUARD } from '@nestjs/core';
+import { RoleGuard } from './auth/role.guard';
+import { AuthService } from './auth/auth.service';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true, load: [commonConf] }),
+    AuthModule,
     VotesModule,
     PollsModule,
     DatabaseModule,
     UsersModule,
-    AuthModule,
   ],
   controllers: [],
-  providers: [],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

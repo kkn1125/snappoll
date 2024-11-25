@@ -14,11 +14,36 @@ export class PollsService {
   }
 
   findAll() {
-    return this.prisma.poll.findMany();
+    return this.prisma.poll.findMany({
+      include: {
+        user: {
+          select: {
+            id: true,
+            email: true,
+            username: true,
+            createdAt: true,
+            updatedAt: true,
+          },
+        },
+      },
+    });
   }
 
   findOne(id: string) {
-    return this.prisma.poll.findUnique({ where: { id } });
+    return this.prisma.poll.findUnique({
+      where: { id },
+      include: {
+        user: {
+          select: {
+            id: true,
+            email: true,
+            username: true,
+            createdAt: true,
+            updatedAt: true,
+          },
+        },
+      },
+    });
   }
 
   update(id: string, updatePollDto: UpdatePollDto) {

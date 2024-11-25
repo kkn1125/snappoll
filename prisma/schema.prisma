@@ -16,9 +16,9 @@ model User {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  Poll       Poll[]
-  Vote       Vote[]
-  PollResult PollResult[]
+  poll       Poll[]
+  vote       Vote[]
+  pollResult PollResult[]
 
   @@map("user")
 }
@@ -33,8 +33,8 @@ model Poll {
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
 
-  User       User?        @relation(fields: [createdBy], references: [id])
-  PollResult PollResult[]
+  user       User?        @relation(fields: [createdBy], references: [id])
+  pollResult PollResult[]
 
   @@map("poll")
 }
@@ -48,8 +48,10 @@ model PollResult {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  Poll Poll? @relation(fields: [pollId], references: [id])
-  User User? @relation(fields: [userId], references: [id])
+  poll Poll? @relation(fields: [pollId], references: [id])
+  user User? @relation(fields: [userId], references: [id])
+
+  @@map("poll_result")
 }
 
 model Vote {
@@ -59,7 +61,7 @@ model Vote {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  User User? @relation(fields: [userId], references: [id])
+  user User? @relation(fields: [userId], references: [id])
 
   @@map("vote")
 }

@@ -18,6 +18,7 @@ export class AuthController {
   @UseGuards(AuthGuard('local'))
   @Post('login')
   async login(@Req() req: Request, @Res() res: Response) {
+    console.log(req.user);
     if (req.user) {
       const { id, username, email } = req.user;
       const jsonwebtoken = this.authService.getToken({ id, username, email });
@@ -33,16 +34,20 @@ export class AuthController {
         token: jsonwebtoken,
       });
     } else {
-      throw new UnauthorizedException();
+      throw new UnauthorizedException('회원정보를 다시 확인해주세요.');
     }
   }
 
   @UseGuards(CookieGuard)
   @Post('verify')
-  async verify(@Req() req: Request) {
-    return {
+  async verify(@Req() req: Request, @Res() res: Response) {
+    console.log(req.verify);
+    this.authService.getMe(req.verify?.email);
+
+    res.json({
       ok: !!req.user,
       token: req.cookies?.token,
-    };
+      userId: req.user?.id,
+    });
   }
 }

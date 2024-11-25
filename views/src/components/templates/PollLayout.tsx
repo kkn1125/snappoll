@@ -47,9 +47,14 @@ const PollLayout: React.FC<PollLayoutProps> = ({ data, polls, setPolls }) => {
 
   return (
     <Stack gap={2}>
-      <Typography fontSize={32} fontWeight={700}>
-        {data?.title}
-      </Typography>
+      <Stack direction="row" alignItems="baseline" gap={1}>
+        <Typography fontSize={32} fontWeight={700}>
+          {data?.title}
+        </Typography>
+        <Typography fontSize={14} fontWeight={700}>
+          (작성자: {data?.user?.username})
+        </Typography>
+      </Stack>
       {data?.description && (
         <Typography fontSize={14} fontWeight={300}>
           {data?.description}

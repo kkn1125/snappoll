@@ -147,6 +147,10 @@ const SnapPoll: React.FC<SnapPollProps> = () => {
     return false;
   }
 
+  function handleDeletePoll(pollId: string) {
+    setPolls(polls.filter((poll) => poll.id !== pollId));
+  }
+
   return (
     <Container component={Stack} p={5} gap={3}>
       <Stack
@@ -238,6 +242,7 @@ const SnapPoll: React.FC<SnapPollProps> = () => {
             index={index + 1}
             poll={poll}
             updatePoll={updatePoll}
+            handleDeletePoll={handleDeletePoll}
             setErrors={setErrors}
             errors={errors}
           />

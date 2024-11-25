@@ -1,8 +1,10 @@
 import { getPolls } from '@/apis/getPolls';
 import { removePoll } from '@/apis/removePoll';
+import { tokenAtom } from '@/recoils/token.atom';
 import { BRAND_NAME } from '@common/variables';
 import {
   Button,
+  Container,
   List,
   ListItemButton,
   ListItemText,
@@ -13,10 +15,10 @@ import {
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { MouseEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useCookies } from 'react-cookie';
-import Login from './user/Login';
+import { useRecoilValue } from 'recoil';
 
 const Home = () => {
+  const { userId } = useRecoilValue(tokenAtom);
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const query = useQuery<APIPoll[]>({
@@ -63,31 +65,38 @@ const Home = () => {
         </Typography>
       </Stack>
       {/* second section */}
-      <Stack gap={2}>
-        <Typography align="center" fontSize={36} fontWeight={700}>
-          최근 설문조사
-        </Typography>
-        <Paper>
-          <List>
-            {query.data?.map((poll) => (
-              <ListItemButton
-                key={poll.id}
-                onClick={() => {
-                  navigate('/polls/' + poll.id);
-                }}
-              >
-                <ListItemText>{poll.title}</ListItemText>
-                <Button onClick={handleRemovePoll(poll.id)}>❌</Button>
-              </ListItemButton>
-            ))}
-            {query.data?.length === 0 && (
-              <ListItemButton>
-                <ListItemText>등록된 설문지가 없습니다.</ListItemText>
-              </ListItemButton>
-            )}
-          </List>
-        </Paper>
-      </Stack>
+      <Container maxWidth="md">
+        <Stack gap={2}>
+          <Typography align="center" fontSize={36} fontWeight={700}>
+            최근 설문조사
+          </Typography>
+          <Paper>
+            <List>
+              {query.data?.map((poll) => (
+                <ListItemButton
+                  key={poll.id}
+                  onClick={() => {
+                    navigate('/polls/' + poll.id);
+                  }}
+                >
+                  <ListItemText
+                    primary={poll.title}
+                    secondary={poll.user?.username || 'Unknown'}
+                  />
+                  {poll.user?.id === userId && (
+                    <Button onClick={handleRemovePoll(poll.id)}>❌</Button>
+                  )}
+                </ListItemButton>
+              ))}
+              {query.data?.length === 0 && (
+                <ListItemButton>
+                  <ListItemText>등록된 설문지가 없습니다.</ListItemText>
+                </ListItemButton>
+              )}
+            </List>
+          </Paper>
+        </Stack>
+      </Container>
     </Stack>
   );
 };

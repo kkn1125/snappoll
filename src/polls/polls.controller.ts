@@ -1,25 +1,35 @@
+import { Roles } from '@/auth/roles.decorator';
+import { Role } from '@common/enums/Role';
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
-  Param,
+  Controller,
   Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Req,
+  UseGuards,
 } from '@nestjs/common';
-import { PollsService } from './polls.service';
 import { CreatePollDto } from './dto/create-poll.dto';
 import { UpdatePollDto } from './dto/update-poll.dto';
+import { PollsService } from './polls.service';
+import { RoleGuard } from '@/auth/role.guard';
+import { Request } from 'express';
 
+// @Roles([Role.User])
+@UseGuards(RoleGuard)
 @Controller('polls')
 export class PollsController {
   constructor(private readonly pollsService: PollsService) {}
 
   @Post()
-  create(@Body() createPollDto: CreatePollDto) {
+  create(@Req() req: Request, @Body() createPollDto: CreatePollDto) {
+    createPollDto.createdBy = req.user.id;
     return this.pollsService.create(createPollDto);
   }
 
+  // @Roles([Role.User])
   @Get()
   findAll() {
     return this.pollsService.findAll();
