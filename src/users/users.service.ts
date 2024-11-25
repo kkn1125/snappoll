@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from '@database/prisma.service';
@@ -7,7 +7,26 @@ import { PrismaService } from '@database/prisma.service';
 export class UsersService {
   constructor(private readonly prisma: PrismaService) {}
 
-  create(createUserDto: CreateUserDto) {
+  async create(createUserDto: CreateUserDto) {
+    if (
+      !(createUserDto.email && createUserDto.password && createUserDto.username)
+    ) {
+      throw new BadRequestException('입력 정보가 누락되었습니다.');
+    }
+
+    const existsUser = await this.prisma.user.findUnique({
+      where: { email: createUserDto.email },
+    });
+
+    if (!!existsUser) {
+      throw new BadRequestException('이메일이 중복됩니다.', {
+        cause: createUserDto.email,
+      });
+    }
+
+    const password = this.prisma.encryptPassword(createUserDto.password);
+    createUserDto.password = password;
+
     return this.prisma.user.create({
       data: createUserDto,
     });

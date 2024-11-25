@@ -18,8 +18,10 @@ import { useRecoilState } from 'recoil';
 
 const headerBgChangePoint = 100;
 
-interface HeaderProps {}
-const Header: React.FC<HeaderProps> = () => {
+interface HeaderProps {
+  isCrew: boolean;
+}
+const Header: React.FC<HeaderProps> = ({ isCrew }) => {
   const { current } = useScroll();
   const [sidebarState, setSidebarState] = useRecoilState(sidebarAtom);
 
@@ -50,25 +52,27 @@ const Header: React.FC<HeaderProps> = () => {
       <Toolbar>
         <Stack direction="row" flex={1} justifyContent="space-between" px={2}>
           <Stack direction="row" gap={2}>
-            <IconButton
-              onClick={handleToggleSidebar}
-              color="primary"
-              sx={{
-                ['& svg']: {
-                  transition: '150ms ease-in-out',
-                  transform: 'rotate(0)',
-                },
-                ['&:hover svg']: {
-                  transform: 'rotate(-20deg)',
-                },
-              }}
-            >
-              {sidebarState.opened ? (
-                <MenuOpenRoundedIcon />
-              ) : (
-                <MenuRoundedIcon />
-              )}
-            </IconButton>
+            {isCrew && (
+              <IconButton
+                onClick={handleToggleSidebar}
+                color="primary"
+                sx={{
+                  ['& svg']: {
+                    transition: '150ms ease-in-out',
+                    transform: 'rotate(0)',
+                  },
+                  ['&:hover svg']: {
+                    transform: 'rotate(-20deg)',
+                  },
+                }}
+              >
+                {sidebarState.opened ? (
+                  <MenuOpenRoundedIcon />
+                ) : (
+                  <MenuRoundedIcon />
+                )}
+              </IconButton>
+            )}
             <Stack
               component={Link}
               to="/"
@@ -96,12 +100,25 @@ const Header: React.FC<HeaderProps> = () => {
             <Button size="large" color="inherit">
               About
             </Button>
-            <Button size="large" color="inherit">
-              Polls
-            </Button>
-            <Button size="large" color="inherit">
-              Votes
-            </Button>
+            {isCrew ? (
+              <>
+                <Button size="large" color="inherit">
+                  Polls
+                </Button>
+                <Button size="large" color="inherit">
+                  Votes
+                </Button>
+              </>
+            ) : (
+              <Button
+                component={Link}
+                size="large"
+                color="inherit"
+                to="/user/signup"
+              >
+                Signup
+              </Button>
+            )}
           </Stack>
         </Stack>
       </Toolbar>

@@ -17,7 +17,7 @@ export class Poll<T extends PollType['type']> implements BasePoll {
   placeholder: string = '';
 
   /* text, option */
-  value: string = '';
+  value!: string | boolean;
 
   /* option, checkbox */
   items!: {

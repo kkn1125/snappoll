@@ -3,6 +3,7 @@ import react from '@vitejs/plugin-react';
 import dotenv from 'dotenv';
 import path from 'path';
 import tsconfig from 'vite-tsconfig-paths';
+import svgr from 'vite-plugin-svgr';
 
 dotenv.config({
   path: path.join(path.resolve(), '.env'),
@@ -37,6 +38,6 @@ export default defineConfig(({ command, mode }) => {
       port,
     },
     base: projectBasePath,
-    plugins: [react(), tsconfig()],
+    plugins: [react(), tsconfig(), svgr()],
   };
 });

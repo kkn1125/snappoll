@@ -1,10 +1,15 @@
 import { addPoll } from '@/apis/addPoll';
 import PollOptionItem from '@components/moleculars/PollOptionItem';
 import useSnapPoll from '@hooks/useSnapPoll';
+import PreviewIcon from '@mui/icons-material/Preview';
+import SaveIcon from '@mui/icons-material/Save';
 import {
   Button,
   Container,
   Divider,
+  SpeedDial,
+  SpeedDialAction,
+  SpeedDialIcon,
   Stack,
   TextField,
   Typography,
@@ -16,10 +21,24 @@ import {
 } from '@mui/x-date-pickers';
 import { Poll } from '@utils/Poll';
 import dayjs from 'dayjs';
-import { ChangeEvent, FormEvent, useState } from 'react';
+import { ChangeEvent, FormEvent, useEffect, useRef, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 
+// const actions = [
+//   // { icon: <FileCopyIcon />, name: 'Copy' },
+//   { icon: <SaveIcon />, name: 'Save' },
+//   { icon: <PreviewIcon />, name: 'Preview' },
+//   // { icon: <PrintIcon />, name: 'Print' },
+//   // { icon: <ShareIcon />, name: 'Share' },
+// ];
 interface SnapPollProps {}
 const SnapPoll: React.FC<SnapPollProps> = () => {
+  const formRef = useRef<HTMLFormElement>(null);
+  const locate = useLocation();
+  const [errors, setErrors] = useState<
+    Record<string, { itemIndex: number; cause: string }>
+  >({});
+  const navigate = useNavigate();
   const { setSnapPolls } = useSnapPoll();
   const [baseInfo, setBaseInfo] = useState<Record<string, string | Date>>({
     title: '',
@@ -28,6 +47,46 @@ const SnapPoll: React.FC<SnapPollProps> = () => {
     expiresAt: new Date(),
   });
   const [polls, setPolls] = useState<Poll<PollType['type']>[]>([]);
+  const actions = [
+    {
+      icon: <SaveIcon />,
+      name: 'Save',
+      onClick: () => {
+        formRef.current?.requestSubmit();
+      },
+    },
+    {
+      icon: <PreviewIcon />,
+      name: 'Preview',
+      onClick: () =>
+        navigate('/polls/new/preview', {
+          state: {
+            data: {
+              ...baseInfo,
+              options: JSON.stringify(polls),
+            },
+          },
+        }),
+    },
+  ];
+
+  useEffect(() => {
+    window.history.replaceState({}, '');
+
+    const state = locate.state;
+    if (state?.data) {
+      const { data } = state;
+      const { title, description, start, expiresAt, options } = data;
+      setBaseInfo({
+        title,
+        description,
+        start,
+        expiresAt,
+      });
+      const optionList = JSON.parse(options);
+      setPolls(optionList.map((option: any) => new Poll(option)));
+    }
+  }, [locate.state]);
 
   function updateBaseInfo(e: ChangeEvent<HTMLInputElement>) {
     const target = e.target;
@@ -68,12 +127,22 @@ const SnapPoll: React.FC<SnapPollProps> = () => {
 
     /* do something... */
     const { start, ...rest } = baseInfo;
-    console.log(baseInfo, polls);
 
     if (polls.length === 0) return;
+    if (Object.keys(errors).length > 0) return;
 
     setSnapPolls(polls);
     addPoll({ ...rest, options: JSON.stringify(polls) });
+
+    /* 초기화 */
+    setBaseInfo({
+      title: '',
+      description: '',
+      start: new Date(),
+      expiresAt: new Date(),
+    });
+    setPolls([]);
+    setErrors({});
 
     return false;
   }
@@ -81,6 +150,7 @@ const SnapPoll: React.FC<SnapPollProps> = () => {
   return (
     <Container component={Stack} p={5} gap={3}>
       <Stack
+        ref={formRef}
         component="form"
         onSubmit={handleSubmit}
         gap={3}
@@ -99,6 +169,7 @@ const SnapPoll: React.FC<SnapPollProps> = () => {
             설문 제목
           </Typography>
           <TextField
+            autoFocus
             size="small"
             name="title"
             placeholder="제목을 입력해주세요."
@@ -153,9 +224,9 @@ const SnapPoll: React.FC<SnapPollProps> = () => {
           </Stack>
         </Stack>
 
-        <Button variant="contained" type="submit">
+        {/* <Button variant="contained" type="submit">
           Save
-        </Button>
+        </Button> */}
       </Stack>
 
       <Divider />
@@ -167,6 +238,8 @@ const SnapPoll: React.FC<SnapPollProps> = () => {
             index={index + 1}
             poll={poll}
             updatePoll={updatePoll}
+            setErrors={setErrors}
+            errors={errors}
           />
         ))}
         <Button
@@ -178,6 +251,20 @@ const SnapPoll: React.FC<SnapPollProps> = () => {
           Add
         </Button>
       </Stack>
+      <SpeedDial
+        ariaLabel="SpeedDial basic example"
+        sx={{ position: 'absolute', bottom: 16, right: 16 }}
+        icon={<SpeedDialIcon />}
+      >
+        {actions.map((action) => (
+          <SpeedDialAction
+            key={action.name}
+            icon={action.icon}
+            tooltipTitle={action.name}
+            onClick={action.onClick}
+          />
+        ))}
+      </SpeedDial>
     </Container>
   );
 };

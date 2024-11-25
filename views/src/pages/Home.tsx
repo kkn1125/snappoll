@@ -1,6 +1,8 @@
 import { getPolls } from '@/apis/getPolls';
+import { removePoll } from '@/apis/removePoll';
 import { BRAND_NAME } from '@common/variables';
 import {
+  Button,
   List,
   ListItemButton,
   ListItemText,
@@ -8,22 +10,41 @@ import {
   Stack,
   Typography,
 } from '@mui/material';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { MouseEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useCookies } from 'react-cookie';
+import Login from './user/Login';
 
 const Home = () => {
+  const queryClient = useQueryClient();
   const navigate = useNavigate();
   const query = useQuery<APIPoll[]>({
     queryKey: ['polls'],
     queryFn: getPollList,
   });
 
+  const mutation = useMutation({
+    mutationKey: ['polls-remove'],
+    mutationFn: (pollId: string) => removePoll(pollId),
+    onSuccess: () => {
+      // Invalidate and refetch
+      queryClient.invalidateQueries({ queryKey: ['polls'] });
+    },
+  });
   function getPollList() {
     return getPolls();
   }
 
+  function handleRemovePoll(pollId: string) {
+    return (e: MouseEvent) => {
+      e.stopPropagation();
+      mutation.mutate(pollId);
+    };
+  }
+
   return (
-    <Stack gap={5}>
+    <Stack p={2} gap={5}>
       {/* first section */}
       <Stack gap={2}>
         <Typography align="center" fontSize={36} fontWeight={700}>
@@ -48,16 +69,22 @@ const Home = () => {
         </Typography>
         <Paper>
           <List>
-            {query.data?.map((item) => (
+            {query.data?.map((poll) => (
               <ListItemButton
-                key={item.id}
+                key={poll.id}
                 onClick={() => {
-                  navigate('/polls/' + item.id);
+                  navigate('/polls/' + poll.id);
                 }}
               >
-                <ListItemText>{item.title}</ListItemText>
+                <ListItemText>{poll.title}</ListItemText>
+                <Button onClick={handleRemovePoll(poll.id)}>❌</Button>
               </ListItemButton>
             ))}
+            {query.data?.length === 0 && (
+              <ListItemButton>
+                <ListItemText>등록된 설문지가 없습니다.</ListItemText>
+              </ListItemButton>
+            )}
           </List>
         </Paper>
       </Stack>

@@ -147,4 +147,23 @@ export declare global {
     expiresAt: Date;
     options: Poll<PollType['type']>;
   };
+  interface User {
+    id: string;
+    username: string;
+    email: string;
+    password: string;
+    createdAt: Date;
+    updatedAt: Date;
+  }
+  interface SignupUser extends Omit<User, 'id' | 'createdAt' | 'updatedAt'> {
+    checkPassword: string;
+  }
+  interface LoginUser
+    extends Omit<User, 'id' | 'username' | 'createdAt' | 'updatedAt'> {}
+  type Message<T> = { [k in keyof T]: string };
+  interface UserToken {
+    token?: string;
+    signed: boolean;
+    expired: boolean;
+  }
 }

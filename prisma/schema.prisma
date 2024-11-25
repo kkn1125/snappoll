@@ -15,8 +15,10 @@ model User {
   password  String   @db.VarChar(200)
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
-  Poll      Poll[]
-  Vote      Vote[]
+
+  Poll       Poll[]
+  Vote       Vote[]
+  PollResult PollResult[]
 
   @@map("user")
 }
@@ -30,10 +32,24 @@ model Poll {
   expiresAt   DateTime @default(now()) @map("expires_at")
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
-  User        User?    @relation(fields: [createdBy], references: [id])
-  Vote        Vote[]
+
+  User       User?        @relation(fields: [createdBy], references: [id])
+  PollResult PollResult[]
 
   @@map("poll")
+}
+
+model PollResult {
+  id     String  @id @default(uuid()) @db.Uuid
+  userId String? @map("user_id") @db.Uuid
+  pollId String? @map("poll_id") @db.Uuid
+  answer Json
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  Poll Poll? @relation(fields: [pollId], references: [id])
+  User User? @relation(fields: [userId], references: [id])
 }
 
 model Vote {
@@ -42,8 +58,8 @@ model Vote {
   pollId    String?  @map("poll_id") @db.Uuid
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
-  Poll      Poll?    @relation(fields: [pollId], references: [id])
-  User      User?    @relation(fields: [userId], references: [id])
+
+  User User? @relation(fields: [userId], references: [id])
 
   @@map("vote")
 }

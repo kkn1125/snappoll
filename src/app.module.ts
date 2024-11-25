@@ -6,6 +6,7 @@ import { DatabaseModule } from './database/database.module';
 import { PollsModule } from './polls/polls.module';
 import { VotesModule } from './votes/votes.module';
 import { UsersModule } from './users/users.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { UsersModule } from './users/users.module';
     PollsModule,
     DatabaseModule,
     UsersModule,
+    AuthModule,
   ],
   controllers: [],
   providers: [],

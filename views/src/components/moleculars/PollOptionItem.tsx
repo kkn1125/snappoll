@@ -1,7 +1,6 @@
 import {
   Button,
   Divider,
-  FormControlLabel,
   MenuItem,
   Paper,
   Select,
@@ -12,17 +11,35 @@ import {
   Typography,
 } from '@mui/material';
 import { Poll } from '@utils/Poll';
-import { ChangeEvent } from 'react';
+import { ChangeEvent, Dispatch, SetStateAction, useEffect } from 'react';
 
 interface PollOptionItemProps {
   index: number;
   poll: Poll<PollType['type']>;
   updatePoll: (poll: Poll<PollType['type']>) => void;
+  // addErrors: (pollId: string, itemIndex: number, cause: string) => void;
+  // deleteErrors: (pollId: string) => void;
+  setErrors: Dispatch<
+    SetStateAction<
+      Record<
+        string,
+        {
+          itemIndex: number;
+          cause: string;
+        }
+      >
+    >
+  >;
+  errors: Record<string, { itemIndex: number; cause: string }>;
 }
 const PollOptionItem: React.FC<PollOptionItemProps> = ({
   index,
   poll,
   updatePoll,
+  setErrors,
+  // addErrors,
+  // deleteErrors,
+  errors,
 }) => {
   function onChange(e: ChangeEvent<HTMLInputElement>) {
     const target = e.target;
@@ -45,7 +62,10 @@ const PollOptionItem: React.FC<PollOptionItemProps> = ({
   function onChangeItemName(index: number) {
     return function (e: ChangeEvent<HTMLInputElement>) {
       const target = e.target;
-      poll.items[index].name = target.value;
+      // poll.items[index].name = target.value;
+      const newItems = [...poll.items];
+      newItems[index].name = target.value;
+      poll.items = newItems;
       updatePoll(poll);
     };
   }
@@ -53,7 +73,10 @@ const PollOptionItem: React.FC<PollOptionItemProps> = ({
   function onChangeItemValue(index: number) {
     return function (e: ChangeEvent<HTMLInputElement>) {
       const target = e.target;
-      poll.items[index].value = target.value;
+      // poll.items[index].value = target.value;
+      const newItems = [...poll.items];
+      newItems[index].value = target.value;
+      poll.items = newItems;
       updatePoll(poll);
     };
   }
@@ -66,11 +89,13 @@ const PollOptionItem: React.FC<PollOptionItemProps> = ({
   }
 
   function handleAddItem() {
-    poll.items.push({
+    const newItems = [...poll.items];
+    newItems.push({
       name: '',
       value: '',
       checked: false,
     });
+    poll.items = newItems;
     updatePoll(poll);
   }
 
@@ -80,6 +105,43 @@ const PollOptionItem: React.FC<PollOptionItemProps> = ({
       updatePoll(poll);
     };
   }
+
+  useEffect(() => {
+    function addErrors(pollId: string, itemIndex: number, cause: string) {
+      setErrors((errors) => ({
+        ...errors,
+        [pollId]: { itemIndex, cause },
+      }));
+    }
+
+    function deleteErrors(pollId: string) {
+      setErrors((errors) => {
+        delete errors[pollId];
+        return { ...errors };
+      });
+    }
+
+    if (poll.type === 'option') {
+      const values = poll.items.map((item) => item.value);
+      let index = -1;
+      for (let i = 0; i < values.length; i++) {
+        for (let q = i + 1; q < values.length; q++) {
+          const first = values[i];
+          const second = values[q];
+
+          if (first === second) {
+            index = i;
+            break;
+          }
+        }
+      }
+      if (index === -1) {
+        deleteErrors(poll.id);
+      } else {
+        addErrors(poll.id, index, 'duplicate');
+      }
+    }
+  }, [poll.id, poll.items, poll.type, setErrors]);
 
   return (
     <Paper component={Stack} gap={2} p={3}>
@@ -210,7 +272,7 @@ const PollOptionItem: React.FC<PollOptionItemProps> = ({
 
       {poll.type === 'text' && (
         <Stack direction="row" gap={2}>
-          <Stack>
+          {/* <Stack>
             <Typography fontSize={14} gutterBottom color="textDisabled">
               기본값
             </Typography>
@@ -226,7 +288,7 @@ const PollOptionItem: React.FC<PollOptionItemProps> = ({
                 },
               }}
             />
-          </Stack>
+          </Stack> */}
           <Stack>
             <Typography fontSize={14} gutterBottom color="textDisabled">
               도움말
@@ -266,6 +328,7 @@ const PollOptionItem: React.FC<PollOptionItemProps> = ({
                 name="name"
                 onChange={onChangeItemName(i)}
                 required
+                error={errors?.[poll.id]?.itemIndex === i}
               />
               <TextField
                 placeholder="옵션값"
@@ -274,6 +337,7 @@ const PollOptionItem: React.FC<PollOptionItemProps> = ({
                 name="value"
                 onChange={onChangeItemValue(i)}
                 required
+                error={errors?.[poll.id]?.itemIndex === i}
               />
               <Button
                 color="error"

@@ -1,4 +1,3 @@
-import useSnapPoll from '@hooks/useSnapPoll';
 import {
   Checkbox,
   FormControl,
@@ -18,9 +17,14 @@ const LegendText = styled((props) => <Typography {...props} />)``;
 
 interface PollItemProps {
   poll: Poll<'text' | 'option' | 'checkbox'>;
+  onChange: (id: string, value: string | boolean) => void;
+  onChangeCheckbox: (id: string, index: number, checked: boolean) => void;
 }
-const PollItem: React.FC<PollItemProps> = ({ poll }) => {
-  const { updateSnapPoll } = useSnapPoll();
+const PollItem: React.FC<PollItemProps> = ({
+  poll,
+  onChange,
+  onChangeCheckbox,
+}) => {
   switch (poll.type) {
     case 'text':
       return (
@@ -49,7 +53,8 @@ const PollItem: React.FC<PollItemProps> = ({ poll }) => {
               required={poll.required}
               name={poll.name}
               placeholder={poll.placeholder}
-              value={poll.value || poll.default}
+              value={poll.value || poll.default || ''}
+              onChange={(e) => onChange(poll.id, e.target.value)}
             />
           </FormControl>
         </Stack>
@@ -67,15 +72,21 @@ const PollItem: React.FC<PollItemProps> = ({ poll }) => {
             variant="standard"
             sx={{ gap: 2 }}
           >
-            <FormLabel
-              component={LegendText}
-              className="font-maru"
-              sx={{ color: 'CaptionText', fontWeight: 500 }}
-            >
-              {poll.desc}
-            </FormLabel>
+            {poll.desc && (
+              <FormLabel
+                component={LegendText}
+                className="font-maru"
+                sx={{ color: 'CaptionText', fontWeight: 500 }}
+              >
+                {poll.desc}
+              </FormLabel>
+            )}
 
-            <Select value={poll.value || poll.default} required={poll.required}>
+            <Select
+              value={poll.value || poll.default || poll.items[0].value}
+              required={poll.required}
+              onChange={(e) => onChange(poll.id, e.target.value)}
+            >
               {(poll as Poll<'option'>).items.map((item) => (
                 <MenuItem key={item.name} value={item.value}>
                   {item.name}
@@ -100,13 +111,15 @@ const PollItem: React.FC<PollItemProps> = ({ poll }) => {
               variant="standard"
               sx={{ gap: 2 }}
             >
-              <FormLabel
-                component={LegendText}
-                className="font-maru"
-                sx={{ color: 'CaptionText', fontWeight: 500 }}
-              >
-                {poll.desc}
-              </FormLabel>
+              {poll.desc && (
+                <FormLabel
+                  component={LegendText}
+                  className="font-maru"
+                  sx={{ color: 'CaptionText', fontWeight: 500 }}
+                >
+                  {poll.desc}
+                </FormLabel>
+              )}
               <FormGroup>
                 {(poll as Poll<'checkbox'>).items.map((item, i) => (
                   <FormControlLabel
@@ -119,6 +132,9 @@ const PollItem: React.FC<PollItemProps> = ({ poll }) => {
                           item.checked ||
                           (poll as Poll<'checkbox'>).default ||
                           false
+                        }
+                        onChange={(e) =>
+                          onChangeCheckbox(poll.id, i, e.target.checked)
                         }
                       />
                     }

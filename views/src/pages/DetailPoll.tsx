@@ -1,10 +1,18 @@
 import { getPoll } from '@/apis/getPoll';
-import PollItem from '@components/moleculars/PollItem';
-import { Stack, Typography } from '@mui/material';
+import { savePollResult } from '@/apis/savePollResult';
+import PollLayout from '@components/templates/PollLayout';
+import {
+  Button,
+  Container,
+  Divider,
+  Stack,
+  styled,
+  Typography,
+} from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
 import { Poll } from '@utils/Poll';
-import { useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useState, useEffect, FormEvent } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 
 interface DetailPollProps {
   // title: string;
@@ -13,7 +21,9 @@ interface DetailPollProps {
   // options: string;
 }
 const DetailPoll: React.FC<DetailPollProps> = () => {
+  const navigate = useNavigate();
   const [polls, setPolls] = useState<Poll<PollType['type']>[]>([]);
+
   const { id } = useParams();
 
   const { data } = useQuery<APIPoll>({
@@ -23,25 +33,33 @@ const DetailPoll: React.FC<DetailPollProps> = () => {
 
   async function getPollOne() {
     const data = await getPoll(id as string);
-    const { options } = data;
-    setPolls(JSON.parse(options));
+    setPolls(JSON.parse(data.options));
     return data;
   }
 
+  async function handleSavePollResult(e: FormEvent) {
+    e.preventDefault();
+    if (data && id) {
+      await savePollResult(id, 'test', JSON.stringify(polls));
+      navigate('/');
+    }
+    return false;
+  }
+
+  if (!data) {
+    return <Typography>Loading...</Typography>;
+  }
+
   return (
-    <Stack>
-      <Typography>{data?.title}</Typography>
-      <Typography>{data?.description}</Typography>
-      <Typography>{data?.expiresAt?.toLocaleString('ko') || ''}</Typography>
-      <Stack gap={10}>
-        {polls.map((poll) => (
-          <PollItem key={poll.id} poll={poll} />
-        ))}
-        {/* {polls.map((poll, i) => (
-          <PollItem key={poll.name + i} poll={poll} />
-        ))} */}
+    <Container>
+      <Stack component="form" gap={3} onSubmit={handleSavePollResult}>
+        <PollLayout data={data} polls={polls} setPolls={setPolls} />
+        <Divider />
+        <Button variant="contained" size="large" type="submit">
+          제출
+        </Button>
       </Stack>
-    </Stack>
+    </Container>
   );
 };
 

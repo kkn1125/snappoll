@@ -1,0 +1,163 @@
+import { login } from '@/apis/login';
+import { tokenAtom } from '@/recoils/token.atom';
+import {
+  Container,
+  Stack,
+  Portal,
+  Paper,
+  Typography,
+  Button,
+  TextField,
+  Divider,
+} from '@mui/material';
+import { useMutation } from '@tanstack/react-query';
+import { AxiosError } from 'axios';
+import { useState, FormEvent, ChangeEvent } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import { useSetRecoilState } from 'recoil';
+
+interface LoginProps {}
+const Login: React.FC<LoginProps> = () => {
+  const navigate = useNavigate();
+  const [modal, setModal] = useState<Partial<Record<string, string>>>({});
+  const [errors, setErrors] = useState<Partial<Message<LoginUser>>>({});
+  const [loginInfo, setLoginInfo] = useState<LoginUser>({
+    email: '',
+    password: '',
+  });
+  const setToken = useSetRecoilState(tokenAtom);
+  const mutation = useMutation({
+    mutationKey: ['login'],
+    mutationFn: login,
+    onSuccess(data, variables, context) {
+      if (data.ok) {
+        setLoginInfo(() => ({
+          email: '',
+          password: '',
+        }));
+        setToken((token) => ({
+          token: data.token,
+          signed: !!data.token,
+          expired: false,
+        }));
+        navigate('/');
+      }
+    },
+    onError(error: AxiosError, variables, context) {
+      const { response } = error;
+      const { data } = response as { data: any };
+
+      setModal({
+        title: '잘못된 요청',
+        content: data.message,
+      });
+    },
+  });
+
+  function validateForm() {
+    const errors: Partial<Message<LoginUser>> = {};
+    if (loginInfo.email === '') {
+      errors['email'] = '필수입니다.';
+    }
+    if (loginInfo.password === '') {
+      errors['password'] = '필수입니다.';
+    }
+    setErrors(errors);
+    return Object.keys(errors).length === 0;
+  }
+
+  function handleSubmit(e: FormEvent) {
+    e.preventDefault();
+
+    if (!validateForm()) return;
+
+    mutation.mutate(loginInfo);
+
+    return false;
+  }
+
+  function onChange(e: ChangeEvent<HTMLInputElement>) {
+    const name = e.target.name;
+    const value = e.target.value;
+    setLoginInfo((loginInfo) => ({ ...loginInfo, [name]: value }));
+  }
+
+  return (
+    <Container component={Stack} maxWidth="sm" gap={2}>
+      <Portal>
+        {modal.title && modal.content && (
+          <Paper
+            component={Stack}
+            p={3}
+            minWidth="50%"
+            sx={{
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              zIndex: 100,
+            }}
+          >
+            <Typography fontSize={24} gutterBottom>
+              {modal.title}
+            </Typography>
+            <Typography className="font-maru" fontSize={15}>
+              {modal.content}
+            </Typography>
+            <Button color="error" onClick={() => setModal({})}>
+              닫기
+            </Button>
+          </Paper>
+        )}
+      </Portal>
+      <Stack component="form" gap={2} onSubmit={handleSubmit} noValidate>
+        <Typography fontSize={32} fontWeight={700}>
+          로그인
+        </Typography>
+        <TextField
+          variant="filled"
+          label="Email"
+          name="email"
+          type="email"
+          value={loginInfo.email}
+          autoComplete="username"
+          onChange={onChange}
+          required
+          error={!!errors['email']}
+          helperText={errors['email']}
+        />
+
+        <TextField
+          variant="filled"
+          label="Password"
+          name="password"
+          type="password"
+          value={loginInfo.password}
+          autoComplete="current-password"
+          onChange={onChange}
+          required
+          error={!!errors['password']}
+          helperText={errors['password']}
+        />
+
+        <Divider />
+        <Button variant="outlined" size="large" type="submit">
+          로그인
+        </Button>
+        <Button
+          component={Link}
+          variant="outlined"
+          size="large"
+          to="/user/signup"
+        >
+          계정이 없어요
+        </Button>
+        <Button component={Link} variant="outlined" size="large" to="/">
+          메인으로
+        </Button>
+      </Stack>
+    </Container>
+  );
+};
+
+export default Login;
