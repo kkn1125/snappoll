@@ -73,7 +73,7 @@ export class AuthController {
       token: req.cookies?.token,
       userId: req.user?.id,
       username: req.user?.username,
-      profile: profile?.[0].image,
+      profile: profile?.[0]?.image,
     });
   }
 }

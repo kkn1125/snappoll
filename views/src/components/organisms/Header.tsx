@@ -1,6 +1,6 @@
 import { sidebarAtom } from '@/recoils/sidebar.atom';
 import { tokenAtom } from '@/recoils/token.atom';
-import { BRAND_NAME, logoImage } from '@common/variables';
+import { BRAND_NAME, DefaultProfile, logoImage } from '@common/variables';
 import useScroll from '@hooks/useScroll';
 import MenuOpenRoundedIcon from '@mui/icons-material/MenuOpenRounded';
 import MenuRoundedIcon from '@mui/icons-material/MenuRounded';
@@ -105,11 +105,7 @@ const Header: React.FC<HeaderProps> = ({ isCrew }) => {
                   },
                 }}
               >
-                {sidebarOpened ? (
-                  <MenuOpenRoundedIcon />
-                ) : (
-                  <MenuRoundedIcon />
-                )}
+                {sidebarOpened ? <MenuOpenRoundedIcon /> : <MenuRoundedIcon />}
               </IconButton>
             )}
             <Stack
@@ -148,11 +144,15 @@ const Header: React.FC<HeaderProps> = ({ isCrew }) => {
                       <MenuItem onClick={redirectTo('/polls')}>Polls</MenuItem>
                       <MenuItem onClick={redirectTo('/votes')}>Votes</MenuItem>
                       <MenuItem onClick={redirectTo('/user/profile')}>
-                        <Avatar
-                          src={profileImage}
-                          sx={{ width: 32, height: 32 }}
-                          alt={username}
-                        />
+                        {profileImage ? (
+                          <Avatar
+                            src={profileImage}
+                            sx={{ width: 32, height: 32 }}
+                            alt={username}
+                          />
+                        ) : (
+                          <DefaultProfile width={32} height={32} />
+                        )}
                         {username}
                       </MenuItem>
                     </Stack>
@@ -197,11 +197,15 @@ const Header: React.FC<HeaderProps> = ({ isCrew }) => {
                   color="inherit"
                   to="/user/profile"
                   startIcon={
-                    <Avatar
-                      src={profileImage}
-                      sx={{ width: 32, height: 32 }}
-                      alt={username}
-                    />
+                    profileImage ? (
+                      <Avatar
+                        src={profileImage}
+                        sx={{ width: 32, height: 32 }}
+                        alt={username}
+                      />
+                    ) : (
+                      <DefaultProfile width={32} height={32} />
+                    )
                   }
                 >
                   {username}
