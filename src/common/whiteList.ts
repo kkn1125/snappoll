@@ -1,4 +1,4 @@
 export default {
-  hosts: ['localhost'],
-  ports: [8080, 5000],
+  hosts: ['localhost', 'snappoll.kro.kr'],
+  ports: [8080, 5000, 80],
 };
