@@ -1,3 +1,0 @@
-#! /usr/bin/env bash
-
-cd views && npm i && cd .. && npm i
