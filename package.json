@@ -7,6 +7,7 @@
   "license": "UNLICENSED",
   "scripts": {
     "dev": "concurrently --kill-others-on-fail \"npm run start:dev\" \"cd views/ && npm run dev\"",
+    "prebuild": "bash scripts/build",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
@@ -27,6 +28,7 @@
     "@nestjs/mapped-types": "*",
     "@nestjs/passport": "^10.0.3",
     "@nestjs/platform-express": "^10.0.0",
+    "@nestjs/serve-static": "^4.0.2",
     "@prisma/client": "^5.22.0",
     "cookie-parser": "^1.4.7",
     "crypto-js": "^4.2.0",

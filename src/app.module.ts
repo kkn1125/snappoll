@@ -1,16 +1,14 @@
 import { LoggerMiddleware } from '@middleware/logger.middleware';
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import path from 'path';
+import { AuthModule } from './auth/auth.module';
 import commonConf from './common/common.conf';
 import { DatabaseModule } from './database/database.module';
 import { PollsModule } from './polls/polls.module';
-import { VotesModule } from './votes/votes.module';
 import { UsersModule } from './users/users.module';
-import { AuthModule } from './auth/auth.module';
-import { APP_GUARD } from '@nestjs/core';
-import { RoleGuard } from './auth/role.guard';
-import { AuthService } from './auth/auth.service';
-
+import { VotesModule } from './votes/votes.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true, load: [commonConf] }),
@@ -19,6 +17,9 @@ import { AuthService } from './auth/auth.service';
     PollsModule,
     DatabaseModule,
     UsersModule,
+    ServeStaticModule.forRoot({
+      rootPath: path.join(path.resolve(), 'views/dist'),
+    }),
   ],
   controllers: [],
 })
