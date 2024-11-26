@@ -41,6 +41,38 @@ export default defineConfig(({ command, mode }) => {
       host,
       port,
     },
+    resolve: {
+      alias: [
+        { find: '@assets', replacement: path.resolve('src/assets') },
+        { find: '@common', replacement: path.resolve('src/common') },
+        { find: '@providers', replacement: path.resolve('src/providers') },
+        { find: '@hooks', replacement: path.resolve('src/hooks') },
+        {
+          find: '@components',
+          replacement: path.resolve('src/components'),
+        },
+        {
+          find: '@atoms',
+          replacement: path.resolve('src/components/atoms'),
+        },
+        {
+          find: '@moleculars',
+          replacement: path.resolve('src/components/moleculars'),
+        },
+        {
+          find: '@organisms',
+          replacement: path.resolve('src/components/organisms'),
+        },
+        {
+          find: '@templates',
+          replacement: path.resolve('src/components/templates'),
+        },
+        { find: '@utils', replacement: path.resolve('src/utils') },
+        { find: '@routes', replacement: path.resolve('src/routes') },
+        { find: '@pages', replacement: path.resolve('src/pages') },
+        { find: '@', replacement: path.resolve('src') },
+      ],
+    },
     base: projectBasePath,
     plugins: [react(), tsconfig(), svgr()],
   };
