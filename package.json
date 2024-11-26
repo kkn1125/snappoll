@@ -6,6 +6,7 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
+    "installation": "bash scripts/installation",
     "dev": "concurrently --kill-others-on-fail \"npm run start:dev\" \"cd views/ && npm run dev\"",
     "prebuild": "bash scripts/build",
     "build": "nest build",
