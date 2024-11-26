@@ -62,7 +62,7 @@ export class AuthController {
     if (!req.verify) {
       throw new UnauthorizedException('토큰이 만료되었습니다.');
     }
-    const profile = req.user['userProfile'];
+    const profile = req.user?.['userProfile'];
     console.log('profile:', profile);
     // const blob = new Blob([new Uint8Array(profile.data)], {
     //   type: 'image/jpeg',
