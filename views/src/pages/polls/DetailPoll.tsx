@@ -8,6 +8,7 @@ import {
   Divider,
   Stack,
   styled,
+  Toolbar,
   Typography,
 } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
@@ -61,6 +62,7 @@ const DetailPoll: React.FC<DetailPollProps> = () => {
 
   return (
     <Container>
+      <Toolbar />
       <Stack component="form" gap={3} onSubmit={handleSavePollResult}>
         {data && <PollLayout data={data} polls={polls} setPolls={setPolls} />}
         <Divider />
@@ -68,6 +70,7 @@ const DetailPoll: React.FC<DetailPollProps> = () => {
           제출
         </Button>
       </Stack>
+      <Toolbar />
     </Container>
   );
 };

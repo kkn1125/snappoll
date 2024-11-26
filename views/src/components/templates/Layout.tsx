@@ -2,7 +2,8 @@ import { sidebarAtom } from '@/recoils/sidebar.atom';
 import Footer from '@components/organisms/Footer';
 import Header from '@components/organisms/Header';
 import Sidebar from '@components/organisms/Sidebar';
-import { Stack, Toolbar } from '@mui/material';
+import { Stack, Toolbar, useMediaQuery, useTheme } from '@mui/material';
+import { useEffect } from 'react';
 import { Outlet } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 
@@ -17,6 +18,9 @@ interface LayoutProps {
 }
 const Layout: React.FC<LayoutProps> = ({ isCrew = true }) => {
   const sidebarState = useRecoilValue(sidebarAtom);
+  const theme = useTheme();
+  const isMdDown = useMediaQuery(theme.breakpoints.down('md'));
+  const sidebarOpened = isMdDown ? !sidebarState.opened : sidebarState.opened;
 
   return (
     <Stack height="inherit">
@@ -30,11 +34,21 @@ const Layout: React.FC<LayoutProps> = ({ isCrew = true }) => {
             overflow="hidden"
             sx={{
               width: '100%',
-              maxWidth: sidebarState.opened
+              maxWidth: sidebarOpened
                 ? sidebarWidth.max
-                : sidebarWidth.min,
+                : isMdDown
+                  ? 0
+                  : sidebarWidth.min,
               transition: '150ms ease-in-out',
               borderRight: '1px solid #eee',
+              backgroundColor: '#fff',
+              ...(isMdDown && {
+                position: 'absolute',
+                zIndex: 5,
+                top: 0,
+                left: 0,
+                bottom: 0,
+              }),
             }}
           >
             <Sidebar />

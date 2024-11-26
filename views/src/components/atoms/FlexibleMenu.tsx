@@ -7,6 +7,8 @@ import {
   ListItemIcon,
   ListItemText,
   Tooltip,
+  useMediaQuery,
+  useTheme,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
@@ -19,7 +21,9 @@ interface FlexibleMenuProps {
 const FlexibleMenu: React.FC<FlexibleMenuProps> = ({ name, desc, to }) => {
   const navigation = useNavigate();
   const sidebarState = useRecoilValue(sidebarAtom);
-  const opened = sidebarState.opened;
+  const theme = useTheme();
+  const isMdDown = useMediaQuery(theme.breakpoints.down('md'));
+  const opened = isMdDown ? !sidebarState.opened : sidebarState.opened;
 
   function handleRedirect(to: string) {
     navigation(to);

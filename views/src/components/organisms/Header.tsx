@@ -10,13 +10,18 @@ import {
   Box,
   Button,
   IconButton,
+  Menu,
+  MenuItem,
   Stack,
   Toolbar,
   Typography,
+  useMediaQuery,
+  useTheme,
 } from '@mui/material';
-import { useEffect, useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Fragment, MouseEvent, useEffect, useMemo, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { useRecoilState, useRecoilValue } from 'recoil';
+import WidgetsIcon from '@mui/icons-material/Widgets';
 
 const headerBgChangePoint = 100;
 
@@ -24,10 +29,22 @@ interface HeaderProps {
   isCrew: boolean;
 }
 const Header: React.FC<HeaderProps> = ({ isCrew }) => {
+  const navigate = useNavigate();
   const [profileImage, setProfileImage] = useState('');
   const { current } = useScroll();
   const [sidebarState, setSidebarState] = useRecoilState(sidebarAtom);
   const { username, profile } = useRecoilValue(tokenAtom);
+  const theme = useTheme();
+  const isMdDown = useMediaQuery(theme.breakpoints.down('md'));
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+  const sidebarOpened = isMdDown ? !sidebarState.opened : sidebarState.opened;
 
   function handleToggleSidebar() {
     setSidebarState((sidebarState) => ({
@@ -49,6 +66,13 @@ const Header: React.FC<HeaderProps> = ({ isCrew }) => {
       setProfileImage(url);
     }
   }, [profile, profile?.data]);
+
+  function redirectTo(to: string) {
+    return () => {
+      navigate(to);
+      handleClose();
+    };
+  }
 
   return (
     <AppBar
@@ -81,7 +105,7 @@ const Header: React.FC<HeaderProps> = ({ isCrew }) => {
                   },
                 }}
               >
-                {sidebarState.opened ? (
+                {sidebarOpened ? (
                   <MenuOpenRoundedIcon />
                 ) : (
                   <MenuRoundedIcon />
@@ -112,11 +136,45 @@ const Header: React.FC<HeaderProps> = ({ isCrew }) => {
             </Stack>
           </Stack>
           <Stack direction="row">
-            <Button component={Link} size="large" color="inherit" to="/about">
-              About
-            </Button>
-            {isCrew ? (
+            {isMdDown ? (
+              <Stack alignItems="center">
+                <IconButton onClick={handleClick}>
+                  <WidgetsIcon />
+                </IconButton>
+                <Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
+                  {isCrew ? (
+                    <Stack>
+                      <MenuItem onClick={redirectTo('/about')}>About</MenuItem>
+                      <MenuItem onClick={redirectTo('/polls')}>Polls</MenuItem>
+                      <MenuItem onClick={redirectTo('/votes')}>Votes</MenuItem>
+                      <MenuItem onClick={redirectTo('/user/profile')}>
+                        <Avatar
+                          src={profileImage}
+                          sx={{ width: 32, height: 32 }}
+                          alt={username}
+                        />
+                        {username}
+                      </MenuItem>
+                    </Stack>
+                  ) : (
+                    <Stack>
+                      <MenuItem onClick={redirectTo('/user/signup')}>
+                        Signup
+                      </MenuItem>
+                    </Stack>
+                  )}
+                </Menu>
+              </Stack>
+            ) : isCrew ? (
               <>
+                <Button
+                  component={Link}
+                  size="large"
+                  color="inherit"
+                  to="/about"
+                >
+                  About
+                </Button>
                 <Button
                   component={Link}
                   size="large"
