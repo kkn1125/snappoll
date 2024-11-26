@@ -48,7 +48,9 @@ export class UsersService {
     const password = this.prisma.encryptPassword(createUserDto.password);
     createUserDto.password = password;
 
-    createUserDto.username += this.getNextUserNumber(createUserDto.username);
+    createUserDto.username += await this.getNextUserNumber(
+      createUserDto.username,
+    );
 
     return this.prisma.user.create({
       data: createUserDto,
