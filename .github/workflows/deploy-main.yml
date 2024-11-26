@@ -1,0 +1,48 @@
+name: Deploy to cloudtype
+on:
+  schedule:
+    - cron: '0,30 0,19,22 * * *'
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Connect deploy key
+        uses: cloudtype-github-actions/connect@v1
+        with:
+          token: ${{ secrets.CLOUDTYPE_TOKEN }}
+          ghtoken: ${{ secrets.GHP_TOKEN }}
+      - name: Deploy
+        uses: cloudtype-github-actions/deploy@v1
+        with:
+          token: ${{ secrets.CLOUDTYPE_TOKEN }}
+          project: chaplet1125/realtime-poll
+          stage: main
+          yaml: |
+            name: realtime-poll
+            app: node@20
+            options:
+              ports: "8080"
+              install: npm i
+              build: npm run build
+              start: npm run start:prod
+              env:
+                - name: DATABASE_URL
+                  secret: DATABASE_URL
+                - name: DIRECT_URL
+                  secret: DIRECT_URL
+                - name: HOST
+                  value: 0.0.0.0
+                - name: PORT
+                  value: "8080"
+                - name: SECRET_KEY
+                  secret: SECRET_KEY
+              buildenv: []
+              strategy: rolling
+            context:
+              git:
+                url: git@github.com:${{ github.repository }}.git
+                ref: ${{ github.ref }}
