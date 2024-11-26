@@ -24,12 +24,12 @@ export class CookieGuard implements CanActivate {
         algorithms: ['HS256'],
       }) as JwtPayload;
       const user = await this.authService.getMe(result.email);
-
       if (result) {
         req.verify = result;
       }
       if (user) {
-        req.user = user;
+        const { password, ...users } = user;
+        req.user = users;
       }
       // return !!result;
     } catch (error) {

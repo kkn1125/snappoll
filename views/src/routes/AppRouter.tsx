@@ -1,22 +1,30 @@
 import { verifyLogin } from '@/apis/verifyLogin';
 import { tokenAtom } from '@/recoils/token.atom';
 import Layout from '@components/templates/Layout';
-import { Stack, Typography } from '@mui/material';
-import DetailPoll from '@pages/DetailPoll';
+import useLoading from '@hooks/useLoading';
+import useModal from '@hooks/useModal';
+import About from '@pages/About';
 import GuestHome from '@pages/GuestHome';
 import Home from '@pages/Home';
-import PreviewPoll from '@pages/PreviewPoll';
-import SnapPoll from '@pages/SnapPoll';
+import DetailPoll from '@pages/polls/DetailPoll';
+import PreviewPoll from '@pages/polls/PreviewPoll';
+import SnapPoll from '@pages/polls/SnapPoll';
 import SnapVote from '@pages/SnapVote';
 import Login from '@pages/user/Login';
+import Profile from '@pages/user/Profile';
 import Signup from '@pages/user/Signup';
 import { useMutation } from '@tanstack/react-query';
 import { useEffect } from 'react';
-import { Route, Routes, useLocation } from 'react-router-dom';
+import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 
+const skipPath = ['/user/signup', '/user/login'];
+
 function AppRouter() {
+  const { openModal } = useModal();
   const locate = useLocation();
+  const navigate = useNavigate();
+  const { updateLoading } = useLoading();
   const [{ signed }, setToken] = useRecoilState(tokenAtom);
 
   const mutation = useMutation({
@@ -29,35 +37,48 @@ function AppRouter() {
       setToken({
         token: data.token,
         userId: data.userId,
+        username: data.username,
+        profile: data.profile,
         signed: !!data.token,
         expired: false,
       });
+      updateLoading();
     },
     onError(error, variables, context) {
       setToken({
         token: undefined,
         userId: undefined,
+        username: undefined,
+        profile: undefined,
         signed: false,
         expired: true,
       });
+      if (
+        locate.pathname.match(/\/(polls|votes)\/?(.+)/) ||
+        !skipPath.includes(locate.pathname)
+      ) {
+        navigate('/');
+      }
       // removeCookie('token', { secure: true, httpOnly: true, sameSite: 'lax' });
     },
   });
 
   useEffect(() => {
-    mutation.mutate();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [locate.pathname]);
+    // openLoading('Loading...');
 
-  if (!signed && (mutation.isIdle || mutation.isPending)) {
-    return (
-      <Stack alignItems="center" height="inherit" justifyContent="center">
-        <Typography fontSize={42} fontWeight={700}>
-          Loading...
-        </Typography>
-      </Stack>
-    );
-  }
+    mutation.mutate();
+
+    if (signed && skipPath.includes(locate.pathname)) {
+      // 로그인 후 login, signup 페이지 제한
+      navigate('/');
+      // openModal({ title: '잘못된 접근', content: '이미 로그인 상태입니다.' });
+    }
+
+    // return () => {
+    //   updateLoading();
+    // };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [signed, locate.pathname]);
 
   return (
     <Routes>
@@ -65,6 +86,7 @@ function AppRouter() {
         <Route path="user">
           <Route path="login" element={<Login />}></Route>
           <Route path="signup" element={<Signup />}></Route>
+          <Route path="profile" element={<Profile />}></Route>
         </Route>
         <Route index element={signed ? <Home /> : <GuestHome />} />
         <Route path="polls">
@@ -75,6 +97,7 @@ function AppRouter() {
         <Route path="votes">
           <Route path="new" element={<SnapVote />} />
         </Route>
+        <Route path="about" element={<About />} />
       </Route>
     </Routes>
   );

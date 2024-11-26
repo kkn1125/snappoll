@@ -41,7 +41,6 @@ const Signup: React.FC<SignupProps> = () => {
     onError(error: AxiosError, variables, context) {
       const { response } = error;
       const { data } = response as { data: any };
-      console.log(data);
 
       setModal({
         title: '잘못된 요청',

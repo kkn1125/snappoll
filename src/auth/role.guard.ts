@@ -11,6 +11,7 @@ import jwt, { JwtPayload } from 'jsonwebtoken';
 import { Observable } from 'rxjs';
 import { Roles } from './roles.decorator';
 import { AuthService } from './auth.service';
+import { User } from '@prisma/client';
 
 @Injectable()
 export class RoleGuard implements CanActivate {
@@ -36,7 +37,6 @@ export class RoleGuard implements CanActivate {
         algorithms: ['HS256'],
       }) as JwtPayload;
 
-      console.log(result);
       const user = await this.authService.getMe(result.email);
       if (result) {
         req.verify = result;

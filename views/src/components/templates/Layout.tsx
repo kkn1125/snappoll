@@ -3,8 +3,7 @@ import Footer from '@components/organisms/Footer';
 import Header from '@components/organisms/Header';
 import Sidebar from '@components/organisms/Sidebar';
 import { Stack, Toolbar } from '@mui/material';
-import { useEffect } from 'react';
-import { Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 
 const sidebarWidth = {
@@ -18,14 +17,6 @@ interface LayoutProps {
 }
 const Layout: React.FC<LayoutProps> = ({ isCrew = true }) => {
   const sidebarState = useRecoilValue(sidebarAtom);
-  const locate = useLocation();
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if (!isCrew && locate.pathname.match(/\/polls\/?(.+)|\/votes\/?(.+)/)) {
-      navigate('/');
-    }
-  }, [isCrew, locate.pathname, navigate]);
 
   return (
     <Stack height="inherit">

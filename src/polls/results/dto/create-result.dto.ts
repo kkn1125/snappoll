@@ -7,4 +7,5 @@ export class CreateResultDto
   userId: string;
   pollId: string;
   answer: JsonValue;
+  isCrew?: boolean;
 }

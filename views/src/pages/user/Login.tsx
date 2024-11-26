@@ -1,5 +1,6 @@
 import { login } from '@/apis/login';
 import { tokenAtom } from '@/recoils/token.atom';
+import useModal from '@hooks/useModal';
 import {
   Container,
   Stack,
@@ -18,9 +19,9 @@ import { useSetRecoilState } from 'recoil';
 
 interface LoginProps {}
 const Login: React.FC<LoginProps> = () => {
+  const { openModal } = useModal();
   const locate = useLocation();
   const navigate = useNavigate();
-  const [modal, setModal] = useState<Partial<Record<string, string>>>({});
   const [errors, setErrors] = useState<Partial<Message<LoginUser>>>({});
   const [loginInfo, setLoginInfo] = useState<LoginUser>({
     email: '',
@@ -48,7 +49,7 @@ const Login: React.FC<LoginProps> = () => {
       const { response } = error;
       const { data } = response as { data: any };
 
-      setModal({
+      openModal({
         title: '잘못된 요청',
         content: data.message,
       });
@@ -58,12 +59,12 @@ const Login: React.FC<LoginProps> = () => {
   useEffect(() => {
     window.history.replaceState({}, '');
     if (locate?.state?.type) {
-      setModal({
+      openModal({
         title: '권한 필요',
         content: '로그인이 필요한 기능입니다.',
       });
     }
-  }, [locate?.state?.type]);
+  }, [locate?.state?.type, openModal]);
 
   function validateForm() {
     const errors: Partial<Message<LoginUser>> = {};
@@ -95,32 +96,6 @@ const Login: React.FC<LoginProps> = () => {
 
   return (
     <Container component={Stack} maxWidth="sm" gap={2}>
-      <Portal>
-        {modal.title && modal.content && (
-          <Paper
-            component={Stack}
-            p={3}
-            minWidth="50%"
-            sx={{
-              position: 'absolute',
-              top: '50%',
-              left: '50%',
-              transform: 'translate(-50%, -50%)',
-              zIndex: 100,
-            }}
-          >
-            <Typography fontSize={24} gutterBottom>
-              {modal.title}
-            </Typography>
-            <Typography className="font-maru" fontSize={15}>
-              {modal.content}
-            </Typography>
-            <Button color="error" onClick={() => setModal({})}>
-              닫기
-            </Button>
-          </Paper>
-        )}
-      </Portal>
       <Stack component="form" gap={2} onSubmit={handleSubmit} noValidate>
         <Typography fontSize={32} fontWeight={700} align="center">
           로그인

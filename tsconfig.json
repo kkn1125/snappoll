@@ -30,5 +30,6 @@
       "@common/*": ["src/common/*"],
       "@/*": ["src/*"]
     }
-  }
+  },
+  "exclude": ["views"]
 }

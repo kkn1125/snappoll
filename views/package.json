@@ -3,6 +3,12 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "author": {
+    "name": "devkimson",
+    "email": "chaplet01@gmail.com",
+    "url": "https://kkn1125.github.io/",
+    "profile": "https://avatars.githubusercontent.com/u/71887242?v=4"
+  },
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",

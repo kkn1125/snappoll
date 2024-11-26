@@ -23,9 +23,12 @@ export class ResultsController {
 
   @Post()
   create(@Req() req: Request, @Body() createResultDto: CreateResultDto) {
+    const { isCrew, ...resultDto } = createResultDto;
     const user = req.user;
-    createResultDto.userId = user.id;
-    return this.resultsService.create(createResultDto);
+    if (isCrew) {
+      resultDto.userId = user.id;
+    }
+    return this.resultsService.create(resultDto);
   }
 
   @Get()

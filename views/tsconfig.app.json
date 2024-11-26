@@ -25,6 +25,7 @@
     "paths": {
       "@assets/*": ["src/assets/*"],
       "@common/*": ["src/common/*"],
+      "@providers/*": ["src/providers/*"],
       "@hooks/*": ["src/hooks/*"],
       "@components/*": ["src/components/*"],
       "@atoms/*": ["src/components/atoms/*"],

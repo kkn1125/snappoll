@@ -1,6 +1,7 @@
 import { getPoll } from '@/apis/getPoll';
 import { savePollResult } from '@/apis/savePollResult';
 import PollLayout from '@components/templates/PollLayout';
+import useLoading from '@hooks/useLoading';
 import {
   Button,
   Container,
@@ -21,12 +22,13 @@ interface DetailPollProps {
   // options: string;
 }
 const DetailPoll: React.FC<DetailPollProps> = () => {
+  const { openLoading, updateLoading } = useLoading();
   const navigate = useNavigate();
   const [polls, setPolls] = useState<Poll<PollType['type']>[]>([]);
 
   const { id } = useParams();
 
-  const { data } = useQuery<APIPoll>({
+  const { data, isPending } = useQuery<APIPoll>({
     queryKey: ['poll'],
     queryFn: getPollOne,
   });
@@ -34,27 +36,33 @@ const DetailPoll: React.FC<DetailPollProps> = () => {
   async function getPollOne() {
     const data = await getPoll(id as string);
     setPolls(JSON.parse(data.options));
+    updateLoading();
     return data;
   }
 
   async function handleSavePollResult(e: FormEvent) {
     e.preventDefault();
     const userId = data?.user?.id;
-    if (data && id && userId) {
-      await savePollResult(id, JSON.stringify(polls));
+    if (data && id) {
+      await savePollResult(id, JSON.stringify(polls), !!userId);
       navigate('/');
     }
     return false;
   }
 
-  if (!data) {
-    return <Typography>Loading...</Typography>;
-  }
+  useEffect(() => {
+    if (!data || isPending) {
+      openLoading('Loading...');
+    }
+    return () => {
+      updateLoading();
+    };
+  }, [data, isPending, openLoading, updateLoading]);
 
   return (
     <Container>
       <Stack component="form" gap={3} onSubmit={handleSavePollResult}>
-        <PollLayout data={data} polls={polls} setPolls={setPolls} />
+        {data && <PollLayout data={data} polls={polls} setPolls={setPolls} />}
         <Divider />
         <Button variant="contained" size="large" type="submit">
           제출

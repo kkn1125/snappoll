@@ -1,17 +1,14 @@
+import { Illu01, Illu02 } from '@common/variables';
 import {
   Box,
   Button,
   Container,
-  Divider,
   Paper,
   Stack,
-  SvgIcon,
   Toolbar,
   Typography,
 } from '@mui/material';
 
-import Illu01 from '@assets/illustrations/illu-01.svg?react';
-import Illu02 from '@assets/illustrations/illu-02.svg?react';
 import { Link } from 'react-router-dom';
 
 interface GuestHomeProps {}
@@ -20,7 +17,7 @@ const GuestHome: React.FC<GuestHomeProps> = () => {
     <Stack>
       {/* section 01 */}
       <Stack
-        height="calc(100vh - 64px * 2)"
+        minHeight="calc(100vh - 64px * 2)"
         sx={{
           backgroundColor: (theme) => theme.palette.info.light + '56',
           backgroundImage: `url(${import.meta.resolve('/images/main.jpg')})`,
@@ -63,7 +60,7 @@ const GuestHome: React.FC<GuestHomeProps> = () => {
 
       {/* section 02 */}
       <Container>
-        <Stack height={{ xs: 'auto', md: 'calc(100vh - 64px * 2)' }}>
+        <Stack minHeight={{ xs: 'auto', md: 'calc(100vh - 64px * 2)' }}>
           <Toolbar />
           <Typography align="center" fontSize={32} fontWeight={700}>
             왜 SnapPoll인가?
@@ -125,7 +122,7 @@ const GuestHome: React.FC<GuestHomeProps> = () => {
 
       {/* section 03 */}
       <Container>
-        <Stack height="calc(100vh - 64px * 2)">
+        <Stack minHeight="calc(100vh - 64px * 2)">
           <Toolbar />
           <Typography align="center" fontSize={32} fontWeight={700}>
             어떻게 하면 되나요?

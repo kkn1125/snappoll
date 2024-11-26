@@ -63,6 +63,19 @@ export class UsersService {
     return this.prisma.user.findUnique({ where: { id } });
   }
 
+  uploadProfile(id: string, image: Buffer) {
+    return this.prisma.userProfile.create({
+      data: {
+        userId: id,
+        image,
+      },
+    });
+  }
+
+  deleteProfileImage(id: string) {
+    return this.prisma.userProfile.deleteMany({ where: { userId: id } });
+  }
+
   update(id: string, updateUserDto: UpdateUserDto) {
     return this.prisma.user.update({ where: { id }, data: updateUserDto });
   }

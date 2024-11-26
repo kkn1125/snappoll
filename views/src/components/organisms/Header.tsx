@@ -1,10 +1,12 @@
 import { sidebarAtom } from '@/recoils/sidebar.atom';
+import { tokenAtom } from '@/recoils/token.atom';
 import { BRAND_NAME, logoImage } from '@common/variables';
 import useScroll from '@hooks/useScroll';
 import MenuOpenRoundedIcon from '@mui/icons-material/MenuOpenRounded';
 import MenuRoundedIcon from '@mui/icons-material/MenuRounded';
 import {
   AppBar,
+  Avatar,
   Box,
   Button,
   IconButton,
@@ -12,9 +14,9 @@ import {
   Toolbar,
   Typography,
 } from '@mui/material';
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 
 const headerBgChangePoint = 100;
 
@@ -22,8 +24,10 @@ interface HeaderProps {
   isCrew: boolean;
 }
 const Header: React.FC<HeaderProps> = ({ isCrew }) => {
+  const [profileImage, setProfileImage] = useState('');
   const { current } = useScroll();
   const [sidebarState, setSidebarState] = useRecoilState(sidebarAtom);
+  const { username, profile } = useRecoilValue(tokenAtom);
 
   function handleToggleSidebar() {
     setSidebarState((sidebarState) => ({
@@ -35,6 +39,16 @@ const Header: React.FC<HeaderProps> = ({ isCrew }) => {
   const headerShadowActivate = useMemo(() => {
     return current >= headerBgChangePoint;
   }, [current]);
+
+  useEffect(() => {
+    if (profile) {
+      const blob = new Blob([new Uint8Array(profile.data)], {
+        type: 'image/jpeg',
+      });
+      const url = URL.createObjectURL(blob);
+      setProfileImage(url);
+    }
+  }, [profile, profile?.data]);
 
   return (
     <AppBar
@@ -124,8 +138,15 @@ const Header: React.FC<HeaderProps> = ({ isCrew }) => {
                   size="large"
                   color="inherit"
                   to="/user/profile"
+                  startIcon={
+                    <Avatar
+                      src={profileImage}
+                      sx={{ width: 32, height: 32 }}
+                      alt={username}
+                    />
+                  }
                 >
-                  Profiles
+                  {username}
                 </Button>
               </>
             ) : (

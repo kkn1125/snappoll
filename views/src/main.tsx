@@ -14,6 +14,8 @@ import { PROJECT_BASEPATH } from '@common/variables.js';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import 'dayjs/locale/ko';
+import LoadingScreenProvider from '@providers/LoadingScreenProvider.js';
+import ModalProvider from '@providers/ModalProvider.js';
 
 const skyColor = '#98cfff';
 const skyColorMain = alpha(skyColor, 0.7);
@@ -55,8 +57,12 @@ createRoot(document.getElementById('root')!).render(
           future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
         >
           <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="ko">
-            <CssBaseline />
-            <AppRouter />
+            <LoadingScreenProvider>
+              <ModalProvider>
+                <CssBaseline />
+                <AppRouter />
+              </ModalProvider>
+            </LoadingScreenProvider>
           </LocalizationProvider>
         </BrowserRouter>
       </QueryClientProvider>

@@ -155,6 +155,16 @@ export declare global {
     password: string;
     createdAt: Date;
     updatedAt: Date;
+    userProfile?: Profile[];
+  }
+  interface Profile {
+    id: string;
+    userId: string;
+    image: {
+      type: 'Buffer';
+      data: number[];
+    };
+    createdAt: Date;
   }
   interface SignupUser extends Omit<User, 'id' | 'createdAt' | 'updatedAt'> {
     checkPassword: string;
@@ -165,6 +175,11 @@ export declare global {
   interface UserToken {
     token?: string;
     userId?: string;
+    username?: string;
+    profile?: {
+      type: 'Buffer';
+      data: number[];
+    };
     signed: boolean;
     expired: boolean;
   }

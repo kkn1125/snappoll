@@ -2,6 +2,7 @@ import { getPolls } from '@/apis/getPolls';
 import { removePoll } from '@/apis/removePoll';
 import { tokenAtom } from '@/recoils/token.atom';
 import { BRAND_NAME } from '@common/variables';
+import useLoading from '@hooks/useLoading';
 import {
   Button,
   Container,
@@ -13,11 +14,12 @@ import {
   Typography,
 } from '@mui/material';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { MouseEvent } from 'react';
+import { MouseEvent, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 
 const Home = () => {
+  const { openLoading, updateLoading } = useLoading();
   const { userId } = useRecoilValue(tokenAtom);
   const queryClient = useQueryClient();
   const navigate = useNavigate();
@@ -34,8 +36,10 @@ const Home = () => {
       queryClient.invalidateQueries({ queryKey: ['polls'] });
     },
   });
-  function getPollList() {
-    return getPolls();
+  async function getPollList() {
+    const polls = await getPolls();
+    updateLoading();
+    return polls;
   }
 
   function handleRemovePoll(pollId: string) {
@@ -44,6 +48,12 @@ const Home = () => {
       mutation.mutate(pollId);
     };
   }
+
+  useEffect(() => {
+    if (query.isPending) {
+      openLoading('Loading...');
+    }
+  }, [openLoading, query.isPending]);
 
   return (
     <Stack p={2} gap={5}>

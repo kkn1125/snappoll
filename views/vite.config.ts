@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import path from 'path';
 import tsconfig from 'vite-tsconfig-paths';
 import svgr from 'vite-plugin-svgr';
+import * as pkg from './package.json';
 
 dotenv.config({
   path: path.join(path.resolve(), '.env'),
@@ -31,6 +32,9 @@ export default defineConfig(({ command, mode }) => {
         HOST: host,
         PORT: port,
         PROJECT_BASEPATH: projectBasePath,
+        USER_NAME: pkg.author.name,
+        USER_BLOG: pkg.author.url,
+        USER_PROFILE: pkg.author.profile,
       },
     },
     server: {
