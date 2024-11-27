@@ -8,12 +8,20 @@ import {
   Portal,
   Stack,
   TextField,
+  Toolbar,
   Tooltip,
   Typography,
 } from '@mui/material';
 import { useMutation } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
-import { ChangeEvent, FormEvent, MouseEvent, useState } from 'react';
+import {
+  ChangeEvent,
+  FormEvent,
+  MouseEvent,
+  useCallback,
+  useEffect,
+  useState,
+} from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import CasinoIcon from '@mui/icons-material/Casino';
 import { getRandomUsername } from '@utils/getRandomUsername';
@@ -22,6 +30,7 @@ import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 
 interface SignupProps {}
 const Signup: React.FC<SignupProps> = () => {
+  const [validated, setValidated] = useState(false);
   const [visible, setVisible] = useState({
     password: false,
     checkPassword: false,
@@ -49,7 +58,7 @@ const Signup: React.FC<SignupProps> = () => {
     },
   });
 
-  function validateForm() {
+  const validateForm = useCallback(() => {
     const errorMessages: Partial<Message<SignupUser>> = {};
     if (signupInfo.email === '') {
       errorMessages['email'] = '필수입니다.';
@@ -70,10 +79,32 @@ const Signup: React.FC<SignupProps> = () => {
     setErrors(errorMessages);
 
     return Object.keys(errorMessages).length === 0;
-  }
+  }, [signupInfo]);
+
+  useEffect(() => {
+    function handleBeforeUnloaded(e: BeforeUnloadEvent) {
+      e.preventDefault();
+      return '';
+    }
+    window.addEventListener('beforeunload', handleBeforeUnloaded, {
+      capture: true,
+    });
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnloaded, {
+        capture: true,
+      });
+    };
+  }, []);
+
+  useEffect(() => {
+    if (validated) {
+      validateForm();
+    }
+  }, [validateForm, validated, signupInfo]);
 
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
+    setValidated(true);
 
     if (!validateForm()) return;
 
@@ -118,6 +149,7 @@ const Signup: React.FC<SignupProps> = () => {
 
   return (
     <Container component={Stack} maxWidth="sm" gap={2}>
+      <Toolbar />
       <Portal>
         {modal.title && modal.content && (
           <Paper
@@ -144,11 +176,22 @@ const Signup: React.FC<SignupProps> = () => {
           </Paper>
         )}
       </Portal>
-      <Stack component="form" gap={2} onSubmit={handleSubmit} noValidate>
+      <Stack
+        component="form"
+        gap={2}
+        onSubmit={handleSubmit}
+        noValidate
+        onKeyUp={(e: FormEvent<HTMLFormElement>) => {
+          if (validated) {
+            validateForm();
+          }
+        }}
+      >
         <Typography fontSize={32} fontWeight={700} align="center">
           회원가입
         </Typography>
         <TextField
+          autoFocus
           variant="filled"
           label="Email"
           name="email"
@@ -263,11 +306,13 @@ const Signup: React.FC<SignupProps> = () => {
           variant="contained"
           size="large"
           to="/"
+          reloadDocument
           color="inherit"
         >
           메인으로
         </Button>
       </Stack>
+      <Toolbar />
     </Container>
   );
 };

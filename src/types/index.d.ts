@@ -1,9 +1,11 @@
 import { Role } from '@common/enums/Role';
-import { User as PrismaUser } from '@prisma/client';
+import { User as PrismaUser, UserProfile } from '@prisma/client';
 
 export declare global {
   namespace Express {
-    interface User extends Omit<PrismaUser, 'password'> {}
+    interface User extends Omit<PrismaUser, 'password'> {
+      userProfile?: UserProfile[];
+    }
     interface Request {
       user?: User;
     }
@@ -27,5 +29,6 @@ declare module 'jsonwebtoken' {
 declare module 'express' {
   interface Request {
     verify?: JwtPayload;
+    token?: string;
   }
 }

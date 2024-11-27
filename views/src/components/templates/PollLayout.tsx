@@ -1,6 +1,7 @@
 import PollItem from '@components/moleculars/PollItem';
 import { Divider, Stack, Typography } from '@mui/material';
 import { Poll } from '@utils/Poll';
+import dayjs from 'dayjs';
 import {
   ChangeEvent,
   Dispatch,
@@ -46,7 +47,7 @@ const PollLayout: React.FC<PollLayoutProps> = ({ data, polls, setPolls }) => {
   }
 
   return (
-    <Stack gap={2}>
+    <Stack gap={1}>
       <Stack direction="row" alignItems="baseline" gap={1}>
         <Typography fontSize={32} fontWeight={700}>
           {data?.title}
@@ -60,7 +61,9 @@ const PollLayout: React.FC<PollLayoutProps> = ({ data, polls, setPolls }) => {
           {data?.description}
         </Typography>
       )}
-      <Typography>{data?.expiresAt?.toLocaleString('ko') || ''}</Typography>
+      <Typography>
+        {dayjs(data?.expiresAt).format('YYYY. MM. DD HH:mm') + ' 까지' || ''}
+      </Typography>
       <Stack gap={1}>
         <Divider sx={{ borderBottomWidth: 3, borderBottomStyle: 'dotted' }} />
       </Stack>

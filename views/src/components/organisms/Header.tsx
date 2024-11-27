@@ -33,7 +33,7 @@ const Header: React.FC<HeaderProps> = ({ isCrew }) => {
   const [profileImage, setProfileImage] = useState('');
   const { current } = useScroll();
   const [sidebarState, setSidebarState] = useRecoilState(sidebarAtom);
-  const { username, profile } = useRecoilValue(tokenAtom);
+  const { user } = useRecoilValue(tokenAtom);
   const theme = useTheme();
   const isMdDown = useMediaQuery(theme.breakpoints.down('md'));
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -58,14 +58,14 @@ const Header: React.FC<HeaderProps> = ({ isCrew }) => {
   }, [current]);
 
   useEffect(() => {
-    if (profile) {
-      const blob = new Blob([new Uint8Array(profile.data)], {
+    if (user && user?.userProfile) {
+      const blob = new Blob([new Uint8Array(user.userProfile[0]?.image.data)], {
         type: 'image/jpeg',
       });
       const url = URL.createObjectURL(blob);
       setProfileImage(url);
     }
-  }, [profile, profile?.data]);
+  }, [user]);
 
   function redirectTo(to: string) {
     return () => {
@@ -148,18 +148,22 @@ const Header: React.FC<HeaderProps> = ({ isCrew }) => {
                           <Avatar
                             src={profileImage}
                             sx={{ width: 32, height: 32 }}
-                            alt={username}
+                            alt={user?.username}
                           />
                         ) : (
                           <DefaultProfile width={32} height={32} />
                         )}
-                        {username}
+                        {user?.username}
                       </MenuItem>
                     </Stack>
                   ) : (
                     <Stack>
+                      <MenuItem onClick={redirectTo('/about')}>About</MenuItem>
                       <MenuItem onClick={redirectTo('/user/signup')}>
                         Signup
+                      </MenuItem>
+                      <MenuItem onClick={redirectTo('/user/login')}>
+                        Login
                       </MenuItem>
                     </Stack>
                   )}
@@ -201,25 +205,43 @@ const Header: React.FC<HeaderProps> = ({ isCrew }) => {
                       <Avatar
                         src={profileImage}
                         sx={{ width: 32, height: 32 }}
-                        alt={username}
+                        alt={user?.username}
                       />
                     ) : (
                       <DefaultProfile width={32} height={32} />
                     )
                   }
                 >
-                  {username}
+                  {user?.username}
                 </Button>
               </>
             ) : (
-              <Button
-                component={Link}
-                size="large"
-                color="inherit"
-                to="/user/signup"
-              >
-                Signup
-              </Button>
+              <>
+                <Button
+                  component={Link}
+                  size="large"
+                  color="inherit"
+                  to="/about"
+                >
+                  About
+                </Button>
+                <Button
+                  component={Link}
+                  size="large"
+                  color="inherit"
+                  to="/user/signup"
+                >
+                  Signup
+                </Button>
+                <Button
+                  component={Link}
+                  size="large"
+                  color="inherit"
+                  to="/user/login"
+                >
+                  Login
+                </Button>
+              </>
             )}
           </Stack>
         </Stack>

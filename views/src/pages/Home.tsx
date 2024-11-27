@@ -2,7 +2,6 @@ import { getPolls } from '@/apis/getPolls';
 import { removePoll } from '@/apis/removePoll';
 import { tokenAtom } from '@/recoils/token.atom';
 import { BRAND_NAME } from '@common/variables';
-import useLoading from '@hooks/useLoading';
 import {
   Button,
   Container,
@@ -14,13 +13,12 @@ import {
   Typography,
 } from '@mui/material';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { MouseEvent, useEffect } from 'react';
+import { MouseEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 
 const Home = () => {
-  const { openLoading, updateLoading } = useLoading();
-  const { userId } = useRecoilValue(tokenAtom);
+  const { user } = useRecoilValue(tokenAtom);
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const query = useQuery<APIPoll[]>({
@@ -38,7 +36,6 @@ const Home = () => {
   });
   async function getPollList() {
     const polls = await getPolls();
-    updateLoading();
     return polls;
   }
 
@@ -48,12 +45,6 @@ const Home = () => {
       mutation.mutate(pollId);
     };
   }
-
-  useEffect(() => {
-    if (query.isPending) {
-      openLoading('Loading...');
-    }
-  }, [openLoading, query.isPending]);
 
   return (
     <Stack p={2} gap={5}>
@@ -93,7 +84,7 @@ const Home = () => {
                     primary={poll.title}
                     secondary={poll.user?.username || 'Unknown'}
                   />
-                  {poll.user?.id === userId && (
+                  {poll.user?.id === user?.id && (
                     <Button onClick={handleRemovePoll(poll.id)}>❌</Button>
                   )}
                 </ListItemButton>

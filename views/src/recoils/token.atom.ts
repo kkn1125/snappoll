@@ -4,7 +4,7 @@ export const tokenAtom = atom<UserToken>({
   key: 'token',
   default: {
     token: undefined,
-    userId: undefined,
+    user: undefined,
     signed: false,
     expired: true,
   },

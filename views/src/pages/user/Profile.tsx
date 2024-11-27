@@ -15,25 +15,32 @@ import { DefaultProfile } from '@common/variables';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import { logout } from '@/apis/logout';
 import { useLocation } from 'react-router-dom';
+import { useRecoilValue } from 'recoil';
+import { tokenAtom } from '@/recoils/token.atom';
 
 interface ProfileProps {}
 const Profile: React.FC<ProfileProps> = () => {
+  const { user } = useRecoilValue(tokenAtom);
   const [current, setCurrent] = useState<
     Partial<Omit<User, 'id' | 'userProfile' | 'createdAt' | 'updatedAt'>>
   >({});
   const [image, setImage] = useState('');
-  const { data } = useQuery<User>({
-    queryKey: ['getMe'],
-    queryFn: getMe,
-  });
+
   const logoutMutate = useMutation({
     mutationKey: ['logout'],
     mutationFn: logout,
+    onSuccess(data, variables, context) {
+      console.log(data);
+      if (data.ok) {
+        localStorage.setItem('logged_in', 'false');
+        window.location.pathname = '/';
+      }
+    },
   });
 
   useEffect(() => {
-    if (data) {
-      const image = data.userProfile?.[0]?.image;
+    if (user) {
+      const image = user.userProfile?.[0]?.image;
       if (image) {
         const file = new Blob([new Uint8Array(image.data)], {
           type: 'image/jpeg',
@@ -42,12 +49,12 @@ const Profile: React.FC<ProfileProps> = () => {
         setImage(dataImage);
       }
       setCurrent({
-        email: data.email,
-        username: data.username,
+        email: user.email,
+        username: user.username,
         password: '*'.repeat(8),
       });
     }
-  }, [data, data?.userProfile]);
+  }, [user]);
 
   function onChange(e: ChangeEvent<HTMLInputElement>) {
     const name = e.target.name;
@@ -60,7 +67,6 @@ const Profile: React.FC<ProfileProps> = () => {
 
   function handleLogout(e: MouseEvent) {
     logoutMutate.mutate();
-    window.location.pathname = '/';
   }
 
   function handleSubmit(e: FormEvent) {}
@@ -81,7 +87,7 @@ const Profile: React.FC<ProfileProps> = () => {
       <Stack gap={3}>
         <Stack alignItems="center" gap={3}>
           <Typography fontSize={32} fontWeight={700} gutterBottom>
-            [{data?.username}] 님의 프로필
+            [{user?.username}] 님의 프로필
           </Typography>
           <Stack gap={1}>
             <Stack

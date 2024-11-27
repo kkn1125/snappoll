@@ -10,7 +10,6 @@ import { AuthGuard } from '@nestjs/passport';
 import { Request, Response } from 'express';
 import { AuthService } from './auth.service';
 import { CookieGuard } from './cookie.guard';
-import { Blob } from 'buffer';
 
 @Controller('auth')
 export class AuthController {
@@ -20,8 +19,12 @@ export class AuthController {
   @Post('login')
   async login(@Req() req: Request, @Res() res: Response) {
     if (req.user) {
-      const { id, username, email } = req.user;
-      const jsonwebtoken = this.authService.getToken({ id, username, email });
+      const user = req.user;
+      const jsonwebtoken = this.authService.getToken({
+        id: user.id,
+        username: user.username,
+        email: user.email,
+      });
 
       res.cookie('token', jsonwebtoken, {
         httpOnly: true,
@@ -32,6 +35,7 @@ export class AuthController {
       res.json({
         ok: true,
         token: jsonwebtoken,
+        user,
       });
     } else {
       throw new UnauthorizedException('회원정보를 다시 확인해주세요.');

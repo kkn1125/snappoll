@@ -1,7 +1,6 @@
 import { getPoll } from '@/apis/getPoll';
 import { savePollResult } from '@/apis/savePollResult';
 import PollLayout from '@components/templates/PollLayout';
-import useLoading from '@hooks/useLoading';
 import {
   Button,
   Container,
@@ -23,7 +22,6 @@ interface DetailPollProps {
   // options: string;
 }
 const DetailPoll: React.FC<DetailPollProps> = () => {
-  const { openLoading, updateLoading } = useLoading();
   const navigate = useNavigate();
   const [polls, setPolls] = useState<Poll<PollType['type']>[]>([]);
 
@@ -37,7 +35,6 @@ const DetailPoll: React.FC<DetailPollProps> = () => {
   async function getPollOne() {
     const data = await getPoll(id as string);
     setPolls(JSON.parse(data.options));
-    updateLoading();
     return data;
   }
 
@@ -50,15 +47,6 @@ const DetailPoll: React.FC<DetailPollProps> = () => {
     }
     return false;
   }
-
-  useEffect(() => {
-    if (!data || isPending) {
-      openLoading('Loading...');
-    }
-    return () => {
-      updateLoading();
-    };
-  }, [data, isPending, openLoading, updateLoading]);
 
   return (
     <Container>

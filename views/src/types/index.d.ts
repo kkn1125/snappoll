@@ -155,7 +155,18 @@ export declare global {
     password: string;
     createdAt: Date;
     updatedAt: Date;
+    poll?: UserPoll[];
     userProfile?: Profile[];
+  }
+  interface UserPoll {
+    id: string;
+    title: string;
+    description: string;
+    options: string;
+    createdBy: string;
+    expiresAt: Date;
+    createdAt: Date;
+    updatedAt: Date;
   }
   interface Profile {
     id: string;
@@ -174,12 +185,7 @@ export declare global {
   type Message<T> = { [k in keyof T]: string };
   interface UserToken {
     token?: string;
-    userId?: string;
-    username?: string;
-    profile?: {
-      type: 'Buffer';
-      data: number[];
-    };
+    user?: Pick<User, 'id' | 'email' | 'username' | 'userProfile'>;
     signed: boolean;
     expired: boolean;
   }

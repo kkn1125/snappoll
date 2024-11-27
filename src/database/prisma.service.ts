@@ -15,9 +15,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
 
   encryptPassword(originalPassword: string) {
     const secretKey = this.configService.get<string>('common.SECRET_KEY');
-    console.log(secretKey);
     const hmacKey = CryptoJS.HmacSHA256(originalPassword, secretKey);
-    console.log(hmacKey.toString(CryptoJS.enc.Hex));
     return hmacKey.toString(CryptoJS.enc.Hex);
   }
 }

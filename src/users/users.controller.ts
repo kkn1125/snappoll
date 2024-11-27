@@ -1,24 +1,22 @@
+import { RoleGuard } from '@/auth/role.guard';
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
-  Param,
+  Controller,
   Delete,
-  UseGuards,
-  Req,
+  Get,
+  Param,
+  Post,
   Put,
-  UseInterceptors,
+  Req,
   UploadedFile,
+  UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
-import { UsersService } from './users.service';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { Request } from 'express';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { RoleGuard } from '@/auth/role.guard';
-import { Request } from 'express';
-import { FileInterceptor } from '@nestjs/platform-express';
-import { File } from 'buffer';
+import { UsersService } from './users.service';
 
 @Controller('users')
 export class UsersController {
@@ -38,7 +36,11 @@ export class UsersController {
   @UseGuards(RoleGuard)
   @Get('me')
   findMe(@Req() req: Request) {
-    return req.user;
+    return {
+      ok: true,
+      user: req.user,
+      token: req.token,
+    };
   }
 
   @UseGuards(RoleGuard)

@@ -1,8 +1,6 @@
-import { SECRET_KEY } from '@common/variables';
 import { PrismaService } from '@database/prisma.service';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import * as CryptoJS from 'crypto-js';
 import * as jwt from 'jsonwebtoken';
 
 @Injectable()
@@ -12,16 +10,19 @@ export class AuthService {
     private readonly configService: ConfigService,
   ) {}
 
-  async validateUser(email: string, password: string) {
-    const encryptedPassword = this.prisma.encryptPassword(password);
+  async validateUser(email: string, userPassword: string) {
     const user = await this.prisma.user.findUnique({
       where: { email },
     });
-    if (user && user.password === encryptedPassword) {
-      const { password, ...result } = user;
-      return result;
-    }
-    return null;
+
+    if (!user) return null;
+
+    const encryptedPassword = this.prisma.encryptPassword(userPassword);
+
+    if (user.password !== encryptedPassword) return null;
+
+    const { password, ...result } = user;
+    return result;
   }
 
   getToken(userData: { id: string; email: string; username: string }) {

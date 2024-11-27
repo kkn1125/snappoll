@@ -8,10 +8,8 @@ import { ConfigService } from '@nestjs/config';
 import { Reflector } from '@nestjs/core';
 import { Request } from 'express';
 import jwt, { JwtPayload } from 'jsonwebtoken';
-import { Observable } from 'rxjs';
-import { Roles } from './roles.decorator';
 import { AuthService } from './auth.service';
-import { User } from '@prisma/client';
+import { Roles } from './roles.decorator';
 
 @Injectable()
 export class RoleGuard implements CanActivate {
@@ -40,6 +38,7 @@ export class RoleGuard implements CanActivate {
       const user = await this.authService.getMe(result.email);
       if (result) {
         req.verify = result;
+        req.token = req.cookies.token;
       }
       if (user) {
         const { password, ...users } = user;

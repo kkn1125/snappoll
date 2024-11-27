@@ -2,5 +2,5 @@ import { snapApi } from '.';
 
 export async function getPolls() {
   const { data } = await snapApi.get('/polls');
-  return data;
+  return data as APIPoll[];
 }
