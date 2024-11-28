@@ -1,5 +1,5 @@
 import { PrismaService } from '@database/prisma.service';
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as jwt from 'jsonwebtoken';
 
@@ -16,6 +16,9 @@ export class AuthService {
     });
 
     if (!user) return null;
+    if (user.deletedAt !== null) {
+      throw new BadRequestException('탈퇴된 계정입니다.');
+    }
 
     const encryptedPassword = this.prisma.encryptPassword(userPassword);
 

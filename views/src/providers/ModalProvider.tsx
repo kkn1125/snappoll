@@ -6,7 +6,14 @@ import {
   ModalInitialValue,
   ModalReducerAction,
 } from './contexts/modalTypes';
-import { Button, Paper, Portal, Stack, Typography } from '@mui/material';
+import {
+  Button,
+  Paper,
+  Portal,
+  Stack,
+  Toolbar,
+  Typography,
+} from '@mui/material';
 
 const reducer = (state: ModalInitialValue, action: ModalReducerAction) => {
   switch (action.type) {
@@ -47,22 +54,24 @@ const ModalProvider: React.FC<ModalProviderProps> = ({ children }) => {
             <Paper
               component={Stack}
               p={3}
-              minWidth="50%"
+              minWidth={{ xs: '80vw', md: '20vw' }}
+              maxWidth={{ xs: '90vw', md: '30vw' }}
+              gap={3}
               sx={{
                 position: 'absolute',
-                top: '50%',
+                top: '20vh',
                 left: '50%',
-                transform: 'translate(-50%, -50%)',
+                transform: 'translate(-50%, 0%)',
                 zIndex: 100,
               }}
             >
-              <Typography fontSize={24} gutterBottom>
-                {state.title}
-              </Typography>
-              <Typography className="font-maru" fontSize={15}>
-                {state.content}
-              </Typography>
-              <Button color="error" onClick={handleClose}>
+              <Stack gap={1}>
+                <Typography fontSize={24}>{state.title}</Typography>
+                <Typography className="font-maru" fontSize={15}>
+                  {state.content}
+                </Typography>
+              </Stack>
+              <Button variant="outlined" color="error" onClick={handleClose}>
                 닫기
               </Button>
             </Paper>

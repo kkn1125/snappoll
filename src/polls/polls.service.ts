@@ -29,6 +29,23 @@ export class PollsService {
     });
   }
 
+  findMe(id: string) {
+    return this.prisma.poll.findMany({
+      where: { createdBy: id },
+      include: {
+        user: {
+          select: {
+            id: true,
+            email: true,
+            username: true,
+            createdAt: true,
+            updatedAt: true,
+          },
+        },
+      },
+    });
+  }
+
   findOne(id: string) {
     return this.prisma.poll.findUnique({
       where: { id },

@@ -6,11 +6,16 @@ import {
   Patch,
   Param,
   Delete,
+  Req,
+  UseGuards,
 } from '@nestjs/common';
 import { VotesService } from './votes.service';
 import { CreateVoteDto } from './dto/create-vote.dto';
 import { UpdateVoteDto } from './dto/update-vote.dto';
+import { Request } from 'express';
+import { RoleGuard } from '@/auth/role.guard';
 
+@UseGuards(RoleGuard)
 @Controller('votes')
 export class VotesController {
   constructor(private readonly votesService: VotesService) {}
@@ -23,6 +28,12 @@ export class VotesController {
   @Get()
   findAll() {
     return this.votesService.findAll();
+  }
+
+  @Get('me')
+  findMe(@Req() req: Request) {
+    const { id } = req.user;
+    return this.votesService.findMe(id);
   }
 
   @Get(':id')

@@ -7,4 +7,5 @@ export class User implements PrismaUser {
   password: string;
   createdAt: Date;
   updatedAt: Date;
+  deletedAt: Date | null;
 }

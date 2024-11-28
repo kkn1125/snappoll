@@ -1,4 +1,4 @@
-import snapPollAtom from '@/recoils/snapPoll.atom';
+import { snapPollAtom } from '@/recoils/snapPoll.atom';
 import { SelectChangeEvent } from '@mui/material';
 import { Poll } from '@utils/Poll';
 import { ChangeEvent, useCallback } from 'react';

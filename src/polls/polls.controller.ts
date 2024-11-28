@@ -35,6 +35,12 @@ export class PollsController {
     return this.pollsService.findAll();
   }
 
+  @Get('me')
+  findMe(@Req() req: Request) {
+    const { id } = req.user;
+    return this.pollsService.findMe(id);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.pollsService.findOne(id);

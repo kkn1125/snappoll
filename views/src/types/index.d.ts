@@ -189,4 +189,27 @@ export declare global {
     signed: boolean;
     expired: boolean;
   }
+  interface Vote {
+    id: string;
+    userId: string;
+    pollId: string;
+    title: string;
+    content: string;
+    options: string;
+    createdAt: Date;
+    updatedAt: Date;
+    user?: User;
+    voteResult?: VoteResult;
+  }
+
+  interface VoteResult {
+    id: string;
+    userId: string;
+    pollId?: string;
+    title: string;
+    content: string;
+    options: string;
+    createdAt: Date;
+    updatedAt: Date;
+  }
 }

@@ -1,19 +1,11 @@
 import { getPoll } from '@/apis/getPoll';
 import { savePollResult } from '@/apis/savePollResult';
 import PollLayout from '@components/templates/PollLayout';
-import {
-  Button,
-  Container,
-  Divider,
-  Stack,
-  styled,
-  Toolbar,
-  Typography,
-} from '@mui/material';
+import { Button, Container, Divider, Stack, Toolbar } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
 import { Poll } from '@utils/Poll';
-import { useState, useEffect, FormEvent } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { FormEvent, useState } from 'react';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 
 interface DetailPollProps {
   // title: string;
@@ -56,6 +48,15 @@ const DetailPoll: React.FC<DetailPollProps> = () => {
         <Divider />
         <Button variant="contained" size="large" type="submit">
           제출
+        </Button>
+        <Button
+          variant="contained"
+          size="large"
+          type="button"
+          color="inherit"
+          onClick={() => navigate(-1)}
+        >
+          이전으로
         </Button>
       </Stack>
       <Toolbar />

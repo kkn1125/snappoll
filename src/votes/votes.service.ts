@@ -17,6 +17,10 @@ export class VotesService {
     return this.prisma.vote.findMany();
   }
 
+  findMe(id: string) {
+    return this.prisma.vote.findMany({ where: { userId: id } });
+  }
+
   findOne(id: string) {
     return this.prisma.vote.findUnique({ where: { id } });
   }

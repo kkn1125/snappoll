@@ -17,6 +17,7 @@ import { logout } from '@/apis/logout';
 import { useLocation } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import { tokenAtom } from '@/recoils/token.atom';
+import { removeAccount } from '@/apis/removeAccount';
 
 interface ProfileProps {}
 const Profile: React.FC<ProfileProps> = () => {
@@ -35,6 +36,15 @@ const Profile: React.FC<ProfileProps> = () => {
         localStorage.setItem('logged_in', 'false');
         window.location.pathname = '/';
       }
+    },
+  });
+
+  const removeAccountMutate = useMutation({
+    mutationKey: ['removeAccount'],
+    mutationFn: removeAccount,
+    onSuccess(data, variables, context) {
+      localStorage.setItem('logged_in', 'false');
+      window.location.pathname = '/';
     },
   });
 
@@ -70,6 +80,12 @@ const Profile: React.FC<ProfileProps> = () => {
   }
 
   function handleSubmit(e: FormEvent) {}
+
+  function handleRemoveAccount(id?: string) {
+    if (id) {
+      removeAccountMutate.mutate(id);
+    }
+  }
 
   return (
     <Container>
@@ -140,7 +156,7 @@ const Profile: React.FC<ProfileProps> = () => {
                 onChange={onChange}
               />
             </Stack>
-            <Stack>
+            {/* <Stack>
               <Typography>Password</Typography>
               <TextField
                 fullWidth
@@ -151,9 +167,25 @@ const Profile: React.FC<ProfileProps> = () => {
                 value={current.password || ''}
                 onChange={onChange}
               />
-            </Stack>
+            </Stack> */}
             <Button type="submit" variant="contained">
               정보 수정
+            </Button>
+            <Divider />
+            <Button
+              color="error"
+              variant="outlined"
+              onClick={() => {
+                if (
+                  confirm(
+                    '탈퇴한 후 10일이 지나면 모든 데이터가 제거 됩니다. 탈퇴 시점부터 계정은 사용 불가하게 됩니다.\n\n진행하시겠습니까?',
+                  )
+                ) {
+                  handleRemoveAccount(user?.id);
+                }
+              }}
+            >
+              회원탈퇴
             </Button>
           </Stack>
         </Container>

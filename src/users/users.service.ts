@@ -1,8 +1,7 @@
+import { PrismaService } from '@database/prisma.service';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { PrismaService } from '@database/prisma.service';
-import { first } from 'rxjs';
 
 @Injectable()
 export class UsersService {
@@ -58,11 +57,15 @@ export class UsersService {
   }
 
   findAll() {
-    return this.prisma.user.findMany();
+    return this.prisma.user.findMany({
+      where: { deletedAt: { not: null } },
+    });
   }
 
   findOne(id: string) {
-    return this.prisma.user.findUnique({ where: { id } });
+    return this.prisma.user.findUnique({
+      where: { id, deletedAt: { not: null } },
+    });
   }
 
   uploadProfile(id: string, image: Buffer) {
@@ -79,10 +82,18 @@ export class UsersService {
   }
 
   update(id: string, updateUserDto: UpdateUserDto) {
-    return this.prisma.user.update({ where: { id }, data: updateUserDto });
+    return this.prisma.user.update({
+      where: { id, deletedAt: { not: null } },
+      data: updateUserDto,
+    });
   }
 
   remove(id: string) {
-    return this.prisma.user.delete({ where: { id } });
+    return this.prisma.user.update({
+      where: { id },
+      data: {
+        deletedAt: new Date(),
+      },
+    });
   }
 }
