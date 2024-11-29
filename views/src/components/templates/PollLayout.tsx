@@ -46,6 +46,17 @@ const PollLayout: React.FC<PollLayoutProps> = ({ data, polls, setPolls }) => {
     });
   }
 
+  function onChangeEtc(id: string, value: string) {
+    setPolls((polls) => {
+      return polls.map((poll) => {
+        if (poll.id === id) {
+          poll.etc = value;
+        }
+        return poll;
+      });
+    });
+  }
+
   return (
     <Stack gap={1}>
       <Stack direction="row" alignItems="baseline" gap={1}>
@@ -74,6 +85,7 @@ const PollLayout: React.FC<PollLayoutProps> = ({ data, polls, setPolls }) => {
             poll={poll}
             onChange={onChange}
             onChangeCheckbox={onChangeCheckbox}
+            onChangeEtc={onChangeEtc}
           />
         ))}
         {/* {polls.map((poll, i) => (

@@ -12,8 +12,18 @@ import {
   Typography,
 } from '@mui/material';
 import { Poll } from '@utils/Poll';
-import { ChangeEvent, Dispatch, SetStateAction, useEffect } from 'react';
+import {
+  ChangeEvent,
+  Dispatch,
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useMemo,
+} from 'react';
 import DeleteIcon from '@mui/icons-material/Delete';
+import PollDesc from '@components/atoms/PollDesc';
+import useModal from '@hooks/useModal';
+import { Message } from '@common/messages';
 
 interface PollOptionItemProps {
   index: number;
@@ -41,19 +51,22 @@ const PollOptionItem: React.FC<PollOptionItemProps> = ({
   updatePoll,
   handleDeletePoll,
   setErrors,
-  // addErrors,
-  // deleteErrors,
   errors,
 }) => {
-  function onChange(e: ChangeEvent<HTMLInputElement>) {
-    const target = e.target;
-    const name = target.name;
-    const value = target.value;
-    const checked = target.checked;
+  const { openInteractiveModal } = useModal();
 
-    Object.assign(poll, { [name]: name === 'required' ? checked : value });
-    updatePoll(poll);
-  }
+  const onChange = useCallback(
+    (e: ChangeEvent<HTMLInputElement>) => {
+      const target = e.target;
+      const name = target.name;
+      const value = target.value;
+      const checked = target.checked;
+
+      Object.assign(poll, { [name]: name === 'required' ? checked : value });
+      updatePoll(poll);
+    },
+    [poll, updatePoll],
+  );
 
   function onSelectChange(e: SelectChangeEvent) {
     const target = e.target;
@@ -77,7 +90,6 @@ const PollOptionItem: React.FC<PollOptionItemProps> = ({
   function onChangeItemValue(index: number) {
     return function (e: ChangeEvent<HTMLInputElement>) {
       const target = e.target;
-      // poll.items[index].value = target.value;
       const newItems = [...poll.items];
       newItems[index].value = target.value;
       poll.items = newItems;
@@ -105,8 +117,10 @@ const PollOptionItem: React.FC<PollOptionItemProps> = ({
 
   function handleDeleteItem(index: number) {
     return function () {
-      poll.items = poll.items.filter((item, i) => index !== i);
-      updatePoll(poll);
+      openInteractiveModal(Message.Single.Remove, () => {
+        poll.items = poll.items.filter((item, i) => index !== i);
+        updatePoll(poll);
+      });
     };
   }
 
@@ -149,7 +163,11 @@ const PollOptionItem: React.FC<PollOptionItemProps> = ({
 
   return (
     <Paper component={Stack} gap={2} p={3}>
-      <Stack direction="row" gap={2} alignItems="flex-end">
+      <Stack
+        direction={{ xs: 'column', md: 'row' }}
+        gap={2}
+        alignItems={{ xs: 'auto', d: 'flex-end' }}
+      >
         <Typography whiteSpace="nowrap" fontSize={20} lineHeight={1.7}>
           질문 {index}.
         </Typography>
@@ -172,7 +190,7 @@ const PollOptionItem: React.FC<PollOptionItemProps> = ({
           <Typography
             position="absolute"
             fontSize={14}
-            bottom={'40%'}
+            bottom={'50%'}
             color="textDisabled"
             sx={{
               zIndex: 2,
@@ -214,8 +232,7 @@ const PollOptionItem: React.FC<PollOptionItemProps> = ({
             <MenuItem value="checkbox">체크박스</MenuItem>
           </Select>
         </Stack>
-        <Divider flexItem orientation="vertical" />
-        <Stack direction="row" alignItems="center">
+        <Stack direction="row" alignItems="center" gap={2}>
           <Typography component="label" whiteSpace="nowrap">
             <Switch
               id="required"
@@ -226,9 +243,6 @@ const PollOptionItem: React.FC<PollOptionItemProps> = ({
             />
             필수여부
           </Typography>
-        </Stack>
-        <Divider />
-        <Stack>
           <IconButton onClick={() => handleDeletePoll(poll.id)}>
             <DeleteIcon />
           </IconButton>
@@ -238,25 +252,11 @@ const PollOptionItem: React.FC<PollOptionItemProps> = ({
         <Typography fontSize={14} gutterBottom color="textDisabled">
           설명
         </Typography>
-        <TextField
-          name="desc"
-          size="small"
-          multiline
-          placeholder=""
-          rows={5}
-          variant="filled"
-          value={poll.desc || ''}
-          onChange={onChange}
-          sx={{
-            ['& .MuiInputBase-root']: {
-              pt: 1,
-            },
-          }}
-        />
+        <PollDesc pollDesc={poll.desc} onChange={onChange} />
       </Stack>
       <Stack direction="row" justifyContent="space-between" gap={3}>
         <Stack direction="row" gap={2} flex={1}>
-          <Stack>
+          <Stack flex={1}>
             <Typography fontSize={14} gutterBottom color="textDisabled">
               분류
             </Typography>
@@ -268,6 +268,7 @@ const PollOptionItem: React.FC<PollOptionItemProps> = ({
               variant="filled"
               value={poll.name || ''}
               onChange={onChange}
+              fullWidth
               sx={{
                 ['& input']: {
                   pt: 1,
@@ -282,24 +283,7 @@ const PollOptionItem: React.FC<PollOptionItemProps> = ({
 
       {poll.type === 'text' && (
         <Stack direction="row" gap={2}>
-          {/* <Stack>
-            <Typography fontSize={14} gutterBottom color="textDisabled">
-              기본값
-            </Typography>
-            <TextField
-              name="value"
-              size="small"
-              variant="filled"
-              value={poll.value || ''}
-              onChange={onChange}
-              sx={{
-                ['& input']: {
-                  pt: 1,
-                },
-              }}
-            />
-          </Stack> */}
-          <Stack>
+          <Stack flex={1}>
             <Typography fontSize={14} gutterBottom color="textDisabled">
               도움말
             </Typography>
@@ -309,6 +293,8 @@ const PollOptionItem: React.FC<PollOptionItemProps> = ({
               variant="filled"
               value={poll.placeholder}
               onChange={onChange}
+              fullWidth
+              placeholder="해당 입력 창에 나타나는 도움말입니다."
               sx={{
                 ['& input']: {
                   pt: 1,

@@ -1,5 +1,8 @@
 import { addPoll } from '@/apis/addPoll';
+import { Action } from '@/models/Action';
+import { Message } from '@common/messages';
 import PollOptionItem from '@components/moleculars/PollOptionItem';
+import useModal from '@hooks/useModal';
 import useSnapPoll from '@hooks/useSnapPoll';
 import PreviewIcon from '@mui/icons-material/Preview';
 import SaveIcon from '@mui/icons-material/Save';
@@ -33,6 +36,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 // ];
 interface SnapPollProps {}
 const SnapPoll: React.FC<SnapPollProps> = () => {
+  const { openModal, openInteractiveModal } = useModal();
   const formRef = useRef<HTMLFormElement>(null);
   const locate = useLocation();
   const [errors, setErrors] = useState<
@@ -48,26 +52,19 @@ const SnapPoll: React.FC<SnapPollProps> = () => {
   });
   const [polls, setPolls] = useState<Poll<PollType['type']>[]>([]);
   const actions = [
-    {
-      icon: <SaveIcon />,
-      name: 'Save',
-      onClick: () => {
-        formRef.current?.requestSubmit();
-      },
-    },
-    {
-      icon: <PreviewIcon />,
-      name: 'Preview',
-      onClick: () =>
-        navigate('/polls/new/preview', {
-          state: {
-            data: {
-              ...baseInfo,
-              options: JSON.stringify(polls),
-            },
+    new Action('Save', <SaveIcon />, () => {
+      formRef.current?.requestSubmit();
+    }),
+    new Action('Preview', <PreviewIcon />, () =>
+      navigate('/polls/new/preview', {
+        state: {
+          data: {
+            ...baseInfo,
+            options: JSON.stringify(polls),
           },
-        }),
-    },
+        },
+      }),
+    ),
   ];
 
   useEffect(() => {
@@ -85,6 +82,8 @@ const SnapPoll: React.FC<SnapPollProps> = () => {
       });
       const optionList = JSON.parse(options);
       setPolls(optionList.map((option: any) => new Poll(option)));
+    } else {
+      setPolls((polls) => [...polls, new Poll<'text'>()]);
     }
   }, [locate.state]);
 
@@ -100,7 +99,7 @@ const SnapPoll: React.FC<SnapPollProps> = () => {
   function updateExpiresTime(name: string) {
     return (
       value: dayjs.Dayjs | null,
-      context: PickerChangeHandlerContext<DateTimeValidationError>,
+      _context: PickerChangeHandlerContext<DateTimeValidationError>,
     ) => {
       setBaseInfo((baseInfo) => ({
         ...baseInfo,
@@ -148,7 +147,13 @@ const SnapPoll: React.FC<SnapPollProps> = () => {
   }
 
   function handleDeletePoll(pollId: string) {
-    setPolls(polls.filter((poll) => poll.id !== pollId));
+    openInteractiveModal(Message.Single.Remove, () => {
+      if (polls.length > 1) {
+        setPolls(polls.filter((poll) => poll.id !== pollId));
+      } else {
+        openModal(Message.Info.NoDeleteOne);
+      }
+    });
   }
 
   return (

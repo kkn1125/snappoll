@@ -16,6 +16,15 @@ import { LocalizationProvider } from '@mui/x-date-pickers';
 import 'dayjs/locale/ko';
 import LoadingScreenProvider from '@providers/LoadingScreenProvider.js';
 import ModalProvider from '@providers/ModalProvider.js';
+import { scan } from 'react-scan';
+import Modal from '@components/moleculars/Modal.js';
+
+if (typeof window !== 'undefined') {
+  scan({
+    enabled: true,
+    log: true,
+  });
+}
 
 const skyColor = '#98cfff';
 const skyColorMain = alpha(skyColor, 0.7);
@@ -48,6 +57,13 @@ const darkTheme = createTheme({
 
 const queryClient = new QueryClient();
 
+type DataAttributeKey = `data-${string}`;
+declare module 'react' {
+  interface HTMLAttribute<T> extends AriaAttributes, DOMAttributes<T> {
+    [dataAttribute: DataAttributeKey]: unknown;
+  }
+}
+
 createRoot(document.getElementById('root')!).render(
   <ThemeProvider theme={darkTheme}>
     <RecoilRoot>
@@ -61,6 +77,7 @@ createRoot(document.getElementById('root')!).render(
               <ModalProvider>
                 <CssBaseline />
                 <AppRouter />
+                <Modal />
               </ModalProvider>
             </LoadingScreenProvider>
           </LocalizationProvider>

@@ -1,5 +1,6 @@
 import { USER_BLOG, USER_NAME, USER_PROFILE } from '@common/variables';
 import { Avatar, Button, Container, Stack, Typography } from '@mui/material';
+import { memo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 interface AboutProps {}

@@ -1,27 +1,27 @@
 import { login } from '@/apis/login';
 import { tokenAtom } from '@/recoils/token.atom';
+import { Message } from '@common/messages';
+import CustomInput from '@components/atoms/CustomInput';
 import useModal from '@hooks/useModal';
 import {
-  Container,
-  Stack,
-  Portal,
-  Paper,
-  Typography,
   Button,
-  TextField,
+  Container,
   Divider,
+  Stack,
   Toolbar,
+  Typography,
 } from '@mui/material';
 import { useMutation } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import {
-  useState,
-  FormEvent,
   ChangeEvent,
-  useEffect,
+  FormEvent,
   useCallback,
+  useEffect,
+  useMemo,
+  useState,
 } from 'react';
-import { useNavigate, Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
 
 interface LoginProps {}
@@ -30,7 +30,7 @@ const Login: React.FC<LoginProps> = () => {
   const { openModal } = useModal();
   const locate = useLocation();
   const navigate = useNavigate();
-  const [errors, setErrors] = useState<Partial<Message<LoginUser>>>({});
+  const [errors, setErrors] = useState<Partial<ErrorMessage<LoginUser>>>({});
   const [loginInfo, setLoginInfo] = useState<LoginUser>({
     email: '',
     password: '',
@@ -65,25 +65,25 @@ const Login: React.FC<LoginProps> = () => {
         email: loginInfo.email,
         password: '',
       }));
-
-      openModal({
-        title: '잘못된 요청',
-        content: data.message,
-      });
+      console.log(data.message);
+      openModal(Message.WrongRequest(data.message));
     },
   });
 
-  const validateForm = useCallback(() => {
-    const errors: Partial<Message<LoginUser>> = {};
-    if (loginInfo.email === '') {
-      errors['email'] = '필수입니다.';
-    }
-    if (loginInfo.password === '') {
-      errors['password'] = '필수입니다.';
-    }
-    setErrors(errors);
-    return Object.keys(errors).length === 0;
-  }, [loginInfo]);
+  const validateForm = useCallback(
+    (loginInfo: { email: string; password: string }) => {
+      const errors: Partial<ErrorMessage<LoginUser>> = {};
+      if (loginInfo.email === '') {
+        errors['email'] = '필수입니다.';
+      }
+      if (loginInfo.password === '') {
+        errors['password'] = '필수입니다.';
+      }
+      setErrors(errors);
+      return Object.keys(errors).length === 0;
+    },
+    [],
+  );
 
   useEffect(() => {
     window.history.replaceState({}, '');
@@ -97,26 +97,40 @@ const Login: React.FC<LoginProps> = () => {
 
   useEffect(() => {
     if (validated) {
-      validateForm();
+      validateForm(loginInfo);
     }
-  }, [validateForm, validated, loginInfo]);
+  }, [validated, loginInfo]);
 
-  function handleSubmit(e: FormEvent) {
-    e.preventDefault();
-    setValidated(true);
+  const handleSubmit = useCallback(
+    (e: FormEvent) => {
+      e.preventDefault();
+      setValidated(true);
 
-    if (!validateForm()) return;
+      if (!validateForm(loginInfo)) return;
 
-    mutation.mutate(loginInfo);
+      mutation.mutate(loginInfo);
 
-    return false;
-  }
+      return false;
+    },
+    [loginInfo, mutation],
+  );
 
-  function onChange(e: ChangeEvent<HTMLInputElement>) {
+  const onChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     const name = e.target.name;
     const value = e.target.value;
     setLoginInfo((loginInfo) => ({ ...loginInfo, [name]: value }));
-  }
+  }, []);
+
+  const memoErrors = useMemo(() => errors, [errors]);
+
+  const onFormChange = useCallback(
+    (e: FormEvent<HTMLFormElement>) => {
+      if (validated) {
+        validateForm(loginInfo);
+      }
+    },
+    [loginInfo, validateForm, validated],
+  );
 
   return (
     <Container component={Stack} maxWidth="sm" gap={2}>
@@ -126,40 +140,28 @@ const Login: React.FC<LoginProps> = () => {
         gap={2}
         onSubmit={handleSubmit}
         noValidate
-        onChange={(e: FormEvent<HTMLFormElement>) => {
-          if (validated) {
-            validateForm();
-          }
-        }}
+        onChange={onFormChange}
       >
         <Typography fontSize={32} fontWeight={700} align="center">
           로그인
         </Typography>
-        <TextField
-          autoFocus
-          variant="filled"
+        <CustomInput
           label="Email"
           name="email"
           type="email"
+          errors={memoErrors}
           value={loginInfo.email}
           autoComplete="username"
           onChange={onChange}
-          required
-          error={!!errors['email']}
-          helperText={errors['email']}
         />
-
-        <TextField
-          variant="filled"
+        <CustomInput
           label="Password"
           name="password"
           type="password"
+          errors={memoErrors}
           value={loginInfo.password}
           autoComplete="current-password"
           onChange={onChange}
-          required
-          error={!!errors['password']}
-          helperText={errors['password']}
         />
 
         <Divider />

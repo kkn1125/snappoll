@@ -12,6 +12,7 @@ import {
   Typography,
 } from '@mui/material';
 import { Poll } from '@utils/Poll';
+import { ChangeEvent, useEffect, useState } from 'react';
 
 const LegendText = styled((props) => <Typography {...props} />)``;
 
@@ -19,12 +20,24 @@ interface PollItemProps {
   poll: Poll<'text' | 'option' | 'checkbox'>;
   onChange: (id: string, value: string | boolean) => void;
   onChangeCheckbox: (id: string, index: number, checked: boolean) => void;
+  onChangeEtc: (id: string, value: string) => void;
 }
 const PollItem: React.FC<PollItemProps> = ({
   poll,
   onChange,
   onChangeCheckbox,
+  onChangeEtc,
 }) => {
+  const [etcActive, setEtcActive] = useState(false);
+
+  useEffect(() => {
+    if (poll.items.length === 1 && poll.items[0].value) {
+      setEtcActive(true);
+    } else {
+      setEtcActive(false);
+    }
+  }, []);
+
   switch (poll.type) {
     case 'text':
       return (
@@ -81,7 +94,6 @@ const PollItem: React.FC<PollItemProps> = ({
                 {poll.desc}
               </FormLabel>
             )}
-
             <Select
               value={poll.value || poll.default || poll.items[0].value}
               required={poll.required}
@@ -93,7 +105,18 @@ const PollItem: React.FC<PollItemProps> = ({
                 </MenuItem>
               ))}
             </Select>
-            {poll.value === 'etc' && <TextField name="etc" value={poll.etc} />}
+            {(poll.label === '기타' ||
+              poll.name === '기타' ||
+              poll.value === 'etc' ||
+              etcActive) && (
+              <TextField
+                name="etc"
+                value={poll.etc}
+                onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                  onChangeEtc(poll.id, e.target.value)
+                }
+              />
+            )}
           </FormControl>
         </Stack>
       );
@@ -123,23 +146,33 @@ const PollItem: React.FC<PollItemProps> = ({
               )}
               <FormGroup>
                 {(poll as Poll<'checkbox'>).items.map((item, i) => (
-                  <FormControlLabel
-                    key={item.name + i}
-                    label={item.name}
-                    control={
-                      <Checkbox
-                        name={item.name}
-                        checked={
-                          item.checked ||
-                          (poll as Poll<'checkbox'>).default ||
-                          false
-                        }
-                        onChange={(e) =>
-                          onChangeCheckbox(poll.id, i, e.target.checked)
+                  <Stack key={item.name + i} direction="row">
+                    <FormControlLabel
+                      label={item.name}
+                      control={
+                        <Checkbox
+                          name={item.name}
+                          checked={
+                            item.checked ||
+                            (poll as Poll<'checkbox'>).default ||
+                            false
+                          }
+                          onChange={(e) =>
+                            onChangeCheckbox(poll.id, i, e.target.checked)
+                          }
+                        />
+                      }
+                    />
+                    {((item.name === '기타' && item.checked) || etcActive) && (
+                      <TextField
+                        name="etc"
+                        value={poll.etc}
+                        onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                          onChangeEtc(poll.id, e.target.value)
                         }
                       />
-                    }
-                  />
+                    )}
+                  </Stack>
                 ))}
               </FormGroup>
             </FormControl>

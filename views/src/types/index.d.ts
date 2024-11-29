@@ -182,7 +182,7 @@ export declare global {
   }
   interface LoginUser
     extends Omit<User, 'id' | 'username' | 'createdAt' | 'updatedAt'> {}
-  type Message<T> = { [k in keyof T]: string };
+  type ErrorMessage<T> = { [k in keyof T]: string };
   interface UserToken {
     token?: string;
     user?: Pick<User, 'id' | 'email' | 'username' | 'userProfile'>;
@@ -202,6 +202,17 @@ export declare global {
     voteResult?: VoteResult;
   }
 
+  interface VoteOption {
+    type: string;
+    items: VoteOptionItem[];
+  }
+
+  interface VoteOptionItem {
+    name: string;
+    checked: boolean;
+    value?: string;
+  }
+
   interface VoteResult {
     id: string;
     userId: string;
@@ -211,5 +222,9 @@ export declare global {
     options: string;
     createdAt: Date;
     updatedAt: Date;
+  }
+  interface MessageTemplate {
+    title: string;
+    content: string;
   }
 }

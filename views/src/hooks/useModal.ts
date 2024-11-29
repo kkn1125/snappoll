@@ -3,14 +3,25 @@ import {
   ModalDispatchContext,
 } from '@providers/contexts/ModalContext';
 import { ModalActionType } from '@providers/contexts/modalTypes';
-import { useCallback, useContext, useState } from 'react';
+import { useCallback, useContext, useMemo } from 'react';
 
 const useModal = () => {
   const modalState = useContext(ModalContext);
   const modalDispatch = useContext(ModalDispatchContext);
   const openModal = useCallback(
-    (info: { title: string; content: string }) => {
+    (info: MessageTemplate) => {
       modalDispatch({ type: ModalActionType.Open, ...info });
+    },
+    [modalDispatch],
+  );
+  const openInteractiveModal = useCallback(
+    (content: string, callback: () => void | Promise<void>) => {
+      modalDispatch({
+        type: ModalActionType.OpenInteractive,
+        title: '안내',
+        content,
+        callback,
+      });
     },
     [modalDispatch],
   );
@@ -18,9 +29,12 @@ const useModal = () => {
     modalDispatch({ type: ModalActionType.Close });
   }, [modalDispatch]);
 
+  const memoModalState = useMemo(() => modalState, [modalState]);
+
   return {
-    modalState,
+    modalState: memoModalState,
     openModal,
+    openInteractiveModal,
     closeModal,
   };
 };

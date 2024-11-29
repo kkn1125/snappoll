@@ -20,6 +20,7 @@ import {
   MouseEvent,
   useCallback,
   useEffect,
+  useMemo,
   useState,
 } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
@@ -27,6 +28,8 @@ import CasinoIcon from '@mui/icons-material/Casino';
 import { getRandomUsername } from '@utils/getRandomUsername';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import { Message } from '@common/messages';
+import CustomInput from '@components/atoms/CustomInput';
 
 interface SignupProps {}
 const Signup: React.FC<SignupProps> = () => {
@@ -37,7 +40,7 @@ const Signup: React.FC<SignupProps> = () => {
   });
   const navigate = useNavigate();
   const [modal, setModal] = useState<Partial<Record<string, string>>>({});
-  const [errors, setErrors] = useState<Partial<Message<SignupUser>>>({});
+  const [errors, setErrors] = useState<Partial<ErrorMessage<SignupUser>>>({});
   const [signupInfo, setSignupInfo] = useState<SignupUser>({
     email: '',
     username: '',
@@ -51,15 +54,12 @@ const Signup: React.FC<SignupProps> = () => {
       const { response } = error;
       const { data } = response as { data: any };
 
-      setModal({
-        title: '잘못된 요청',
-        content: data.message,
-      });
+      setModal(Message.WrongRequest(data.message));
     },
   });
 
   const validateForm = useCallback(() => {
-    const errorMessages: Partial<Message<SignupUser>> = {};
+    const errorMessages: Partial<ErrorMessage<SignupUser>> = {};
     if (signupInfo.email === '') {
       errorMessages['email'] = '필수입니다.';
     }
@@ -122,11 +122,11 @@ const Signup: React.FC<SignupProps> = () => {
     return false;
   }
 
-  function onChange(e: ChangeEvent<HTMLInputElement>) {
+  const onChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     const name = e.target.name;
     const value = e.target.value;
     setSignupInfo((signupInfo) => ({ ...signupInfo, [name]: value }));
-  }
+  }, []);
 
   function handleRandomUsername(e: MouseEvent) {
     e.preventDefault();
@@ -138,14 +138,121 @@ const Signup: React.FC<SignupProps> = () => {
     }));
   }
 
-  function handleVisible(name: keyof typeof visible) {
-    return () => {
-      setVisible((visible) => ({
-        ...visible,
-        [name]: !visible[name],
-      }));
-    };
-  }
+  const handleVisible = useCallback((e: MouseEvent) => {
+    const name = (e.target as HTMLButtonElement).name as keyof typeof visible;
+    setVisible((visible) => ({
+      ...visible,
+      [name]: !visible[name],
+    }));
+  }, []);
+
+  const emailComponent = useMemo(() => {
+    return (
+      <CustomInput
+        autoFocus
+        label="Email"
+        name="email"
+        type="email"
+        value={signupInfo.email}
+        autoComplete="username"
+        onChange={onChange}
+        required
+        errors={errors}
+      />
+    );
+  }, [signupInfo.email, errors.email]);
+  const usernameComponent = useMemo(() => {
+    return (
+      <Stack position="relative">
+        <CustomInput
+          label="Username"
+          name="username"
+          type="username"
+          value={signupInfo.username}
+          autoComplete="username"
+          onChange={onChange}
+          required
+          errors={errors}
+        />
+        <Tooltip title="랜덤" placement="right">
+          <IconButton
+            onClick={handleRandomUsername}
+            sx={{
+              position: 'absolute',
+              top: '50%',
+              right: 5,
+              transform: 'translateY(-50%)',
+              transition: '150ms ease-in-out',
+              ['&:hover']: {
+                transform: 'translateY(-50%) rotate(-15deg)',
+              },
+            }}
+          >
+            <CasinoIcon />
+          </IconButton>
+        </Tooltip>
+      </Stack>
+    );
+  }, [signupInfo.username, errors.username]);
+
+  const passwordComponent = useMemo(() => {
+    return (
+      <Stack position="relative">
+        <CustomInput
+          label="Password"
+          name="password"
+          type={!visible.password ? 'password' : 'text'}
+          value={signupInfo.password}
+          autoComplete="new-password"
+          onChange={onChange}
+          required
+          errors={errors}
+        />
+        <IconButton
+          component="button"
+          data-name="password"
+          onClick={handleVisible}
+          sx={{
+            position: 'absolute',
+            right: 5,
+            top: '50%',
+            transform: 'translateY(-50%)',
+          }}
+        >
+          {visible.password ? <VisibilityOffIcon /> : <VisibilityIcon />}
+        </IconButton>
+      </Stack>
+    );
+  }, [signupInfo.password, visible.password, errors.password]);
+  const checkPasswordComponent = useMemo(() => {
+    return (
+      <Stack position="relative">
+        <CustomInput
+          label="Check Password"
+          name="checkPassword"
+          type={!visible.checkPassword ? 'password' : 'text'}
+          value={signupInfo.checkPassword}
+          autoComplete="new-password"
+          onChange={onChange}
+          required
+          errors={errors}
+        />
+        <IconButton
+          component="button"
+          data-name="checkPassword"
+          onClick={handleVisible}
+          sx={{
+            position: 'absolute',
+            right: 5,
+            top: '50%',
+            transform: 'translateY(-50%)',
+          }}
+        >
+          {visible.checkPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
+        </IconButton>
+      </Stack>
+    );
+  }, [signupInfo.checkPassword, visible.checkPassword, errors.checkPassword]);
 
   return (
     <Container component={Stack} maxWidth="sm" gap={2}>
@@ -190,104 +297,10 @@ const Signup: React.FC<SignupProps> = () => {
         <Typography fontSize={32} fontWeight={700} align="center">
           회원가입
         </Typography>
-        <TextField
-          autoFocus
-          variant="filled"
-          label="Email"
-          name="email"
-          type="email"
-          value={signupInfo.email}
-          autoComplete="username"
-          onChange={onChange}
-          required
-          error={!!errors['email']}
-          helperText={errors['email']}
-        />
-        <Stack position="relative">
-          <TextField
-            variant="filled"
-            label="Username"
-            name="username"
-            type="username"
-            value={signupInfo.username}
-            autoComplete="username"
-            onChange={onChange}
-            required
-            error={!!errors['username']}
-            helperText={errors['username']}
-          />
-          <Tooltip title="랜덤" placement="right">
-            <IconButton
-              onClick={handleRandomUsername}
-              sx={{
-                position: 'absolute',
-                top: '50%',
-                right: 5,
-                transform: 'translateY(-50%)',
-                transition: '150ms ease-in-out',
-                ['&:hover']: {
-                  transform: 'translateY(-50%) rotate(-15deg)',
-                },
-              }}
-            >
-              <CasinoIcon />
-            </IconButton>
-          </Tooltip>
-        </Stack>
-        <Stack position="relative">
-          <TextField
-            variant="filled"
-            label="Password"
-            name="password"
-            type={!visible['password'] ? 'password' : 'text'}
-            value={signupInfo.password}
-            autoComplete="new-password"
-            onChange={onChange}
-            required
-            error={!!errors['password']}
-            helperText={errors['password']}
-          />
-          <IconButton
-            onClick={handleVisible('password')}
-            sx={{
-              position: 'absolute',
-              right: 5,
-              top: '50%',
-              transform: 'translateY(-50%)',
-            }}
-          >
-            {visible['password'] ? <VisibilityOffIcon /> : <VisibilityIcon />}
-          </IconButton>
-        </Stack>
-        <Stack position="relative">
-          <TextField
-            variant="filled"
-            label="Check Password"
-            name="checkPassword"
-            type={!visible['checkPassword'] ? 'password' : 'text'}
-            value={signupInfo.checkPassword}
-            autoComplete="new-password"
-            onChange={onChange}
-            required
-            error={!!errors['checkPassword']}
-            helperText={errors['checkPassword']}
-          />
-          <IconButton
-            onClick={handleVisible('checkPassword')}
-            sx={{
-              position: 'absolute',
-              right: 5,
-              top: '50%',
-              transform: 'translateY(-50%)',
-            }}
-          >
-            {visible['checkPassword'] ? (
-              <VisibilityOffIcon />
-            ) : (
-              <VisibilityIcon />
-            )}
-          </IconButton>
-        </Stack>
+        {emailComponent}
+        {usernameComponent}
+        {passwordComponent}
+        {checkPasswordComponent}
         <Divider />
         <Button variant="contained" size="large" type="submit">
           회원가입

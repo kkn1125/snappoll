@@ -1,6 +1,6 @@
 import { getMe } from '@/apis/getMe';
-import { verifyLogin } from '@/apis/verifyLogin';
 import { tokenAtom } from '@/recoils/token.atom';
+import { Message } from '@common/messages';
 import Layout from '@components/templates/Layout';
 import useLoading from '@hooks/useLoading';
 import useModal from '@hooks/useModal';
@@ -10,21 +10,19 @@ import GuestHome from '@pages/GuestHome';
 import Home from '@pages/Home';
 import DetailPoll from '@pages/polls/DetailPoll';
 import MyPolls from '@pages/polls/MyPolls';
-import PollList from '@pages/polls/PollList';
 import PollListV2 from '@pages/polls/PollListV2';
 import PreviewPoll from '@pages/polls/PreviewPoll';
 import SnapPoll from '@pages/polls/SnapPoll';
-import SnapVote from '@pages/SnapVote';
+import SnapVote from '@pages/votes/SnapVote';
 import Login from '@pages/user/Login';
 import Profile from '@pages/user/Profile';
 import Signup from '@pages/user/Signup';
 import MyVotes from '@pages/votes/MyVotes';
+import VoteList from '@pages/votes/VoteList';
 import { useMutation } from '@tanstack/react-query';
-import { useEffect, useState } from 'react';
-import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
+import { memo, useCallback, useEffect, useState } from 'react';
+import { Route, Routes, useNavigate } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
-
-// const skipPath = ['/user/signup', '/user/login'];
 
 function AppRouter() {
   const [loaded, setLoaded] = useState(false);
@@ -32,6 +30,16 @@ function AppRouter() {
   const { openLoading, closeLoading } = useLoading();
   const [{ signed }, setToken] = useRecoilState(tokenAtom);
   const navigate = useNavigate();
+
+  const clearToken = useCallback(() => {
+    localStorage.setItem('logged_in', 'false');
+    setToken({
+      signed: false,
+      user: undefined,
+      token: undefined,
+      expired: true,
+    });
+  }, [setToken]);
 
   const getMeMutate = useMutation({
     mutationKey: ['getMe'],
@@ -50,16 +58,11 @@ function AppRouter() {
       }
     },
     onError(error, variables, context) {
-      const storage = localStorage.getItem('logged_in');
-      if (!storage || storage === 'false') {
-        openModal({ title: '안내', content: '로그인이 필요합니다.' });
-      } else {
-        openModal({
-          title: '안내',
-          content: '토큰이 만료되었습니다. 다시 로그인해주세요.',
-        });
+      const loggedIn = localStorage.getItem('logged_in');
+      if (!loggedIn || loggedIn === 'false') {
+        openModal(Message.Require.Login);
       }
-      localStorage.setItem('logged_in', 'false');
+      clearToken();
       if (location.pathname.match(/\/user\/profile|\/(votes|polls)\/?(.*)/)) {
         navigate('/');
       }
@@ -68,17 +71,17 @@ function AppRouter() {
 
   useEffect(() => {
     openLoading('Loading...');
-    const loggedInString = localStorage.getItem('logged_in');
-    const loggedIn = JSON.parse(loggedInString || 'false');
-    if (loggedIn) {
+    const loggedIn = localStorage.getItem('logged_in');
+    if (loggedIn === 'true') {
       getMeMutate.mutate();
+    } else {
+      clearToken();
     }
     setLoaded(true);
     return () => {
       closeLoading();
       closeModal();
     };
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -103,6 +106,7 @@ function AppRouter() {
           <Route path=":id" element={<DetailPoll />} />
         </Route>
         <Route path="votes">
+          <Route index element={<VoteList />} />
           <Route path="me" element={<MyVotes />} />
           <Route path="new" element={<SnapVote />} />
         </Route>
