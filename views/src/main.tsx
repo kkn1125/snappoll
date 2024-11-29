@@ -21,8 +21,8 @@ import Modal from '@components/moleculars/Modal.js';
 
 if (typeof window !== 'undefined') {
   scan({
-    enabled: true,
-    log: true,
+    enabled: import.meta.env.DEV,
+    log: import.meta.env.DEV,
   });
 }
 
