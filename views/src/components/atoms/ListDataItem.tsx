@@ -85,7 +85,9 @@ function ListDataItem<T extends APIPoll | Vote, F extends (id: string) => any>({
             }
           >
             <ListItemButton onClick={() => navigate(`/${name}s/${data.id}`)}>
-              <ListItemText>{data.title}</ListItemText>
+              <ListItemText secondary={data.user?.username}>
+                {data.title}
+              </ListItemText>
             </ListItemButton>
           </ListItem>
         ))

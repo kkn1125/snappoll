@@ -1,4 +1,5 @@
 import { getMe } from '@/apis/getMe';
+import { verifyLogin } from '@/apis/verifyLogin';
 import { tokenAtom } from '@/recoils/token.atom';
 import { Message } from '@common/messages';
 import Layout from '@components/templates/Layout';
@@ -8,20 +9,19 @@ import About from '@pages/About';
 import Graph from '@pages/graph/Graph';
 import GuestHome from '@pages/GuestHome';
 import Home from '@pages/Home';
+import CreateSnapPoll from '@pages/polls/CreateSnapPoll';
 import DetailPoll from '@pages/polls/DetailPoll';
 import MyPolls from '@pages/polls/MyPolls';
 import PollListV2 from '@pages/polls/PollListV2';
-import PreviewPoll from '@pages/polls/PreviewPoll';
-import SnapPoll from '@pages/polls/SnapPoll';
-import SnapVote from '@pages/votes/SnapVote';
 import Login from '@pages/user/Login';
 import Profile from '@pages/user/Profile';
 import Signup from '@pages/user/Signup';
 import MyVotes from '@pages/votes/MyVotes';
+import SnapVote from '@pages/votes/SnapVote';
 import VoteList from '@pages/votes/VoteList';
 import { useMutation } from '@tanstack/react-query';
-import { memo, useCallback, useEffect, useState } from 'react';
-import { Route, Routes, useNavigate } from 'react-router-dom';
+import { useCallback, useEffect, useState } from 'react';
+import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 
 function AppRouter() {
@@ -30,6 +30,7 @@ function AppRouter() {
   const { openLoading, closeLoading } = useLoading();
   const [{ signed }, setToken] = useRecoilState(tokenAtom);
   const navigate = useNavigate();
+  const locate = useLocation();
 
   const clearToken = useCallback(() => {
     localStorage.setItem('logged_in', 'false');
@@ -39,7 +40,15 @@ function AppRouter() {
       token: undefined,
       expired: true,
     });
-  }, [setToken]);
+    if (locate.pathname.match(/\/user\/profile|\/(votes|polls)\/?(.*)/)) {
+      navigate('/');
+    }
+  }, [locate.pathname, navigate, setToken]);
+
+  const verifyMutate = useMutation({
+    mutationKey: ['verify'],
+    mutationFn: verifyLogin,
+  });
 
   const getMeMutate = useMutation({
     mutationKey: ['getMe'],
@@ -63,11 +72,15 @@ function AppRouter() {
         openModal(Message.Require.Login);
       }
       clearToken();
-      if (location.pathname.match(/\/user\/profile|\/(votes|polls)\/?(.*)/)) {
-        navigate('/');
-      }
     },
   });
+
+  useEffect(() => {
+    const loggedIn = localStorage.getItem('logged_in');
+    if (loggedIn === 'true' && signed) {
+      verifyMutate.mutate();
+    }
+  }, [location.pathname, signed]);
 
   useEffect(() => {
     openLoading('Loading...');
@@ -101,8 +114,8 @@ function AppRouter() {
         <Route path="polls">
           <Route index element={<PollListV2 />} />
           <Route path="me" element={<MyPolls />} />
-          <Route path="new" element={<SnapPoll />} />
-          <Route path="new/preview" element={<PreviewPoll />} />
+          <Route path="new" element={<CreateSnapPoll />} />
+          {/* <Route path="new/preview" element={<PreviewPoll />} /> */}
           <Route path=":id" element={<DetailPoll />} />
         </Route>
         <Route path="votes">

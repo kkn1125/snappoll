@@ -1,11 +1,7 @@
-import { Poll } from '@utils/Poll';
+import { SnapPoll } from '@models/SnapPoll';
 import { atom } from 'recoil';
 
-export const snapPollAtom = atom<{
-  polls: Poll<'text' | 'option' | 'checkbox'>[];
-}>({
+export const snapPollAtom = atom<SnapPoll>({
   key: 'snapPoll',
-  default: {
-    polls: [],
-  },
+  default: new SnapPoll(),
 });

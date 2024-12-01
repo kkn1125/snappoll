@@ -4,7 +4,7 @@ import {
   ModalDispatchContext,
 } from '@providers/contexts/ModalContext';
 import { ModalActionType } from '@providers/contexts/modalTypes';
-import { memo, useContext } from 'react';
+import { useContext } from 'react';
 
 interface ModalProps {}
 const Modal: React.FC<ModalProps> = () => {

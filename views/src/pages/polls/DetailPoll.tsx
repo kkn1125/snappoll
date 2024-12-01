@@ -1,42 +1,85 @@
 import { getPoll } from '@/apis/getPoll';
 import { savePollResult } from '@/apis/savePollResult';
+import { snapResponseAtom } from '@/recoils/snapResponse.atom';
+import { tokenAtom } from '@/recoils/token.atom';
+import { Message } from '@common/messages';
 import PollLayout from '@components/templates/PollLayout';
+import useModal from '@hooks/useModal';
+import { SnapPoll } from '@models/SnapPoll';
+import { SnapResponse } from '@models/SnapResponse';
 import { Button, Container, Divider, Stack, Toolbar } from '@mui/material';
-import { useQuery } from '@tanstack/react-query';
-import { Poll } from '@utils/Poll';
-import { FormEvent, useState } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { AxiosError } from 'axios';
+import { FormEvent, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useRecoilState } from 'recoil';
 
-interface DetailPollProps {
-  // title: string;
-  // description: string;
-  // expiresAt: Date;
-  // options: string;
-}
+interface DetailPollProps {}
 const DetailPoll: React.FC<DetailPollProps> = () => {
+  const { openModal, openInteractiveModal } = useModal();
   const navigate = useNavigate();
-  const [polls, setPolls] = useState<Poll<PollType['type']>[]>([]);
+  const [{ user }, setToken] = useRecoilState(tokenAtom);
+  const [response, setResponse] = useRecoilState(snapResponseAtom);
 
   const { id } = useParams();
 
-  const { data, isPending } = useQuery<APIPoll>({
-    queryKey: ['poll'],
-    queryFn: getPollOne,
+  const { data, isPending } = useQuery<SnapPoll>({
+    queryKey: ['poll', id],
+    queryFn: () => getPoll(id),
   });
 
-  async function getPollOne() {
-    const data = await getPoll(id as string);
-    setPolls(JSON.parse(data.options));
-    return data;
-  }
+  const saveResponseMutate = useMutation({
+    mutationKey: ['saveResponse'],
+    mutationFn: savePollResult,
+    onSuccess(data, variables, context) {
+      setResponse(new SnapResponse());
+      console.log(data);
+      navigate(-1);
+    },
+    onError(error: AxiosError, variables, context) {
+      if (error.response?.status === 401) {
+        setResponse(new SnapResponse());
+        localStorage.setItem('logged_in', 'false');
+        setToken({
+          signed: false,
+          user: undefined,
+          token: undefined,
+          expired: true,
+        });
+        navigate('/');
+      }
+    },
+  });
 
-  async function handleSavePollResult(e: FormEvent) {
+  function handleSavePollResult(e: FormEvent) {
     e.preventDefault();
-    const userId = data?.user?.id;
-    if (data && id) {
-      await savePollResult(id, JSON.stringify(polls), !!userId);
-      navigate('/');
-    }
+
+    if (!id) return;
+
+    openInteractiveModal('작성을 완료하시겠습니까?', () => {
+      const answerLength = response.answer.length;
+      if (answerLength === 0) {
+        openModal(Message.Require.LeastResponse);
+        return false;
+      }
+
+      const answered = data?.question.every((question) => {
+        if (!question.isRequired) return true;
+        const answer = response.answer.find(
+          (answer) => answer.questionId === question.id,
+        );
+        return !!answer;
+      });
+      if (!answered) {
+        openModal(Message.Require.MustFill);
+        return false;
+      }
+      const copyResponse = SnapResponse.copy(response);
+      copyResponse.userId = user?.id;
+      copyResponse.pollId = id;
+      saveResponseMutate.mutate(copyResponse);
+    });
+
     return false;
   }
 
@@ -44,7 +87,7 @@ const DetailPoll: React.FC<DetailPollProps> = () => {
     <Container>
       <Toolbar />
       <Stack component="form" gap={3} onSubmit={handleSavePollResult}>
-        {data && <PollLayout data={data} polls={polls} setPolls={setPolls} />}
+        {data && <PollLayout poll={data} />}
         <Divider />
         <Button variant="contained" size="large" type="submit">
           제출

@@ -25,6 +25,7 @@
     "paths": {
       "@assets/*": ["src/assets/*"],
       "@common/*": ["src/common/*"],
+      "@models/*": ["src/models/*"],
       "@providers/*": ["src/providers/*"],
       "@hooks/*": ["src/hooks/*"],
       "@components/*": ["src/components/*"],

@@ -28,10 +28,11 @@ model User {
   updatedAt DateTime  @updatedAt @map("updated_at")
   deletedAt DateTime? @map("deleted_at")
 
-  poll        Poll[]
-  vote        Vote[]
-  pollResult  PollResult[]
-  userProfile UserProfile[]
+  userProfile  UserProfile[]
+  poll         Poll[]
+  vote         Vote[]
+  response     Response[]
+  voteResponse VoteResponse[]
 
   @@map("user")
 }
@@ -47,60 +48,123 @@ model SharePoll {
 
 model Poll {
   id          String   @id @default(uuid()) @db.Uuid
-  title       String
-  description String
-  options     Json
-  createdBy   String?  @map("created_by") @db.Uuid
+  title       String   @db.VarChar(30)
+  description String?
+  createdBy   String   @map("created_by") @db.Uuid
   expiresAt   DateTime @default(now()) @map("expires_at")
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
 
-  user       User?        @relation(fields: [createdBy], references: [id])
-  pollResult PollResult[]
-  sharePoll  SharePoll[]
+  user User @relation(fields: [createdBy], references: [id])
+
+  question  Question[]
+  response  Response[]
+  sharePoll SharePoll[]
 
   @@map("poll")
 }
 
-model PollResult {
-  id     String  @id @default(uuid()) @db.Uuid
-  userId String? @map("user_id") @db.Uuid
-  pollId String? @map("poll_id") @db.Uuid
-  answer Json
+model Question {
+  id          String  @id @default(uuid()) @db.Uuid
+  pollId      String  @map("poll_id") @db.Uuid
+  type        String  @default("input") @map("type") @db.VarChar(20)
+  title       String  @db.VarChar(30)
+  description String?
+  order       Int?
+  isRequired  Boolean @default(false) @map("is_required")
+  isMultiple  Boolean @default(false) @map("is_multiple")
+  useEtc      Boolean @default(false) @map("use_etc")
 
+  poll Poll @relation(fields: [pollId], references: [id])
+
+  answer Answer[]
+  option Option[]
+
+  @@map("question")
+}
+
+model Response {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String?  @map("user_id") @db.Uuid
+  pollId    String   @map("poll_id") @db.Uuid
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  poll Poll? @relation(fields: [pollId], references: [id])
+  poll Poll  @relation(fields: [pollId], references: [id])
   user User? @relation(fields: [userId], references: [id])
 
-  @@map("poll_result")
+  answer Answer[]
+
+  @@map("response")
+}
+
+model Answer {
+  id         String  @id @default(uuid()) @db.Uuid
+  responseId String  @map("response_id") @db.Uuid
+  questionId String  @map("question_id") @db.Uuid
+  optionId   String? @map("option_id") @db.Uuid
+  // select, multiple checkbox
+  value      String? @db.VarChar(100)
+  // text input only
+
+  response Response @relation(fields: [responseId], references: [id])
+  question Question @relation(fields: [questionId], references: [id])
+  option   Option?  @relation(fields: [optionId], references: [id])
+
+  @@map("answer")
+}
+
+model Option {
+  id         String @id @default(uuid()) @db.Uuid
+  questionId String @map("question_id") @db.Uuid
+  content    String @db.VarChar(150)
+
+  question Question @relation(fields: [questionId], references: [id])
+  answer   Answer[]
+
+  @@map("option")
 }
 
 model Vote {
-  id        String   @id @default(uuid()) @db.Uuid
-  userId    String?  @map("user_id") @db.Uuid
-  pollId    String?  @map("poll_id") @db.Uuid
-  title     String
-  content   String
-  options   Json     @db.JsonB
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  id          String   @id @default(uuid()) @db.Uuid
+  userId      String   @map("user_id") @db.Uuid
+  title       String   @db.VarChar(30)
+  description String
+  isMultiple  Boolean  @map("is_multiple")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
 
-  user       User?        @relation(fields: [userId], references: [id])
-  voteResult VoteResult[]
+  user User @relation(fields: [userId], references: [id])
+
+  voteOption   VoteOption[]
+  voteResponse VoteResponse[]
 
   @@map("vote")
 }
 
-model VoteResult {
-  id        String   @id @default(uuid()) @db.Uuid
-  voteId    String   @map("vote_id") @db.Uuid
-  answer    Json
+model VoteResponse {
+  id           String   @id @default(uuid()) @db.Uuid
+  userId       String?  @map("user_id") @db.Uuid
+  voteId       String   @map("vote_id") @db.Uuid
+  voteOptionId String   @map("vote_option_id") @db.Uuid
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  user User? @relation(fields: [userId], references: [id])
+  vote Vote  @relation(fields: [voteId], references: [id])
+
+  @@map("vote_response")
+}
+
+model VoteOption {
+  id      String @id @default(uuid()) @db.Uuid
+  voteId  String @map("vote_id") @db.Uuid
+  content String @db.VarChar(100)
+
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
   vote Vote @relation(fields: [voteId], references: [id])
 
-  @@map("vote_result")
+  @@map("vote_option")
 }

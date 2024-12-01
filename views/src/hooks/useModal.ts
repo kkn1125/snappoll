@@ -15,7 +15,7 @@ const useModal = () => {
     [modalDispatch],
   );
   const openInteractiveModal = useCallback(
-    (content: string, callback: () => void | Promise<void>) => {
+    function <T>(content: string, callback: () => T | Promise<T>) {
       modalDispatch({
         type: ModalActionType.OpenInteractive,
         title: '안내',

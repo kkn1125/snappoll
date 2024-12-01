@@ -30,7 +30,7 @@ const Login: React.FC<LoginProps> = () => {
   const { openModal } = useModal();
   const locate = useLocation();
   const navigate = useNavigate();
-  const [errors, setErrors] = useState<Partial<ErrorMessage<LoginUser>>>({});
+  const [errors, setErrors] = useState<ErrorMessage<LoginUser>>({});
   const [loginInfo, setLoginInfo] = useState<LoginUser>({
     email: '',
     password: '',
@@ -41,10 +41,10 @@ const Login: React.FC<LoginProps> = () => {
     mutationFn: login,
     onSuccess(data, _variables, _context) {
       if (data.ok) {
-        setLoginInfo(() => ({
-          email: '',
-          password: '',
-        }));
+        // setLoginInfo(() => ({
+        //   email: '',
+        //   password: '',
+        // }));
         setToken(() => ({
           token: data.token,
           signed: !!data.token,
@@ -72,7 +72,7 @@ const Login: React.FC<LoginProps> = () => {
 
   const validateForm = useCallback(
     (loginInfo: { email: string; password: string }) => {
-      const errors: Partial<ErrorMessage<LoginUser>> = {};
+      const errors: ErrorMessage<LoginUser> = {};
       if (loginInfo.email === '') {
         errors['email'] = '필수입니다.';
       }
@@ -146,6 +146,7 @@ const Login: React.FC<LoginProps> = () => {
           로그인
         </Typography>
         <CustomInput
+          autoFocus
           label="Email"
           name="email"
           type="email"

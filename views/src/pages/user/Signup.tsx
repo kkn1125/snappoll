@@ -1,18 +1,22 @@
 import { signup } from '@/apis/signup';
+import { Message } from '@common/messages';
+import CustomInput from '@components/atoms/CustomInput';
+import useModal from '@hooks/useModal';
+import CasinoIcon from '@mui/icons-material/Casino';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import {
   Button,
   Container,
   Divider,
   IconButton,
-  Paper,
-  Portal,
   Stack,
-  TextField,
   Toolbar,
   Tooltip,
   Typography,
 } from '@mui/material';
 import { useMutation } from '@tanstack/react-query';
+import { getRandomUsername } from '@utils/getRandomUsername';
 import { AxiosError } from 'axios';
 import {
   ChangeEvent,
@@ -24,23 +28,17 @@ import {
   useState,
 } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import CasinoIcon from '@mui/icons-material/Casino';
-import { getRandomUsername } from '@utils/getRandomUsername';
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
-import { Message } from '@common/messages';
-import CustomInput from '@components/atoms/CustomInput';
 
 interface SignupProps {}
 const Signup: React.FC<SignupProps> = () => {
   const [validated, setValidated] = useState(false);
+  const { openModal } = useModal();
   const [visible, setVisible] = useState({
     password: false,
     checkPassword: false,
   });
   const navigate = useNavigate();
-  const [modal, setModal] = useState<Partial<Record<string, string>>>({});
-  const [errors, setErrors] = useState<Partial<ErrorMessage<SignupUser>>>({});
+  const [errors, setErrors] = useState<ErrorMessage<SignupUser>>({});
   const [signupInfo, setSignupInfo] = useState<SignupUser>({
     email: '',
     username: '',
@@ -50,16 +48,24 @@ const Signup: React.FC<SignupProps> = () => {
   const mutation = useMutation({
     mutationKey: ['signup'],
     mutationFn: signup,
+    onSuccess(data, variables, context) {
+      // setSignupInfo({
+      //   email: '',
+      //   username: '',
+      //   password: '',
+      //   checkPassword: '',
+      // });
+      navigate('/');
+    },
     onError(error: AxiosError, variables, context) {
       const { response } = error;
       const { data } = response as { data: any };
-
-      setModal(Message.WrongRequest(data.message));
+      openModal(Message.WrongRequest(data.message));
     },
   });
 
   const validateForm = useCallback(() => {
-    const errorMessages: Partial<ErrorMessage<SignupUser>> = {};
+    const errorMessages: ErrorMessage<SignupUser> = {};
     if (signupInfo.email === '') {
       errorMessages['email'] = '필수입니다.';
     }
@@ -109,15 +115,6 @@ const Signup: React.FC<SignupProps> = () => {
     if (!validateForm()) return;
 
     mutation.mutate(signupInfo);
-
-    setSignupInfo({
-      email: '',
-      username: '',
-      password: '',
-      checkPassword: '',
-    });
-
-    navigate('/');
 
     return false;
   }
@@ -257,32 +254,6 @@ const Signup: React.FC<SignupProps> = () => {
   return (
     <Container component={Stack} maxWidth="sm" gap={2}>
       <Toolbar />
-      <Portal>
-        {modal.title && modal.content && (
-          <Paper
-            component={Stack}
-            p={3}
-            minWidth="50%"
-            sx={{
-              position: 'absolute',
-              top: '50%',
-              left: '50%',
-              transform: 'translate(-50%, -50%)',
-              zIndex: 100,
-            }}
-          >
-            <Typography fontSize={24} gutterBottom>
-              {modal.title}
-            </Typography>
-            <Typography className="font-maru" fontSize={15}>
-              {modal.content}
-            </Typography>
-            <Button color="error" onClick={() => setModal({})}>
-              닫기
-            </Button>
-          </Paper>
-        )}
-      </Portal>
       <Stack
         component="form"
         gap={2}

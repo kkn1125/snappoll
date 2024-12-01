@@ -1,9 +1,9 @@
-export type ModalInitialValue = {
+export type ModalInitialValue<T = any> = {
   title: string;
   content: string;
   open: boolean;
   interactive: boolean;
-  callback: () => void | Promise<void>;
+  callback: () => T | Promise<T>;
 };
 export const initialValue = {
   title: '',
@@ -19,9 +19,9 @@ export const ModalActionType = {
 } as const;
 export type ModalActionType =
   (typeof ModalActionType)[keyof typeof ModalActionType];
-export type ModalReducerAction = {
+export type ModalReducerAction<T = any> = {
   type: ModalActionType;
   title?: string;
   content?: string;
-  callback?: () => void | Promise<void>;
+  callback?: () => T | Promise<T>;
 };

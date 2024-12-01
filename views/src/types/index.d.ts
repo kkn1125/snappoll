@@ -145,7 +145,7 @@ export declare global {
     title: string;
     description: string;
     expiresAt: Date;
-    options: Poll<PollType['type']>;
+    // options: Poll<PollType['type']>;
     user?: User;
   };
   interface User {
@@ -182,7 +182,7 @@ export declare global {
   }
   interface LoginUser
     extends Omit<User, 'id' | 'username' | 'createdAt' | 'updatedAt'> {}
-  type ErrorMessage<T> = { [k in keyof T]: string };
+  type ErrorMessage<T = object> = Partial<{ [k in keyof T]: string }>;
   interface UserToken {
     token?: string;
     user?: Pick<User, 'id' | 'email' | 'username' | 'userProfile'>;
@@ -227,4 +227,47 @@ export declare global {
     title: string;
     content: string;
   }
+  interface DateTemplate {
+    createdAt: Date;
+    updatedAt: Date;
+  }
+  interface Poll extends DateTemplate {
+    id: string;
+    title: string;
+    description: string;
+    createdBy: string;
+    expiresAt: Date;
+    question: Question[];
+  }
+  interface Question {
+    id: string;
+    pollId: string;
+    type: string;
+    title: string;
+    description: string;
+    order: number;
+    isMultiple: boolean;
+    option: Option[];
+  }
+  interface Option {
+    id: string;
+    voteId: string;
+    questionId: string;
+  }
+
+  interface PollOption {
+    id: number;
+    pollId: string;
+    type: string;
+  }
+
+  interface OptionItem {
+    id: number;
+    voteOptionId: number;
+    pollOptionId: number;
+    value: string;
+    checked: boolean;
+  }
+
+  type CreateOmitType = 'id' | keyof DateTemplate;
 }

@@ -1,96 +1,42 @@
+import { tokenAtom } from '@/recoils/token.atom';
+import QuestionItem from '@components/atoms/QuestionItem';
 import PollItem from '@components/moleculars/PollItem';
+import { SnapPoll } from '@models/SnapPoll';
 import { Divider, Stack, Typography } from '@mui/material';
-import { Poll } from '@utils/Poll';
 import dayjs from 'dayjs';
-import {
-  ChangeEvent,
-  Dispatch,
-  SetStateAction,
-  useEffect,
-  useState,
-} from 'react';
+import { useRecoilValue } from 'recoil';
 
 interface PollLayoutProps {
-  data: APIPoll;
-  polls: Poll<PollType['type']>[];
-  setPolls: Dispatch<SetStateAction<Poll<PollType['type']>[]>>;
+  poll: SnapPoll;
 }
-const PollLayout: React.FC<PollLayoutProps> = ({ data, polls, setPolls }) => {
-  function onChange(id: string, value: string | boolean) {
-    setPolls((polls) => {
-      return polls.map((poll) => {
-        if (poll.id === id) {
-          const newItems = [...poll.items];
-          if (typeof value === 'boolean') {
-            poll.value = value;
-          } else {
-            poll.value = value;
-          }
-          poll.items = newItems;
-        }
-        return poll;
-      });
-    });
-  }
-
-  function onChangeCheckbox(id: string, index: number, checked: boolean) {
-    setPolls((polls) => {
-      return polls.map((poll) => {
-        if (poll.id === id) {
-          const newItems = [...poll.items];
-          newItems[index].checked = checked;
-          poll.items = newItems;
-        }
-        return poll;
-      });
-    });
-  }
-
-  function onChangeEtc(id: string, value: string) {
-    setPolls((polls) => {
-      return polls.map((poll) => {
-        if (poll.id === id) {
-          poll.etc = value;
-        }
-        return poll;
-      });
-    });
-  }
+const PollLayout: React.FC<PollLayoutProps> = ({ poll }) => {
+  const { user } = useRecoilValue(tokenAtom);
 
   return (
     <Stack gap={1}>
       <Stack direction="row" alignItems="baseline" gap={1}>
         <Typography fontSize={32} fontWeight={700}>
-          {data?.title}
+          {poll.title}
         </Typography>
         <Typography fontSize={14} fontWeight={700}>
-          (작성자: {data?.user?.username})
+          (작성자: {user?.username})
         </Typography>
       </Stack>
-      {data?.description && (
+      {poll.description && (
         <Typography fontSize={14} fontWeight={300}>
-          {data?.description}
+          {poll.description}
         </Typography>
       )}
       <Typography>
-        {dayjs(data?.expiresAt).format('YYYY. MM. DD HH:mm') + ' 까지' || ''}
+        {dayjs(poll.expiresAt).format('YYYY. MM. DD HH:mm') + ' 까지' || ''}
       </Typography>
       <Stack gap={1}>
         <Divider sx={{ borderBottomWidth: 3, borderBottomStyle: 'dotted' }} />
       </Stack>
       <Stack gap={10}>
-        {polls.map((poll) => (
-          <PollItem
-            key={poll.id}
-            poll={poll}
-            onChange={onChange}
-            onChangeCheckbox={onChangeCheckbox}
-            onChangeEtc={onChangeEtc}
-          />
+        {poll.question.map((question) => (
+          <QuestionItem key={question.id} question={question} />
         ))}
-        {/* {polls.map((poll, i) => (
-          <PollItem key={poll.name + i} poll={poll} />
-        ))} */}
       </Stack>
     </Stack>
   );

@@ -1,13 +1,11 @@
-import { Poll } from '@prisma/client';
-import { JsonValue } from '@prisma/client/runtime/library';
+import { Poll, Question } from '@prisma/client';
 
 export class CreatePollDto
-  implements
-    Pick<Poll, 'title' | 'description' | 'options' | 'createdBy' | 'expiresAt'>
+  implements Pick<Poll, 'title' | 'description' | 'createdBy' | 'expiresAt'>
 {
   title: string;
   description: string;
-  options: JsonValue;
   createdBy: string;
   expiresAt: Date;
+  question?: Question[];
 }

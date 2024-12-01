@@ -3,6 +3,8 @@ export const CustomMessage = {
   Logout: { title: '안내', content: '로그아웃 되었습니다.' },
   Token: { title: '안내', content: '토큰이 만료되었습니다.' },
   NoDeleteOne: { title: '안내', content: '최소 하나의 질문은 있어야합니다.' },
+  LeastResponse: { title: '안내', content: '최소 한 개 이상 응답해야합니다.' },
+  MustFill: { title: '안내', content: '필수 질문을 완성해주세요.' },
   ServerError: { title: '서버 안내', content: '서버에서 문제가 발생했습니다.' },
 } as const;
 export type CustomMessage = (typeof CustomMessage)[keyof typeof CustomMessage];
@@ -20,6 +22,8 @@ export type Expired = (typeof Expired)[keyof typeof Expired];
 export const Require = {
   Login: CustomMessage.Login,
   Logout: CustomMessage.Logout,
+  LeastResponse: CustomMessage.LeastResponse,
+  MustFill: CustomMessage.MustFill,
 } as const;
 export type Require = (typeof Require)[keyof typeof Require];
 

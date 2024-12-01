@@ -1,5 +1,4 @@
-import { Button, Paper, Portal, Stack, Typography } from '@mui/material';
-import { memo, useMemo, useReducer } from 'react';
+import { useMemo, useReducer } from 'react';
 import { ModalContext, ModalDispatchContext } from './contexts/ModalContext';
 import {
   initialValue,
@@ -7,7 +6,6 @@ import {
   ModalInitialValue,
   ModalReducerAction,
 } from './contexts/modalTypes';
-import { createPortal } from 'react-dom';
 
 const reducer = (state: ModalInitialValue, action: ModalReducerAction) => {
   switch (action.type) {

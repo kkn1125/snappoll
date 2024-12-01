@@ -32,6 +32,7 @@ export class AuthController {
         sameSite: 'lax',
         path: '/',
       });
+
       res.json({
         ok: true,
         token: jsonwebtoken,
@@ -52,6 +53,7 @@ export class AuthController {
         sameSite: 'lax',
         path: '/',
       });
+
       res.json({
         ok: true,
       });
@@ -67,7 +69,7 @@ export class AuthController {
       throw new UnauthorizedException('토큰이 만료되었습니다.');
     }
     const profile = req.user?.['userProfile'];
-    console.log('profile:', profile);
+    // console.log('profile:', profile);
     // const blob = new Blob([new Uint8Array(profile.data)], {
     //   type: 'image/jpeg',
     // });
