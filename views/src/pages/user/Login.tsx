@@ -67,7 +67,6 @@ const Login: React.FC<LoginProps> = () => {
         email: loginInfo.email,
         password: '',
       }));
-      console.log(data.message);
       openModal(Message.WrongRequest(data.message));
     },
   });

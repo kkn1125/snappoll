@@ -33,7 +33,6 @@ const DetailVote: React.FC<DetailVoteProps> = () => {
     mutationFn: saveVoteResult,
     onSuccess(data, variables, context) {
       setResponses([]);
-      console.log(data);
       navigate(-1);
     },
     onError(error: AxiosError, variables, context) {

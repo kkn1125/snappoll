@@ -31,7 +31,6 @@ const Profile: React.FC<ProfileProps> = () => {
     mutationKey: ['logout'],
     mutationFn: logout,
     onSuccess(data, variables, context) {
-      console.log(data);
       if (data.ok) {
         localStorage.setItem('logged_in', 'false');
         window.location.pathname = '/';

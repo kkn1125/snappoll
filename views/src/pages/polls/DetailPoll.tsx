@@ -33,7 +33,6 @@ const DetailPoll: React.FC<DetailPollProps> = () => {
     mutationFn: savePollResult,
     onSuccess(data, variables, context) {
       setResponse(new SnapResponse());
-      console.log(data);
       navigate(-1);
     },
     onError(error: AxiosError, variables, context) {
