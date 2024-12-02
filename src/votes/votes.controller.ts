@@ -34,6 +34,7 @@ export class VotesController {
   @Get('me')
   findMe(@Req() req: Request, @Query('page') page: number = 1) {
     const { id } = req.user;
+    console.log(page);
     return this.votesService.findMe(id, page);
   }
 

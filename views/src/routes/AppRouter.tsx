@@ -27,6 +27,7 @@ import { previousAtom } from '@/recoils/previous.atom';
 import DetailVote from '@pages/votes/DetailVote';
 import PollResponse from '@pages/polls/PollResponse';
 import DetailPollResponse from '@pages/polls/response/DetailPollResponse';
+import VoteResponse from '@pages/votes/VoteResponse';
 
 function AppRouter() {
   const [loaded, setLoaded] = useState(false);
@@ -150,6 +151,7 @@ function AppRouter() {
           <Route path="me" element={<MyVotes />} />
           <Route path="new" element={<CreateSnapVote />} />
           <Route path=":id" element={<DetailVote />} />
+          <Route path=":id/response" element={<VoteResponse />} />
         </Route>
         <Route path="about" element={<About />} />
         <Route path="graph" element={<Graph />} />

@@ -24,7 +24,7 @@ const Home = () => {
   const { user } = useRecoilValue(tokenAtom);
   const queryClient = useQueryClient();
   const navigate = useNavigate();
-  const query = useQuery<SnapPoll[]>({
+  const { data } = useQuery<{ polls: SnapPoll[]; count: number }>({
     queryKey: ['polls'],
     queryFn: getPolls,
   });
@@ -72,7 +72,7 @@ const Home = () => {
           </Typography>
           <Paper>
             <List>
-              {query.data?.map((poll) => (
+              {data?.polls.slice(0, 5).map((poll, i) => (
                 <ListItem
                   disablePadding
                   key={poll.id}
@@ -101,7 +101,8 @@ const Home = () => {
                     }}
                   >
                     <ListItemText
-                      primary={poll.title}
+                      primaryTypographyProps={{ fontWeight: 700 }}
+                      primary={i + 1 + '. ' + poll.title}
                       secondary={poll.user?.username || 'Unknown'}
                     />
                     {/* {poll.user?.id === user?.id && (
@@ -110,7 +111,7 @@ const Home = () => {
                   </ListItemButton>
                 </ListItem>
               ))}
-              {query.data?.length === 0 && (
+              {data?.polls.length === 0 && (
                 <ListItemButton>
                   <ListItemText>등록된 설문지가 없습니다.</ListItemText>
                 </ListItemButton>
