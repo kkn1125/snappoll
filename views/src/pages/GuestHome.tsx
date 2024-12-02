@@ -13,11 +13,12 @@ import { Link } from 'react-router-dom';
 
 interface GuestHomeProps {}
 const GuestHome: React.FC<GuestHomeProps> = () => {
+  const screenRatio = 3 / 4;
   return (
     <Stack>
       {/* section 01 */}
       <Stack
-        minHeight="calc(100vh - 64px * 2)"
+        minHeight={`calc(100vh * ${screenRatio})`}
         sx={{
           backgroundColor: (theme) => theme.palette.info.light + '56',
           backgroundImage: `url(${import.meta.resolve('/images/main.jpg')})`,
@@ -60,7 +61,7 @@ const GuestHome: React.FC<GuestHomeProps> = () => {
 
       {/* section 02 */}
       <Container>
-        <Stack minHeight={{ xs: 'auto', md: 'calc(100vh - 64px * 2)' }}>
+        <Stack>
           <Toolbar />
           <Typography align="center" fontSize={32} fontWeight={700}>
             왜 SnapPoll인가?
@@ -68,14 +69,14 @@ const GuestHome: React.FC<GuestHomeProps> = () => {
           <Toolbar />
           <Stack flex={1}>
             <Stack
-              direction="row"
+              direction={{ xs: 'column', md: 'row' }}
               justifyContent="space-between"
-              alignItems="space-between"
+              alignItems={{ xs: 'center', md: 'space-between' }}
               gap={5}
               flexWrap="wrap"
             >
               {/* survey */}
-              <Paper component={Stack} flex={1} p={3}>
+              <Paper component={Stack} flex={1} maxWidth={300} p={3}>
                 <Stack alignItems="center" sx={{ float: 'right' }}>
                   <Illu01 width={150} height={150} />
                 </Stack>
@@ -89,7 +90,7 @@ const GuestHome: React.FC<GuestHomeProps> = () => {
                 </Typography>
               </Paper>
               {/* graph */}
-              <Paper component={Stack} flex={1} p={3}>
+              <Paper component={Stack} flex={1} maxWidth={300} p={3}>
                 <Stack alignItems="center" sx={{ float: 'left' }}>
                   <Illu02 width={150} height={150} />
                 </Stack>
@@ -102,7 +103,7 @@ const GuestHome: React.FC<GuestHomeProps> = () => {
                 </Typography>
               </Paper>
               {/* share */}
-              <Paper component={Stack} flex={1} p={3}>
+              <Paper component={Stack} flex={1} maxWidth={300} p={3}>
                 <Stack alignItems="center" sx={{ float: 'right' }}>
                   <Illu01 width={150} height={150} />
                 </Stack>
@@ -122,17 +123,22 @@ const GuestHome: React.FC<GuestHomeProps> = () => {
 
       {/* section 03 */}
       <Container>
-        <Stack minHeight="calc(100vh - 64px * 2)">
+        <Stack>
           <Toolbar />
-          <Typography align="center" fontSize={32} fontWeight={700}>
+          <Typography
+            align="center"
+            fontSize={32}
+            fontWeight={700}
+            gutterBottom
+          >
             어떻게 하면 되나요?
           </Typography>
-          <Toolbar />
           <Box flex={1}>
             <Typography fontSize={20} align="center">
               지금 바로 무료로 시작하고, 설문조사의 새로운 경험을 만나보세요.
             </Typography>
           </Box>
+          <Toolbar />
           <Stack alignItems="center">
             <Button
               component={Link}

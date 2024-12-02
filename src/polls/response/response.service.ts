@@ -28,11 +28,46 @@ export class ResponseService {
   }
 
   findAll() {
-    return this.prisma.response.findMany();
+    return this.prisma.response.findMany({
+      include: {
+        poll: {
+          include: {
+            question: {
+              include: { answer: true, option: true },
+            },
+          },
+        },
+        user: {
+          select: {
+            id: true,
+            username: true,
+            email: true,
+          },
+        },
+      },
+    });
   }
 
   findOne(id: string) {
-    return this.prisma.response.findUnique({ where: { id } });
+    return this.prisma.response.findUnique({
+      where: { id },
+      include: {
+        poll: {
+          include: {
+            question: {
+              include: { answer: true, option: true },
+            },
+          },
+        },
+        user: {
+          select: {
+            id: true,
+            username: true,
+            email: true,
+          },
+        },
+      },
+    });
   }
 
   update(id: string, updateResponseDto: UpdateResponseDto) {

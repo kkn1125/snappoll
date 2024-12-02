@@ -1,5 +1,6 @@
 import { v4 } from 'uuid';
 import { SnapPollOption } from './SnapPollOption';
+import { SnapAnswer } from './SnapAnswer';
 
 export class SnapPollQuestion {
   static copy(question: SnapPollQuestion) {
@@ -16,6 +17,7 @@ export class SnapPollQuestion {
   isRequired: boolean = false;
   useEtc: boolean = false;
   option: SnapPollOption[] = [];
+  answer?: SnapAnswer[];
 
   constructor(props?: SnapPollQuestion) {
     if (props) {

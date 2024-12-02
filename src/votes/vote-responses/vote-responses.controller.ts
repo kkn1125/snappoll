@@ -11,13 +11,20 @@ import { VoteResponsesService } from './vote-responses.service';
 import { CreateVoteResponseDto } from './dto/create-vote-response.dto';
 import { UpdateVoteResponseDto } from './dto/update-vote-response.dto';
 
-@Controller('vote-responses')
+@Controller('response')
 export class VoteResponsesController {
   constructor(private readonly voteResponsesService: VoteResponsesService) {}
 
   @Post()
-  create(@Body() createVoteResponseDto: CreateVoteResponseDto) {
-    return this.voteResponsesService.create(createVoteResponseDto);
+  create(
+    @Body()
+    createVoteResponseDto: CreateVoteResponseDto | CreateVoteResponseDto[],
+  ) {
+    if (createVoteResponseDto instanceof Array) {
+      return this.voteResponsesService.createMany(createVoteResponseDto);
+    } else {
+      return this.voteResponsesService.create(createVoteResponseDto);
+    }
   }
 
   @Get()
@@ -27,7 +34,7 @@ export class VoteResponsesController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.voteResponsesService.findOne(+id);
+    return this.voteResponsesService.findOne(id);
   }
 
   @Patch(':id')
@@ -35,11 +42,11 @@ export class VoteResponsesController {
     @Param('id') id: string,
     @Body() updateVoteResponseDto: UpdateVoteResponseDto,
   ) {
-    return this.voteResponsesService.update(+id, updateVoteResponseDto);
+    return this.voteResponsesService.update(id, updateVoteResponseDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.voteResponsesService.remove(+id);
+    return this.voteResponsesService.remove(id);
   }
 }

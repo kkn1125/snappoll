@@ -1,4 +1,5 @@
 import { login } from '@/apis/login';
+import { previousAtom } from '@/recoils/previous.atom';
 import { tokenAtom } from '@/recoils/token.atom';
 import { Message } from '@common/messages';
 import CustomInput from '@components/atoms/CustomInput';
@@ -22,10 +23,11 @@ import {
   useState,
 } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { useSetRecoilState } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 interface LoginProps {}
 const Login: React.FC<LoginProps> = () => {
+  const previous = useRecoilValue(previousAtom);
   const [validated, setValidated] = useState(false);
   const { openModal } = useModal();
   const locate = useLocation();
@@ -99,6 +101,7 @@ const Login: React.FC<LoginProps> = () => {
     if (validated) {
       validateForm(loginInfo);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [validated, loginInfo]);
 
   const handleSubmit = useCallback(
@@ -112,6 +115,7 @@ const Login: React.FC<LoginProps> = () => {
 
       return false;
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [loginInfo, mutation],
   );
 
@@ -182,7 +186,7 @@ const Login: React.FC<LoginProps> = () => {
           component={Link}
           variant="contained"
           size="large"
-          to="/"
+          to={previous || '/'}
           color="inherit"
         >
           메인으로

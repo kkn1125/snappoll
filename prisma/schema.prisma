@@ -47,13 +47,13 @@ model SharePoll {
 }
 
 model Poll {
-  id          String   @id @default(uuid()) @db.Uuid
-  title       String   @db.VarChar(30)
+  id          String    @id @default(uuid()) @db.Uuid
+  title       String    @db.VarChar(30)
   description String?
-  createdBy   String   @map("created_by") @db.Uuid
-  expiresAt   DateTime @default(now()) @map("expires_at")
-  createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @updatedAt @map("updated_at")
+  createdBy   String    @map("created_by") @db.Uuid
+  expiresAt   DateTime? @map("expires_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
 
   user User @relation(fields: [createdBy], references: [id])
 
@@ -126,13 +126,14 @@ model Option {
 }
 
 model Vote {
-  id          String   @id @default(uuid()) @db.Uuid
-  userId      String   @map("user_id") @db.Uuid
-  title       String   @db.VarChar(30)
+  id          String    @id @default(uuid()) @db.Uuid
+  userId      String    @map("user_id") @db.Uuid
+  title       String    @db.VarChar(30)
   description String
-  isMultiple  Boolean  @map("is_multiple")
-  createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @updatedAt @map("updated_at")
+  isMultiple  Boolean   @map("is_multiple")
+  expiresAt   DateTime? @map("expires_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
 
   user User @relation(fields: [userId], references: [id])
 

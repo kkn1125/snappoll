@@ -1,11 +1,12 @@
-import { Vote } from '@prisma/client';
+import { Vote, VoteOption } from '@prisma/client';
 
 export class CreateVoteDto
-  implements Omit<Vote, 'id' | 'createdAt' | 'updatedAt'>
+  implements Omit<Vote, 'id' | 'expiresAt' | 'createdAt' | 'updatedAt'>
 {
   title: string;
   description: string;
   userId: string;
-  content: string;
   isMultiple: boolean;
+  expiresAt?: Date;
+  voteOption?: VoteOption[];
 }

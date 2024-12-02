@@ -15,7 +15,14 @@ import {
   Switch,
   Typography,
 } from '@mui/material';
-import { ChangeEvent, memo, SyntheticEvent, useCallback } from 'react';
+import {
+  ChangeEvent,
+  Dispatch,
+  memo,
+  SetStateAction,
+  SyntheticEvent,
+  useCallback,
+} from 'react';
 import { useSetRecoilState } from 'recoil';
 import CreateOptionForm from './CreateOptionForm';
 
@@ -43,6 +50,7 @@ const CreateQuestionForm: React.FC<CreateQuestionFormProps> = ({
       copyPoll.updateQuestionByInfo(question.id, name, value);
       return copyPoll;
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const addOption = useCallback(() => {
@@ -63,6 +71,7 @@ const CreateQuestionForm: React.FC<CreateQuestionFormProps> = ({
       copyPoll.updateQuestionByInfo(question.id, 'type', value);
       return copyPoll;
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleChangeOnOff = useCallback(
@@ -74,6 +83,7 @@ const CreateQuestionForm: React.FC<CreateQuestionFormProps> = ({
         return copyPoll;
       });
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [],
   );
 

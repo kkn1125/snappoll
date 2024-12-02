@@ -22,6 +22,7 @@ import { useSetRecoilState } from 'recoil';
 import { snapResponseAtom } from '@/recoils/snapResponse.atom';
 import { SnapResponse } from '@models/SnapResponse';
 import { SnapAnswer } from '@models/SnapAnswer';
+import CheckedComponent from './CheckedComponent';
 
 interface QuestionItemProps {
   question: SnapPollQuestion;
@@ -47,6 +48,7 @@ const QuestionItem: React.FC<QuestionItemProps> = ({ question }) => {
       }
       return copyResponse;
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleClearValue = useCallback(() => {
@@ -58,6 +60,7 @@ const QuestionItem: React.FC<QuestionItemProps> = ({ question }) => {
       }
       return copyResponse;
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleChangeCheckbox = useCallback(
@@ -68,6 +71,7 @@ const QuestionItem: React.FC<QuestionItemProps> = ({ question }) => {
         if (checked) {
           if (!question.isMultiple) {
             copyResponse.answer = [];
+            setUseEtc(false);
           }
           const option = copyResponse.hasOption(name);
           if (!option) {
@@ -86,17 +90,31 @@ const QuestionItem: React.FC<QuestionItemProps> = ({ question }) => {
         return copyResponse;
       });
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [],
   );
 
   return (
-    <Stack>
-      <Typography fontSize={24} fontWeight={700}>
-        {question.title}
-      </Typography>
-      <Typography variant="subtitle2">{question.description}</Typography>
+    <Stack gap={3}>
+      <Stack>
+        <Typography className="font-maru" fontSize={24} fontWeight={700}>
+          {question.title}
+        </Typography>
+        <Typography className="font-maru" variant="subtitle2">
+          {question.description}
+        </Typography>
+      </Stack>
       {question.type === 'text' ? (
-        <TextField onChange={handleChange} />
+        <TextField
+          variant="filled"
+          onChange={handleChange}
+          slotProps={{
+            input: {
+              className: 'font-maru',
+            },
+          }}
+          placeholder={question.isRequired ? '작성해주세요.' : '작성해주세요.'}
+        />
       ) : (
         <List component={Stack} gap={1}>
           {question.option.map((option) => (
@@ -111,12 +129,19 @@ const QuestionItem: React.FC<QuestionItemProps> = ({ question }) => {
               component="label"
               sx={{
                 border: '1px solid #eee',
-                borderRadius: 0.5,
+                borderRadius: 1,
                 p: 2,
               }}
             >
+              <CheckedComponent checked={useEtc} />
               <FormControlLabel
                 label="기타"
+                slotProps={{
+                  typography: {
+                    className: 'font-maru',
+                  },
+                }}
+                checked={useEtc}
                 onChange={(e, checked) => {
                   if (!checked) {
                     handleClearValue();
@@ -131,13 +156,19 @@ const QuestionItem: React.FC<QuestionItemProps> = ({ question }) => {
                   }
                   setUseEtc(checked);
                 }}
-                control={<Checkbox name="useEtc" />}
+                control={<Checkbox name="useEtc" sx={{ display: 'none' }} />}
               />
             </ListItemButton>
           )}
           {useEtc && (
             <TextField
+              variant="filled"
               name="value"
+              slotProps={{
+                input: {
+                  className: 'font-maru',
+                },
+              }}
               placeholder="작성해주세요."
               onChange={handleChange}
             />

@@ -1,4 +1,10 @@
 import { PartialType } from '@nestjs/mapped-types';
-import { CreateVoteDto } from './create-vote.dto';
 
-export class UpdateVoteDto extends PartialType(CreateVoteDto) {}
+class CustomUpdateDto {
+  title: string;
+  description: string;
+  userId: string;
+  isMultiple: boolean;
+  expiresAt?: Date;
+}
+export class UpdateVoteDto extends PartialType(CustomUpdateDto) {}

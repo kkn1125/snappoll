@@ -28,6 +28,7 @@ const CreateOptionForm: React.FC<CreateOptionFormProps> = ({
       copyPoll.updateOptionByInfo(questionId, copyOption);
       return copyPoll;
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleRemove = useCallback(() => {
@@ -36,6 +37,7 @@ const CreateOptionForm: React.FC<CreateOptionFormProps> = ({
       copyPoll.deleteOption(questionId, option.id);
       return copyPoll;
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

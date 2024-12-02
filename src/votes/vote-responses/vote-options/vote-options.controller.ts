@@ -11,7 +11,7 @@ import { VoteOptionsService } from './vote-options.service';
 import { CreateVoteOptionDto } from './dto/create-vote-option.dto';
 import { UpdateVoteOptionDto } from './dto/update-vote-option.dto';
 
-@Controller('vote-options')
+@Controller('options')
 export class VoteOptionsController {
   constructor(private readonly voteOptionsService: VoteOptionsService) {}
 

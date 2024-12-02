@@ -1,4 +1,5 @@
 import { signup } from '@/apis/signup';
+import { previousAtom } from '@/recoils/previous.atom';
 import { Message } from '@common/messages';
 import CustomInput from '@components/atoms/CustomInput';
 import useModal from '@hooks/useModal';
@@ -28,9 +29,11 @@ import {
   useState,
 } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useRecoilValue } from 'recoil';
 
 interface SignupProps {}
 const Signup: React.FC<SignupProps> = () => {
+  const previous = useRecoilValue(previousAtom);
   const [validated, setValidated] = useState(false);
   const { openModal } = useModal();
   const [visible, setVisible] = useState({
@@ -157,6 +160,7 @@ const Signup: React.FC<SignupProps> = () => {
         errors={errors}
       />
     );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [signupInfo.email, errors.email]);
   const usernameComponent = useMemo(() => {
     return (
@@ -190,6 +194,7 @@ const Signup: React.FC<SignupProps> = () => {
         </Tooltip>
       </Stack>
     );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [signupInfo.username, errors.username]);
 
   const passwordComponent = useMemo(() => {
@@ -220,6 +225,7 @@ const Signup: React.FC<SignupProps> = () => {
         </IconButton>
       </Stack>
     );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [signupInfo.password, visible.password, errors.password]);
   const checkPasswordComponent = useMemo(() => {
     return (
@@ -249,6 +255,7 @@ const Signup: React.FC<SignupProps> = () => {
         </IconButton>
       </Stack>
     );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [signupInfo.checkPassword, visible.checkPassword, errors.checkPassword]);
 
   return (
@@ -289,7 +296,7 @@ const Signup: React.FC<SignupProps> = () => {
           component={Link}
           variant="contained"
           size="large"
-          to="/"
+          to={previous || '/'}
           reloadDocument
           color="inherit"
         >

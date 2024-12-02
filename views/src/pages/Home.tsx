@@ -1,11 +1,14 @@
-import { getPolls } from '@/apis/getPolls';
+import { getPolls } from '@/apis/poll/getPolls';
 import { removePoll } from '@/apis/removePoll';
 import { tokenAtom } from '@/recoils/token.atom';
 import { BRAND_NAME } from '@common/variables';
+import ListItemIcons from '@components/atoms/ListItemIcons';
+import { SnapPoll } from '@models/SnapPoll';
 import {
   Button,
   Container,
   List,
+  ListItem,
   ListItemButton,
   ListItemText,
   Paper,
@@ -21,12 +24,12 @@ const Home = () => {
   const { user } = useRecoilValue(tokenAtom);
   const queryClient = useQueryClient();
   const navigate = useNavigate();
-  const query = useQuery<APIPoll[]>({
+  const query = useQuery<SnapPoll[]>({
     queryKey: ['polls'],
-    queryFn: getPollList,
+    queryFn: getPolls,
   });
 
-  const mutation = useMutation({
+  const removeMutation = useMutation({
     mutationKey: ['polls-remove'],
     mutationFn: (pollId: string) => removePoll(pollId),
     onSuccess: () => {
@@ -34,15 +37,11 @@ const Home = () => {
       queryClient.invalidateQueries({ queryKey: ['polls'] });
     },
   });
-  async function getPollList() {
-    const polls = await getPolls();
-    return polls;
-  }
 
   function handleRemovePoll(pollId: string) {
     return (e: MouseEvent) => {
       e.stopPropagation();
-      mutation.mutate(pollId);
+      removeMutation.mutate(pollId);
     };
   }
 
@@ -74,20 +73,42 @@ const Home = () => {
           <Paper>
             <List>
               {query.data?.map((poll) => (
-                <ListItemButton
+                <ListItem
+                  disablePadding
                   key={poll.id}
-                  onClick={() => {
-                    navigate('/polls/' + poll.id);
+                  secondaryAction={
+                    poll.user?.id === user?.id && (
+                      <ListItemIcons
+                        dataId={poll.id}
+                        type="poll"
+                        handleRemove={handleRemovePoll}
+                      />
+                    )
+                  }
+                  sx={{
+                    ['& .MuiListItemSecondaryAction-root']: {
+                      transition: '150ms ease-in-out',
+                      opacity: 0,
+                    },
+                    ['&:hover .MuiListItemSecondaryAction-root']: {
+                      opacity: 1,
+                    },
                   }}
                 >
-                  <ListItemText
-                    primary={poll.title}
-                    secondary={poll.user?.username || 'Unknown'}
-                  />
-                  {poll.user?.id === user?.id && (
-                    <Button onClick={handleRemovePoll(poll.id)}>❌</Button>
-                  )}
-                </ListItemButton>
+                  <ListItemButton
+                    onClick={() => {
+                      navigate('/polls/' + poll.id);
+                    }}
+                  >
+                    <ListItemText
+                      primary={poll.title}
+                      secondary={poll.user?.username || 'Unknown'}
+                    />
+                    {/* {poll.user?.id === user?.id && (
+                      <Button onClick={handleRemovePoll(poll.id)}>❌</Button>
+                    )} */}
+                  </ListItemButton>
+                </ListItem>
               ))}
               {query.data?.length === 0 && (
                 <ListItemButton>

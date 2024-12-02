@@ -1,43 +1,27 @@
-import { getMyVotes } from '@/apis/getMyVotes';
-import { removeVote } from '@/apis/removeVote';
+import { getMyVotes } from '@/apis/vote/getMyVotes';
 import ListDataItem from '@components/atoms/ListDataItem';
-import { Button, Container, List, Stack, Toolbar } from '@mui/material';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { SnapVote } from '@models/SnapVote';
+import { Container, List, Stack, Toolbar } from '@mui/material';
+import { useQuery } from '@tanstack/react-query';
 
 interface MyVotesProps {}
 const MyVotes: React.FC<MyVotesProps> = () => {
-  const queryClient = useQueryClient();
-  const query = useQuery<Vote[]>({
+  const { data } = useQuery<{ votes: SnapVote[]; count: number }>({
     queryKey: ['my-votes'],
     queryFn: getMyVotes,
   });
-
-  const remoteMutate = useMutation({
-    mutationKey: ['removeVote'],
-    mutationFn: removeVote,
-    onSuccess(data, variables, context) {
-      queryClient.invalidateQueries({
-        queryKey: ['my-votes'],
-      });
-    },
-  });
-
-  function handleRemove(id: string) {
-    remoteMutate.mutate(id);
-  }
 
   return (
     <Stack>
       <Toolbar />
       <Container>
         <List>
-          {query.data && (
+          {data && (
             <ListDataItem
               name="vote"
-              dataList={query.data}
-              removeMethod={handleRemove}
               queryKey="votes"
-              mutationKey="voteRemove"
+              dataList={data.votes}
+              count={data.count}
               emptyComment="등록한 투표지가 없습니다."
             />
           )}

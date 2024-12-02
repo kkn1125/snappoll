@@ -8,6 +8,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   Req,
   UseGuards,
 } from '@nestjs/common';
@@ -31,19 +32,24 @@ export class PollsController {
 
   // @Roles([Role.User])
   @Get()
-  findAll() {
-    return this.pollsService.findAll();
+  findAll(@Query('page') page: number = 1) {
+    return this.pollsService.findAll(page);
   }
 
   @Get('me')
-  findMe(@Req() req: Request) {
+  findMe(@Req() req: Request, @Query('page') page: number = 1) {
     const { id } = req.user;
-    return this.pollsService.findMe(id);
+    return this.pollsService.findMe(id, page);
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.pollsService.findOne(id);
+  }
+
+  @Get(':id/response')
+  findOneResponses(@Param('id') id: string) {
+    return this.pollsService.findResponses(id);
   }
 
   @Patch(':id')

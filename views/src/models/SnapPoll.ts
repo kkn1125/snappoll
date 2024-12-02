@@ -1,6 +1,7 @@
 import { v4 } from 'uuid';
 import { SnapPollQuestion } from './SnapPollQuestion';
 import { SnapPollOption } from './SnapPollOption';
+import { SnapResponse } from './SnapResponse';
 
 export class SnapPoll {
   static copy(origin: SnapPoll) {
@@ -11,10 +12,12 @@ export class SnapPoll {
   title: string = '';
   description: string = '';
   createdBy: string = '';
-  expiresAt: Date = new Date();
-  question: SnapPollQuestion[] = [];
+  expiresAt?: Date;
   createdAt: Date = new Date();
   updatedAt: Date = new Date();
+  question: SnapPollQuestion[] = [];
+  user?: User;
+  response?: SnapResponse[];
 
   constructor(props?: SnapPoll) {
     if (props) {

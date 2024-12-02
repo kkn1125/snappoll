@@ -1,5 +1,6 @@
 import { v4 } from 'uuid';
 import { SnapAnswer } from './SnapAnswer';
+import { SnapPoll } from './SnapPoll';
 
 export class SnapResponse {
   static copy(origin: SnapResponse) {
@@ -12,6 +13,8 @@ export class SnapResponse {
   createdAt: Date = new Date();
   updatedAt: Date = new Date();
   answer: SnapAnswer[] = [];
+  poll?: SnapPoll;
+  user?: User;
 
   constructor(props?: SnapResponse) {
     if (props) {

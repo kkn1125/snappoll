@@ -8,6 +8,7 @@ import {
   Delete,
   Req,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { VotesService } from './votes.service';
 import { CreateVoteDto } from './dto/create-vote.dto';
@@ -26,14 +27,14 @@ export class VotesController {
   }
 
   @Get()
-  findAll() {
-    return this.votesService.findAll();
+  findAll(@Query('page') page: number = 1) {
+    return this.votesService.findAll(page);
   }
 
   @Get('me')
-  findMe(@Req() req: Request) {
+  findMe(@Req() req: Request, @Query('page') page: number = 1) {
     const { id } = req.user;
-    return this.votesService.findMe(id);
+    return this.votesService.findMe(id, page);
   }
 
   @Get(':id')

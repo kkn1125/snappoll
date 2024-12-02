@@ -3,6 +3,7 @@ import { SnapPollOption } from '@models/SnapPollOption';
 import { Checkbox, FormControlLabel, ListItemButton } from '@mui/material';
 import { ChangeEvent, memo, SyntheticEvent, useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
+import CheckedComponent from './CheckedComponent';
 
 interface OptionItemProps {
   option: SnapPollOption;
@@ -18,12 +19,24 @@ const OptionItem: React.FC<OptionItemProps> = ({ option, onChange }) => {
   return (
     <ListItemButton
       component="label"
-      sx={{ border: '1px solid #eee', borderRadius: 0.5, p: 2 }}
+      sx={{ border: '1px solid #eee', borderRadius: 1, p: 2 }}
     >
+      <CheckedComponent checked={checked} />
       <FormControlLabel
         label={option.content}
+        slotProps={{
+          typography: {
+            className: 'font-maru',
+          },
+        }}
         onChange={onChange}
-        control={<Checkbox name={option.id} checked={checked} />}
+        control={
+          <Checkbox
+            name={option.id}
+            checked={checked}
+            sx={{ display: 'none' }}
+          />
+        }
       />
     </ListItemButton>
   );

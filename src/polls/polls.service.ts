@@ -64,8 +64,13 @@ export class PollsService {
     });
   }
 
-  findAll() {
-    return this.prisma.poll.findMany({
+  async findAll(page: number) {
+    const polls = await this.prisma.poll.findMany({
+      take: 10,
+      skip: (page - 1) * 10,
+      orderBy: {
+        createdAt: 'desc',
+      },
       include: {
         user: {
           select: {
@@ -78,11 +83,19 @@ export class PollsService {
         },
       },
     });
+    const count = await this.prisma.poll.count();
+
+    return { polls, count };
   }
 
-  findMe(id: string) {
-    return this.prisma.poll.findMany({
+  async findMe(id: string, page: number) {
+    const polls = await this.prisma.poll.findMany({
       where: { createdBy: id },
+      take: 10,
+      skip: (page - 1) * 10,
+      orderBy: {
+        createdAt: 'desc',
+      },
       include: {
         user: {
           select: {
@@ -93,8 +106,12 @@ export class PollsService {
             updatedAt: true,
           },
         },
+        _count: true,
       },
     });
+    const count = await this.prisma.poll.count({ where: { createdBy: id } });
+
+    return { polls, count };
   }
 
   findOne(id: string) {
@@ -114,6 +131,45 @@ export class PollsService {
           include: {
             option: true,
             answer: true,
+          },
+        },
+      },
+    });
+  }
+
+  findResponses(id: string) {
+    // return this.prisma.poll.findUnique({
+    //   where: { id },
+    //   include: {
+    //     response: {
+    //       include: {
+    //         answer: true,
+    //       },
+    //     },
+    //     question: {
+    //       include: {
+    //         option: true,
+    //         answer: true,
+    //       },
+    //     },
+    //   },
+    // });
+    return this.prisma.response.findMany({
+      where: {
+        pollId: id,
+      },
+      include: {
+        poll: {
+          include: {
+            question: true,
+          },
+        },
+        answer: true,
+        user: {
+          select: {
+            id: true,
+            username: true,
+            email: true,
           },
         },
       },

@@ -1,7 +1,7 @@
 import { snapPollAtom } from '@/recoils/snapPoll.atom';
 import CustomInput from '@components/atoms/CustomInput';
 import { SnapPoll } from '@models/SnapPoll';
-import { Stack, Typography } from '@mui/material';
+import { FormControlLabel, Stack, Switch, Typography } from '@mui/material';
 import {
   DateTimePicker,
   DateTimeValidationError,
@@ -9,14 +9,14 @@ import {
 } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
 import { ChangeEvent, memo, useCallback, useState } from 'react';
-import { useRecoilState, useSetRecoilState } from 'recoil';
+import { useRecoilState } from 'recoil';
 
 interface CreatePollFormProps {
   errors: ErrorMessage<SnapPoll>;
 }
 const CreatePollForm: React.FC<CreatePollFormProps> = ({ errors }) => {
+  const [useExpires, setUseExpires] = useState(true);
   const [snapPoll, setSnapPoll] = useRecoilState(snapPollAtom);
-  const [validated, setValidated] = useState(false);
 
   const onChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     const name = e.target.name;
@@ -26,6 +26,7 @@ const CreatePollForm: React.FC<CreatePollFormProps> = ({ errors }) => {
       Object.assign(newSnapPoll, { [name]: value });
       return newSnapPoll;
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const updateExpiresTime = useCallback((name: string) => {
@@ -39,33 +40,8 @@ const CreatePollForm: React.FC<CreatePollFormProps> = ({ errors }) => {
         return newSnapPoll;
       });
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  const validateForm = useCallback(() => {
-    const errorMessages: Partial<Record<keyof SnapPoll, string>> = {};
-    if (snapPoll.title === '') {
-      errorMessages['title'] = '필수입니다.';
-    }
-    if (snapPoll.description === '') {
-      errorMessages['description'] = '필수입니다.';
-    }
-    if (snapPoll.expiresAt < new Date()) {
-      errorMessages['expiresAt'] = '현재보다 과거일 수 없습니다.';
-    }
-    // setErrors(errorMessages);
-  }, [snapPoll]);
-
-  // useEffect(() => {
-  //   if (user) {
-  //     setPoll((poll) => ({ ...poll, createdBy: user.id }));
-  //   }
-  // }, [user]);
-
-  // useEffect(() => {
-  //   if (validated) {
-  //     validateForm();
-  //   }
-  // }, [validateForm, validated]);
 
   return (
     <Stack gap={3}>
@@ -101,6 +77,7 @@ const CreatePollForm: React.FC<CreatePollFormProps> = ({ errors }) => {
         </Typography>
         <Stack direction="row" gap={1} alignItems="center">
           <DateTimePicker
+            disabled={!useExpires}
             format="YYYY. MM. DD. HH:mm"
             value={dayjs(snapPoll.expiresAt)}
             sx={{
@@ -109,6 +86,21 @@ const CreatePollForm: React.FC<CreatePollFormProps> = ({ errors }) => {
               },
             }}
             onChange={updateExpiresTime('expiresAt')}
+            // minDateTime={dayjs()}
+          />
+          <FormControlLabel
+            label="설문 기간 설정"
+            onChange={(e, checked) => {
+              if (checked) {
+                setSnapPoll((snapPoll) => {
+                  const newSnapPoll = SnapPoll.copy(snapPoll);
+                  newSnapPoll['expiresAt'] = undefined;
+                  return newSnapPoll;
+                });
+              }
+              setUseExpires(checked);
+            }}
+            control={<Switch checked={useExpires} />}
           />
         </Stack>
       </Stack>

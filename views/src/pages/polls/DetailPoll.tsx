@@ -1,5 +1,5 @@
-import { getPoll } from '@/apis/getPoll';
-import { savePollResult } from '@/apis/savePollResult';
+import { getPoll } from '@/apis/poll/getPoll';
+import { savePollResult } from '@/apis/poll/savePollResult';
 import { snapResponseAtom } from '@/recoils/snapResponse.atom';
 import { tokenAtom } from '@/recoils/token.atom';
 import { Message } from '@common/messages';
@@ -10,7 +10,7 @@ import { SnapResponse } from '@models/SnapResponse';
 import { Button, Container, Divider, Stack, Toolbar } from '@mui/material';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
-import { FormEvent, useEffect } from 'react';
+import { FormEvent } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 
@@ -84,7 +84,7 @@ const DetailPoll: React.FC<DetailPollProps> = () => {
   }
 
   return (
-    <Container>
+    <Container maxWidth="md">
       <Toolbar />
       <Stack component="form" gap={3} onSubmit={handleSavePollResult}>
         {data && <PollLayout poll={data} />}
@@ -97,7 +97,9 @@ const DetailPoll: React.FC<DetailPollProps> = () => {
           size="large"
           type="button"
           color="inherit"
-          onClick={() => navigate(-1)}
+          onClick={() => {
+            history.back();
+          }}
         >
           이전으로
         </Button>

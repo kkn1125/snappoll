@@ -202,10 +202,10 @@ export declare global {
     voteResult?: VoteResult;
   }
 
-  interface VoteOption {
-    type: string;
-    items: VoteOptionItem[];
-  }
+  // interface VoteOption {
+  //   type: string;
+  //   items: VoteOptionItem[];
+  // }
 
   interface VoteOptionItem {
     name: string;

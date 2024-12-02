@@ -1,15 +1,18 @@
 import { createPoll } from '@/apis/poll/create.poll';
 import { Action } from '@/models/Action';
+import { previousAtom } from '@/recoils/previous.atom';
 import { snapPollAtom } from '@/recoils/snapPoll.atom';
 import { tokenAtom } from '@/recoils/token.atom';
+import { Message } from '@common/messages';
 import CreatePollForm from '@components/moleculars/CreatePollForm';
 import CreateQuestionForm from '@components/moleculars/CreateQuestionForm';
+import useModal from '@hooks/useModal';
 import { SnapPoll } from '@models/SnapPoll';
-import { SnapPollOption } from '@models/SnapPollOption';
 import { SnapPollQuestion } from '@models/SnapPollQuestion';
 import AddBoxIcon from '@mui/icons-material/AddBox';
 import SaveIcon from '@mui/icons-material/Save';
 import {
+  Button,
   Container,
   Divider,
   SpeedDial,
@@ -20,22 +23,32 @@ import {
 } from '@mui/material';
 import { useMutation } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
-import { FormEvent, memo, useCallback, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useRecoilState } from 'recoil';
+import {
+  FormEvent,
+  memo,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useRecoilState, useRecoilValue } from 'recoil';
 
 interface CreateSnapPollProps {}
 const CreateSnapPoll: React.FC<CreateSnapPollProps> = () => {
+  const previous = useRecoilValue(previousAtom);
+  const { openInteractiveModal } = useModal();
   const [{ user }, setToken] = useRecoilState(tokenAtom);
   const navigate = useNavigate();
   const [snapPoll, setSnapPoll] = useRecoilState(snapPollAtom);
+  const [validated, setValidated] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
   const createMutate = useMutation({
     mutationKey: ['createPoll'],
     mutationFn: createPoll,
     onSuccess(data, variables, context) {
       setSnapPoll(new SnapPoll());
-      navigate(-1);
+      navigate(previous || '/');
     },
     onError(error: AxiosError, variables, context) {
       if (error.response?.status === 401) {
@@ -59,15 +72,22 @@ const CreateSnapPoll: React.FC<CreateSnapPollProps> = () => {
       formRef.current?.requestSubmit();
     }),
   ];
-  const [errors, setErrors] = useState<{
-    poll: ErrorMessage<SnapPoll>;
-    question: ErrorMessage<SnapPollQuestion>;
-    option: ErrorMessage<SnapPollOption>;
-  }>({
-    poll: {},
-    question: {},
-    option: {},
-  });
+  const [errors, setErrors] = useState<ErrorMessage<SnapPoll>>({});
+
+  useEffect(() => {
+    function handleBeforeUnloaded(e: BeforeUnloadEvent) {
+      e.preventDefault();
+      return '';
+    }
+    window.addEventListener('beforeunload', handleBeforeUnloaded, {
+      capture: true,
+    });
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnloaded, {
+        capture: true,
+      });
+    };
+  }, []);
 
   const addQuestion = useCallback(() => {
     const newQuestion = new SnapPollQuestion();
@@ -76,23 +96,72 @@ const CreateSnapPoll: React.FC<CreateSnapPollProps> = () => {
       copyPoll.addQuestion(newQuestion);
       return copyPoll;
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  function handleSubmit(e: FormEvent) {
-    e.preventDefault();
-    const copyPoll = SnapPoll.copy(snapPoll);
-    if (user) {
-      copyPoll.createdBy = user.id;
+  const validateForm = useCallback((snapPoll: SnapPoll) => {
+    const copyErrors: ErrorMessage<SnapPoll> = {};
+    if (snapPoll.title === '') {
+      copyErrors['title'] = '필수입니다.';
     }
-    // snapPoll.createdBy
-    createMutate.mutate(copyPoll);
-  }
+    if (snapPoll.description === '') {
+      copyErrors['description'] = '필수입니다.';
+    }
+    if (snapPoll.expiresAt && snapPoll.expiresAt < new Date()) {
+      copyErrors['expiresAt'] = '현재보다 과거일 수 없습니다.';
+    }
+
+    setErrors(copyErrors);
+
+    return Object.keys(copyErrors).length === 0;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const handleSubmit = useCallback(
+    (e: FormEvent) => {
+      e.preventDefault();
+      setValidated(true);
+
+      if (!validateForm(snapPoll)) return;
+
+      const copyPoll = SnapPoll.copy(snapPoll);
+
+      if (user) {
+        copyPoll.createdBy = user.id;
+      }
+
+      openInteractiveModal(Message.Single.Save, () => {
+        createMutate.mutate(copyPoll);
+      });
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    },
+    [snapPoll],
+  );
 
   return (
     <Container maxWidth="md">
       <Toolbar />
-      <Stack component="form" ref={formRef} onSubmit={handleSubmit} gap={2}>
-        <CreatePollForm errors={errors.poll} />
+      <Stack
+        component="form"
+        ref={formRef}
+        noValidate
+        onSubmit={handleSubmit}
+        gap={2}
+      >
+        <Stack direction="row">
+          <Button
+            component={Link}
+            to={previous || '/'}
+            reloadDocument
+            variant="contained"
+            color="inherit"
+          >
+            이전으로
+          </Button>
+        </Stack>
+
+        <CreatePollForm errors={errors} />
+
         <Divider />
 
         <Stack gap={3}>
@@ -101,7 +170,11 @@ const CreateSnapPoll: React.FC<CreateSnapPollProps> = () => {
               key={question.id}
               index={i + 1}
               question={question}
-              errors={errors.question}
+              errors={
+                errors.question?.[
+                  i
+                ] as unknown as ErrorMessage<SnapPollQuestion>
+              }
             />
           ))}
         </Stack>

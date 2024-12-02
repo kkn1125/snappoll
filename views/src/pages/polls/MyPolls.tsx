@@ -1,43 +1,31 @@
-import { getMyPolls } from '@/apis/getMyPolls';
-import { removePoll } from '@/apis/removePoll';
+import { getMyPolls } from '@/apis/poll/getMyPolls';
 import ListDataItem from '@components/atoms/ListDataItem';
-import { Button, Container, List, Stack, Toolbar } from '@mui/material';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { SnapPoll } from '@models/SnapPoll';
+import { Container, List, Stack, Toolbar } from '@mui/material';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 
 interface MyPollsProps {}
 const MyPolls: React.FC<MyPollsProps> = () => {
-  const queryClient = useQueryClient();
-  const query = useQuery<APIPoll[]>({
-    queryKey: ['my-polls'],
+  const [params, setParams] = useSearchParams({ page: '1' });
+  const page = +(params.get('page') || 1);
+  const { data } = useQuery<{ polls: SnapPoll[]; count: number }>({
+    queryKey: ['my-polls', page],
     queryFn: getMyPolls,
   });
-
-  const removeMutate = useMutation({
-    mutationKey: ['removePoll'],
-    mutationFn: removePoll,
-    onSuccess(data, variables, context) {
-      queryClient.invalidateQueries({
-        queryKey: ['my-polls'],
-      });
-    },
-  });
-
-  function handleRemove(id: string) {
-    removeMutate.mutate(id);
-  }
 
   return (
     <Stack>
       <Toolbar />
       <Container>
         <List>
-          {query.data && (
+          {data?.polls && (
             <ListDataItem
               name="poll"
-              dataList={query.data}
-              removeMethod={handleRemove}
-              queryKey="polls"
-              mutationKey="pollRemove"
+              queryKey="my-polls"
+              dataList={data.polls}
+              count={data.count}
               emptyComment="등록한 설문지가 없습니다."
             />
           )}

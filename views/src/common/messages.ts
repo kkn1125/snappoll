@@ -34,6 +34,7 @@ export const Info = {
 export type Info = (typeof Info)[keyof typeof Info];
 
 export const Single = {
+  Save: '이대로 저장하시겠습니까?',
   Remove: '정말로 삭제하시겠습니까?',
 } as const;
 export type Single = (typeof Single)[keyof typeof Single];

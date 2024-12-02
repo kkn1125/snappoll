@@ -1,4 +1,4 @@
-import { snapApi } from '.';
+import { snapApi } from '..';
 
 export async function getPoll(id?: string) {
   if (!id) return {};

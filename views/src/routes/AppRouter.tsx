@@ -17,12 +17,16 @@ import Login from '@pages/user/Login';
 import Profile from '@pages/user/Profile';
 import Signup from '@pages/user/Signup';
 import MyVotes from '@pages/votes/MyVotes';
-import SnapVote from '@pages/votes/SnapVote';
+import CreateSnapVote from '@pages/votes/CreateSnapVote';
 import VoteList from '@pages/votes/VoteList';
 import { useMutation } from '@tanstack/react-query';
 import { useCallback, useEffect, useState } from 'react';
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useSetRecoilState } from 'recoil';
+import { previousAtom } from '@/recoils/previous.atom';
+import DetailVote from '@pages/votes/DetailVote';
+import PollResponse from '@pages/polls/PollResponse';
+import DetailPollResponse from '@pages/polls/response/DetailPollResponse';
 
 function AppRouter() {
   const [loaded, setLoaded] = useState(false);
@@ -31,6 +35,7 @@ function AppRouter() {
   const [{ signed }, setToken] = useRecoilState(tokenAtom);
   const navigate = useNavigate();
   const locate = useLocation();
+  const setPrevious = useSetRecoilState(previousAtom);
 
   const clearToken = useCallback(() => {
     localStorage.setItem('logged_in', 'false');
@@ -48,6 +53,13 @@ function AppRouter() {
   const verifyMutate = useMutation({
     mutationKey: ['verify'],
     mutationFn: verifyLogin,
+    onError(error, variables, context) {
+      const loggedIn = localStorage.getItem('logged_in');
+      if (loggedIn === 'true') {
+        openModal(Message.Expired.Token);
+      }
+      clearToken();
+    },
   });
 
   const getMeMutate = useMutation({
@@ -76,10 +88,20 @@ function AppRouter() {
   });
 
   useEffect(() => {
+    const pathname = location.pathname;
+    return () => {
+      setPrevious(pathname);
+      closeModal();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.pathname]);
+
+  useEffect(() => {
     const loggedIn = localStorage.getItem('logged_in');
     if (loggedIn === 'true' && signed) {
       verifyMutate.mutate();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.pathname, signed]);
 
   useEffect(() => {
@@ -117,11 +139,17 @@ function AppRouter() {
           <Route path="new" element={<CreateSnapPoll />} />
           {/* <Route path="new/preview" element={<PreviewPoll />} /> */}
           <Route path=":id" element={<DetailPoll />} />
+          <Route path=":id/response" element={<PollResponse />} />
+          <Route
+            path=":id/response/:responseId"
+            element={<DetailPollResponse />}
+          />
         </Route>
         <Route path="votes">
           <Route index element={<VoteList />} />
           <Route path="me" element={<MyVotes />} />
-          <Route path="new" element={<SnapVote />} />
+          <Route path="new" element={<CreateSnapVote />} />
+          <Route path=":id" element={<DetailVote />} />
         </Route>
         <Route path="about" element={<About />} />
         <Route path="graph" element={<Graph />} />
