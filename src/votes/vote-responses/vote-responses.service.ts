@@ -69,11 +69,16 @@ export class VoteResponsesService {
     });
   }
 
-  update(id: string, updateVoteResponseDto: UpdateVoteResponseDto) {
-    return `This action updates a #${id} voteResponse`;
+  async update(id: string, updateVoteResponseDto: UpdateVoteResponseDto) {
+    return this.prisma.voteResponse.update({
+      where: { id },
+      data: updateVoteResponseDto,
+    });
   }
 
   remove(id: string) {
-    return this.prisma;
+    return this.prisma.voteResponse.delete({
+      where: { id },
+    });
   }
 }
