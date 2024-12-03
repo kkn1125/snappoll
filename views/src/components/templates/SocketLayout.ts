@@ -19,7 +19,6 @@ const SocketLayout: React.FC<SocketLayoutProps> = ({ children }) => {
     function onConnect() {
       setIsConnected(true);
       socket.emitWithAck('getMessages', { userId: user?.id }).then((res) => {
-        console.log(res);
         setMessage((message) => {
           const newMessage = MessageManager.copy(message);
           newMessage.receiver = res;

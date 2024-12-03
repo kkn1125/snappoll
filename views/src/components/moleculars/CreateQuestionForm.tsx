@@ -6,6 +6,7 @@ import { SnapPollQuestion } from '@models/SnapPollQuestion';
 import {
   Button,
   FormControlLabel,
+  IconButton,
   List,
   MenuItem,
   Paper,
@@ -25,6 +26,7 @@ import {
 } from 'react';
 import { useSetRecoilState } from 'recoil';
 import CreateOptionForm from './CreateOptionForm';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 interface CreateQuestionFormProps {
   index: number;
@@ -41,6 +43,16 @@ const CreateQuestionForm: React.FC<CreateQuestionFormProps> = ({
   // const [options, setOptions] = useState<SnapPollOption[]>([
   //   new SnapPollOption(),
   // ]);
+
+  const handleRemove = useCallback((questionId: string) => {
+    setSnapPoll((snapPoll) => {
+      const copySnapPoll = SnapPoll.copy(snapPoll);
+      copySnapPoll.question = copySnapPoll.question.filter(
+        (question) => question.id !== questionId,
+      );
+      return copySnapPoll;
+    });
+  }, []);
 
   const onChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     const name = e.target.name as keyof SnapPollQuestion;
@@ -94,14 +106,15 @@ const CreateQuestionForm: React.FC<CreateQuestionFormProps> = ({
           direction="row"
           gap={2}
           justifyContent="space-between"
-          alignItems="baseline"
+          alignItems="center"
+          flexWrap="wrap"
         >
           <Typography fontSize={18} fontWeight={700}>
             {index}
           </Typography>
           <CustomInput
             // label="제목"
-            fullWidth
+            autoFocus
             placeholder="질문"
             name="title"
             type="text"
@@ -111,6 +124,8 @@ const CreateQuestionForm: React.FC<CreateQuestionFormProps> = ({
             onChange={onChange}
             errors={errors}
             sx={{
+              minWidth: '30vw',
+              flex: 1,
               ['& .MuiInputBase-root']: {
                 fontSize: 18,
                 fontWeight: 700,
@@ -126,13 +141,16 @@ const CreateQuestionForm: React.FC<CreateQuestionFormProps> = ({
             value={question.type}
             size="small"
             onChange={handleChangeType}
-            sx={{ minWidth: 200 }}
+            sx={{ minWidth: 100 }}
             required
           >
             <MenuItem value="text">입력</MenuItem>
             <MenuItem value="select">선택</MenuItem>
             <MenuItem value="checkbox">체크박스</MenuItem>
           </Select>
+          <IconButton color="error" onClick={() => handleRemove(question.id)}>
+            <DeleteIcon />
+          </IconButton>
         </Stack>
         <CustomInput
           label="설명"

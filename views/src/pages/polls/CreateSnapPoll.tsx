@@ -114,7 +114,6 @@ const CreateSnapPoll: React.FC<CreateSnapPollProps> = () => {
     setErrors(copyErrors);
 
     return Object.keys(copyErrors).length === 0;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleSubmit = useCallback(
@@ -133,8 +132,8 @@ const CreateSnapPoll: React.FC<CreateSnapPollProps> = () => {
       openInteractiveModal(Message.Single.Save, () => {
         createMutate.mutate(copyPoll);
       });
-      // eslint-disable-next-line react-hooks/exhaustive-deps
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [snapPoll],
   );
 

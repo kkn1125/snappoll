@@ -111,14 +111,11 @@ const CreateVoteForm: React.FC<CreateVoteFormProps> = ({ errors }) => {
         <FormControlLabel
           label="중복선택 허용"
           onChange={(e, checked) => {
-            if (checked) {
-              setSnapVote((snapVote) => {
-                const newSnapVote = SnapVote.copy(snapVote);
-                newSnapVote['isMultiple'] = checked;
-                return newSnapVote;
-              });
-            }
-            setUseExpires(checked);
+            setSnapVote((snapVote) => {
+              const newSnapVote = SnapVote.copy(snapVote);
+              newSnapVote['isMultiple'] = checked;
+              return newSnapVote;
+            });
           }}
           control={<Switch checked={snapVote.isMultiple} />}
         />

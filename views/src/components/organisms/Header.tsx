@@ -4,6 +4,7 @@ import { BRAND_NAME, DefaultProfile, logoImage } from '@common/variables';
 import useScroll from '@hooks/useScroll';
 import MenuOpenRoundedIcon from '@mui/icons-material/MenuOpenRounded';
 import MenuRoundedIcon from '@mui/icons-material/MenuRounded';
+import WidgetsIcon from '@mui/icons-material/Widgets';
 import {
   AppBar,
   Avatar,
@@ -18,10 +19,9 @@ import {
   useMediaQuery,
   useTheme,
 } from '@mui/material';
-import { Fragment, MouseEvent, useEffect, useMemo, useState } from 'react';
+import { MouseEvent, useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import WidgetsIcon from '@mui/icons-material/Widgets';
 
 const headerBgChangePoint = 100;
 

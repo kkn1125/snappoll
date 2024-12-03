@@ -1,3 +1,6 @@
+import { PROJECT_BASEPATH } from '@common/variables.js';
+import Modal from '@components/moleculars/Modal.js';
+import SocketLayout from '@components/templates/SocketLayout.js';
 import CssBaseline from '@mui/material/CssBaseline';
 import {
   ThemeProvider,
@@ -5,27 +8,23 @@ import {
   createTheme,
   getContrastRatio,
 } from '@mui/material/styles';
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import LoadingScreenProvider from '@providers/LoadingScreenProvider.js';
+import ModalProvider from '@providers/ModalProvider.js';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import 'dayjs/locale/ko';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import { RecoilRoot } from 'recoil';
 import AppRouter from './routes/AppRouter.js';
-import { PROJECT_BASEPATH } from '@common/variables.js';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers';
-import 'dayjs/locale/ko';
-import LoadingScreenProvider from '@providers/LoadingScreenProvider.js';
-import ModalProvider from '@providers/ModalProvider.js';
-import { scan } from 'react-scan';
-import Modal from '@components/moleculars/Modal.js';
-import SocketLayout from '@components/templates/SocketLayout.js';
 
-if (typeof window !== 'undefined') {
-  scan({
-    enabled: import.meta.env.DEV,
-    log: import.meta.env.DEV,
-  });
-}
+// if (typeof window !== 'undefined') {
+//   scan({
+//     enabled: import.meta.env.DEV,
+//     log: import.meta.env.DEV,
+//   });
+// }
 
 const skyColor = '#98cfff';
 const skyColorMain = alpha(skyColor, 0.7);

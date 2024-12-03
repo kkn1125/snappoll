@@ -11,8 +11,9 @@ import {
   useMediaQuery,
   useTheme,
 } from '@mui/material';
+import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 
 interface FlexibleMenuProps {
   name: string;
@@ -27,14 +28,25 @@ const FlexibleMenu: React.FC<FlexibleMenuProps> = ({
   badge,
 }) => {
   const navigation = useNavigate();
-  const sidebarState = useRecoilValue(sidebarAtom);
+  const [sidebarState, setSidebarState] = useRecoilState(sidebarAtom);
   const theme = useTheme();
   const isMdDown = useMediaQuery(theme.breakpoints.down('md'));
   const opened = isMdDown ? !sidebarState.opened : sidebarState.opened;
 
   function handleRedirect(to: string) {
+    if (isMdDown) {
+      handleCloseSidebar();
+    }
     navigation(to);
   }
+
+  const handleCloseSidebar = useCallback(() => {
+    setSidebarState((sidebarState) => ({
+      ...sidebarState,
+      opened: !sidebarState.opened,
+    }));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <ListItem disablePadding>

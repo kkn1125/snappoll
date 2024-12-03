@@ -25,6 +25,7 @@ interface ListDataItemProps<T extends SnapPoll | SnapVote> {
   dataList: T[];
   count: number;
   emptyComment?: string;
+  disableCreateButton?: boolean;
 }
 
 function ListDataItem<T extends SnapPoll | SnapVote>({
@@ -33,6 +34,7 @@ function ListDataItem<T extends SnapPoll | SnapVote>({
   dataList,
   count,
   emptyComment = '등록한 데이터가 없습니다.',
+  disableCreateButton = false,
 }: ListDataItemProps<T>) {
   const { openInteractiveModal } = useModal();
   const { user } = useRecoilValue(tokenAtom);
@@ -60,16 +62,18 @@ function ListDataItem<T extends SnapPoll | SnapVote>({
 
   return (
     <Stack>
-      <Stack direction="row">
-        <Button
-          component={Link}
-          variant="contained"
-          size="large"
-          to={`/${name}s/new`}
-        >
-          등록하기
-        </Button>
-      </Stack>
+      {!disableCreateButton && (
+        <Stack direction="row">
+          <Button
+            component={Link}
+            variant="contained"
+            size="large"
+            to={`/${name}s/new`}
+          >
+            등록하기
+          </Button>
+        </Stack>
+      )}
       <List>
         {dataList && dataList.length > 0 ? (
           dataList.map((data, i) => (
@@ -112,21 +116,23 @@ function ListDataItem<T extends SnapPoll | SnapVote>({
           </ListItem>
         )}
       </List>
-      <Stack direction="row" justifyContent="center">
-        <Pagination
-          onChange={(e, page) => {
-            if (page === 1) {
-              setParams({});
-            } else {
-              setParams({ page: '' + page });
-            }
-          }}
-          page={+(params.get('page') || 1)}
-          count={total}
-          showFirstButton
-          showLastButton
-        />
-      </Stack>
+      {total > 0 && (
+        <Stack direction="row" justifyContent="center">
+          <Pagination
+            onChange={(e, page) => {
+              if (page === 1) {
+                setParams({});
+              } else {
+                setParams({ page: '' + page });
+              }
+            }}
+            page={+(params.get('page') || 1)}
+            count={total}
+            showFirstButton
+            showLastButton
+          />
+        </Stack>
+      )}
     </Stack>
   );
 }
