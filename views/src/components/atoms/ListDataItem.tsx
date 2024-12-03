@@ -6,6 +6,7 @@ import { SnapPoll } from '@models/SnapPoll';
 import { SnapVote } from '@models/SnapVote';
 import {
   Button,
+  Divider,
   List,
   ListItem,
   ListItemButton,
@@ -17,7 +18,6 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import ListItemIcons from './ListItemIcons';
-import { useEffect } from 'react';
 
 interface ListDataItemProps<T extends SnapPoll | SnapVote> {
   name: 'poll' | 'vote';
@@ -72,7 +72,7 @@ function ListDataItem<T extends SnapPoll | SnapVote>({
       </Stack>
       <List>
         {dataList && dataList.length > 0 ? (
-          dataList.map((data) => (
+          dataList.map((data, i) => (
             <ListItem
               key={data.id}
               disablePadding
@@ -86,6 +86,10 @@ function ListDataItem<T extends SnapPoll | SnapVote>({
                 )
               }
               sx={{
+                boxSizing: 'border-box',
+                ['&:not(:last-of-type)']: {
+                  borderBottom: '1px solid #eee',
+                },
                 ['& .MuiListItemSecondaryAction-root']: {
                   transition: '150ms ease-in-out',
                   opacity: 0,

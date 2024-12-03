@@ -39,6 +39,16 @@ export const Single = {
 } as const;
 export type Single = (typeof Single)[keyof typeof Single];
 
+export const Wrong = {
+  Required: '필수입니다.',
+  Username: '유저 닉네임은 최소 4자이상, 15자이하입니다.',
+  EmailFormat: '이메일 형식이 잘못되었습니다.',
+  Password: '패스워드는 최소 5자이상, 12자이하입니다.',
+  PasswordFormat: '패스워드 형식은 영문(소문자, 대문자), 숫자, 특수문자(!@#$%^&*./?-+)가 1개 이상으로 총 5~12자로 작성해야합니다.',
+  CheckPassword: '비밀번호를 정확히 입력해주세요.',
+} as const;
+export type Wrong = (typeof Wrong)[keyof typeof Wrong];
+
 type MessageFactory = {
   title: string;
   content: string;
@@ -47,6 +57,7 @@ type MessageFactory = {
 export const Message = {
   Single,
   WrongRequest: (content: string) => ({ title: '잘못된 요청', content }),
+  Wrong,
   Require,
   Expired,
   Info,

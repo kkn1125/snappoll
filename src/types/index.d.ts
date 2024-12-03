@@ -4,7 +4,7 @@ import { User as PrismaUser, UserProfile } from '@prisma/client';
 export declare global {
   namespace Express {
     interface User extends Omit<PrismaUser, 'password'> {
-      userProfile?: UserProfile[];
+      userProfile?: UserProfile;
     }
     interface Request {
       user?: User;

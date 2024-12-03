@@ -18,6 +18,7 @@ import LoadingScreenProvider from '@providers/LoadingScreenProvider.js';
 import ModalProvider from '@providers/ModalProvider.js';
 import { scan } from 'react-scan';
 import Modal from '@components/moleculars/Modal.js';
+import SocketLayout from '@components/templates/SocketLayout.js';
 
 if (typeof window !== 'undefined') {
   scan({
@@ -67,22 +68,24 @@ declare module 'react' {
 createRoot(document.getElementById('root')!).render(
   <ThemeProvider theme={darkTheme}>
     <RecoilRoot>
-      <QueryClientProvider client={queryClient}>
-        <BrowserRouter
-          basename={PROJECT_BASEPATH}
-          future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
-        >
-          <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="ko">
-            <LoadingScreenProvider>
-              <ModalProvider>
-                <CssBaseline />
-                <AppRouter />
-                <Modal />
-              </ModalProvider>
-            </LoadingScreenProvider>
-          </LocalizationProvider>
-        </BrowserRouter>
-      </QueryClientProvider>
+      <SocketLayout>
+        <QueryClientProvider client={queryClient}>
+          <BrowserRouter
+            basename={PROJECT_BASEPATH}
+            future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
+          >
+            <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="ko">
+              <LoadingScreenProvider>
+                <ModalProvider>
+                  <CssBaseline />
+                  <AppRouter />
+                  <Modal />
+                </ModalProvider>
+              </LoadingScreenProvider>
+            </LocalizationProvider>
+          </BrowserRouter>
+        </QueryClientProvider>
+      </SocketLayout>
     </RecoilRoot>
   </ThemeProvider>,
 );

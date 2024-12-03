@@ -10,9 +10,9 @@ datasource db {
 
 model UserProfile {
   id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @unique @db.Uuid
   image     Bytes    @db.ByteA
   createdAt DateTime @default(now())
-  userId    String   @db.Uuid
 
   user User @relation(fields: [userId], references: [id])
 
@@ -28,18 +28,20 @@ model User {
   updatedAt DateTime  @updatedAt @map("updated_at")
   deletedAt DateTime? @map("deleted_at")
 
-  userProfile  UserProfile[]
-  poll         Poll[]
-  vote         Vote[]
-  response     Response[]
-  voteResponse VoteResponse[]
+  userProfile    UserProfile?
+  poll           Poll[]
+  vote           Vote[]
+  response       Response[]
+  voteResponse   VoteResponse[]
+  sendMessage    Message[]      @relation("sendMessage")
+  receiveMessage Message[]      @relation("receiveMessage")
 
   @@map("user")
 }
 
 model SharePoll {
   id     String @id @default(uuid()) @db.Uuid
-  pollId String @map("poll_id") @db.Uuid
+  pollId String @unique @map("poll_id") @db.Uuid
 
   poll Poll @relation(fields: [pollId], references: [id])
 
@@ -59,7 +61,7 @@ model Poll {
 
   question  Question[]
   response  Response[]
-  sharePoll SharePoll[]
+  sharePoll SharePoll?
 
   @@map("poll")
 }
@@ -168,4 +170,18 @@ model VoteOption {
   vote Vote @relation(fields: [voteId], references: [id])
 
   @@map("vote_option")
+}
+
+model Message {
+  id        String   @id @default(uuid()) @db.Uuid
+  fromId    String   @map("from_id") @db.Uuid
+  toId      String   @map("to_id") @db.Uuid
+  message   String
+  checked   Boolean  @default(false)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  sender   User @relation("sendMessage", fields: [fromId], references: [id])
+  receiver User @relation("receiveMessage", fields: [toId], references: [id])
+
+  @@map("message")
 }

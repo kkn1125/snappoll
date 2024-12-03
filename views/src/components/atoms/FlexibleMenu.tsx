@@ -1,6 +1,7 @@
 import { sidebarAtom } from '@/recoils/sidebar.atom';
 import InboxIcon from '@mui/icons-material/Inbox';
 import {
+  Badge,
   Fade,
   ListItem,
   ListItemButton,
@@ -17,8 +18,14 @@ interface FlexibleMenuProps {
   name: string;
   desc?: string;
   to: string;
+  badge?: number;
 }
-const FlexibleMenu: React.FC<FlexibleMenuProps> = ({ name, desc, to }) => {
+const FlexibleMenu: React.FC<FlexibleMenuProps> = ({
+  name,
+  desc,
+  to,
+  badge,
+}) => {
   const navigation = useNavigate();
   const sidebarState = useRecoilValue(sidebarAtom);
   const theme = useTheme();
@@ -42,6 +49,9 @@ const FlexibleMenu: React.FC<FlexibleMenuProps> = ({ name, desc, to }) => {
         <ListItemButton onClick={() => handleRedirect(to)}>
           <ListItemIcon sx={{ minWidth: 'auto' }}>
             <InboxIcon />
+            <Fade in={!!badge && !opened}>
+              <Badge badgeContent={badge} color="secondary" />
+            </Fade>
           </ListItemIcon>
           <Fade in={opened}>
             <ListItemText
@@ -50,6 +60,9 @@ const FlexibleMenu: React.FC<FlexibleMenuProps> = ({ name, desc, to }) => {
               sx={{ pl: 3, whiteSpace: 'nowrap' }}
             />
           </Fade>
+          {!!badge && opened && (
+            <Badge badgeContent={badge} color="secondary" />
+          )}
         </ListItemButton>
       </Tooltip>
     </ListItem>

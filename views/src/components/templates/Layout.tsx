@@ -2,8 +2,8 @@ import { sidebarAtom } from '@/recoils/sidebar.atom';
 import Footer from '@components/organisms/Footer';
 import Header from '@components/organisms/Header';
 import Sidebar from '@components/organisms/Sidebar';
-import { Stack, Toolbar, useMediaQuery, useTheme } from '@mui/material';
-import { useEffect } from 'react';
+import useSocket from '@hooks/useSocket';
+import { Button, Stack, Toolbar, useMediaQuery, useTheme } from '@mui/material';
 import { Outlet } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 

@@ -18,6 +18,7 @@ interface CustomInputProps {
   required?: boolean;
   multiline?: boolean;
   sx?: SxProps;
+  endAdornment?: React.ReactNode;
 }
 function CustomInput({
   name,
@@ -36,6 +37,7 @@ function CustomInput({
   rows,
   required = false,
   sx = {},
+  endAdornment,
 }: CustomInputProps) {
   return (
     <TextField
@@ -55,6 +57,11 @@ function CustomInput({
       error={!!errors?.[name]}
       helperText={errors?.[name]}
       sx={sx}
+      slotProps={{
+        input: {
+          endAdornment,
+        },
+      }}
     />
   );
 }

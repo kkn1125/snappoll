@@ -9,6 +9,8 @@ import { DatabaseModule } from './database/database.module';
 import { PollsModule } from './polls/polls.module';
 import { UsersModule } from './users/users.module';
 import { VotesModule } from './votes/votes.module';
+import { WebsocketGateway } from './websocket/websocket.gateway';
+import { PrismaService } from '@database/prisma.service';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true, load: [commonConf] }),
@@ -22,6 +24,7 @@ import { VotesModule } from './votes/votes.module';
     }),
   ],
   controllers: [],
+  providers: [PrismaService, WebsocketGateway],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

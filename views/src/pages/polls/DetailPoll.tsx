@@ -5,6 +5,7 @@ import { tokenAtom } from '@/recoils/token.atom';
 import { Message } from '@common/messages';
 import PollLayout from '@components/templates/PollLayout';
 import useModal from '@hooks/useModal';
+import useSocket from '@hooks/useSocket';
 import { SnapPoll } from '@models/SnapPoll';
 import { SnapResponse } from '@models/SnapResponse';
 import { Button, Container, Divider, Stack, Toolbar } from '@mui/material';
@@ -16,6 +17,7 @@ import { useRecoilState } from 'recoil';
 
 interface DetailPollProps {}
 const DetailPoll: React.FC<DetailPollProps> = () => {
+  const { sendMessage } = useSocket();
   const { openModal, openInteractiveModal } = useModal();
   const navigate = useNavigate();
   const [{ user }, setToken] = useRecoilState(tokenAtom);
@@ -32,6 +34,11 @@ const DetailPoll: React.FC<DetailPollProps> = () => {
     mutationKey: ['saveResponse'],
     mutationFn: savePollResult,
     onSuccess(data, variables, context) {
+      sendMessage({
+        type: 'pollResponse',
+        userId: user?.id,
+        pollId: id,
+      });
       setResponse(new SnapResponse());
       navigate(-1);
     },

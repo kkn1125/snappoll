@@ -5,7 +5,6 @@ import { BRAND_NAME } from '@common/variables';
 import ListItemIcons from '@components/atoms/ListItemIcons';
 import { SnapPoll } from '@models/SnapPoll';
 import {
-  Button,
   Container,
   List,
   ListItem,
@@ -13,7 +12,7 @@ import {
   ListItemText,
   Paper,
   Stack,
-  Typography,
+  Typography
 } from '@mui/material';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { MouseEvent } from 'react';

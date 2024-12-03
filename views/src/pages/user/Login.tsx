@@ -4,6 +4,7 @@ import { tokenAtom } from '@/recoils/token.atom';
 import { Message } from '@common/messages';
 import CustomInput from '@components/atoms/CustomInput';
 import useModal from '@hooks/useModal';
+import useValidate from '@hooks/useValidate';
 import {
   Button,
   Container,
@@ -32,11 +33,12 @@ const Login: React.FC<LoginProps> = () => {
   const { openModal } = useModal();
   const locate = useLocation();
   const navigate = useNavigate();
-  const [errors, setErrors] = useState<ErrorMessage<LoginUser>>({});
+  // const [errors, setErrors] = useState<ErrorMessage<LoginUser>>({});
   const [loginInfo, setLoginInfo] = useState<LoginUser>({
     email: '',
     password: '',
   });
+  const { errors, validate } = useValidate(loginInfo);
   const setToken = useSetRecoilState(tokenAtom);
   const mutation = useMutation({
     mutationKey: ['login'],
@@ -71,20 +73,20 @@ const Login: React.FC<LoginProps> = () => {
     },
   });
 
-  const validateForm = useCallback(
-    (loginInfo: { email: string; password: string }) => {
-      const errors: ErrorMessage<LoginUser> = {};
-      if (loginInfo.email === '') {
-        errors['email'] = '필수입니다.';
-      }
-      if (loginInfo.password === '') {
-        errors['password'] = '필수입니다.';
-      }
-      setErrors(errors);
-      return Object.keys(errors).length === 0;
-    },
-    [],
-  );
+  // const validateForm = useCallback(
+  //   (loginInfo: { email: string; password: string }) => {
+  //     const errors: ErrorMessage<LoginUser> = {};
+  //     if (loginInfo.email === '') {
+  //       errors['email'] = '필수입니다.';
+  //     }
+  //     if (loginInfo.password === '') {
+  //       errors['password'] = '필수입니다.';
+  //     }
+  //     setErrors(errors);
+  //     return Object.keys(errors).length === 0;
+  //   },
+  //   [],
+  // );
 
   useEffect(() => {
     window.history.replaceState({}, '');
@@ -98,7 +100,7 @@ const Login: React.FC<LoginProps> = () => {
 
   useEffect(() => {
     if (validated) {
-      validateForm(loginInfo);
+      validate();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [validated, loginInfo]);
@@ -108,7 +110,7 @@ const Login: React.FC<LoginProps> = () => {
       e.preventDefault();
       setValidated(true);
 
-      if (!validateForm(loginInfo)) return;
+      if (!validate()) return;
 
       mutation.mutate(loginInfo);
 
@@ -126,14 +128,14 @@ const Login: React.FC<LoginProps> = () => {
 
   const memoErrors = useMemo(() => errors, [errors]);
 
-  const onFormChange = useCallback(
-    (e: FormEvent<HTMLFormElement>) => {
-      if (validated) {
-        validateForm(loginInfo);
-      }
-    },
-    [loginInfo, validateForm, validated],
-  );
+  // const onFormChange = useCallback(
+  //   (e: FormEvent<HTMLFormElement>) => {
+  //     if (validated) {
+  //       validateForm(loginInfo);
+  //     }
+  //   },
+  //   [loginInfo, validateForm, validated],
+  // );
 
   return (
     <Container component={Stack} maxWidth="sm" gap={2}>
@@ -143,7 +145,7 @@ const Login: React.FC<LoginProps> = () => {
         gap={2}
         onSubmit={handleSubmit}
         noValidate
-        onChange={onFormChange}
+        // onChange={onFormChange}
       >
         <Typography fontSize={32} fontWeight={700} align="center">
           로그인

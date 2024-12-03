@@ -28,6 +28,7 @@ import DetailVote from '@pages/votes/DetailVote';
 import PollResponse from '@pages/polls/PollResponse';
 import DetailPollResponse from '@pages/polls/response/DetailPollResponse';
 import VoteResponse from '@pages/votes/VoteResponse';
+import Notice from '@pages/notice/Notice';
 
 function AppRouter() {
   const [loaded, setLoaded] = useState(false);
@@ -155,6 +156,7 @@ function AppRouter() {
         </Route>
         <Route path="about" element={<About />} />
         <Route path="graph" element={<Graph />} />
+        <Route path="notice" element={<Notice />} />
       </Route>
     </Routes>
   );

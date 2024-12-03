@@ -3,6 +3,7 @@ import { previousAtom } from '@/recoils/previous.atom';
 import { Message } from '@common/messages';
 import CustomInput from '@components/atoms/CustomInput';
 import useModal from '@hooks/useModal';
+import useValidate from '@hooks/useValidate';
 import CasinoIcon from '@mui/icons-material/Casino';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
@@ -41,23 +42,17 @@ const Signup: React.FC<SignupProps> = () => {
     checkPassword: false,
   });
   const navigate = useNavigate();
-  const [errors, setErrors] = useState<ErrorMessage<SignupUser>>({});
   const [signupInfo, setSignupInfo] = useState<SignupUser>({
     email: '',
     username: '',
     password: '',
     checkPassword: '',
   });
+  const { errors, validate } = useValidate(signupInfo);
   const mutation = useMutation({
     mutationKey: ['signup'],
     mutationFn: signup,
     onSuccess(data, variables, context) {
-      // setSignupInfo({
-      //   email: '',
-      //   username: '',
-      //   password: '',
-      //   checkPassword: '',
-      // });
       navigate('/');
     },
     onError(error: AxiosError, variables, context) {
@@ -66,29 +61,6 @@ const Signup: React.FC<SignupProps> = () => {
       openModal(Message.WrongRequest(data.message));
     },
   });
-
-  const validateForm = useCallback(() => {
-    const errorMessages: ErrorMessage<SignupUser> = {};
-    if (signupInfo.email === '') {
-      errorMessages['email'] = '필수입니다.';
-    }
-    if (signupInfo.username === '') {
-      errorMessages['username'] = '필수입니다.';
-    }
-    if (signupInfo.password === '') {
-      errorMessages['password'] = '필수입니다.';
-    }
-    if (signupInfo.checkPassword === '') {
-      errorMessages['checkPassword'] = '필수입니다.';
-    }
-    if (signupInfo.password !== signupInfo.checkPassword) {
-      errorMessages['checkPassword'] = '비밀번호를 정확히 입력해주세요.';
-    }
-
-    setErrors(errorMessages);
-
-    return Object.keys(errorMessages).length === 0;
-  }, [signupInfo]);
 
   useEffect(() => {
     function handleBeforeUnloaded(e: BeforeUnloadEvent) {
@@ -107,15 +79,15 @@ const Signup: React.FC<SignupProps> = () => {
 
   useEffect(() => {
     if (validated) {
-      validateForm();
+      validate();
     }
-  }, [validateForm, validated, signupInfo]);
+  }, [validated, signupInfo]);
 
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
     setValidated(true);
 
-    if (!validateForm()) return;
+    if (!validate()) return;
 
     mutation.mutate(signupInfo);
 
@@ -138,8 +110,7 @@ const Signup: React.FC<SignupProps> = () => {
     }));
   }
 
-  const handleVisible = useCallback((e: MouseEvent) => {
-    const name = (e.target as HTMLButtonElement).name as keyof typeof visible;
+  const handleVisible = useCallback((name: keyof typeof visible) => {
     setVisible((visible) => ({
       ...visible,
       [name]: !visible[name],
@@ -174,24 +145,23 @@ const Signup: React.FC<SignupProps> = () => {
           onChange={onChange}
           required
           errors={errors}
+          endAdornment={
+            <Tooltip title="랜덤" placement="right">
+              <IconButton
+                onClick={handleRandomUsername}
+                sx={{
+                  transform: 'rotate(0deg)',
+                  transition: '150ms ease-in-out',
+                  ['&:hover']: {
+                    transform: 'rotate(-15deg)',
+                  },
+                }}
+              >
+                <CasinoIcon />
+              </IconButton>
+            </Tooltip>
+          }
         />
-        <Tooltip title="랜덤" placement="right">
-          <IconButton
-            onClick={handleRandomUsername}
-            sx={{
-              position: 'absolute',
-              top: '50%',
-              right: 5,
-              transform: 'translateY(-50%)',
-              transition: '150ms ease-in-out',
-              ['&:hover']: {
-                transform: 'translateY(-50%) rotate(-15deg)',
-              },
-            }}
-          >
-            <CasinoIcon />
-          </IconButton>
-        </Tooltip>
       </Stack>
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -209,20 +179,16 @@ const Signup: React.FC<SignupProps> = () => {
           onChange={onChange}
           required
           errors={errors}
+          endAdornment={
+            <IconButton
+              component="button"
+              data-name="password"
+              onClick={() => handleVisible('password')}
+            >
+              {visible.password ? <VisibilityOffIcon /> : <VisibilityIcon />}
+            </IconButton>
+          }
         />
-        <IconButton
-          component="button"
-          data-name="password"
-          onClick={handleVisible}
-          sx={{
-            position: 'absolute',
-            right: 5,
-            top: '50%',
-            transform: 'translateY(-50%)',
-          }}
-        >
-          {visible.password ? <VisibilityOffIcon /> : <VisibilityIcon />}
-        </IconButton>
       </Stack>
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -239,20 +205,20 @@ const Signup: React.FC<SignupProps> = () => {
           onChange={onChange}
           required
           errors={errors}
+          endAdornment={
+            <IconButton
+              component="button"
+              data-name="checkPassword"
+              onClick={() => handleVisible('checkPassword')}
+            >
+              {visible.checkPassword ? (
+                <VisibilityOffIcon />
+              ) : (
+                <VisibilityIcon />
+              )}
+            </IconButton>
+          }
         />
-        <IconButton
-          component="button"
-          data-name="checkPassword"
-          onClick={handleVisible}
-          sx={{
-            position: 'absolute',
-            right: 5,
-            top: '50%',
-            transform: 'translateY(-50%)',
-          }}
-        >
-          {visible.checkPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
-        </IconButton>
       </Stack>
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -261,17 +227,7 @@ const Signup: React.FC<SignupProps> = () => {
   return (
     <Container component={Stack} maxWidth="sm" gap={2}>
       <Toolbar />
-      <Stack
-        component="form"
-        gap={2}
-        onSubmit={handleSubmit}
-        noValidate
-        onKeyUp={(e: FormEvent<HTMLFormElement>) => {
-          if (validated) {
-            validateForm();
-          }
-        }}
-      >
+      <Stack component="form" gap={2} onSubmit={handleSubmit} noValidate>
         <Typography fontSize={32} fontWeight={700} align="center">
           회원가입
         </Typography>
