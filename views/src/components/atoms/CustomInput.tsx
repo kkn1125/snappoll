@@ -12,13 +12,14 @@ interface CustomInputProps {
   placeholder?: string;
   autoFocus?: boolean;
   autoComplete?: string;
-  onChange: (e: ChangeEvent<HTMLInputElement>) => void;
+  onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
   errors?: Record<string, string>;
   rows?: number;
   required?: boolean;
   multiline?: boolean;
   sx?: SxProps;
   endAdornment?: React.ReactNode;
+  disabled?: boolean;
 }
 function CustomInput({
   name,
@@ -38,6 +39,7 @@ function CustomInput({
   required = false,
   sx = {},
   endAdornment,
+  disabled = false,
 }: CustomInputProps) {
   return (
     <TextField
@@ -57,6 +59,7 @@ function CustomInput({
       error={!!errors?.[name]}
       helperText={errors?.[name]}
       sx={sx}
+      disabled={disabled}
       slotProps={{
         input: {
           endAdornment,

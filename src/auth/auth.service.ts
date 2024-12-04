@@ -30,25 +30,39 @@ export class AuthService {
 
   getToken(userData: { id: string; email: string; username: string }) {
     const secretKey = this.configService.get<string>('common.SECRET_KEY');
-    return jwt.sign(
+    const token = jwt.sign(
       {
         ...userData,
         loginAt: Date.now(),
       },
       secretKey,
       {
+        expiresIn: '30m',
+        issuer: 'snapPoll',
+        algorithm: 'HS256',
+      },
+    );
+    const refreshToken = jwt.sign(
+      {
+        ...userData,
+        loginAt: Date.now(),
+      },
+      secretKey,
+      {
+        subject: 'refresh',
         expiresIn: '1h',
         issuer: 'snapPoll',
         algorithm: 'HS256',
       },
     );
+    return { token, refreshToken };
   }
 
   getMe(email: string) {
     return this.prisma.user.findUnique({
       where: { email },
       include: {
-        poll: true,
+        // poll: true,
         userProfile: true,
       },
     });

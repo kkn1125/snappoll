@@ -4,43 +4,47 @@ import { SnapVoteResponse } from '@models/SnapVoteResponse';
 import {
   Checkbox,
   FormControlLabel,
+  List,
   ListItemButton,
   Stack,
+  TextField,
 } from '@mui/material';
-import { memo, SyntheticEvent, useCallback, useMemo } from 'react';
-import { useRecoilState } from 'recoil';
+import {
+  ChangeEvent,
+  memo,
+  SyntheticEvent,
+  useCallback,
+  useMemo,
+  useState,
+} from 'react';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import CheckedComponent from './CheckedComponent';
+import OptionItem from './OptionItem';
+import { SnapVoteAnswer } from '@models/SnapVoteAnswer';
 
 interface VoteOptionItemProps {
   option: SnapVoteOption;
+  onChange: (e: SyntheticEvent, checked: boolean) => void;
 }
-const VoteOptionItem: React.FC<VoteOptionItemProps> = ({ option }) => {
-  const [responses, setResponses] = useRecoilState(snapVoteResponseAtom);
+const VoteOptionItem: React.FC<VoteOptionItemProps> = ({
+  option,
+  onChange,
+}) => {
+  const response = useRecoilValue(snapVoteResponseAtom);
 
   const checked = useMemo(() => {
-    return responses.some((response) => response.voteOptionId === option.id);
-  }, [option.id, responses]);
-
-  const handleChange = useCallback((e: SyntheticEvent, checked: boolean) => {
-    setResponses((responses) => {
-      if (checked) {
-        const newResponse = new SnapVoteResponse();
-        newResponse.voteOptionId = option.id;
-        return [...responses, newResponse];
-      } else {
-        return responses.filter(
-          (response) => response.voteOptionId !== option.id,
-        );
-      }
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    return !!response.hasOption(option.id);
+  }, [option.id, response]);
 
   return (
-    <Stack
-      direction="row"
+    <ListItemButton
       component="label"
-      sx={{ border: '1px solid #eee', borderRadius: 0.5, py: 1, px: 2 }}
+      sx={{
+        border: '1px solid #eee',
+        borderRadius: 1,
+        p: 2,
+        cursor: 'pointer',
+      }}
     >
       <CheckedComponent checked={checked} />
       <FormControlLabel
@@ -50,7 +54,7 @@ const VoteOptionItem: React.FC<VoteOptionItemProps> = ({ option }) => {
             className: 'font-maru',
           },
         }}
-        onChange={handleChange}
+        onChange={onChange}
         control={
           <Checkbox
             name={option.id}
@@ -58,9 +62,8 @@ const VoteOptionItem: React.FC<VoteOptionItemProps> = ({ option }) => {
             sx={{ display: 'none' }}
           />
         }
-        sx={{ whiteSpace: 'nowrap' }}
       />
-    </Stack>
+    </ListItemButton>
   );
 };
 

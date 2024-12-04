@@ -1,9 +1,9 @@
-import { VoteResponse } from '@prisma/client';
+import { VoteAnswer, VoteResponse } from '@prisma/client';
 
-export class CreateVoteResponseDto
-  implements Omit<VoteResponse, 'id' | 'userId' | 'createdAt' | 'updatedAt'>
-{
+export class CreateVoteResponseDto implements Pick<VoteResponse, 'voteId'> {
   userId?: string;
   voteId: string;
-  voteOptionId: string;
+  voteOptionId?: string;
+  value?: string;
+  voteAnswer?: VoteAnswer[];
 }

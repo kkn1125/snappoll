@@ -90,9 +90,11 @@ const Modal: React.FC<ModalProps> = () => {
           >
             <Stack gap={1}>
               <Typography fontSize={24}>{modalState.title}</Typography>
-              <Typography className="font-maru" fontSize={15}>
-                {modalState.content}
-              </Typography>
+              {modalState.content.map((ctt, i) => (
+                <Typography key={ctt + i} className="font-maru" fontSize={15}>
+                  {ctt}
+                </Typography>
+              ))}
             </Stack>
             <Stack direction="row" justifyContent="space-between" gap={2}>
               {modalState.interactive && (

@@ -11,20 +11,14 @@ interface SocketLayoutProps {
 const SocketLayout: React.FC<SocketLayoutProps> = ({ children }) => {
   const setMessage = useSetRecoilState(messageAtom);
   const { user } = useRecoilValue(tokenAtom);
-  const { socket } = useSocket();
+  const { socket, getMessages } = useSocket();
   const [isConnected, setIsConnected] = useState(socket.connected);
   const [fooEvents, setFooEvents] = useState<any[]>([]);
 
   useEffect(() => {
     function onConnect() {
       setIsConnected(true);
-      socket.emitWithAck('getMessages', { userId: user?.id }).then((res) => {
-        setMessage((message) => {
-          const newMessage = MessageManager.copy(message);
-          newMessage.receiver = res;
-          return newMessage;
-        });
-      });
+      getMessages();
     }
 
     function onDisconnect() {

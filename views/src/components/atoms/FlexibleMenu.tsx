@@ -20,12 +20,14 @@ interface FlexibleMenuProps {
   desc?: string;
   to: string;
   badge?: number;
+  icon?: React.ReactNode;
 }
 const FlexibleMenu: React.FC<FlexibleMenuProps> = ({
   name,
   desc,
   to,
   badge,
+  icon,
 }) => {
   const navigation = useNavigate();
   const [sidebarState, setSidebarState] = useRecoilState(sidebarAtom);
@@ -60,7 +62,7 @@ const FlexibleMenu: React.FC<FlexibleMenuProps> = ({
       >
         <ListItemButton onClick={() => handleRedirect(to)}>
           <ListItemIcon sx={{ minWidth: 'auto' }}>
-            <InboxIcon />
+            {icon}
             <Fade in={!!badge && !opened}>
               <Badge badgeContent={badge} color="secondary" />
             </Fade>

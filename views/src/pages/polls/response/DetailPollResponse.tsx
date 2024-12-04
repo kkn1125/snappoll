@@ -1,10 +1,6 @@
-import { getPollResponse } from '@/apis/poll/response/getPollResponse';
 import { getResponse } from '@/apis/poll/response/getResponse';
 import { tokenAtom } from '@/recoils/token.atom';
-import PollLayout from '@components/templates/PollLayout';
 import PollResponseLayout from '@components/templates/PollResponseLayout';
-import ResponseLayout from '@components/templates/ResponseLayout';
-import { SnapPoll } from '@models/SnapPoll';
 import { SnapResponse } from '@models/SnapResponse';
 import { Button, Container, Divider, Stack, Toolbar } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
@@ -16,9 +12,10 @@ const DetailPollResponse: React.FC<DetailPollResponseProps> = () => {
   const { user } = useRecoilValue(tokenAtom);
   const { responseId: id } = useParams();
   const { data } = useQuery<SnapResponse>({
-    queryKey: ['pollResponse'],
+    queryKey: ['pollResponse', id],
     queryFn: () => getResponse(id),
   });
+
   return (
     <Container maxWidth="md">
       <Toolbar />

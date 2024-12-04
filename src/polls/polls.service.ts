@@ -137,26 +137,15 @@ export class PollsService {
     });
   }
 
-  findResponses(id: string) {
-    // return this.prisma.poll.findUnique({
-    //   where: { id },
-    //   include: {
-    //     response: {
-    //       include: {
-    //         answer: true,
-    //       },
-    //     },
-    //     question: {
-    //       include: {
-    //         option: true,
-    //         answer: true,
-    //       },
-    //     },
-    //   },
-    // });
-    return this.prisma.response.findMany({
+  async findResponses(id: string, page: number) {
+    const responses = await this.prisma.response.findMany({
       where: {
         pollId: id,
+      },
+      take: 10,
+      skip: (page - 1) * 10,
+      orderBy: {
+        createdAt: 'desc',
       },
       include: {
         poll: {
@@ -174,6 +163,44 @@ export class PollsService {
         },
       },
     });
+    const count = await this.prisma.response.count({
+      where: { pollId: id },
+    });
+
+    return { responses, count };
+  }
+
+  async findResponsesMe(userId: string, page: number) {
+    const responses = await this.prisma.response.findMany({
+      where: {
+        userId,
+      },
+      take: 10,
+      skip: (page - 1) * 10,
+      orderBy: {
+        createdAt: 'desc',
+      },
+      include: {
+        poll: {
+          include: {
+            question: true,
+          },
+        },
+        answer: true,
+        user: {
+          select: {
+            id: true,
+            username: true,
+            email: true,
+          },
+        },
+      },
+    });
+    const count = await this.prisma.response.count({
+      where: { userId },
+    });
+
+    return { responses, count };
   }
 
   update(id: string, updatePollDto: UpdatePollDto) {

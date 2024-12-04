@@ -36,6 +36,10 @@ export type Info = (typeof Info)[keyof typeof Info];
 export const Single = {
   Save: '이대로 저장하시겠습니까?',
   Remove: '정말로 삭제하시겠습니까?',
+  LeaveAlert: [
+    '탈퇴 승인 시점부터 계정은 사용할 수 없으며, 10일이 지나면 모든 데이터가 완전히 소멸됩니다. 복구를 원하시면 문의하기에서 1~2일 내로 탈퇴 신청을 철회할 수 있습니다.',
+    '진행하시겠습니까?',
+  ],
 } as const;
 export type Single = (typeof Single)[keyof typeof Single];
 
@@ -44,7 +48,8 @@ export const Wrong = {
   Username: '유저 닉네임은 최소 4자이상, 15자이하입니다.',
   EmailFormat: '이메일 형식이 잘못되었습니다.',
   Password: '패스워드는 최소 5자이상, 12자이하입니다.',
-  PasswordFormat: '패스워드 형식은 영문(소문자, 대문자), 숫자, 특수문자(!@#$%^&*./?-+)가 1개 이상으로 총 5~12자로 작성해야합니다.',
+  PasswordFormat:
+    '패스워드 형식은 영문(소문자, 대문자), 숫자, 특수문자(!@#$%^&*./?-+)가 1개 이상으로 총 5~12자로 작성해야합니다.',
   CheckPassword: '비밀번호를 정확히 입력해주세요.',
 } as const;
 export type Wrong = (typeof Wrong)[keyof typeof Wrong];

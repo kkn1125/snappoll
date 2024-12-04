@@ -61,6 +61,6 @@ export class WebsocketGateway {
       where: { id: messageId },
       data: { checked: true },
     });
-    return this.prisma.message.findMany({ where: { id: userId } });
+    return this.prisma.message.findMany({ where: { toId: userId } });
   }
 }

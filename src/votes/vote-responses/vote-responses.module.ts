@@ -7,9 +7,7 @@ import { PrismaService } from '@database/prisma.service';
 
 @Module({
   imports: [
-    RouterModule.register([
-      { path: 'vote-responses', module: VoteOptionsModule },
-    ]),
+    RouterModule.register([{ path: 'response', module: VoteOptionsModule }]),
     VoteOptionsModule,
   ],
   controllers: [VoteResponsesController],

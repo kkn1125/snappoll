@@ -19,7 +19,13 @@ import {
   useMediaQuery,
   useTheme,
 } from '@mui/material';
-import { MouseEvent, useEffect, useMemo, useState } from 'react';
+import { makeBlobToImageUrl } from '@utils/makeBlobToImageUrl';
+import {
+  MouseEvent as ReactMouseEvent,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
@@ -38,7 +44,7 @@ const Header: React.FC<HeaderProps> = ({ isCrew }) => {
   const isMdDown = useMediaQuery(theme.breakpoints.down('md'));
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
-  const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
+  const handleClick = (event: ReactMouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   };
   const handleClose = () => {
@@ -46,7 +52,8 @@ const Header: React.FC<HeaderProps> = ({ isCrew }) => {
   };
   const sidebarOpened = isMdDown ? !sidebarState.opened : sidebarState.opened;
 
-  function handleToggleSidebar() {
+  function handleToggleSidebar(e: ReactMouseEvent<HTMLElement>) {
+    e.stopPropagation();
     setSidebarState((sidebarState) => ({
       ...sidebarState,
       opened: !sidebarState.opened,
@@ -58,19 +65,42 @@ const Header: React.FC<HeaderProps> = ({ isCrew }) => {
   }, [current]);
 
   useEffect(() => {
+    function handleSidebarClose(e: MouseEvent) {
+      if (!isMdDown) return;
+      const target = e.target as HTMLElement;
+      if (!target) return;
+      if (target.closest('#toggle-sidebar')) return;
+      if (!target.closest('#sidebar')) {
+        setSidebarState((sidebarState) => {
+          const newState = { ...sidebarState };
+          const reverseValue = !sidebarState.opened;
+          if (reverseValue) {
+            newState.opened = reverseValue;
+          }
+          return newState;
+        });
+      }
+    }
+    window.addEventListener('click', handleSidebarClose);
+    return () => {
+      window.removeEventListener('click', handleSidebarClose);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isMdDown]);
+
+  useEffect(() => {
     if (user && user?.userProfile) {
-      const blob = new Blob([new Uint8Array(user.userProfile[0]?.image.data)], {
-        type: 'image/jpeg',
-      });
-      const url = URL.createObjectURL(blob);
-      setProfileImage(url);
+      const url = makeBlobToImageUrl(user.userProfile[0]?.image.data);
+      if (url) {
+        setProfileImage(url);
+      }
     }
   }, [user]);
 
   function redirectTo(to: string) {
     return () => {
-      navigate(to);
       handleClose();
+      navigate(to);
     };
   }
 
@@ -85,7 +115,8 @@ const Header: React.FC<HeaderProps> = ({ isCrew }) => {
         ...(!headerShadowActivate && {
           '--Paper-shadow': '0 0 0 0 #ffffffff !important',
         }),
-        borderBottom: '1px solid #eee',
+        borderBottom: (theme) =>
+          `1px solid ${headerShadowActivate ? theme.palette.sky.main : '#eee'}`,
       }}
     >
       <Toolbar>
@@ -93,6 +124,7 @@ const Header: React.FC<HeaderProps> = ({ isCrew }) => {
           <Stack direction="row" gap={2}>
             {isCrew && (
               <IconButton
+                id="toggle-sidebar"
                 onClick={handleToggleSidebar}
                 color="primary"
                 sx={{

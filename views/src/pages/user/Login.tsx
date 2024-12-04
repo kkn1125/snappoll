@@ -34,7 +34,9 @@ const Login: React.FC<LoginProps> = () => {
   const locate = useLocation();
   const navigate = useNavigate();
   // const [errors, setErrors] = useState<ErrorMessage<LoginUser>>({});
-  const [loginInfo, setLoginInfo] = useState<LoginUser>({
+  const [loginInfo, setLoginInfo] = useState<
+    Pick<LoginUser, 'email' | 'password'>
+  >({
     email: '',
     password: '',
   });
@@ -100,7 +102,7 @@ const Login: React.FC<LoginProps> = () => {
 
   useEffect(() => {
     if (validated) {
-      validate();
+      validate('login');
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [validated, loginInfo]);

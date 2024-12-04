@@ -12,6 +12,7 @@ export class VotesService {
     const description = createVoteDto.description;
     const userId = createVoteDto.userId;
     const isMultiple = createVoteDto.isMultiple;
+    const useEtc = createVoteDto.useEtc;
     const expiresAt = createVoteDto.expiresAt;
 
     let voteOption;
@@ -34,6 +35,7 @@ export class VotesService {
       description,
       userId,
       isMultiple,
+      useEtc,
       expiresAt,
       voteOption,
     };
@@ -114,11 +116,101 @@ export class VotesService {
     });
   }
 
+  // findResponse(id: string) {
+  //   return this.prisma.vote.findUnique({
+  //     where: { id },
+  //     include: {
+  //       user: {
+  //         select: {
+  //           id: true,
+  //           email: true,
+  //           username: true,
+  //           createdAt: true,
+  //           updatedAt: true,
+  //         },
+  //       },
+  //       voteOption: true,
+  //       voteResponse: {
+  //         include: {
+  //           user: true,
+  //         },
+  //       },
+  //     },
+  //   });
+  // }
+
+  async findResponses(id: string, page: number) {
+    const responses = await this.prisma.voteResponse.findMany({
+      where: {
+        voteId: id,
+      },
+      take: 10,
+      skip: (page - 1) * 10,
+      orderBy: {
+        createdAt: 'desc',
+      },
+      include: {
+        vote: {
+          include: {
+            voteOption: true,
+          },
+        },
+        voteAnswer: true,
+        user: {
+          select: {
+            id: true,
+            username: true,
+            email: true,
+          },
+        },
+      },
+    });
+    const count = await this.prisma.voteResponse.count({
+      where: { voteId: id },
+    });
+
+    return { responses, count };
+  }
+
+  async findResponsesMe(userId: string, page: number) {
+    const responses = await this.prisma.voteResponse.findMany({
+      where: {
+        userId,
+      },
+      take: 10,
+      skip: (page - 1) * 10,
+      orderBy: {
+        createdAt: 'desc',
+      },
+      include: {
+        vote: {
+          include: {
+            voteOption: true,
+          },
+        },
+        voteAnswer: true,
+        user: {
+          select: {
+            id: true,
+            username: true,
+            email: true,
+          },
+        },
+      },
+    });
+    const count = await this.prisma.voteResponse.count({
+      where: { userId },
+    });
+
+    return { responses, count };
+  }
+
   update(id: string, updateVoteDto: UpdateVoteDto) {
     return this.prisma.vote.update({ where: { id }, data: updateVoteDto });
   }
 
   remove(id: string) {
+    console.log(id);
     return this.prisma.vote.delete({ where: { id } });
   }
 }

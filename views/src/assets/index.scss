@@ -50,6 +50,10 @@ body,
   user-select: none;
 }
 
+[disabled] {
+  cursor: not-allowed;
+}
+
 .font-maru {
   font-family: 'Maruburi', Arial, Helvetica, sans-serif !important;
 }

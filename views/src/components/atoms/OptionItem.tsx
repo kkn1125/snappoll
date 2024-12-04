@@ -19,7 +19,12 @@ const OptionItem: React.FC<OptionItemProps> = ({ option, onChange }) => {
   return (
     <ListItemButton
       component="label"
-      sx={{ border: '1px solid #eee', borderRadius: 1, p: 2 }}
+      sx={{
+        border: '1px solid #eee',
+        borderRadius: 1,
+        p: 2,
+        cursor: 'pointer',
+      }}
     >
       <CheckedComponent checked={checked} />
       <FormControlLabel

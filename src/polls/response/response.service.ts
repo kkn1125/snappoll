@@ -78,6 +78,8 @@ export class ResponseService {
   }
 
   remove(id: string) {
-    return this.prisma.response.delete({ where: { id } });
+    return this.prisma.response.delete({
+      where: { id },
+    });
   }
 }

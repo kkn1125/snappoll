@@ -109,7 +109,7 @@ const CreateVoteForm: React.FC<CreateVoteFormProps> = ({ errors }) => {
 
       <Stack direction="row" gap={1} alignItems="center">
         <FormControlLabel
-          label="중복선택 허용"
+          label="다중 선택 허용"
           onChange={(e, checked) => {
             setSnapVote((snapVote) => {
               const newSnapVote = SnapVote.copy(snapVote);
@@ -118,6 +118,18 @@ const CreateVoteForm: React.FC<CreateVoteFormProps> = ({ errors }) => {
             });
           }}
           control={<Switch checked={snapVote.isMultiple} />}
+        />
+        <FormControlLabel
+          label="기타"
+          checked={snapVote.useEtc}
+          onChange={(e, checked) => {
+            setSnapVote((snapVote) => {
+              const newSnapVote = SnapVote.copy(snapVote);
+              newSnapVote['useEtc'] = checked;
+              return newSnapVote;
+            });
+          }}
+          control={<Switch name="useEtc" />}
         />
       </Stack>
     </Stack>

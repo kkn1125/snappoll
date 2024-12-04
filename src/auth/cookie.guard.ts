@@ -33,13 +33,55 @@ export class CookieGuard implements CanActivate {
       }
       // return !!result;
     } catch (error) {
-      //
-      res.clearCookie('token', {
-        httpOnly: true,
-        secure: true,
-        sameSite: 'lax',
-        path: '/',
-      });
+      if (error.name === 'TokenExpiredError') {
+        try {
+          /* refresh check */
+          const result = jwt.verify(req.cookies.refresh, secretKey, {
+            algorithms: ['HS256'],
+          }) as JwtPayload;
+          if (result) {
+            console.log('토큰 재발급 완료');
+          }
+          const user = jwt.decode(req.cookies.token, {
+            json: true,
+          }) as JwtPayload;
+          const { token, refreshToken } = this.authService.getToken({
+            id: user.id,
+            email: user.email,
+            username: user.username,
+          });
+          req.verify = user;
+          res.cookie('token', token, {
+            httpOnly: true,
+            secure: true,
+            sameSite: 'lax',
+            path: '/',
+          });
+          res.cookie('refresh', refreshToken, {
+            httpOnly: true,
+            secure: true,
+            sameSite: 'lax',
+            path: '/',
+          });
+        } catch (error) {
+          console.log(error.name, error.message);
+          console.log('invalid refresh token!');
+        }
+      } else {
+        //
+        res.clearCookie('token', {
+          httpOnly: true,
+          secure: true,
+          sameSite: 'lax',
+          path: '/',
+        });
+        res.clearCookie('refresh', {
+          httpOnly: true,
+          secure: true,
+          sameSite: 'lax',
+          path: '/',
+        });
+      }
     }
     return true;
   }

@@ -1,5 +1,5 @@
 import { getVotes } from '@/apis/vote/getVotes';
-import ListDataItem from '@components/atoms/ListDataItem';
+import ListDataItem from '@components/organisms/ListDataItem';
 import { SnapVote } from '@models/SnapVote';
 import { Container, Stack, Toolbar } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';

@@ -225,7 +225,7 @@ export declare global {
   }
   interface MessageTemplate {
     title: string;
-    content: string;
+    content: string | string[];
   }
   interface DateTemplate {
     createdAt: Date;

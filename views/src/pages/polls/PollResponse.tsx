@@ -1,31 +1,50 @@
 import { getPollResponse } from '@/apis/poll/response/getPollResponse';
+import { getPollResponseMe } from '@/apis/poll/response/getPollResponseMe';
+import { removeResponse } from '@/apis/poll/response/removeResponse';
 import { tokenAtom } from '@/recoils/token.atom';
+import { Message } from '@common/messages';
+import useModal from '@hooks/useModal';
 import { SnapResponse } from '@models/SnapResponse';
+import DeleteIcon from '@mui/icons-material/Delete';
 import {
   Button,
   Container,
   Divider,
+  IconButton,
   List,
   ListItem,
   ListItemButton,
   ListItemText,
   Stack,
   Toolbar,
+  Typography,
 } from '@mui/material';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import { useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 
-interface PollResponseProps {}
-const PollResponse: React.FC<PollResponseProps> = () => {
+interface PollResponseProps {
+  me?: boolean;
+}
+const PollResponse: React.FC<PollResponseProps> = ({ me }) => {
   const { user } = useRecoilValue(tokenAtom);
   const navigate = useNavigate();
+  const { openInteractiveModal } = useModal();
   const { id } = useParams();
-  const { data } = useQuery<SnapResponse[]>({
-    queryKey: ['pollResponses'],
-    queryFn: () => getPollResponse(id),
+  const queryClient = useQueryClient();
+  const { data } = useQuery<{ responses: SnapResponse[]; count: number }>({
+    queryKey: ['pollResponses', id],
+    queryFn: () => (me ? getPollResponseMe() : getPollResponse(id)),
+  });
+
+  const removeMutation = useMutation({
+    mutationKey: ['removeMutate'],
+    mutationFn: removeResponse,
+    onSuccess(data, variables, context) {
+      queryClient.invalidateQueries({ queryKey: ['pollResponses'] });
+    },
   });
 
   const getTitle = useCallback((response: SnapResponse) => {
@@ -43,26 +62,47 @@ const PollResponse: React.FC<PollResponseProps> = () => {
     [user?.username],
   );
 
+  const handleRemove = useCallback((responseId: string) => {
+    openInteractiveModal(Message.Single.Remove, () => {
+      removeMutation.mutate(responseId);
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <Container maxWidth="md">
       <Toolbar />
       <Stack gap={3}>
         <List>
-          {data?.map((response, i) => (
-            <ListItem key={response.id}>
+          {data?.responses.map((response, i) => (
+            <ListItem
+              key={response.id}
+              secondaryAction={
+                user?.id === response.userId && (
+                  <IconButton
+                    color="error"
+                    onClick={() => handleRemove(response.id)}
+                  >
+                    <DeleteIcon />
+                  </IconButton>
+                )
+              }
+            >
               <ListItemButton
                 onClick={() => navigate(`/polls/${id}/response/${response.id}`)}
               >
-                <ListItemText>{i + 1}.</ListItemText>
-                <ListItemText>{getTitle(response)}</ListItemText>
-                <ListItemText>{getUser(response)}</ListItemText>
-                <ListItemText>
-                  {dayjs(response.createdAt).format('YYYY. MM. DD. HH:mm')}
-                </ListItemText>
+                <Stack direction="row" gap={3}>
+                  <Typography>{i + 1}.</Typography>
+                  <Typography>{getTitle(response)}</Typography>
+                  <Typography>{getUser(response)}</Typography>
+                  <Typography>
+                    {dayjs(response.createdAt).format('YYYY. MM. DD. HH:mm')}
+                  </Typography>
+                </Stack>
               </ListItemButton>
             </ListItem>
           ))}
-          {data?.length === 0 && (
+          {data?.responses.length === 0 && (
             <ListItem>
               <ListItemButton>
                 <ListItemText>

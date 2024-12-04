@@ -17,7 +17,8 @@ import {
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
-import ListItemIcons from './ListItemIcons';
+import ListItemIcons from '../atoms/ListItemIcons';
+import { removeVote } from '@/apis/removeVote';
 
 interface ListDataItemProps<T extends SnapPoll | SnapVote> {
   name: 'poll' | 'vote';
@@ -43,8 +44,8 @@ function ListDataItem<T extends SnapPoll | SnapVote>({
   const [params, setParams] = useSearchParams({ page: '1' });
 
   const removeMutate = useMutation({
-    mutationKey: ['removePoll'],
-    mutationFn: removePoll,
+    mutationKey: ['removeVote'],
+    mutationFn: removeVote,
     onSuccess(data, variables, context) {
       queryClient.invalidateQueries({
         queryKey: [queryKey],
@@ -85,7 +86,7 @@ function ListDataItem<T extends SnapPoll | SnapVote>({
                   <ListItemIcons
                     dataId={data.id}
                     type={name}
-                    handleRemove={handleRemove}
+                    handleRemove={() => handleRemove(data.id)}
                   />
                 )
               }
@@ -94,13 +95,13 @@ function ListDataItem<T extends SnapPoll | SnapVote>({
                 ['&:not(:last-of-type)']: {
                   borderBottom: '1px solid #eee',
                 },
-                ['& .MuiListItemSecondaryAction-root']: {
-                  transition: '150ms ease-in-out',
-                  opacity: 0,
-                },
-                ['&:hover .MuiListItemSecondaryAction-root']: {
-                  opacity: 1,
-                },
+                // ['& .MuiListItemSecondaryAction-root']: {
+                //   transition: '150ms ease-in-out',
+                //   opacity: 0,
+                // },
+                // ['&:hover .MuiListItemSecondaryAction-root']: {
+                //   opacity: 1,
+                // },
               }}
             >
               <ListItemButton onClick={() => navigate(`/${name}s/${data.id}`)}>

@@ -94,18 +94,21 @@ const CreateSnapVote: React.FC<CreateSnapVoteProps> = () => {
     };
   }, []);
 
-  const handleSubmit = useCallback((e: FormEvent) => {
-    e.preventDefault();
-    openInteractiveModal(Message.Single.Save, () => {
-      const copyVote = SnapVote.copy(snapVote);
-      if (user) {
-        copyVote.userId = user.id;
-        createMutate.mutate(copyVote);
-      }
-    });
-    return false;
+  const handleSubmit = useCallback(
+    (e: FormEvent) => {
+      e.preventDefault();
+      openInteractiveModal(Message.Single.Save, () => {
+        const copyVote = SnapVote.copy(snapVote);
+        if (user) {
+          copyVote.userId = user.id;
+          createMutate.mutate(copyVote);
+        }
+      });
+      return false;
+    },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    [snapVote, user],
+  );
 
   return (
     <Container maxWidth="md">

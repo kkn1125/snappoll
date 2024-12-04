@@ -10,16 +10,35 @@ const useModal = () => {
   const modalDispatch = useContext(ModalDispatchContext);
   const openModal = useCallback(
     (info: MessageTemplate) => {
-      modalDispatch({ type: ModalActionType.Open, ...info });
+      const concatContent = [];
+      if (info.content instanceof Array) {
+        concatContent.push(...info.content);
+      } else {
+        concatContent.push(info.content);
+      }
+      modalDispatch({
+        type: ModalActionType.Open,
+        title: info.title,
+        content: concatContent,
+      });
     },
     [modalDispatch],
   );
   const openInteractiveModal = useCallback(
-    function <T>(content: string, callback: () => T | Promise<T>) {
+    function <Q extends string, T = void>(
+      content: Q | readonly Q[],
+      callback: () => T | Promise<T>,
+    ) {
+      const concatContent = [];
+      if (content instanceof Array) {
+        concatContent.push(...content);
+      } else {
+        concatContent.push(content);
+      }
       modalDispatch({
         type: ModalActionType.OpenInteractive,
         title: '안내',
-        content,
+        content: concatContent,
         callback,
       });
     },

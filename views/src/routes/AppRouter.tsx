@@ -3,6 +3,7 @@ import { verifyLogin } from '@/apis/verifyLogin';
 import { previousAtom } from '@/recoils/previous.atom';
 import { tokenAtom } from '@/recoils/token.atom';
 import { Message } from '@common/messages';
+import { VERSION } from '@common/variables';
 import Layout from '@components/templates/Layout';
 import useLoading from '@hooks/useLoading';
 import useModal from '@hooks/useModal';
@@ -23,14 +24,17 @@ import Signup from '@pages/user/Signup';
 import CreateSnapVote from '@pages/votes/CreateSnapVote';
 import DetailVote from '@pages/votes/DetailVote';
 import MyVotes from '@pages/votes/MyVotes';
+import DetailVoteResponse from '@pages/votes/response/DetailVoteResponse';
 import VoteList from '@pages/votes/VoteList';
 import VoteResponse from '@pages/votes/VoteResponse';
 import { useMutation } from '@tanstack/react-query';
+import { AxiosError } from 'axios';
 import { useCallback, useEffect, useState } from 'react';
 import { Route, Routes, useNavigate } from 'react-router-dom';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 
-const guestDisallowPaths = /\/user\/profile|\/(votes|polls|notice)\/?(.*)/;
+const guestDisallowPaths =
+  /\/user\/profile|\/(votes|polls|notice|graph)\/?(.*)/;
 const userDisallowPaths = /\/user\/(login|signup)\/?(.*)/;
 
 function AppRouter() {
@@ -57,9 +61,11 @@ function AppRouter() {
   const verifyMutate = useMutation({
     mutationKey: ['verify'],
     mutationFn: verifyLogin,
-    onError(error, variables, context) {
+    onError(error: AxiosError, variables, context) {
       const loggedIn = localStorage.getItem('logged_in');
       if (loggedIn === 'true') {
+        openModal(Message.Expired.Token);
+      } else if (error.response?.status === 401) {
         openModal(Message.Expired.Token);
       }
       clearToken();
@@ -110,6 +116,9 @@ function AppRouter() {
 
   useEffect(() => {
     openLoading('Loading...');
+    /* version save */
+    localStorage.setItem('version', VERSION);
+
     const loggedIn = localStorage.getItem('logged_in');
     if (loggedIn === 'true') {
       getMeMutate.mutate();
@@ -140,6 +149,7 @@ function AppRouter() {
         <Route path="polls">
           <Route index element={<PollListV2 />} />
           <Route path="me" element={<MyPolls />} />
+          <Route path="me/response" element={<PollResponse me />} />
           <Route path="new" element={<CreateSnapPoll />} />
           {/* <Route path="new/preview" element={<PreviewPoll />} /> */}
           <Route path=":id" element={<DetailPoll />} />
@@ -152,9 +162,14 @@ function AppRouter() {
         <Route path="votes">
           <Route index element={<VoteList />} />
           <Route path="me" element={<MyVotes />} />
+          <Route path="me/response" element={<VoteResponse me />} />
           <Route path="new" element={<CreateSnapVote />} />
           <Route path=":id" element={<DetailVote />} />
           <Route path=":id/response" element={<VoteResponse />} />
+          <Route
+            path=":id/response/:responseId"
+            element={<DetailVoteResponse />}
+          />
         </Route>
         <Route path="about" element={<About />} />
         <Route path="graph" element={<Graph />} />

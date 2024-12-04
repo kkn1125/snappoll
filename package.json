@@ -1,13 +1,13 @@
 {
   "name": "realtime-poll",
-  "version": "0.0.1",
+  "version": "0.0.7",
   "description": "",
   "author": "",
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
     "dev": "concurrently --kill-others-on-fail \"npm run start:dev\" \"cd views/ && npm run dev\"",
-    "prebuild": "npx prisma db pull && npx prisma migrate dev --name init",
+    "prebuild": "npx prisma db pull && npx prisma migrate dev --name init && cd views/ && npm run build && cd ..",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",

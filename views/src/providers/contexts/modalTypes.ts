@@ -1,13 +1,13 @@
 export type ModalInitialValue<T = any> = {
   title: string;
-  content: string;
+  content: string[];
   open: boolean;
   interactive: boolean;
   callback: () => T | Promise<T>;
 };
 export const initialValue = {
   title: '',
-  content: '',
+  content: [],
   open: false,
   interactive: false,
   callback: () => {},
@@ -22,6 +22,6 @@ export type ModalActionType =
 export type ModalReducerAction<T = any> = {
   type: ModalActionType;
   title?: string;
-  content?: string;
+  content?: string[];
   callback?: () => T | Promise<T>;
 };

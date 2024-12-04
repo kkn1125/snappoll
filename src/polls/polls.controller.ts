@@ -8,6 +8,7 @@ import {
   Param,
   Patch,
   Post,
+  Put,
   Query,
   Req,
   UseGuards,
@@ -47,12 +48,18 @@ export class PollsController {
     return this.pollsService.findOne(id);
   }
 
-  @Get(':id/response')
-  findOneResponses(@Param('id') id: string) {
-    return this.pollsService.findResponses(id);
+  @Get('me/response')
+  findOneResponsesMe(@Req() req: Request, @Query('page') page: number = 1) {
+    const id = req.user.id;
+    return this.pollsService.findResponsesMe(id, page);
   }
 
-  @Patch(':id')
+  @Get(':id/response')
+  findOneResponses(@Param('id') id: string, @Query('page') page: number = 1) {
+    return this.pollsService.findResponses(id, page);
+  }
+
+  @Put(':id')
   update(@Param('id') id: string, @Body() updatePollDto: UpdatePollDto) {
     return this.pollsService.update(id, updatePollDto);
   }

@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  Put,
 } from '@nestjs/common';
 import { VoteResponsesService } from './vote-responses.service';
 import { CreateVoteResponseDto } from './dto/create-vote-response.dto';
@@ -18,13 +19,13 @@ export class VoteResponsesController {
   @Post()
   create(
     @Body()
-    createVoteResponseDto: CreateVoteResponseDto | CreateVoteResponseDto[],
+    createVoteResponseDto: CreateVoteResponseDto,
   ) {
-    if (createVoteResponseDto instanceof Array) {
-      return this.voteResponsesService.createMany(createVoteResponseDto);
-    } else {
-      return this.voteResponsesService.create(createVoteResponseDto);
-    }
+    return this.voteResponsesService.create(createVoteResponseDto);
+    // if (createVoteResponseDto instanceof Array) {
+    //   return this.voteResponsesService.createMany(createVoteResponseDto);
+    // } else {
+    // }
   }
 
   @Get()
@@ -37,7 +38,7 @@ export class VoteResponsesController {
     return this.voteResponsesService.findOne(id);
   }
 
-  @Patch(':id')
+  @Put(':id')
   update(
     @Param('id') id: string,
     @Body() updateVoteResponseDto: UpdateVoteResponseDto,

@@ -29,7 +29,7 @@ const reducer = (state: ModalInitialValue, action: ModalReducerAction) => {
       const newState = { ...state };
       newState['open'] = false;
       newState['title'] = '';
-      newState['content'] = '';
+      newState['content'] = [];
       newState['callback'] = () => {};
       newState['interactive'] = false;
       return newState;

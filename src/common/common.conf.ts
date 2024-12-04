@@ -6,6 +6,7 @@ import {
   MODE,
   PORT,
   SECRET_KEY,
+  VERSION,
 } from './variables';
 
 export default registerAs('common', () => ({
@@ -15,4 +16,5 @@ export default registerAs('common', () => ({
   DATABASE_URL,
   DIRECT_URL,
   SECRET_KEY,
+  VERSION,
 }));

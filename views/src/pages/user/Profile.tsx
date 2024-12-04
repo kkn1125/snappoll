@@ -18,12 +18,18 @@ import { useLocation } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import { tokenAtom } from '@/recoils/token.atom';
 import { removeAccount } from '@/apis/removeAccount';
+import CustomInput from '@components/atoms/CustomInput';
+import useModal from '@hooks/useModal';
+import { Message } from '@common/messages';
 
 interface ProfileProps {}
 const Profile: React.FC<ProfileProps> = () => {
+  const { openInteractiveModal } = useModal();
   const { user } = useRecoilValue(tokenAtom);
   const [current, setCurrent] = useState<
-    Partial<Omit<User, 'id' | 'userProfile' | 'createdAt' | 'updatedAt'>>
+    Partial<
+      Omit<User, 'id' | 'userProfile' | 'password' | 'createdAt' | 'updatedAt'>
+    >
   >({});
   const [image, setImage] = useState('');
 
@@ -60,7 +66,6 @@ const Profile: React.FC<ProfileProps> = () => {
       setCurrent({
         email: user.email,
         username: user.username,
-        password: '*'.repeat(8),
       });
     }
   }, [user]);
@@ -78,7 +83,13 @@ const Profile: React.FC<ProfileProps> = () => {
     logoutMutate.mutate();
   }
 
-  function handleSubmit(e: FormEvent) {}
+  function handleSubmit(e: FormEvent) {
+    e.preventDefault();
+    openInteractiveModal(Message.Single.Save, () => {
+      console.log(current);
+    });
+    return false;
+  }
 
   function handleRemoveAccount(id?: string) {
     if (id) {
@@ -132,8 +143,21 @@ const Profile: React.FC<ProfileProps> = () => {
         <Container maxWidth="sm">
           <Stack component="form" gap={2} onSubmit={handleSubmit}>
             <Stack>
+              <Typography>Email</Typography>
+              <CustomInput
+                fullWidth
+                size="small"
+                name="email"
+                type="email"
+                autoComplete="new-username"
+                value={current.email || ''}
+                disabled
+                // onChange={onChange}
+              />
+            </Stack>
+            <Stack>
               <Typography>Username</Typography>
-              <TextField
+              <CustomInput
                 fullWidth
                 size="small"
                 name="username"
@@ -143,18 +167,7 @@ const Profile: React.FC<ProfileProps> = () => {
                 onChange={onChange}
               />
             </Stack>
-            <Stack>
-              <Typography>Email</Typography>
-              <TextField
-                fullWidth
-                size="small"
-                name="email"
-                type="email"
-                autoComplete="new-username"
-                value={current.email || ''}
-                onChange={onChange}
-              />
-            </Stack>
+
             {/* <Stack>
               <Typography>Password</Typography>
               <TextField
@@ -167,21 +180,18 @@ const Profile: React.FC<ProfileProps> = () => {
                 onChange={onChange}
               />
             </Stack> */}
-            <Button type="submit" variant="contained">
+            <Button type="submit" variant="contained" size="large">
               정보 수정
             </Button>
             <Divider />
             <Button
               color="error"
               variant="outlined"
+              size="large"
               onClick={() => {
-                if (
-                  confirm(
-                    '탈퇴한 후 10일이 지나면 모든 데이터가 제거 됩니다. 탈퇴 시점부터 계정은 사용 불가하게 됩니다.\n\n진행하시겠습니까?',
-                  )
-                ) {
+                openInteractiveModal(Message.Single.LeaveAlert, () => {
                   handleRemoveAccount(user?.id);
-                }
+                });
               }}
             >
               회원탈퇴

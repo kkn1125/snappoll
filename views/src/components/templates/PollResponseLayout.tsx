@@ -29,7 +29,7 @@ const PollResponseLayout: React.FC<PollResponseLayoutProps> = ({
         </Typography>
         <Stack alignItems="flex-end" mb={1} flex={1} gap={1}>
           <Typography className="font-maru" fontSize={16} fontWeight={100}>
-            {user?.username}
+            {poll.user?.username}
           </Typography>
 
           <Typography className="font-maru" fontSize={16}>

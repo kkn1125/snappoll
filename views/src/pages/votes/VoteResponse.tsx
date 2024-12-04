@@ -1,12 +1,130 @@
+import { getVoteResponse } from '@/apis/vote/response/getVoteResponse';
+import { getVoteResponseMe } from '@/apis/vote/response/getVoteResponseMe';
+import { tokenAtom } from '@/recoils/token.atom';
 import ReadyAlert from '@components/atoms/ReadyAlert';
-import { Stack } from '@mui/material';
+import { SnapVote } from '@models/SnapVote';
+import { SnapVoteResponse } from '@models/SnapVoteResponse';
+import {
+  Button,
+  Container,
+  Divider,
+  IconButton,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemText,
+  Stack,
+  Toolbar,
+  Typography,
+} from '@mui/material';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import dayjs from 'dayjs';
+import { useCallback } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useRecoilValue } from 'recoil';
+import DeleteIcon from '@mui/icons-material/Delete';
+import { removeVoteResponse } from '@/apis/vote/response/removeVoteResponse';
+import useModal from '@hooks/useModal';
+import { Message } from '@common/messages';
 
-interface VoteResponseProps {}
-const VoteResponse: React.FC<VoteResponseProps> = () => {
+interface VoteResponseProps {
+  me?: boolean;
+}
+const VoteResponse: React.FC<VoteResponseProps> = ({ me }) => {
+  const { user } = useRecoilValue(tokenAtom);
+  const navigate = useNavigate();
+  const { id } = useParams();
+  const { openInteractiveModal } = useModal();
+  const queryClient = useQueryClient();
+  const { data } = useQuery<{ responses: SnapVoteResponse[]; count: number }>({
+    queryKey: ['voteResponse', id],
+    queryFn: () => (me ? getVoteResponseMe() : getVoteResponse(id)),
+  });
+
+  const removeMutation = useMutation({
+    mutationKey: ['removeMutate'],
+    mutationFn: removeVoteResponse,
+    onSuccess(data, variables, context) {
+      queryClient.invalidateQueries({ queryKey: ['voteResponse'] });
+    },
+  });
+
+  const getTitle = useCallback((response: SnapVoteResponse) => {
+    return response.vote?.title;
+  }, []);
+
+  const getUser = useCallback(
+    (response?: SnapVoteResponse) => {
+      return response?.user
+        ? response.user.username === user?.username
+          ? '나'
+          : response.user.username
+        : 'Unknown';
+    },
+    [user?.username],
+  );
+
+  const handleRemove = useCallback((responseId: string) => {
+    openInteractiveModal(Message.Single.Remove, () => {
+      removeMutation.mutate(responseId);
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
-    <Stack direction="row" justifyContent="center" alignContent="center">
-      <ReadyAlert />
-    </Stack>
+    <Container maxWidth="md">
+      <Toolbar />
+      <Stack gap={3}>
+        <List>
+          {data?.responses.map((response, i) => (
+            <ListItem
+              key={response.id}
+              secondaryAction={
+                user?.id === response.userId && (
+                  <IconButton
+                    color="error"
+                    onClick={() => handleRemove(response.id)}
+                  >
+                    <DeleteIcon />
+                  </IconButton>
+                )
+              }
+            >
+              <ListItemButton
+                onClick={() => navigate(`/votes/${id}/response/${response.id}`)}
+              >
+                <Stack direction="row" gap={3}>
+                  <Typography>{i + 1}.</Typography>
+                  <Typography>{getTitle(response)}</Typography>
+                  <Typography>{getUser(response)}</Typography>
+                  <Typography>
+                    {dayjs(response.createdAt).format('YYYY. MM. DD. HH:mm')}
+                  </Typography>
+                </Stack>
+              </ListItemButton>
+            </ListItem>
+          ))}
+          {data?.responses.length === 0 && (
+            <ListItem>
+              <ListItemButton>
+                <ListItemText>아직 투표에 참여한 사람이 없습니다.</ListItemText>
+              </ListItemButton>
+            </ListItem>
+          )}
+        </List>
+        <Divider />
+        <Button
+          variant="contained"
+          size="large"
+          type="button"
+          color="inherit"
+          onClick={() => navigate(-1)}
+        >
+          이전으로
+        </Button>
+      </Stack>
+      <Toolbar />
+    </Container>
   );
 };
 

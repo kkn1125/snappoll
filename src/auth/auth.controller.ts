@@ -20,13 +20,19 @@ export class AuthController {
   async login(@Req() req: Request, @Res() res: Response) {
     if (req.user) {
       const user = req.user;
-      const jsonwebtoken = this.authService.getToken({
+      const { token, refreshToken } = this.authService.getToken({
         id: user.id,
         username: user.username,
         email: user.email,
       });
 
-      res.cookie('token', jsonwebtoken, {
+      res.cookie('token', token, {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'lax',
+        path: '/',
+      });
+      res.cookie('refresh', refreshToken, {
         httpOnly: true,
         secure: true,
         sameSite: 'lax',
@@ -35,7 +41,7 @@ export class AuthController {
 
       res.json({
         ok: true,
-        token: jsonwebtoken,
+        token,
         user,
       });
     } else {
@@ -48,6 +54,12 @@ export class AuthController {
   logout(@Req() req: Request, @Res() res: Response) {
     if (req.user) {
       res.clearCookie('token', {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'lax',
+        path: '/',
+      });
+      res.clearCookie('refresh', {
         httpOnly: true,
         secure: true,
         sameSite: 'lax',

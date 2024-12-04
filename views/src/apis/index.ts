@@ -7,4 +7,5 @@ export const snapApi = axios.create({
       ? 'http://localhost:8080/api'
       : location.origin + '/api',
   withCredentials: true,
+  timeout: 1000,
 });

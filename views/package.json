@@ -1,7 +1,7 @@
 {
   "name": "views",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.0.7",
   "type": "module",
   "author": {
     "name": "devkimson",

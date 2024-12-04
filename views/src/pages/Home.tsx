@@ -1,6 +1,6 @@
 import { getPolls } from '@/apis/poll/getPolls';
 import { BRAND_NAME } from '@common/variables';
-import ListDataItem from '@components/atoms/ListDataItem';
+import ListDataItem from '@components/organisms/ListDataItem';
 import { SnapPoll } from '@models/SnapPoll';
 import { Container, List, Stack, Typography } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';

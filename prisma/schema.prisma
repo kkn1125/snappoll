@@ -35,6 +35,7 @@ model User {
   voteResponse   VoteResponse[]
   sendMessage    Message[]      @relation("sendMessage")
   receiveMessage Message[]      @relation("receiveMessage")
+  Board          Board[]
 
   @@map("user")
 }
@@ -102,14 +103,14 @@ model Response {
 
 model Answer {
   id         String  @id @default(uuid()) @db.Uuid
-  responseId String  @map("response_id") @db.Uuid
+  responseId String?  @map("response_id") @db.Uuid
   questionId String  @map("question_id") @db.Uuid
   optionId   String? @map("option_id") @db.Uuid
   // select, multiple checkbox
   value      String? @db.VarChar(100)
   // text input only
 
-  response Response @relation(fields: [responseId], references: [id])
+  response Response? @relation(fields: [responseId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   question Question @relation(fields: [questionId], references: [id])
   option   Option?  @relation(fields: [optionId], references: [id])
 
@@ -133,6 +134,7 @@ model Vote {
   title       String    @db.VarChar(30)
   description String
   isMultiple  Boolean   @map("is_multiple")
+  useEtc      Boolean   @default(false) @map("use_etc")
   expiresAt   DateTime? @map("expires_at")
   createdAt   DateTime  @default(now()) @map("created_at")
   updatedAt   DateTime  @updatedAt @map("updated_at")
@@ -146,28 +148,40 @@ model Vote {
 }
 
 model VoteResponse {
-  id           String   @id @default(uuid()) @db.Uuid
-  userId       String?  @map("user_id") @db.Uuid
-  voteId       String   @map("vote_id") @db.Uuid
-  voteOptionId String   @map("vote_option_id") @db.Uuid
-  createdAt    DateTime @default(now()) @map("created_at")
-  updatedAt    DateTime @updatedAt @map("updated_at")
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String?  @map("user_id") @db.Uuid
+  voteId    String   @map("vote_id") @db.Uuid
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
-  user User? @relation(fields: [userId], references: [id])
-  vote Vote  @relation(fields: [voteId], references: [id])
+  user       User?        @relation(fields: [userId], references: [id])
+  vote       Vote         @relation(fields: [voteId], references: [id])
+  voteAnswer VoteAnswer[]
 
   @@map("vote_response")
 }
 
-model VoteOption {
-  id      String @id @default(uuid()) @db.Uuid
-  voteId  String @map("vote_id") @db.Uuid
-  content String @db.VarChar(100)
+model VoteAnswer {
+  id             String  @id @default(uuid()) @db.Uuid
+  voteResponseId String? @map("vote_response_id") @db.Uuid
+  voteOptionId   String? @map("vote_option_id") @db.Uuid
+  value          String? @db.VarChar(100)
 
+  voteResponse VoteResponse? @relation(fields: [voteResponseId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  voteOption   VoteOption?   @relation(fields: [voteOptionId], references: [id])
+
+  @@map("vote_answer")
+}
+
+model VoteOption {
+  id        String   @id @default(uuid()) @db.Uuid
+  voteId    String   @map("vote_id") @db.Uuid
+  content   String   @db.VarChar(100)
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  vote Vote @relation(fields: [voteId], references: [id])
+  vote       Vote         @relation(fields: [voteId], references: [id])
+  voteAnswer VoteAnswer[]
 
   @@map("vote_option")
 }
@@ -184,4 +198,23 @@ model Message {
   receiver User @relation("receiveMessage", fields: [toId], references: [id])
 
   @@map("message")
+}
+
+model Board {
+  id         String    @id @default(uuid()) @db.Uuid
+  userId     String    @map("user_id") @db.Uuid
+  order      Int?
+  category   String    @db.VarChar(50)
+  title      String    @db.VarChar(100)
+  content    String
+  viewCount  Int       @default(0)
+  isPrivate  Boolean   @default(false)
+  isOnlyCrew Boolean   @default(false)
+  createdAt  DateTime  @default(now()) @map("created_at")
+  updatedAt  DateTime  @updatedAt @map("updated_at")
+  deletedAt  DateTime? @map("deleted_at")
+
+  author User @relation(fields: [userId], references: [id])
+
+  @@map("board")
 }

@@ -1,5 +1,5 @@
 import { getMyVotes } from '@/apis/vote/getMyVotes';
-import ListDataItem from '@components/atoms/ListDataItem';
+import ListDataItem from '@components/organisms/ListDataItem';
 import { SnapVote } from '@models/SnapVote';
 import { Container, List, Stack, Toolbar } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
@@ -22,7 +22,7 @@ const MyVotes: React.FC<MyVotesProps> = () => {
           {data && (
             <ListDataItem
               name="vote"
-              queryKey="votes"
+              queryKey="my-votes"
               dataList={data.votes}
               count={data.count}
               emptyComment="등록한 투표지가 없습니다."

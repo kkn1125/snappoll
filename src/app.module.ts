@@ -1,6 +1,6 @@
 import { LoggerMiddleware } from '@middleware/logger.middleware';
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import path from 'path';
 import { AuthModule } from './auth/auth.module';
@@ -11,6 +11,7 @@ import { UsersModule } from './users/users.module';
 import { VotesModule } from './votes/votes.module';
 import { WebsocketGateway } from './websocket/websocket.gateway';
 import { PrismaService } from '@database/prisma.service';
+import { AppController } from './app.controller';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true, load: [commonConf] }),
@@ -23,8 +24,8 @@ import { PrismaService } from '@database/prisma.service';
       rootPath: path.join(path.resolve(), 'views/dist'),
     }),
   ],
-  controllers: [],
-  providers: [PrismaService, WebsocketGateway],
+  controllers: [AppController],
+  providers: [ConfigService, PrismaService, WebsocketGateway],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

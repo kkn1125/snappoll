@@ -31,6 +31,7 @@ const Layout: React.FC<LayoutProps> = ({ isCrew = true }) => {
         {/* Sidebar */}
         {isCrew && (
           <Stack
+            id="sidebar"
             overflow="hidden"
             sx={{
               width: '100%',

@@ -7,6 +7,7 @@ export class CreateVoteDto
   description: string;
   userId: string;
   isMultiple: boolean;
+  useEtc: boolean;
   expiresAt?: Date;
   voteOption?: VoteOption[];
 }

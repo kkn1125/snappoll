@@ -81,6 +81,7 @@ const Signup: React.FC<SignupProps> = () => {
     if (validated) {
       validate();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [validated, signupInfo]);
 
   function handleSubmit(e: FormEvent) {
@@ -166,7 +167,6 @@ const Signup: React.FC<SignupProps> = () => {
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [signupInfo.username, errors.username]);
-
   const passwordComponent = useMemo(() => {
     return (
       <Stack position="relative">

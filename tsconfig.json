@@ -20,6 +20,7 @@
     "esModuleInterop": true,
     "moduleResolution": "node",
     "typeRoots": ["node_modules/@types", "src/types"],
+    "resolveJsonModule": true,
     "paths": {
       "@database/*": ["src/database/*"],
       "@middleware/*": ["src/middleware/*"],

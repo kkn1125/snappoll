@@ -7,17 +7,37 @@ import { PrismaService } from '@database/prisma.service';
 export class VoteResponsesService {
   constructor(private readonly prisma: PrismaService) {}
 
+  // create(createVoteResponseDto: CreateVoteResponseDto) {
+  //   const userId = createVoteResponseDto.userId;
+  //   const voteId = createVoteResponseDto.voteId;
+  //   const voteOptionId = createVoteResponseDto.voteOptionId;
+  //   const value = createVoteResponseDto.value;
+  //   const data = {
+  //     userId,
+  //     voteId,
+  //     voteOptionId,
+  //     value,
+  //   };
+  //   return this.prisma.voteResponse.create({
+  //     data,
+  //   });
+  // }
   create(createVoteResponseDto: CreateVoteResponseDto) {
     const userId = createVoteResponseDto.userId;
     const voteId = createVoteResponseDto.voteId;
-    const voteOptionId = createVoteResponseDto.voteOptionId;
-    const data = {
-      userId,
-      voteId,
-      voteOptionId,
+    const voteAnswer = {
+      create: createVoteResponseDto.voteAnswer.map((answer) => {
+        const voteOptionId = answer.voteOptionId;
+        const value = answer.value;
+        return { voteOptionId, value };
+      }),
     };
     return this.prisma.voteResponse.create({
-      data,
+      data: {
+        voteId,
+        userId,
+        voteAnswer,
+      },
     });
   }
 
@@ -40,11 +60,22 @@ export class VoteResponsesService {
   }
 
   findOne(id: string) {
-    return this.prisma.vote.findUnique({
+    return this.prisma.voteResponse.findUnique({
       where: { id },
       include: {
-        voteOption: true,
-        voteResponse: true,
+        vote: {
+          include: {
+            voteOption: true,
+          },
+        },
+        voteAnswer: true,
+        user: {
+          select: {
+            id: true,
+            username: true,
+            email: true,
+          },
+        },
       },
     });
   }

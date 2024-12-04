@@ -1,20 +1,20 @@
+import { RoleGuard } from '@/auth/role.guard';
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
-  Param,
+  Controller,
   Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+  Query,
   Req,
   UseGuards,
-  Query,
 } from '@nestjs/common';
-import { VotesService } from './votes.service';
+import { Request } from 'express';
 import { CreateVoteDto } from './dto/create-vote.dto';
 import { UpdateVoteDto } from './dto/update-vote.dto';
-import { Request } from 'express';
-import { RoleGuard } from '@/auth/role.guard';
+import { VotesService } from './votes.service';
 
 @UseGuards(RoleGuard)
 @Controller('votes')
@@ -34,7 +34,6 @@ export class VotesController {
   @Get('me')
   findMe(@Req() req: Request, @Query('page') page: number = 1) {
     const { id } = req.user;
-    console.log(page);
     return this.votesService.findMe(id, page);
   }
 
@@ -43,7 +42,23 @@ export class VotesController {
     return this.votesService.findOne(id);
   }
 
-  @Patch(':id')
+  // @Get(':id/response')
+  // findOneResponse(@Param('id') id: string) {
+  //   return this.votesService.findResponse(id);
+  // }
+
+  @Get('me/response')
+  findOneResponsesMe(@Req() req: Request, @Query('page') page: number = 1) {
+    const id = req.user.id;
+    return this.votesService.findResponsesMe(id, page);
+  }
+
+  @Get(':id/response')
+  findOneResponses(@Param('id') id: string, @Query('page') page: number = 1) {
+    return this.votesService.findResponses(id, page);
+  }
+
+  @Put(':id')
   update(@Param('id') id: string, @Body() updateVoteDto: UpdateVoteDto) {
     return this.votesService.update(id, updateVoteDto);
   }

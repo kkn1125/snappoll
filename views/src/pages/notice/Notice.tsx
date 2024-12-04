@@ -1,4 +1,7 @@
 import { messageAtom } from '@/recoils/message.atom';
+import { tokenAtom } from '@/recoils/token.atom';
+import { Message } from '@common/messages';
+import useModal from '@hooks/useModal';
 import useSocket from '@hooks/useSocket';
 import {
   Button,
@@ -7,27 +10,38 @@ import {
   ListItem,
   ListItemButton,
   ListItemText,
+  Pagination,
   Paper,
   Stack,
   Toolbar,
   Typography,
 } from '@mui/material';
-import { useCallback } from 'react';
+import { ChangeEvent, useCallback, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 
 interface NoticeProps {}
 const Notice: React.FC<NoticeProps> = () => {
   const { receiver } = useRecoilValue(messageAtom);
-  const { messageRead } = useSocket();
+  const [page, setPage] = useState(1);
 
-  const handleReaded = useCallback((messageId: string) => {
+  const { messageRead } = useSocket();
+  const handleReaded = (messageId: string) => {
     messageRead(messageId);
-  }, []);
+  };
+
+  const handleChangePage = useCallback(
+    (e: ChangeEvent<unknown>, page: number) => {
+      setPage(page);
+    },
+    [],
+  );
 
   return (
     <Container>
       <Toolbar />
-      <Typography>알림</Typography>
+      <Typography fontSize={32} fontWeight={700} gutterBottom>
+        알림
+      </Typography>
       <Paper>
         <Stack minHeight={100} p={3}>
           <List>
@@ -36,9 +50,14 @@ const Notice: React.FC<NoticeProps> = () => {
                 key={message.id}
                 disablePadding
                 secondaryAction={
-                  <Button onClick={() => handleReaded(message.id)}>
-                    {!message.checked && '읽음'}
-                  </Button>
+                  !message.checked && (
+                    <Button
+                      variant="contained"
+                      onClick={() => handleReaded(message.id)}
+                    >
+                      읽음
+                    </Button>
+                  )
                 }
               >
                 <ListItemButton>
@@ -46,7 +65,21 @@ const Notice: React.FC<NoticeProps> = () => {
                 </ListItemButton>
               </ListItem>
             ))}
+            {receiver.length === 0 && (
+              <ListItem>
+                <Typography>받은 알림이 없습니다.</Typography>
+              </ListItem>
+            )}
           </List>
+          <Stack alignItems="center">
+            <Pagination
+              page={page}
+              onChange={handleChangePage}
+              showFirstButton
+              showLastButton
+              count={Math.ceil(receiver.length / 10)}
+            />
+          </Stack>
         </Stack>
       </Paper>
     </Container>

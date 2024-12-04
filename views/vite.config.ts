@@ -32,6 +32,7 @@ export default defineConfig(({ command, mode }) => {
         HOST: host,
         PORT: port,
         PROJECT_BASEPATH: projectBasePath,
+        VERSION: pkg.version,
         USER_NAME: pkg.author.name,
         USER_BLOG: pkg.author.url,
         USER_PROFILE: pkg.author.profile,

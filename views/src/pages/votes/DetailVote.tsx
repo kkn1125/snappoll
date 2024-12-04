@@ -10,7 +10,7 @@ import { SnapVoteResponse } from '@models/SnapVoteResponse';
 import { Button, Container, Divider, Stack, Toolbar } from '@mui/material';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
-import { FormEvent } from 'react';
+import { FormEvent, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 
@@ -19,7 +19,7 @@ const DetailVote: React.FC<DetailVoteProps> = () => {
   const { openModal, openInteractiveModal } = useModal();
   const navigate = useNavigate();
   const [{ user }, setToken] = useRecoilState(tokenAtom);
-  const [responses, setResponses] = useRecoilState(snapVoteResponseAtom);
+  const [response, setResponse] = useRecoilState(snapVoteResponseAtom);
 
   const { id } = useParams();
 
@@ -32,12 +32,12 @@ const DetailVote: React.FC<DetailVoteProps> = () => {
     mutationKey: ['saveResponse'],
     mutationFn: saveVoteResult,
     onSuccess(data, variables, context) {
-      setResponses([]);
+      setResponse(new SnapVoteResponse());
       navigate(-1);
     },
     onError(error: AxiosError, variables, context) {
       if (error.response?.status === 401) {
-        setResponses([]);
+        setResponse(new SnapVoteResponse());
         localStorage.setItem('logged_in', 'false');
         setToken({
           signed: false,
@@ -50,28 +50,31 @@ const DetailVote: React.FC<DetailVoteProps> = () => {
     },
   });
 
-  function handleSavePollResult(e: FormEvent) {
-    e.preventDefault();
+  const handleSavePollResult = useCallback(
+    (e: FormEvent) => {
+      e.preventDefault();
 
-    if (!id) return;
+      if (!id) return;
 
-    openInteractiveModal('작성을 완료하시겠습니까?', () => {
-      const answerLength = responses.length;
-      if (answerLength === 0) {
-        openModal(Message.Require.LeastResponse);
-        return false;
-      }
-      const copyResponses = responses.map((response) => {
+      openInteractiveModal('작성을 완료하시겠습니까?', () => {
+        // const answerLength = responses.length;
+        // if (answerLength === 0) {
+        //   openModal(Message.Require.LeastResponse);
+        //   return false;
+        // }
         const copyResponse = SnapVoteResponse.copy(response);
         copyResponse.userId = user?.id;
         copyResponse.voteId = id;
-        return copyResponse;
+        // console.log(copyResponse);
+        saveResponseMutate.mutate(copyResponse);
       });
-      saveResponseMutate.mutate(copyResponses);
-    });
 
-    return false;
-  }
+      return false;
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [id, response, user],
+  );
+
   return (
     <Container maxWidth="md">
       <Toolbar />

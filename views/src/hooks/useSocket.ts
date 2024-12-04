@@ -1,16 +1,16 @@
 import { messageAtom } from '@/recoils/message.atom';
 import { tokenAtom } from '@/recoils/token.atom';
-import { Message } from '@common/messages';
 import { MessageManager } from '@models/MessageManager';
 import { socket } from '@utils/socket';
 import { useCallback, useMemo } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import useModal from './useModal';
+import { Message } from '@common/messages';
 
 const useSocket = () => {
-  const { openModal } = useModal();
-  const { user } = useRecoilValue(tokenAtom);
   const setMessage = useSetRecoilState(messageAtom);
+  const { user } = useRecoilValue(tokenAtom);
+  const { openModal } = useModal();
   const connect = useCallback(() => {
     return socket.connect;
   }, []);
@@ -24,19 +24,18 @@ const useSocket = () => {
       socket.emit('message', message);
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [user],
+    [],
   );
 
   const messageRead = useCallback(
     (messageId: string) => {
-      console.log(user);
       if (!user) {
         openModal(Message.Require.Login);
         return;
       }
       socket
         .emitWithAck('readMessage', {
-          userId: user?.id,
+          userId: user.id,
           messageId,
         })
         .then((res) => {
@@ -47,13 +46,25 @@ const useSocket = () => {
           });
         });
     },
-    [openModal, setMessage, user],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [user],
   );
+
+  const getMessages = useCallback(() => {
+    socket.emitWithAck('getMessages', { userId: user?.id }).then((res) => {
+      setMessage((message) => {
+        const newMessage = MessageManager.copy(message);
+        newMessage.receiver = res;
+        return newMessage;
+      });
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
 
   const memoSocket = useMemo(() => {
     return socket;
   }, []);
-  return { socket: memoSocket, connect, sendMessage, messageRead };
+  return { socket: memoSocket, connect, getMessages, sendMessage, messageRead };
 };
 
 export default useSocket;

@@ -1,5 +1,5 @@
 import { getMyPolls } from '@/apis/poll/getMyPolls';
-import ListDataItem from '@components/atoms/ListDataItem';
+import ListDataItem from '@components/organisms/ListDataItem';
 import { SnapPoll } from '@models/SnapPoll';
 import { Container, List, Stack, Toolbar } from '@mui/material';
 import { useQuery, useQueryClient } from '@tanstack/react-query';

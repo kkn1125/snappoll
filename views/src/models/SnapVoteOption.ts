@@ -1,4 +1,5 @@
 import { v4 } from 'uuid';
+import { SnapVoteAnswer } from './SnapVoteAnswer';
 
 export class SnapVoteOption {
   static copy(voteOption: SnapVoteOption) {
@@ -10,6 +11,7 @@ export class SnapVoteOption {
   content: string = '';
   createdAt: Date = new Date();
   updatedAt: Date = new Date();
+  voteAnswer?: SnapVoteAnswer[];
 
   constructor(props?: SnapVoteOption) {
     if (props) {
