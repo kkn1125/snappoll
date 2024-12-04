@@ -7,8 +7,9 @@
   "license": "UNLICENSED",
   "scripts": {
     "dev": "concurrently --kill-others-on-fail \"npm run start:dev\" \"cd views/ && npm run dev\"",
-    "prebuild": "npx prisma db pull && npx prisma migrate dev --name init && cd views/ && npm run build && cd ..",
+    "prebuild": "npx prisma db pull",
     "build": "nest build",
+    "postbuild": "cd views/ && npm run build && cd ..",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
     "start:dev": "nest start --watch",
