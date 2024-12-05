@@ -32,7 +32,7 @@ export class CookieGuard implements CanActivate {
         req.user = users;
       }
       // return !!result;
-    } catch (error) {
+    } catch (error: any) {
       if (error.name === 'TokenExpiredError') {
         try {
           /* refresh check */
@@ -63,7 +63,7 @@ export class CookieGuard implements CanActivate {
             sameSite: 'lax',
             path: '/',
           });
-        } catch (error) {
+        } catch (error: any) {
           console.log(error.name, error.message);
           console.log('invalid refresh token!');
         }
