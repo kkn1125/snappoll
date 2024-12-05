@@ -11,11 +11,9 @@
   },
   "scripts": {
     "dev": "vite",
-    "prebuild": "npm run sitemap",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview",
-    "sitemap": "node __tests__/generateSitemap.js"
+    "preview": "vite preview"
   },
   "dependencies": {
     "@emotion/react": "^11.13.5",
