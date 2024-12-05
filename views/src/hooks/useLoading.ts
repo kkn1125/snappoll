@@ -9,7 +9,7 @@ const useLoading = () => {
   const loadingState = useContext(LoadingContext);
   const loadingDispatch = useContext(LoadingDispatchContext);
   const openLoading = useCallback(
-    (content: string, timeout: number = 2) => {
+    (content: string, timeout: number = 0.2) => {
       loadingDispatch({ type: ActionType.Open, content, timeout });
     },
     [loadingDispatch],

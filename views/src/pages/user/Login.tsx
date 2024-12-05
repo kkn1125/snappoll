@@ -181,7 +181,7 @@ const Login: React.FC<LoginProps> = () => {
           variant="contained"
           size="large"
           to="/user/signup"
-          color="warning"
+          color="sky"
         >
           계정이 없어요
         </Button>
@@ -189,7 +189,7 @@ const Login: React.FC<LoginProps> = () => {
           component={Link}
           variant="contained"
           size="large"
-          to={previous || '/'}
+          to="/"
           color="inherit"
         >
           메인으로

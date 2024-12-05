@@ -1,8 +1,10 @@
 import commonConf from '@common/common.conf';
 import whiteList from '@common/whiteList';
+import { RequestMethod } from '@nestjs/common';
 import { ConfigService, ConfigType } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { allowOrigins } from '@utils/allowOrigins';
+import compression from 'compression';
 import cookieParser from 'cookie-parser';
 import { AppModule } from './app.module';
 
@@ -23,8 +25,11 @@ async function bootstrap() {
     origin: allowList,
     credentials: true,
   });
-  app.setGlobalPrefix('api');
+  app.setGlobalPrefix('api', {
+    exclude: [{ path: 'sitemap.xml', method: RequestMethod.GET }],
+  });
   app.use(cookieParser());
+  app.use(compression());
 
   await app.listen(common.PORT, common.HOST, async () => {
     console.log(`server listening on ${await app.getUrl()}`);

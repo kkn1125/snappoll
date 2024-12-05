@@ -1,10 +1,15 @@
-# SnapPoll 서버사이드
+# SnapPoll Back-end
 
 서버사이드 구현
 
 - 2024-12-05
   - feat
     - board API 초안 제작
+    - basic 모듈 제작
+    - 미들웨어 로거 출력 옵션 추가
+    - sitemap 동적 응답 추가
+    - 알림 모두 읽기 메세지 이벤트 추가
+    - sitemap prefix 제외
 - 2024-12-04
   - feat
     - version API 추가

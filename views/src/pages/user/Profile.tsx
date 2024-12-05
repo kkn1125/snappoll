@@ -11,7 +11,7 @@ import {
 } from '@mui/material';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { ChangeEvent, FormEvent, MouseEvent, useEffect, useState } from 'react';
-import { DefaultProfile } from '@common/variables';
+import { defaultProfile, DefaultProfile } from '@common/variables';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import { logout } from '@/apis/logout';
 import { useLocation } from 'react-router-dom';
@@ -133,7 +133,13 @@ const Profile: React.FC<ProfileProps> = () => {
                   alt="profileImage"
                 />
               ) : (
-                <DefaultProfile width={300} height={300} />
+                <Box
+                  component="img"
+                  src={defaultProfile}
+                  width={300}
+                  height={300}
+                  alt="default_profile"
+                />
               )}
             </Stack>
             <Button variant="contained">변경</Button>

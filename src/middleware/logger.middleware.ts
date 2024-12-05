@@ -9,7 +9,13 @@ export class LoggerMiddleware implements NestMiddleware {
   use(req: Request, res: Response, next: NextFunction) {
     const method = req.method;
     const url = req.originalUrl;
+    const queries = new URLSearchParams(req.url);
+    const body = req.body;
+    const header = req.headers;
     this.logger.log(`Request ${method} ${url} --->`);
+    this.logger.log(`Request Header:`, header);
+    this.logger.log(`Request Query: ${decodeURIComponent(queries.toString())}`);
+    this.logger.log(`Request Body:`, body);
     next();
   }
 }

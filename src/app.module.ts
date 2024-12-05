@@ -12,10 +12,12 @@ import { UsersModule } from '@users/users.module';
 import { VotesModule } from '@votes/votes.module';
 import { WebsocketGateway } from '@websocket/websocket.gateway';
 import path from 'path';
-import { AppController } from './app.controller';
+import { BasicModule } from './basic/basic.module';
+
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true, load: [commonConf] }),
+    BasicModule,
     AuthModule,
     VotesModule,
     PollsModule,
@@ -23,10 +25,11 @@ import { AppController } from './app.controller';
     UsersModule,
     ServeStaticModule.forRoot({
       rootPath: path.join(path.resolve(), 'views/dist'),
+      exclude: ['/sitemap.xml'],
     }),
     BoardsModule,
   ],
-  controllers: [AppController],
+  controllers: [],
   providers: [ConfigService, PrismaService, WebsocketGateway],
 })
 export class AppModule implements NestModule {

@@ -270,4 +270,15 @@ export declare global {
   }
 
   type CreateOmitType = 'id' | keyof DateTemplate;
+
+  interface WindowEventMap {
+    watch: WatchEvent;
+  }
+
+  interface WatchEventDetail {
+    path?: string;
+    reload?: boolean;
+  }
+
+  type WatchEvent = CustomEvent<WatchEventDetail>;
 }

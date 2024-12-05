@@ -19,6 +19,7 @@ import {
 } from '@mui/material';
 import { useMutation } from '@tanstack/react-query';
 import { getRandomUsername } from '@utils/getRandomUsername';
+import { WatcherEvent } from '@utils/WatcherEvent';
 import { AxiosError } from 'axios';
 import {
   ChangeEvent,
@@ -36,7 +37,7 @@ interface SignupProps {}
 const Signup: React.FC<SignupProps> = () => {
   const previous = useRecoilValue(previousAtom);
   const [validated, setValidated] = useState(false);
-  const { openModal } = useModal();
+  const { openModal, noSaveModal } = useModal();
   const [visible, setVisible] = useState({
     password: false,
     checkPassword: false,
@@ -63,19 +64,46 @@ const Signup: React.FC<SignupProps> = () => {
   });
 
   useEffect(() => {
-    function handleBeforeUnloaded(e: BeforeUnloadEvent) {
+    //   function handleWatchEvent(e: WatchEvent) {
+    //     e.preventDefault();
+    //     openInteractiveModal(
+    //       {
+    //         title: '사이트를 새로고침하시겠습니까?',
+    //         content: Message.Single.Redirect,
+    //       },
+    //       () => {
+    //         console.log(e.detail);
+    //         if (e.detail.reload) {
+    //           if (e.detail.path) {
+    //             location.href = location.origin + e.detail.path;
+    //           } else {
+    //             history.go(0);
+    //           }
+    //         } else if (e.detail.path) {
+    //           navigate(e.detail.path);
+    //         }
+    //       },
+    //     );
+    //   }
+    function handleBeforeUnload(e: BeforeUnloadEvent) {
+      // new WatcherEvent('watch', { detail: { reload: true } });
       e.preventDefault();
+      // e.returnValue = '';
       return '';
     }
-    window.addEventListener('beforeunload', handleBeforeUnloaded, {
-      capture: true,
-    });
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    //   window.addEventListener('watch', handleWatchEvent as EventListener);
     return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnloaded, {
-        capture: true,
-      });
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+      //     window.removeEventListener('watch', handleWatchEvent as EventListener);
     };
   }, []);
+
+  // const watcher = useCallback((detail: { path?: string; reload?: boolean }) => {
+  //   return new WatcherEvent('watch', {
+  //     detail,
+  //   });
+  // }, []);
 
   useEffect(() => {
     if (validated) {
@@ -244,7 +272,14 @@ const Signup: React.FC<SignupProps> = () => {
           variant="contained"
           size="large"
           to="/user/login"
+          reloadDocument
           color="success"
+          // onClick={() => {
+          //   noSaveModal(() => {
+          //     navigate('/user/login');
+          //   });
+          //   // window.dispatchEvent(watcher({ path: '/user/login' }));
+          // }}
         >
           이미 계정이 있어요
         </Button>
@@ -252,9 +287,15 @@ const Signup: React.FC<SignupProps> = () => {
           component={Link}
           variant="contained"
           size="large"
-          to={previous || '/'}
+          to="/"
           reloadDocument
           color="inherit"
+          // onClick={() => {
+          //   noSaveModal(() => {
+          //     navigate('/');
+          //   });
+          //   // window.dispatchEvent(watcher({ path: '/' }));
+          // }}
         >
           메인으로
         </Button>

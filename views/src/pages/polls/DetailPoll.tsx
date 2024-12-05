@@ -34,11 +34,11 @@ const DetailPoll: React.FC<DetailPollProps> = () => {
     mutationKey: ['saveResponse'],
     mutationFn: savePollResult,
     onSuccess(data, variables, context) {
-      sendMessage({
-        type: 'pollResponse',
-        userId: user?.id,
-        pollId: id,
-      });
+      // sendMessage({
+      //   type: 'pollResponse',
+      //   userId: user?.id,
+      //   pollId: id,
+      // });
       setResponse(new SnapResponse());
       navigate(-1);
     },

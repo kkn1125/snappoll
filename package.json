@@ -1,8 +1,13 @@
 {
   "name": "realtime-poll",
-  "version": "0.0.8",
-  "description": "",
-  "author": "",
+  "version": "0.0.9",
+  "description": "SnapPoll은 사용자들이 설문을 쉽게 만들고 참여할 수 있는 플랫폼입니다.",
+  "author": {
+    "name": "devkimson",
+    "email": "chaplet01@gmail.com",
+    "url": "https://kkn1125.github.io/",
+    "profile": "https://avatars.githubusercontent.com/u/71887242?v=4"
+  },
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
@@ -32,6 +37,7 @@
     "@nestjs/serve-static": "^4.0.2",
     "@nestjs/websockets": "^10.4.12",
     "@prisma/client": "^6.0.1",
+    "compression": "^1.7.5",
     "cookie-parser": "^1.4.7",
     "crypto-js": "^4.2.0",
     "jsonwebtoken": "^9.0.2",
@@ -44,6 +50,7 @@
     "@nestjs/cli": "^10.0.0",
     "@nestjs/schematics": "^10.0.0",
     "@nestjs/testing": "^10.0.0",
+    "@types/compression": "^1.7.5",
     "@types/cookie-parser": "^1.4.7",
     "@types/crypto-js": "^4.2.2",
     "@types/express": "^5.0.0",

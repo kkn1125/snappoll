@@ -34,6 +34,7 @@ export const Info = {
 export type Info = (typeof Info)[keyof typeof Info];
 
 export const Single = {
+  Redirect: '변경사항이 저장되지 않을 수 있습니다',
   Save: '이대로 저장하시겠습니까?',
   Remove: '정말로 삭제하시겠습니까?',
   LeaveAlert: [

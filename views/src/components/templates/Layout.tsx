@@ -2,8 +2,9 @@ import { sidebarAtom } from '@/recoils/sidebar.atom';
 import Footer from '@components/organisms/Footer';
 import Header from '@components/organisms/Header';
 import Sidebar from '@components/organisms/Sidebar';
-import useSocket from '@hooks/useSocket';
-import { Button, Stack, Toolbar, useMediaQuery, useTheme } from '@mui/material';
+import { Stack, Toolbar, useMediaQuery, useTheme } from '@mui/material';
+import { useMemo } from 'react';
+import Helmet from 'react-helmet';
 import { Outlet } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 
@@ -22,8 +23,16 @@ const Layout: React.FC<LayoutProps> = ({ isCrew = true }) => {
   const isMdDown = useMediaQuery(theme.breakpoints.down('md'));
   const sidebarOpened = isMdDown ? !sidebarState.opened : sidebarState.opened;
 
+  const canonical = useMemo(() => {
+    return location.origin + location.pathname;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.pathname]);
+
   return (
     <Stack height="inherit">
+      <Helmet>
+        <link rel="canonical" href={canonical} />
+      </Helmet>
       {/* header */}
       <Header isCrew={isCrew} />
       <Toolbar />

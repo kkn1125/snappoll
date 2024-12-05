@@ -99,9 +99,16 @@ function AppRouter() {
 
   useEffect(() => {
     const pathname = location.pathname;
+
+    // const link = document.createElement('link');
+    // link.rel = 'canonical';
+    // link.href = location.origin + pathname;
+    // document.head.insertAdjacentElement('beforeend', link);
+
     return () => {
       setPrevious(pathname);
       closeModal();
+      // link.remove();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.pathname]);
@@ -142,8 +149,8 @@ function AppRouter() {
       <Route element={<Layout isCrew={signed} />}>
         <Route path="user">
           <Route path="login" element={<Login />}></Route>
-          <Route path="signup" element={<Signup />}></Route>
-          <Route path="profile" element={<Profile />}></Route>
+          <Route path="signup" element={<Signup />} />
+          <Route path="profile" element={<Profile />} />
         </Route>
         <Route index element={signed ? <Home /> : <GuestHome />} />
         <Route path="polls">

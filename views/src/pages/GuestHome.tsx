@@ -1,4 +1,10 @@
-import { Illu01, Illu02 } from '@common/variables';
+import {
+  guestMainImage,
+  illu01,
+  Illu01,
+  illu02,
+  Illu02,
+} from '@common/variables';
 import {
   Box,
   Button,
@@ -18,15 +24,30 @@ const GuestHome: React.FC<GuestHomeProps> = () => {
     <Stack>
       {/* section 01 */}
       <Stack
-        minHeight={`calc(100vh * ${screenRatio})`}
-        sx={{
-          backgroundColor: (theme) => theme.palette.info.light + '56',
-          backgroundImage: `url(${import.meta.resolve('/images/main.jpg')})`,
-          backgroundSize: 'cover',
-          backgroundRepeat: 'no-repeat',
-          backgroundPosition: 'center',
-        }}
+        position="relative"
+        height={`calc(100vh * ${screenRatio})`}
+        overflow="hidden"
+        // sx={{
+        //   backgroundColor: (theme) => theme.palette.info.light + '56',
+        //   backgroundImage: `url(${guestMainImage})`,
+        //   backgroundSize: 'cover',
+        //   backgroundRepeat: 'no-repeat',
+        //   backgroundPosition: 'center',
+        // }}
       >
+        <Box
+          component="img"
+          src={guestMainImage}
+          alt="mainCover"
+          sx={{
+            position: 'absolute',
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+            objectPosition: 'center',
+            zIndex: -1,
+          }}
+        />
         <Toolbar />
         <Stack alignItems="center" gap={1}>
           <Typography
@@ -77,13 +98,27 @@ const GuestHome: React.FC<GuestHomeProps> = () => {
             >
               {/* survey */}
               <Paper component={Stack} flex={1} maxWidth={300} p={3}>
-                <Stack alignItems="center" sx={{ float: 'right' }}>
-                  <Illu01 width={150} height={150} />
+                <Stack
+                  minHeight={170}
+                  alignItems="center"
+                  sx={{ float: 'right' }}
+                >
+                  <Box
+                    component="img"
+                    src={illu01}
+                    alt="item01"
+                    width={150}
+                    height={150}
+                    sx={{
+                      objectFit: 'cover',
+                      objectPosition: 'center',
+                    }}
+                  />
                 </Stack>
                 <Typography fontSize={24} fontWeight={700}>
                   Poll
                 </Typography>
-                <Typography fontSize={14} fontWeight={500}>
+                <Typography minHeight={80} fontSize={14} fontWeight={500}>
                   설문조사를 더 쉽고 스마트하게 만들어보세요. 복잡한 설정 없이
                   3분 만에 전문적인 설문지를 제작하고, 실시간으로 응답을 수집할
                   수 있습니다.
@@ -91,26 +126,54 @@ const GuestHome: React.FC<GuestHomeProps> = () => {
               </Paper>
               {/* graph */}
               <Paper component={Stack} flex={1} maxWidth={300} p={3}>
-                <Stack alignItems="center" sx={{ float: 'left' }}>
-                  <Illu02 width={150} height={150} />
+                <Stack
+                  minHeight={170}
+                  alignItems="center"
+                  sx={{ float: 'left' }}
+                >
+                  <Box
+                    component="img"
+                    src={illu02}
+                    alt="item02"
+                    width={150}
+                    height={150}
+                    sx={{
+                      objectFit: 'cover',
+                      objectPosition: 'center',
+                    }}
+                  />
                 </Stack>
                 <Typography fontSize={24} fontWeight={700}>
                   Graph
                 </Typography>
-                <Typography fontSize={14} fontWeight={500}>
+                <Typography minHeight={80} fontSize={14} fontWeight={500}>
                   다양한 차트와 그래프로 한눈에 보는 분석 리포트를 제공합니다.
                   응답자들의 의견을 직관적으로 파악하고 인사이트를 도출하세요.
                 </Typography>
               </Paper>
               {/* share */}
               <Paper component={Stack} flex={1} maxWidth={300} p={3}>
-                <Stack alignItems="center" sx={{ float: 'right' }}>
-                  <Illu01 width={150} height={150} />
+                <Stack
+                  minHeight={170}
+                  alignItems="center"
+                  sx={{ float: 'right' }}
+                >
+                  <Box
+                    component="img"
+                    src={illu01}
+                    alt="item03"
+                    width={150}
+                    height={150}
+                    sx={{
+                      objectFit: 'cover',
+                      objectPosition: 'center',
+                    }}
+                  />
                 </Stack>
                 <Typography fontSize={24} fontWeight={700}>
                   Share
                 </Typography>
-                <Typography fontSize={14} fontWeight={500}>
+                <Typography minHeight={80} fontSize={14} fontWeight={500}>
                   설문 링크 하나로 누구나 쉽게 참여할 수 있습니다. 이메일,
                   메신저, SNS 등 다양한 채널을 통해 설문을 공유하고 더 많은
                   의견을 모아보세요.

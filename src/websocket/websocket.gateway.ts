@@ -19,39 +19,41 @@ export class WebsocketGateway {
   @SubscribeMessage('message')
   async handleMessage(client: any, payload: any) {
     console.log(client, payload);
-    if (payload.type === 'pollResponse') {
-      const sender = await this.prisma.user.findUnique({
-        where: { id: payload.userId },
-      });
-      const poll = await this.prisma.poll.findUnique({
-        where: { id: payload.pollId },
-        include: {
-          user: {
-            select: {
-              id: true,
-              username: true,
-              email: true,
-            },
-          },
-        },
-      });
-      const senderName =
-        sender.id === poll.user.id ? '본인의' : `[${sender.username}]님께서`;
-      await this.prisma.message.create({
-        data: {
-          fromId: sender.id,
-          toId: poll.user.id,
-          message: `${senderName} "${poll.title}" 설문지에 응답했습니다!`,
-          checked: false,
-        } as Message,
-      });
-    }
-    return 'Hello world!';
+    // if (payload.type === 'pollResponse') {
+    //   const sender = await this.prisma.user.findUnique({
+    //     where: { id: payload.userId },
+    //   });
+    //   const poll = await this.prisma.poll.findUnique({
+    //     where: { id: payload.pollId },
+    //     include: {
+    //       user: {
+    //         select: {
+    //           id: true,
+    //           username: true,
+    //           email: true,
+    //         },
+    //       },
+    //     },
+    //   });
+    //   const senderName =
+    //     sender.id === poll.user.id ? '본인의' : `[${sender.username}]님께서`;
+    //   await this.prisma.message.create({
+    //     data: {
+    //       fromId: sender.id,
+    //       toId: poll.user.id,
+    //       message: `${senderName} "${poll.title}" 설문지에 응답했습니다!`,
+    //       checked: false,
+    //     } as Message,
+    //   });
+    // }
+    // return 'Hello world!';
   }
 
   @SubscribeMessage('getMessages')
   async handleGetMessages(client: any, payload: any) {
-    return this.prisma.message.findMany({ where: { id: payload.userId } });
+    console.log('getMessage payload', payload.userId);
+    if (!payload.userId) return [];
+    return this.prisma.message.findMany({ where: { toId: payload.userId } });
   }
 
   @SubscribeMessage('readMessage')
@@ -59,6 +61,20 @@ export class WebsocketGateway {
     const { userId, messageId } = payload;
     await this.prisma.message.update({
       where: { id: messageId },
+      data: { checked: true },
+    });
+    return this.prisma.message.findMany({ where: { toId: userId } });
+  }
+
+  @SubscribeMessage('readAllMessage')
+  async handleAllReadMessage(client: any, payload: any) {
+    const { userId, messageIds } = payload;
+    await this.prisma.message.updateMany({
+      where: {
+        id: {
+          in: messageIds,
+        },
+      },
       data: { checked: true },
     });
     return this.prisma.message.findMany({ where: { toId: userId } });

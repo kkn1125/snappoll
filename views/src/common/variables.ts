@@ -1,4 +1,10 @@
-export const logoImage = import.meta.resolve('/logo/SnapPoll.png');
+export const logoImage = import.meta.resolve('/logo/SnapPoll_small.webp');
+export const guestMainImage = import.meta.resolve('/images/main.webp');
+export const defaultProfile = import.meta.resolve(
+  '/images/default_profile.webp',
+);
+export const illu01 = import.meta.resolve('/images/illu-01.webp');
+export const illu02 = import.meta.resolve('/images/illu-02.webp');
 export const BRAND_NAME = 'SnapPoll';
 
 export const MODE = process.env.MODE;

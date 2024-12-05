@@ -50,6 +50,29 @@ const useSocket = () => {
     [user],
   );
 
+  const messageAllRead = useCallback(
+    (messageIds: string[]) => {
+      if (!user) {
+        openModal(Message.Require.Login);
+        return;
+      }
+      socket
+        .emitWithAck('readAllMessage', {
+          userId: user.id,
+          messageIds,
+        })
+        .then((res) => {
+          setMessage((message) => {
+            const newMessage = MessageManager.copy(message);
+            newMessage.receiver = res;
+            return newMessage;
+          });
+        });
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [user],
+  );
+
   const getMessages = useCallback(() => {
     socket.emitWithAck('getMessages', { userId: user?.id }).then((res) => {
       setMessage((message) => {
@@ -64,7 +87,14 @@ const useSocket = () => {
   const memoSocket = useMemo(() => {
     return socket;
   }, []);
-  return { socket: memoSocket, connect, getMessages, sendMessage, messageRead };
+  return {
+    socket: memoSocket,
+    connect,
+    getMessages,
+    sendMessage,
+    messageRead,
+    messageAllRead,
+  };
 };
 
 export default useSocket;

@@ -1,7 +1,14 @@
-# Realtime Poll Front-end
+# SnapPoll Front-end
 
 실시간 설문조사 프론트엔드
 
+- 2024-12-05
+  - feat
+    - font -> woff2,woff 변환 및 preload
+    - image -> webp 변환 및 preload
+    - 알림 모두 읽기 기능 추가
+    - 알림 읽기 버그 수정
+    - seo 최적화
 - 2024-12-04
   - feat
     - 사이드바 기능 개선
