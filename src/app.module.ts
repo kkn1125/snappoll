@@ -12,6 +12,7 @@ import { VotesModule } from './votes/votes.module';
 import { WebsocketGateway } from './websocket/websocket.gateway';
 import { PrismaService } from '@database/prisma.service';
 import { AppController } from './app.controller';
+import { BoardsModule } from './boards/boards.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true, load: [commonConf] }),
@@ -23,6 +24,7 @@ import { AppController } from './app.controller';
     ServeStaticModule.forRoot({
       rootPath: path.join(path.resolve(), 'views/dist'),
     }),
+    BoardsModule,
   ],
   controllers: [AppController],
   providers: [ConfigService, PrismaService, WebsocketGateway],

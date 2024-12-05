@@ -10,9 +10,9 @@ datasource db {
 
 model UserProfile {
   id        String   @id @default(uuid()) @db.Uuid
-  userId    String   @unique @db.Uuid
+  userId    String   @unique @map("user_id") @db.Uuid
   image     Bytes    @db.ByteA
-  createdAt DateTime @default(now())
+  createdAt DateTime @default(now()) @map("created_at")
 
   user User @relation(fields: [userId], references: [id])
 
@@ -103,7 +103,7 @@ model Response {
 
 model Answer {
   id         String  @id @default(uuid()) @db.Uuid
-  responseId String?  @map("response_id") @db.Uuid
+  responseId String? @map("response_id") @db.Uuid
   questionId String  @map("question_id") @db.Uuid
   optionId   String? @map("option_id") @db.Uuid
   // select, multiple checkbox
@@ -111,8 +111,8 @@ model Answer {
   // text input only
 
   response Response? @relation(fields: [responseId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  question Question @relation(fields: [questionId], references: [id])
-  option   Option?  @relation(fields: [optionId], references: [id])
+  question Question  @relation(fields: [questionId], references: [id])
+  option   Option?   @relation(fields: [optionId], references: [id])
 
   @@map("answer")
 }

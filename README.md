@@ -2,6 +2,9 @@
 
 서버사이드 구현
 
+- 2024-12-05
+  - feat
+    - board API 초안 제작
 - 2024-12-04
   - feat
     - version API 추가
