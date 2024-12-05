@@ -18,24 +18,7 @@
     "strict": true,
     "noUnusedLocals": false,
     "noUnusedParameters": false,
-    "noFallthroughCasesInSwitch": true,
-    "baseUrl": "./",
-    "paths": {
-      "@assets/*": ["src/assets/*"],
-      "@common/*": ["src/common/*"],
-      "@models/*": ["src/models/*"],
-      "@providers/*": ["src/providers/*"],
-      "@hooks/*": ["src/hooks/*"],
-      "@components/*": ["src/components/*"],
-      "@atoms/*": ["src/components/atoms/*"],
-      "@moleculars/*": ["src/components/moleculars/*"],
-      "@organisms/*": ["src/components/organisms/*"],
-      "@templates/*": ["src/components/templates/*"],
-      "@utils/*": ["src/utils/*"],
-      "@routes/*": ["src/routes/*"],
-      "@pages/*": ["src/pages/*"],
-      "@/*": ["src/*"]
-    }
+    "noFallthroughCasesInSwitch": true
   },
   "include": ["vite.config.ts"]
 }
