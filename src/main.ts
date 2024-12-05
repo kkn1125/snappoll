@@ -6,6 +6,12 @@ import { allowOrigins } from '@utils/allowOrigins';
 import cookieParser from 'cookie-parser';
 import { AppModule } from './app.module';
 
+console.log('Current working directory:', process.cwd());
+console.log(
+  'Resolved path for ./auth/auth.module:',
+  require.resolve('./auth/auth.module'),
+);
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const { hosts, ports } = whiteList;
