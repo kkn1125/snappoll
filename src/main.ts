@@ -1,10 +1,10 @@
+import commonConf from '@common/common.conf';
+import whiteList from '@common/whiteList';
 import { ConfigService, ConfigType } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
-import commonConf from './common/common.conf';
-import whiteList from './common/whiteList';
-import { allowOrigins } from './utils/allowOrigins';
+import { allowOrigins } from '@utils/allowOrigins';
 import cookieParser from 'cookie-parser';
+import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);

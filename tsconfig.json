@@ -26,6 +26,9 @@
     "paths": {
       "@database/*": ["src/database/*"],
       "@middleware/*": ["src/middleware/*"],
+      "@auth/*": ["src/auth/*"],
+      "@boards/*": ["src/boards/*"],
+      "@websocket/*": ["src/websocket/*"],
       "@users/*": ["src/users/*"],
       "@polls/*": ["src/polls/*"],
       "@votes/*": ["src/votes/*"],

@@ -1,6 +1,6 @@
 import * as dotenv from 'dotenv';
 import * as path from 'path';
-import * as pkg from '../../package.json';
+import * as pkg from '@/../package.json';
 
 export const MODE = process.env.NODE_ENV;
 

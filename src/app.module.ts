@@ -1,18 +1,18 @@
+import { AuthModule } from '@auth/auth.module';
+import { BoardsModule } from '@boards/boards.module';
+import commonConf from '@common/common.conf';
+import { DatabaseModule } from '@database/database.module';
+import { PrismaService } from '@database/prisma.service';
 import { LoggerMiddleware } from '@middleware/logger.middleware';
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ServeStaticModule } from '@nestjs/serve-static';
+import { PollsModule } from '@polls/polls.module';
+import { UsersModule } from '@users/users.module';
+import { VotesModule } from '@votes/votes.module';
+import { WebsocketGateway } from '@websocket/websocket.gateway';
 import path from 'path';
-import { AuthModule } from './auth/auth.module';
-import commonConf from './common/common.conf';
-import { DatabaseModule } from './database/database.module';
-import { PollsModule } from './polls/polls.module';
-import { UsersModule } from './users/users.module';
-import { VotesModule } from './votes/votes.module';
-import { WebsocketGateway } from './websocket/websocket.gateway';
-import { PrismaService } from '@database/prisma.service';
 import { AppController } from './app.controller';
-import { BoardsModule } from './boards/boards.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true, load: [commonConf] }),
