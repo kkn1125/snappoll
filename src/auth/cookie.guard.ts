@@ -23,6 +23,7 @@ export class CookieGuard implements CanActivate {
       const result = jwt.verify(req.cookies.token, secretKey, {
         algorithms: ['HS256'],
       }) as JwtPayload;
+      // console.log('result:', result);
       const user = await this.authService.getMe(result.email);
       if (result) {
         req.verify = result;
@@ -34,6 +35,7 @@ export class CookieGuard implements CanActivate {
       // return !!result;
     } catch (error: any) {
       if (error.name === 'TokenExpiredError') {
+        // console.log(error.message);
         try {
           /* refresh check */
           const result = jwt.verify(req.cookies.refresh, secretKey, {
@@ -66,6 +68,19 @@ export class CookieGuard implements CanActivate {
         } catch (error: any) {
           console.log(error.name, error.message);
           console.log('invalid refresh token!');
+          //
+          res.clearCookie('token', {
+            httpOnly: true,
+            secure: true,
+            sameSite: 'lax',
+            path: '/',
+          });
+          res.clearCookie('refresh', {
+            httpOnly: true,
+            secure: true,
+            sameSite: 'lax',
+            path: '/',
+          });
         }
       } else {
         //
