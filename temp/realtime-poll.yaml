@@ -1,0 +1,24 @@
+name: realtime-poll
+app: node@20
+options:
+  ports: '8080'
+  install: npm i
+  build: cd /app/views && npm i && npm run build && cd /app && npm run build
+  start: npm run start:prod
+  env:
+    - name: DATABASE_URL
+      secret: DATABASE_URL
+    - name: DIRECT_URL
+      secret: DIRECT_URL
+    - name: HOST
+      value: 0.0.0.0
+    - name: PORT
+      value: '8080'
+    - name: SECRET_KEY
+      secret: SECRET_KEY
+  buildenv: []
+  strategy: rolling
+context:
+  git:
+    url: git@github.com:kkn1125/realtime-poll.git
+    ref: refs/heads/main
