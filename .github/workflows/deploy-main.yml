@@ -27,7 +27,7 @@ jobs:
             options:
               ports: "8080"
               install: npm i
-              build: cd /app/views && npm install --force && npm run build && cd /app && npm run build
+              build: cd /app/views && NODE_ENV=development npm install --force && npm run build && cd /app && npm run build
               env:
                 - name: DATABASE_URL
                   secret: DATABASE_URL
