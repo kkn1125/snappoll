@@ -26,7 +26,7 @@ const About: React.FC<AboutProps> = () => {
             여러분의 프로젝트와 비즈니스를 한 단계 업그레이드합니다. 설문조사도
             이제 스마트하게, 스냅폴과 함께하세요.
           </Typography>
-          <Typography fontSize={24} fontWeight={700} gutterBottom>
+          {/* <Typography fontSize={24} fontWeight={700} gutterBottom>
             개발자
           </Typography>
           <Stack direction="row">
@@ -60,7 +60,7 @@ const About: React.FC<AboutProps> = () => {
                 더 알아보기
               </Button>
             </Stack>
-          </Stack>
+          </Stack> */}
         </Stack>
       </Container>
     </Stack>

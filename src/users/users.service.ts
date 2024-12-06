@@ -68,13 +68,25 @@ export class UsersService {
     });
   }
 
-  uploadProfile(id: string, image: Buffer) {
-    return this.prisma.userProfile.create({
-      data: {
-        userId: id,
-        image,
-      },
+  async uploadProfile(id: string, image: Buffer) {
+    const profile = await this.prisma.userProfile.findUnique({
+      where: { userId: id },
     });
+    if (profile) {
+      return this.prisma.userProfile.update({
+        where: { userId: id },
+        data: {
+          image,
+        },
+      });
+    } else {
+      return this.prisma.userProfile.create({
+        data: {
+          userId: id,
+          image,
+        },
+      });
+    }
   }
 
   deleteProfileImage(id: string) {

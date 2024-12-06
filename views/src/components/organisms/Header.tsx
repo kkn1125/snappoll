@@ -89,12 +89,12 @@ const Header: React.FC<HeaderProps> = ({ isCrew }) => {
   }, [isMdDown]);
 
   useEffect(() => {
-    if (user && user?.userProfile) {
-      const url = makeBlobToImageUrl(user.userProfile[0]?.image.data);
-      if (url) {
-        setProfileImage(url);
-      }
-    }
+    if (!(user && user?.userProfile)) return;
+    const { url, revokeUrl } = makeBlobToImageUrl(user.userProfile);
+    setProfileImage(url);
+    return () => {
+      revokeUrl();
+    };
   }, [user]);
 
   function redirectTo(to: string) {

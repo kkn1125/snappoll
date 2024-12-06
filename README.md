@@ -2,6 +2,14 @@
 
 서버사이드 구현
 
+- 2024-12-06
+  - feat
+    - profile upload API 수정
+      - 존재 할 경우 업데이트
+      - 없을 경우 생성
+    - auth verify 응답 값 getMe API와 통일
+    - logger middleware query 표시 방식 변경
+    - role guard 토큰 만료 에러 분기 처리
 - 2024-12-05
   - feat
     - board API 초안 제작

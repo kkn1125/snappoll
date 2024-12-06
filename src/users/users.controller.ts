@@ -50,21 +50,23 @@ export class UsersController {
   }
 
   @UseGuards(RoleGuard)
+  @UseInterceptors(FileInterceptor('file'))
+  @Put('profile')
+  async uploadProfile(@Req() req: Request, @UploadedFile() file) {
+    const id = req.user.id;
+    return await this.usersService.uploadProfile(id, Buffer.from(file.buffer));
+  }
+
+  @UseGuards(RoleGuard)
   @Put(':id')
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.usersService.update(id, updateUserDto);
   }
 
   @UseGuards(RoleGuard)
-  @UseInterceptors(FileInterceptor('file'))
-  @Put(':id/profile')
-  async uploadProfile(@Param('id') id: string, @UploadedFile() file) {
-    return await this.usersService.uploadProfile(id, Buffer.from(file.buffer));
-  }
-
-  @UseGuards(RoleGuard)
-  @Delete(':id/profile')
-  deleteProfileImage(@Param('id') id: string) {
+  @Delete('profile')
+  deleteProfileImage(@Req() req: Request) {
+    const id = req.user.id;
     return this.usersService.deleteProfileImage(id);
   }
 

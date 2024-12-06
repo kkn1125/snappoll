@@ -2,6 +2,12 @@
 
 실시간 설문조사 프론트엔드
 
+- 2024-12-06
+  - feat
+    - 프로필 이미지 업로드 추가
+    - 프로필 이미지 변경 시 global state refetch
+    - 프로필 이미지 영역 스타일 수정
+    - about 개발자 정보 제거
 - 2024-12-05
   - feat
     - font -> woff2,woff 변환 및 preload

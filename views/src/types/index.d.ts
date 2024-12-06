@@ -156,7 +156,7 @@ export declare global {
     createdAt: Date;
     updatedAt: Date;
     poll?: UserPoll[];
-    userProfile?: Profile[];
+    userProfile?: Profile;
   }
   interface UserPoll {
     id: string;
@@ -171,10 +171,7 @@ export declare global {
   interface Profile {
     id: string;
     userId: string;
-    image: {
-      type: 'Buffer';
-      data: number[];
-    };
+    image: object;
     createdAt: Date;
   }
   interface SignupUser extends Omit<User, 'id' | 'createdAt' | 'updatedAt'> {

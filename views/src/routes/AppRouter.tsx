@@ -3,7 +3,11 @@ import { verifyLogin } from '@/apis/verifyLogin';
 import { previousAtom } from '@/recoils/previous.atom';
 import { tokenAtom } from '@/recoils/token.atom';
 import { Message } from '@common/messages';
-import { VERSION } from '@common/variables';
+import {
+  guestDisallowPaths,
+  userDisallowPaths,
+  VERSION,
+} from '@common/variables';
 import Layout from '@components/templates/Layout';
 import useLoading from '@hooks/useLoading';
 import useModal from '@hooks/useModal';
@@ -33,10 +37,6 @@ import { useCallback, useEffect, useState } from 'react';
 import { Route, Routes, useNavigate } from 'react-router-dom';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 
-const guestDisallowPaths =
-  /\/user\/profile|\/(votes|polls|notice|graph)\/?(.*)/;
-const userDisallowPaths = /\/user\/(login|signup)\/?(.*)/;
-
 function AppRouter() {
   const [loaded, setLoaded] = useState(false);
   const { openModal, closeModal } = useModal();
@@ -61,6 +61,19 @@ function AppRouter() {
   const verifyMutate = useMutation({
     mutationKey: ['verify'],
     mutationFn: verifyLogin,
+    onSuccess(data, variables, context) {
+      if (data.ok) {
+        setToken({
+          signed: true,
+          user: data.user,
+          token: data.token,
+          expired: false,
+        });
+        if (location.pathname.match(userDisallowPaths)) {
+          navigate('/');
+        }
+      }
+    },
     onError(error: AxiosError, variables, context) {
       const loggedIn = localStorage.getItem('logged_in');
       if (loggedIn === 'true') {

@@ -19,3 +19,8 @@ export const VERSION = process.env.VERSION as string;
 export { default as Illu01 } from '@assets/illustrations/illu-01.svg?react';
 export { default as Illu02 } from '@assets/illustrations/illu-02.svg?react';
 export { default as DefaultProfile } from '@assets/illustrations/default_profile.svg?react';
+
+/* disallow */
+export const guestDisallowPaths =
+  /\/user\/profile|\/(votes|polls|notice|graph)\/?(.*)/;
+export const userDisallowPaths = /\/user\/(login|signup)\/?(.*)/;

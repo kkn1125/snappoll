@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   CanActivate,
   ExecutionContext,
   Injectable,
@@ -46,8 +47,12 @@ export class RoleGuard implements CanActivate {
       }
 
       return !!result;
-    } catch (error) {
-      throw new UnauthorizedException('잘못된 접근입니다.');
+    } catch (error: any) {
+      if (error.name === 'TokenExpiredError') {
+        throw new UnauthorizedException('토큰이 만료되었습니다.');
+      } else {
+        throw new BadRequestException('잘못된 접근입니다.');
+      }
     }
   }
 }
