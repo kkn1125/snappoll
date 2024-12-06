@@ -27,7 +27,7 @@ jobs:
             options:
               ports: "8080"
               install: npm i
-              build: npm run build
+              build: npm run build && cd /app/views && npm i && npm run build && cd /app
               start: npm run start:prod
               env:
                 - name: DATABASE_URL
