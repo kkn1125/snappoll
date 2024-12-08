@@ -4,6 +4,7 @@ import { SnapPoll } from '@models/SnapPoll';
 import { Stack, Typography, Toolbar } from '@mui/material';
 import { grey } from '@mui/material/colors';
 import dayjs from 'dayjs';
+import { useParams } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 
 interface PollResponseLayoutProps {
@@ -15,6 +16,7 @@ const PollResponseLayout: React.FC<PollResponseLayoutProps> = ({
   contributor,
 }) => {
   const { user } = useRecoilValue(tokenAtom);
+  const { responseId } = useParams();
   return (
     <Stack gap={1}>
       <Stack justifyContent="baseline" gap={1}>
@@ -77,7 +79,15 @@ const PollResponseLayout: React.FC<PollResponseLayoutProps> = ({
 
       <Stack gap={10}>
         {poll.question.map((question) => (
-          <AnswerItem key={question.id} question={question} />
+          <AnswerItem
+            key={question.id}
+            question={question}
+            answer={question.answer?.find(
+              (answer) =>
+                answer.responseId === responseId &&
+                answer.questionId === question.id,
+            )}
+          />
         ))}
       </Stack>
     </Stack>

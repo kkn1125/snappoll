@@ -91,6 +91,11 @@ export class VotesService {
           },
         },
         voteOption: true,
+        voteResponse: {
+          include: {
+            voteAnswer: true,
+          },
+        },
       },
     });
     const count = await this.prisma.vote.count({ where: { userId: id } });
@@ -111,7 +116,11 @@ export class VotesService {
             updatedAt: true,
           },
         },
-        voteOption: true,
+        voteOption: {
+          include: {
+            voteAnswer: true,
+          },
+        },
       },
     });
   }

@@ -133,6 +133,11 @@ export class PollsService {
             answer: true,
           },
         },
+        response: {
+          include: {
+            answer: true,
+          },
+        },
       },
     });
   }

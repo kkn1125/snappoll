@@ -1,0 +1,169 @@
+import { SnapPoll } from '@models/SnapPoll';
+import { SnapPollQuestion } from '@models/SnapPollQuestion';
+import {
+  Badge,
+  Button,
+  ButtonGroup,
+  Stack,
+  Toolbar,
+  Typography,
+} from '@mui/material';
+import { BarChart, BarSeriesType } from '@mui/x-charts';
+import { MakeOptional } from '@mui/x-date-pickers/internals';
+import { ChangeEvent, useCallback, useMemo, useState } from 'react';
+
+interface CorrelationChartProps {
+  data: SnapPoll;
+}
+const CorrelationChart: React.FC<CorrelationChartProps> = ({ data }) => {
+  const [baseQuestion, setBaseQuestion] = useState<SnapPollQuestion | null>(
+    null,
+  );
+  const [questions, setQuestions] = useState<SnapPollQuestion[]>([]);
+
+  function handleSetBaseQuestion(question: SnapPollQuestion) {
+    setBaseQuestion((q) => (q !== question ? question : null));
+    setQuestions((questions) => questions.filter((q) => q.id !== question.id));
+  }
+
+  function handleStackQuestion(question: SnapPollQuestion) {
+    if (questions.includes(question)) {
+      setQuestions((questions) =>
+        questions.filter((q) => q.id !== question.id),
+      );
+    } else {
+      setQuestions((questions) => [...questions, question]);
+    }
+  }
+
+  const slicedTitle = useCallback((question: SnapPollQuestion) => {
+    return question.title.length > 10
+      ? question.title.slice(0, 10) + '...'
+      : question.title;
+  }, []);
+
+  const getCounter = useCallback(
+    (question: SnapPollQuestion) => {
+      if (baseQuestion === null) return [];
+      if (!baseQuestion.answer) return [];
+
+      // {data: [q1, q2, q3, q4]}
+      const result: MakeOptional<BarSeriesType, 'type'>[] = question.option.map(
+        (option) => {
+          // const answer = baseQuestion.answer?.find(
+          //   (answer) => answer.optionId === option.id,
+          // );
+          // const responseId = answer?.responseId;
+          return {
+            data: (baseQuestion.option?.map((opt) => {
+              return question.answer?.reduce((acc, cur) => {
+                const responseId = cur.responseId;
+                const answers = baseQuestion.answer?.filter(
+                  (answer) =>
+                    cur.optionId === option.id &&
+                    responseId === answer.responseId &&
+                    answer.optionId === opt.id,
+                );
+                return acc + (answers?.length || 0);
+              }, 0);
+            }) || []) as number[],
+            label: option.content,
+            highlightScope: { highlight: 'item', fade: 'global' },
+          };
+        },
+      );
+
+      return result;
+    },
+    [baseQuestion],
+  );
+
+  return (
+    <Stack>
+      <Stack direction="row" justifyContent="space-between">
+        <Stack>
+          <Typography variant="h5">기준 질문</Typography>
+          <ButtonGroup>
+            {(baseQuestion !== null ? [baseQuestion] : data.question).map(
+              (question) => (
+                <Badge
+                  key={question.id}
+                  color="error"
+                  variant="dot"
+                  invisible={baseQuestion !== question}
+                >
+                  <Button
+                    variant={
+                      baseQuestion === question ? 'contained' : 'outlined'
+                    }
+                    onClick={() => handleSetBaseQuestion(question)}
+                  >
+                    {slicedTitle(question)}
+                  </Button>
+                </Badge>
+              ),
+            )}
+          </ButtonGroup>
+        </Stack>
+        {baseQuestion !== null && (
+          <Stack>
+            <Typography variant="h5">비교 질문</Typography>
+            <ButtonGroup>
+              {data.question
+                .filter((question) => question !== baseQuestion)
+                .map((question) => (
+                  <Badge
+                    key={question.id}
+                    color="secondary"
+                    badgeContent={Math.max(
+                      questions
+                        .filter((question) => question !== baseQuestion)
+                        .indexOf(question) + 1,
+                      -Infinity,
+                    )}
+                  >
+                    <Button
+                      variant={
+                        questions.includes(question) ? 'contained' : 'outlined'
+                      }
+                      onClick={() => handleStackQuestion(question)}
+                    >
+                      {slicedTitle(question)}
+                    </Button>
+                  </Badge>
+                ))}
+            </ButtonGroup>
+          </Stack>
+        )}
+      </Stack>
+      <Toolbar />
+      <Stack alignItems="center">
+        {baseQuestion &&
+          questions.map((question) => (
+            <Stack key={baseQuestion.id + question.id}>
+              <Typography>
+                {baseQuestion.title} {'↔️'} {question.title}
+              </Typography>
+              <BarChart
+                axisHighlight={{ y: 'line' }}
+                borderRadius={10}
+                xAxis={[
+                  {
+                    scaleType: 'band',
+                    data:
+                      baseQuestion.option?.map((option) => option.content) ||
+                      [],
+                  },
+                ]}
+                series={getCounter(question)}
+                width={700}
+                height={300}
+              />
+            </Stack>
+          ))}
+      </Stack>
+    </Stack>
+  );
+};
+
+export default CorrelationChart;

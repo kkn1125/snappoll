@@ -38,14 +38,15 @@ import { uploadProfileImage } from '@/apis/uploadProfileImage';
 import { makeBlobToImageUrl } from '@utils/makeBlobToImageUrl';
 import { AxiosError } from 'axios';
 import { verifyLogin } from '@/apis/verifyLogin';
+import useToken from '@hooks/useToken';
 
 interface ProfileProps {}
 const Profile: React.FC<ProfileProps> = () => {
-  const queryClient = useQueryClient();
+  const { logoutToken, refetchGetMe } = useToken();
   const [uploadFile, setUploadFile] = useState<File | null>(null);
   const navigate = useNavigate();
   const { openModal, openInteractiveModal } = useModal();
-  const [{ user }, setToken] = useRecoilState(tokenAtom);
+  const { user } = useRecoilValue(tokenAtom);
   const [current, setCurrent] = useState<
     Partial<
       Omit<User, 'id' | 'userProfile' | 'password' | 'createdAt' | 'updatedAt'>
@@ -53,52 +54,13 @@ const Profile: React.FC<ProfileProps> = () => {
   >({});
   const [image, setImage] = useState('');
 
-  const clearToken = useCallback(() => {
-    localStorage.setItem('logged_in', 'false');
-    setToken({
-      signed: false,
-      user: undefined,
-      token: undefined,
-      expired: true,
-    });
-    if (location.pathname.match(guestDisallowPaths)) {
-      navigate('/');
-    }
-  }, [navigate, setToken]);
-
-  const verifyMutate = useMutation({
-    mutationKey: ['verify'],
-    mutationFn: verifyLogin,
-    onSuccess(data, variables, context) {
-      if (data.ok) {
-        setToken({
-          signed: true,
-          user: data.user,
-          token: data.token,
-          expired: false,
-        });
-        if (location.pathname.match(userDisallowPaths)) {
-          navigate('/');
-        }
-      }
-    },
-    onError(error: AxiosError, variables, context) {
-      const loggedIn = localStorage.getItem('logged_in');
-      if (loggedIn === 'true') {
-        openModal(Message.Expired.Token);
-      } else if (error.response?.status === 401) {
-        openModal(Message.Expired.Token);
-      }
-      clearToken();
-    },
-  });
-
   const profileUploadMutate = useMutation({
     mutationKey: ['uploadProfile'],
     mutationFn: uploadProfileImage,
     onSuccess(data, variables, context) {
       openModal({ title: '안내', content: '프로필 변경되었습니다.' });
-      verifyMutate.mutate();
+      // queryClient.invalidateQueries({ queryKey: ['getMe'] });
+      refetchGetMe();
     },
     onError(error: AxiosError<{ message?: any }>, variables, context) {
       if (!error.response) {
@@ -107,7 +69,7 @@ const Profile: React.FC<ProfileProps> = () => {
       }
 
       if (error.response.status === 401) {
-        clearToken();
+        logoutToken();
       } else {
         openModal({
           title: '안내',
@@ -122,8 +84,9 @@ const Profile: React.FC<ProfileProps> = () => {
     mutationFn: logout,
     onSuccess(data, variables, context) {
       if (data.ok) {
-        localStorage.setItem('logged_in', 'false');
-        window.location.pathname = '/';
+        logoutToken();
+        // localStorage.setItem('logged_in', 'false');
+        // window.location.pathname = '/';
       }
     },
   });
@@ -132,8 +95,8 @@ const Profile: React.FC<ProfileProps> = () => {
     mutationKey: ['removeAccount'],
     mutationFn: removeAccount,
     onSuccess(data, variables, context) {
-      localStorage.setItem('logged_in', 'false');
-      window.location.pathname = '/';
+      logoutToken();
+      // window.location.pathname = '/';
     },
   });
 
@@ -168,7 +131,7 @@ const Profile: React.FC<ProfileProps> = () => {
     (e: FormEvent) => {
       e.preventDefault();
       openInteractiveModal(Message.Single.Save, () => {
-        console.log(current);
+        // console.log(current);
       });
       return false;
     },

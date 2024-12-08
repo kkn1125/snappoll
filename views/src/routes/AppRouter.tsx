@@ -1,24 +1,19 @@
-import { getMe } from '@/apis/getMe';
-import { verifyLogin } from '@/apis/verifyLogin';
 import { previousAtom } from '@/recoils/previous.atom';
-import { tokenAtom } from '@/recoils/token.atom';
-import { Message } from '@common/messages';
-import {
-  guestDisallowPaths,
-  userDisallowPaths,
-  VERSION,
-} from '@common/variables';
+import { VERSION } from '@common/variables';
 import Layout from '@components/templates/Layout';
 import useLoading from '@hooks/useLoading';
 import useModal from '@hooks/useModal';
+import useToken from '@hooks/useToken';
 import About from '@pages/About';
 import Graph from '@pages/graph/Graph';
 import GuestHome from '@pages/GuestHome';
 import Home from '@pages/Home';
+import Notfound from '@pages/Notfound';
 import Notice from '@pages/notice/Notice';
 import CreateSnapPoll from '@pages/polls/CreateSnapPoll';
 import DetailPoll from '@pages/polls/DetailPoll';
 import MyPolls from '@pages/polls/MyPolls';
+import PollGraph from '@pages/polls/PollGraph';
 import PollListV2 from '@pages/polls/PollListV2';
 import PollResponse from '@pages/polls/PollResponse';
 import DetailPollResponse from '@pages/polls/response/DetailPollResponse';
@@ -29,122 +24,40 @@ import CreateSnapVote from '@pages/votes/CreateSnapVote';
 import DetailVote from '@pages/votes/DetailVote';
 import MyVotes from '@pages/votes/MyVotes';
 import DetailVoteResponse from '@pages/votes/response/DetailVoteResponse';
+import VoteGraph from '@pages/votes/VoteGraph';
 import VoteList from '@pages/votes/VoteList';
 import VoteResponse from '@pages/votes/VoteResponse';
-import { useMutation } from '@tanstack/react-query';
-import { AxiosError } from 'axios';
-import { useCallback, useEffect, useState } from 'react';
-import { Route, Routes, useNavigate } from 'react-router-dom';
-import { useRecoilState, useSetRecoilState } from 'recoil';
+import { useEffect, useState } from 'react';
+import { Route, Routes, useLocation } from 'react-router-dom';
+import { useSetRecoilState } from 'recoil';
 
 function AppRouter() {
+  const { isCrew, verify } = useToken();
   const [loaded, setLoaded] = useState(false);
-  const { openModal, closeModal } = useModal();
+  const { closeModal } = useModal();
   const { openLoading, closeLoading } = useLoading();
-  const [{ signed }, setToken] = useRecoilState(tokenAtom);
-  const navigate = useNavigate();
+  const locate = useLocation();
   const setPrevious = useSetRecoilState(previousAtom);
 
-  const clearToken = useCallback(() => {
-    localStorage.setItem('logged_in', 'false');
-    setToken({
-      signed: false,
-      user: undefined,
-      token: undefined,
-      expired: true,
-    });
-    if (location.pathname.match(guestDisallowPaths)) {
-      navigate('/');
-    }
-  }, [navigate, setToken]);
-
-  const verifyMutate = useMutation({
-    mutationKey: ['verify'],
-    mutationFn: verifyLogin,
-    onSuccess(data, variables, context) {
-      if (data.ok) {
-        setToken({
-          signed: true,
-          user: data.user,
-          token: data.token,
-          expired: false,
-        });
-        if (location.pathname.match(userDisallowPaths)) {
-          navigate('/');
-        }
-      }
-    },
-    onError(error: AxiosError, variables, context) {
-      const loggedIn = localStorage.getItem('logged_in');
-      if (loggedIn === 'true') {
-        openModal(Message.Expired.Token);
-      } else if (error.response?.status === 401) {
-        openModal(Message.Expired.Token);
-      }
-      clearToken();
-    },
-  });
-
-  const getMeMutate = useMutation({
-    mutationKey: ['getMe'],
-    mutationFn: getMe,
-    onSuccess(data, variables, context) {
-      if (data.ok) {
-        setToken({
-          signed: true,
-          user: data.user,
-          token: data.token,
-          expired: false,
-        });
-        if (location.pathname.match(userDisallowPaths)) {
-          navigate('/');
-        }
-      }
-    },
-    onError(error, variables, context) {
-      const loggedIn = localStorage.getItem('logged_in');
-      if (!loggedIn || loggedIn === 'false') {
-        openModal(Message.Require.Login);
-      }
-      clearToken();
-    },
-  });
-
+  /* when change page */
   useEffect(() => {
-    const pathname = location.pathname;
+    const pathname = locate.pathname;
 
-    // const link = document.createElement('link');
-    // link.rel = 'canonical';
-    // link.href = location.origin + pathname;
-    // document.head.insertAdjacentElement('beforeend', link);
+    verify();
 
     return () => {
       setPrevious(pathname);
       closeModal();
-      // link.remove();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [location.pathname]);
+  }, [locate.pathname]);
 
-  useEffect(() => {
-    const loggedIn = localStorage.getItem('logged_in');
-    if (loggedIn === 'true' && signed) {
-      verifyMutate.mutate();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [location.pathname, signed]);
-
+  /* when refresh */
   useEffect(() => {
     openLoading('Loading...');
     /* version save */
     localStorage.setItem('version', VERSION);
 
-    const loggedIn = localStorage.getItem('logged_in');
-    if (loggedIn === 'true') {
-      getMeMutate.mutate();
-    } else {
-      clearToken();
-    }
     setLoaded(true);
     return () => {
       closeLoading();
@@ -159,13 +72,13 @@ function AppRouter() {
 
   return (
     <Routes>
-      <Route element={<Layout isCrew={signed} />}>
+      <Route element={<Layout isCrew={isCrew} />}>
         <Route path="user">
           <Route path="login" element={<Login />}></Route>
           <Route path="signup" element={<Signup />} />
           <Route path="profile" element={<Profile />} />
         </Route>
-        <Route index element={signed ? <Home /> : <GuestHome />} />
+        <Route index element={isCrew ? <Home /> : <GuestHome />} />
         <Route path="polls">
           <Route index element={<PollListV2 />} />
           <Route path="me" element={<MyPolls />} />
@@ -192,8 +105,13 @@ function AppRouter() {
           />
         </Route>
         <Route path="about" element={<About />} />
-        <Route path="graph" element={<Graph />} />
+        <Route path="graph">
+          <Route index element={<Graph />} />
+          <Route path="polls/:id" element={<PollGraph />} />
+          <Route path="votes/:id" element={<VoteGraph />} />
+        </Route>
         <Route path="notice" element={<Notice />} />
+        <Route path="*" element={<Notfound />} />
       </Route>
     </Routes>
   );

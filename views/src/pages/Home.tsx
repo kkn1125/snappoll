@@ -11,22 +11,6 @@ const Home = () => {
     queryFn: getPolls,
   });
 
-  // const removeMutation = useMutation({
-  //   mutationKey: ['polls-remove'],
-  //   mutationFn: (pollId: string) => removePoll(pollId),
-  //   onSuccess: () => {
-  //     // Invalidate and refetch
-  //     queryClient.invalidateQueries({ queryKey: ['polls'] });
-  //   },
-  // });
-
-  // function handleRemovePoll(pollId: string) {
-  //   return (e: MouseEvent) => {
-  //     e.stopPropagation();
-  //     removeMutation.mutate(pollId);
-  //   };
-  // }
-
   return (
     <Stack p={2} gap={5}>
       {/* first section */}

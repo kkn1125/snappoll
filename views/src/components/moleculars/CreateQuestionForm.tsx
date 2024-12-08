@@ -27,6 +27,8 @@ import {
 import { useSetRecoilState } from 'recoil';
 import CreateOptionForm from './CreateOptionForm';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { Message } from '@common/messages';
+import useModal from '@hooks/useModal';
 
 interface CreateQuestionFormProps {
   index: number;
@@ -38,6 +40,7 @@ const CreateQuestionForm: React.FC<CreateQuestionFormProps> = ({
   question,
   errors,
 }) => {
+  const { openInteractiveModal } = useModal();
   const setSnapPoll = useSetRecoilState(snapPollAtom);
   // const [type, setType] = useState('text');
   // const [options, setOptions] = useState<SnapPollOption[]>([
@@ -45,12 +48,14 @@ const CreateQuestionForm: React.FC<CreateQuestionFormProps> = ({
   // ]);
 
   const handleRemove = useCallback((questionId: string) => {
-    setSnapPoll((snapPoll) => {
-      const copySnapPoll = SnapPoll.copy(snapPoll);
-      copySnapPoll.question = copySnapPoll.question.filter(
-        (question) => question.id !== questionId,
-      );
-      return copySnapPoll;
+    openInteractiveModal(Message.Single.Remove, () => {
+      setSnapPoll((snapPoll) => {
+        const copySnapPoll = SnapPoll.copy(snapPoll);
+        copySnapPoll.question = copySnapPoll.question.filter(
+          (question) => question.id !== questionId,
+        );
+        return copySnapPoll;
+      });
     });
   }, []);
 

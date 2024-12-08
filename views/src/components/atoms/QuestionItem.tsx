@@ -70,7 +70,9 @@ const QuestionItem: React.FC<QuestionItemProps> = ({ question }) => {
         const copyResponse = SnapResponse.copy(response);
         if (checked) {
           if (!question.isMultiple) {
-            copyResponse.answer = [];
+            copyResponse.answer = copyResponse.answer.filter(
+              (answer) => answer.questionId !== question.id,
+            );
             setUseEtc(false);
           }
           const option = copyResponse.hasOption(name);

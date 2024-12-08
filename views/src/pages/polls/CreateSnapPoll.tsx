@@ -2,11 +2,11 @@ import { createPoll } from '@/apis/poll/create.poll';
 import { Action } from '@/models/Action';
 import { previousAtom } from '@/recoils/previous.atom';
 import { snapPollAtom } from '@/recoils/snapPoll.atom';
-import { tokenAtom } from '@/recoils/token.atom';
 import { Message } from '@common/messages';
 import CreatePollForm from '@components/moleculars/CreatePollForm';
 import CreateQuestionForm from '@components/moleculars/CreateQuestionForm';
 import useModal from '@hooks/useModal';
+import useToken from '@hooks/useToken';
 import { SnapPoll } from '@models/SnapPoll';
 import { SnapPollQuestion } from '@models/SnapPollQuestion';
 import AddBoxIcon from '@mui/icons-material/AddBox';
@@ -36,9 +36,10 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 
 interface CreateSnapPollProps {}
 const CreateSnapPoll: React.FC<CreateSnapPollProps> = () => {
+  const { user, logoutToken } = useToken();
   const previous = useRecoilValue(previousAtom);
   const { openInteractiveModal } = useModal();
-  const [{ user }, setToken] = useRecoilState(tokenAtom);
+  // const [{ user }, setToken] = useRecoilState(tokenAtom);
   const navigate = useNavigate();
   const [snapPoll, setSnapPoll] = useRecoilState(snapPollAtom);
   const [validated, setValidated] = useState(false);
@@ -53,13 +54,7 @@ const CreateSnapPoll: React.FC<CreateSnapPollProps> = () => {
     onError(error: AxiosError, variables, context) {
       if (error.response?.status === 401) {
         setSnapPoll(new SnapPoll());
-        localStorage.setItem('logged_in', 'false');
-        setToken({
-          signed: false,
-          user: undefined,
-          token: undefined,
-          expired: true,
-        });
+        logoutToken();
         navigate('/');
       }
     },

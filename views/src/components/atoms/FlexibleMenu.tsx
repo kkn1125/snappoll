@@ -11,8 +11,8 @@ import {
   useMediaQuery,
   useTheme,
 } from '@mui/material';
-import { useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { memo, useCallback, useMemo } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
 interface FlexibleMenuProps {
@@ -34,6 +34,13 @@ const FlexibleMenu: React.FC<FlexibleMenuProps> = ({
   const theme = useTheme();
   const isMdDown = useMediaQuery(theme.breakpoints.down('md'));
   const opened = isMdDown ? !sidebarState.opened : sidebarState.opened;
+  const locate = useLocation();
+
+  const highlight = useMemo(() => {
+    const [first] = to.split('/').filter(($) => $);
+    const current = '/' + first;
+    return locate.pathname.startsWith(current);
+  }, [locate.pathname, to]);
 
   function handleRedirect(to: string) {
     if (isMdDown) {
@@ -51,7 +58,12 @@ const FlexibleMenu: React.FC<FlexibleMenuProps> = ({
   }, []);
 
   return (
-    <ListItem disablePadding>
+    <ListItem
+      disablePadding
+      sx={{
+        background: highlight ? '#cccccc56' : 'auto',
+      }}
+    >
       <Tooltip
         title={name}
         placement="right"
@@ -83,4 +95,4 @@ const FlexibleMenu: React.FC<FlexibleMenuProps> = ({
   );
 };
 
-export default FlexibleMenu;
+export default memo(FlexibleMenu);

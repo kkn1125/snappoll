@@ -67,6 +67,7 @@ declare module 'react' {
 createRoot(document.getElementById('root')!).render(
   <ThemeProvider theme={darkTheme}>
     <RecoilRoot>
+      {/* <AuthProvider> */}
       <SocketLayout>
         <QueryClientProvider client={queryClient}>
           <BrowserRouter
@@ -85,6 +86,7 @@ createRoot(document.getElementById('root')!).render(
           </BrowserRouter>
         </QueryClientProvider>
       </SocketLayout>
+      {/* </AuthProvider> */}
     </RecoilRoot>
   </ThemeProvider>,
 );

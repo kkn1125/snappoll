@@ -39,7 +39,6 @@ export class UsersController {
     return {
       ok: true,
       user: req.user,
-      token: req.token,
     };
   }
 

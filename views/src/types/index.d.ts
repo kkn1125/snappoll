@@ -181,10 +181,10 @@ export declare global {
     extends Omit<User, 'id' | 'username' | 'createdAt' | 'updatedAt'> {}
   type ErrorMessage<T = object> = Partial<{ [k in keyof T]: string }>;
   interface UserToken {
-    token?: string;
+    // token?: string;
     user?: Pick<User, 'id' | 'email' | 'username' | 'userProfile'>;
-    signed: boolean;
-    expired: boolean;
+    // signed: boolean;
+    // expired: boolean;
   }
   interface Vote {
     id: string;

@@ -1,7 +1,6 @@
-import { getResponse } from '@/apis/poll/response/getResponse';
+import { getResponse } from '@/apis/vote/response/getResponse';
 import { tokenAtom } from '@/recoils/token.atom';
 import VoteResponseLayout from '@components/templates/VoteResponseLayout';
-import { SnapVote } from '@models/SnapVote';
 import { SnapVoteResponse } from '@models/SnapVoteResponse';
 import { Button, Container, Divider, Stack, Toolbar } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';

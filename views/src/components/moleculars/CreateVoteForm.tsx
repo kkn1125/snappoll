@@ -65,7 +65,6 @@ const CreateVoteForm: React.FC<CreateVoteFormProps> = ({ errors }) => {
         label="개요"
         name="description"
         value={snapVote.description}
-        required
         multiline
         rows={5}
         variant="filled"

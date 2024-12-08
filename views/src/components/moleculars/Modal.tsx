@@ -35,8 +35,8 @@ const Modal: React.FC<ModalProps> = () => {
   `;
 
   function handleConfirm(callback: () => void | Promise<void>) {
-    modalDispatch({ type: ModalActionType.Close });
     callback();
+    modalDispatch({ type: ModalActionType.Close });
   }
 
   function handleClose() {

@@ -4,6 +4,7 @@ import { tokenAtom } from '@/recoils/token.atom';
 import { Message } from '@common/messages';
 import CustomInput from '@components/atoms/CustomInput';
 import useModal from '@hooks/useModal';
+import useToken from '@hooks/useToken';
 import useValidate from '@hooks/useValidate';
 import {
   Button,
@@ -13,7 +14,7 @@ import {
   Toolbar,
   Typography,
 } from '@mui/material';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import {
   ChangeEvent,
@@ -28,12 +29,10 @@ import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 interface LoginProps {}
 const Login: React.FC<LoginProps> = () => {
-  const previous = useRecoilValue(previousAtom);
   const [validated, setValidated] = useState(false);
   const { openModal } = useModal();
   const locate = useLocation();
   const navigate = useNavigate();
-  // const [errors, setErrors] = useState<ErrorMessage<LoginUser>>({});
   const [loginInfo, setLoginInfo] = useState<
     Pick<LoginUser, 'email' | 'password'>
   >({
@@ -47,16 +46,6 @@ const Login: React.FC<LoginProps> = () => {
     mutationFn: login,
     onSuccess(data, _variables, _context) {
       if (data.ok) {
-        // setLoginInfo(() => ({
-        //   email: '',
-        //   password: '',
-        // }));
-        setToken(() => ({
-          token: data.token,
-          signed: !!data.token,
-          user: data.user,
-          expired: false,
-        }));
         localStorage.setItem('logged_in', 'true');
         navigate('/');
       }
@@ -74,21 +63,6 @@ const Login: React.FC<LoginProps> = () => {
       openModal(Message.WrongRequest(data.message));
     },
   });
-
-  // const validateForm = useCallback(
-  //   (loginInfo: { email: string; password: string }) => {
-  //     const errors: ErrorMessage<LoginUser> = {};
-  //     if (loginInfo.email === '') {
-  //       errors['email'] = '필수입니다.';
-  //     }
-  //     if (loginInfo.password === '') {
-  //       errors['password'] = '필수입니다.';
-  //     }
-  //     setErrors(errors);
-  //     return Object.keys(errors).length === 0;
-  //   },
-  //   [],
-  // );
 
   useEffect(() => {
     window.history.replaceState({}, '');

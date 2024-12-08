@@ -2,6 +2,12 @@
 
 서버사이드 구현
 
+- 2024-12-08
+  - feat
+    - 보드 API 수정
+    - 프리즈마 테이블 onDelete, onUpdate 구조 수정
+  - add
+    - response interceptor 추가
 - 2024-12-06
   - feat
     - profile upload API 수정

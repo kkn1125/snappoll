@@ -2,11 +2,11 @@ import { createVote } from '@/apis/vote/create.vote';
 import { Action } from '@/models/Action';
 import { previousAtom } from '@/recoils/previous.atom';
 import { snapVoteAtom } from '@/recoils/snapVote.atom';
-import { tokenAtom } from '@/recoils/token.atom';
 import { Message } from '@common/messages';
 import CreateVoteOptionItem from '@components/atoms/CreateVoteOptionItem';
 import CreateVoteForm from '@components/moleculars/CreateVoteForm';
 import useModal from '@hooks/useModal';
+import useToken from '@hooks/useToken';
 import { SnapVote } from '@models/SnapVote';
 import { SnapVoteOption } from '@models/SnapVoteOption';
 import AddBoxIcon from '@mui/icons-material/AddBox';
@@ -32,7 +32,7 @@ const CreateSnapVote: React.FC<CreateSnapVoteProps> = () => {
   const previous = useRecoilValue(previousAtom);
   const [snapVote, setSnapVote] = useRecoilState(snapVoteAtom);
   const { openModal, openInteractiveModal } = useModal();
-  const [{ user }, setToken] = useRecoilState(tokenAtom);
+  const { user, logoutToken } = useToken();
   const formRef = useRef<HTMLFormElement>(null);
   const navigate = useNavigate();
 
@@ -46,13 +46,7 @@ const CreateSnapVote: React.FC<CreateSnapVoteProps> = () => {
     onError(error: AxiosError, variables, context) {
       if (error.response?.status === 401) {
         setSnapVote(new SnapVote());
-        localStorage.setItem('logged_in', 'false');
-        setToken({
-          signed: false,
-          user: undefined,
-          token: undefined,
-          expired: true,
-        });
+        logoutToken();
         navigate('/');
       }
     },

@@ -1,5 +1,7 @@
 import { snapPollAtom } from '@/recoils/snapPoll.atom';
+import { Message } from '@common/messages';
 import CustomInput from '@components/atoms/CustomInput';
+import useModal from '@hooks/useModal';
 import { SnapPoll } from '@models/SnapPoll';
 import { SnapPollOption } from '@models/SnapPollOption';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -15,6 +17,7 @@ const CreateOptionForm: React.FC<CreateOptionFormProps> = ({
   questionId,
   option,
 }) => {
+  const { openInteractiveModal } = useModal();
   const setSnapPoll = useSetRecoilState(snapPollAtom);
 
   const onChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
@@ -32,10 +35,12 @@ const CreateOptionForm: React.FC<CreateOptionFormProps> = ({
   }, []);
 
   const handleRemove = useCallback(() => {
-    setSnapPoll((snapPoll) => {
-      const copyPoll = SnapPoll.copy(snapPoll);
-      copyPoll.deleteOption(questionId, option.id);
-      return copyPoll;
+    openInteractiveModal(Message.Single.Remove, () => {
+      setSnapPoll((snapPoll) => {
+        const copyPoll = SnapPoll.copy(snapPoll);
+        copyPoll.deleteOption(questionId, option.id);
+        return copyPoll;
+      });
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -55,6 +60,7 @@ const CreateOptionForm: React.FC<CreateOptionFormProps> = ({
     >
       <ListItemText>
         <CustomInput
+          autoFocus
           fullWidth
           label="내용"
           size="small"

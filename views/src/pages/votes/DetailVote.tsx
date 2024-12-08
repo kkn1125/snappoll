@@ -5,6 +5,7 @@ import { tokenAtom } from '@/recoils/token.atom';
 import { Message } from '@common/messages';
 import VoteLayout from '@components/templates/VoteLayout';
 import useModal from '@hooks/useModal';
+import useToken from '@hooks/useToken';
 import { SnapVote } from '@models/SnapVote';
 import { SnapVoteResponse } from '@models/SnapVoteResponse';
 import { Button, Container, Divider, Stack, Toolbar } from '@mui/material';
@@ -12,10 +13,11 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import { FormEvent, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 
 interface DetailVoteProps {}
 const DetailVote: React.FC<DetailVoteProps> = () => {
+  const { logoutToken } = useToken();
   const { openModal, openInteractiveModal } = useModal();
   const navigate = useNavigate();
   const [{ user }, setToken] = useRecoilState(tokenAtom);
@@ -38,13 +40,7 @@ const DetailVote: React.FC<DetailVoteProps> = () => {
     onError(error: AxiosError, variables, context) {
       if (error.response?.status === 401) {
         setResponse(new SnapVoteResponse());
-        localStorage.setItem('logged_in', 'false');
-        setToken({
-          signed: false,
-          user: undefined,
-          token: undefined,
-          expired: true,
-        });
+        logoutToken();
         navigate('/');
       }
     },

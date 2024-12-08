@@ -15,7 +15,6 @@ const ListItemIcons: React.FC<ListItemIconsProps> = ({
   type,
   handleRemove,
 }) => {
-  const { openInteractiveModal } = useModal();
   return (
     <Stack direction="row" gap={1}>
       <Tooltip placement="top" title="참여결과 보기">
@@ -34,11 +33,7 @@ const ListItemIcons: React.FC<ListItemIconsProps> = ({
           edge="end"
           aria-label="delete"
           color="error"
-          onClick={() => {
-            openInteractiveModal(Message.Single.Remove, () => {
-              handleRemove(dataId);
-            });
-          }}
+          onClick={() => handleRemove(dataId)}
         >
           <DeleteIcon />
         </IconButton>

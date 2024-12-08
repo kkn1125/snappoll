@@ -41,8 +41,6 @@ export class AuthController {
 
       res.json({
         ok: true,
-        token,
-        user,
       });
     } else {
       throw new UnauthorizedException('회원정보를 다시 확인해주세요.');
@@ -89,7 +87,6 @@ export class AuthController {
     res.json({
       ok: !!req.user,
       token: req.cookies?.token,
-      user: req.user,
       // userId: req.user?.id,
       // username: req.user?.username,
       // profile: profile?.[0]?.image,

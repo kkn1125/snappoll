@@ -44,8 +44,8 @@ function ListDataItem<T extends SnapPoll | SnapVote>({
   const [params, setParams] = useSearchParams({ page: '1' });
 
   const removeMutate = useMutation({
-    mutationKey: ['removeVote'],
-    mutationFn: removeVote,
+    mutationKey: [`remove${name}`],
+    mutationFn: name === 'poll' ? removePoll : removeVote,
     onSuccess(data, variables, context) {
       queryClient.invalidateQueries({
         queryKey: [queryKey],
