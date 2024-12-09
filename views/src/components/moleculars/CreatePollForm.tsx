@@ -15,8 +15,9 @@ interface CreatePollFormProps {
   errors: ErrorMessage<SnapPoll>;
 }
 const CreatePollForm: React.FC<CreatePollFormProps> = ({ errors }) => {
-  const [useExpires, setUseExpires] = useState(true);
+  const [timeTemp, setTimeTemp] = useState<Date | null>(null);
   const [snapPoll, setSnapPoll] = useRecoilState(snapPollAtom);
+  const [useExpires, setUseExpires] = useState(!!snapPoll.expiresAt);
 
   const onChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     const name = e.target.name;
@@ -79,7 +80,7 @@ const CreatePollForm: React.FC<CreatePollFormProps> = ({ errors }) => {
           <DateTimePicker
             disabled={!useExpires}
             format="YYYY. MM. DD. HH:mm"
-            value={dayjs(snapPoll.expiresAt)}
+            value={dayjs(snapPoll.expiresAt ?? undefined)}
             sx={{
               ['&, & .MuiInputBase-root']: {
                 maxHeight: 40,
@@ -91,16 +92,26 @@ const CreatePollForm: React.FC<CreatePollFormProps> = ({ errors }) => {
           <FormControlLabel
             label="설문 기간 설정"
             onChange={(e, checked) => {
+              if (!timeTemp && snapPoll.expiresAt) {
+                setTimeTemp(snapPoll.expiresAt);
+              }
               if (checked) {
                 setSnapPoll((snapPoll) => {
                   const newSnapPoll = SnapPoll.copy(snapPoll);
-                  newSnapPoll['expiresAt'] = undefined;
+                  newSnapPoll['expiresAt'] = null;
+                  return newSnapPoll;
+                });
+              } else {
+                setSnapPoll((snapPoll) => {
+                  const newSnapPoll = SnapPoll.copy(snapPoll);
+                  newSnapPoll['expiresAt'] = timeTemp;
                   return newSnapPoll;
                 });
               }
               setUseExpires(checked);
             }}
-            control={<Switch checked={useExpires} />}
+            checked={useExpires}
+            control={<Switch />}
           />
         </Stack>
       </Stack>

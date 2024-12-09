@@ -6,14 +6,18 @@ import useModal from '@hooks/useModal';
 import useToken from '@hooks/useToken';
 import About from '@pages/About';
 import Graph from '@pages/graph/Graph';
+import PollGraph from '@pages/graph/polls/PollGraph';
+import PollGraphList from '@pages/graph/polls/PollGraphList';
+import VoteGraph from '@pages/graph/votes/VoteGraph';
+import VoteGraphList from '@pages/graph/votes/VoteGraphList';
 import GuestHome from '@pages/GuestHome';
 import Home from '@pages/Home';
 import Notfound from '@pages/Notfound';
 import Notice from '@pages/notice/Notice';
 import CreateSnapPoll from '@pages/polls/CreateSnapPoll';
 import DetailPoll from '@pages/polls/DetailPoll';
+import EditSnapPoll from '@pages/polls/EditSnapPoll';
 import MyPolls from '@pages/polls/MyPolls';
-import PollGraph from '@pages/polls/PollGraph';
 import PollListV2 from '@pages/polls/PollListV2';
 import PollResponse from '@pages/polls/PollResponse';
 import DetailPollResponse from '@pages/polls/response/DetailPollResponse';
@@ -22,9 +26,9 @@ import Profile from '@pages/user/Profile';
 import Signup from '@pages/user/Signup';
 import CreateSnapVote from '@pages/votes/CreateSnapVote';
 import DetailVote from '@pages/votes/DetailVote';
+import EditSnapVote from '@pages/votes/EditSnapVote';
 import MyVotes from '@pages/votes/MyVotes';
 import DetailVoteResponse from '@pages/votes/response/DetailVoteResponse';
-import VoteGraph from '@pages/votes/VoteGraph';
 import VoteList from '@pages/votes/VoteList';
 import VoteResponse from '@pages/votes/VoteResponse';
 import { useEffect, useState } from 'react';
@@ -84,6 +88,7 @@ function AppRouter() {
           <Route path="me" element={<MyPolls />} />
           <Route path="me/response" element={<PollResponse me />} />
           <Route path="new" element={<CreateSnapPoll />} />
+          <Route path="edit/:id" element={<EditSnapPoll />} />
           {/* <Route path="new/preview" element={<PreviewPoll />} /> */}
           <Route path=":id" element={<DetailPoll />} />
           <Route path=":id/response" element={<PollResponse />} />
@@ -97,6 +102,7 @@ function AppRouter() {
           <Route path="me" element={<MyVotes />} />
           <Route path="me/response" element={<VoteResponse me />} />
           <Route path="new" element={<CreateSnapVote />} />
+          <Route path="edit/:id" element={<EditSnapVote />} />
           <Route path=":id" element={<DetailVote />} />
           <Route path=":id/response" element={<VoteResponse />} />
           <Route
@@ -107,8 +113,14 @@ function AppRouter() {
         <Route path="about" element={<About />} />
         <Route path="graph">
           <Route index element={<Graph />} />
-          <Route path="polls/:id" element={<PollGraph />} />
-          <Route path="votes/:id" element={<VoteGraph />} />
+          <Route path="polls">
+            <Route index element={<PollGraphList />} />
+            <Route path=":id" element={<PollGraph />} />
+          </Route>
+          <Route path="votes">
+            <Route index element={<VoteGraphList />} />
+            <Route path=":id" element={<VoteGraph />} />
+          </Route>
         </Route>
         <Route path="notice" element={<Notice />} />
         <Route path="*" element={<Notfound />} />

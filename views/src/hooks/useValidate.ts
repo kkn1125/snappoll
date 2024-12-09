@@ -1,8 +1,10 @@
 import { Message } from '@common/messages';
+import { SnapPollQuestion } from '@models/SnapPollQuestion';
 import { useCallback, useMemo, useState } from 'react';
 
-function useValidate<T extends object>(data: T) {
+function useValidate<T extends { [k in string]: any }>(data: T) {
   const [errors, setErrors] = useState<ErrorMessage<T>>({});
+  const [validated, setValidated] = useState(false);
 
   const validate = useCallback(
     (type?: string) => {
@@ -77,6 +79,37 @@ function useValidate<T extends object>(data: T) {
             });
           }
         }
+        if (type === 'snapPoll') {
+          if (data.title === '') {
+            Object.assign(validateErrors, {
+              title: Message.Wrong.Required,
+            });
+          }
+          if (data.description === '') {
+            Object.assign(validateErrors, {
+              description: Message.Wrong.Required,
+            });
+          }
+          if (data.expiresAt && data.expiresAt < new Date()) {
+            Object.assign(validateErrors, {
+              expiresAt: '현재보다 과거일 수 없습니다.',
+            });
+          }
+          if (
+            data.question.some(
+              (question: SnapPollQuestion) => question.title.length === 0,
+            )
+          ) {
+            const found = data.question.findIndex(
+              (question: SnapPollQuestion) => question.title.length === 0,
+            );
+            const array = new Array(data.question.length);
+            array[found] = '질문을 완성해주세요.';
+            Object.assign(validateErrors, {
+              question: array,
+            });
+          }
+        }
       }
       // console.log(validateErrors);
       setErrors(validateErrors);
@@ -89,7 +122,7 @@ function useValidate<T extends object>(data: T) {
   //   return Object.keys(errors).length === 0;
   // }, [errors]);
 
-  return { errors, validate };
+  return { errors, validate, validated, setValidated };
 }
 
 export default useValidate;

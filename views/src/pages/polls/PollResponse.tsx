@@ -4,9 +4,12 @@ import { removeResponse } from '@/apis/poll/response/removeResponse';
 import { tokenAtom } from '@/recoils/token.atom';
 import { Message } from '@common/messages';
 import useModal from '@hooks/useModal';
+import { SnapPoll } from '@models/SnapPoll';
 import { SnapResponse } from '@models/SnapResponse';
 import DeleteIcon from '@mui/icons-material/Delete';
 import {
+  Alert,
+  AlertTitle,
   Button,
   Container,
   Divider,
@@ -20,8 +23,9 @@ import {
   Typography,
 } from '@mui/material';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import dayjs from 'dayjs';
-import { useCallback } from 'react';
+import { formattedDate } from '@utils/formattedDate';
+import { validateExpired } from '@utils/validateExpired';
+import { useCallback, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 
@@ -34,7 +38,11 @@ const PollResponse: React.FC<PollResponseProps> = ({ me }) => {
   const { openInteractiveModal } = useModal();
   const { id } = useParams();
   const queryClient = useQueryClient();
-  const { data } = useQuery<{ responses: SnapResponse[]; count: number }>({
+  const { data } = useQuery<{
+    poll: SnapPoll;
+    responses: SnapResponse[];
+    count: number;
+  }>({
     queryKey: ['pollResponses', id],
     queryFn: () => (me ? getPollResponseMe() : getPollResponse(id)),
   });
@@ -69,6 +77,10 @@ const PollResponse: React.FC<PollResponseProps> = ({ me }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const isExpired = useMemo(() => {
+    return validateExpired(data?.poll?.expiresAt);
+  }, [data?.poll?.expiresAt]);
+
   return (
     <Container maxWidth="md">
       <Toolbar />
@@ -95,13 +107,17 @@ const PollResponse: React.FC<PollResponseProps> = ({ me }) => {
                   <Typography>{i + 1}.</Typography>
                   <Typography>{getTitle(response)}</Typography>
                   <Typography>{getUser(response)}</Typography>
-                  <Typography>
-                    {dayjs(response.createdAt).format('YYYY. MM. DD. HH:mm')}
-                  </Typography>
+                  <Typography>{formattedDate(response.createdAt)}</Typography>
                 </Stack>
               </ListItemButton>
             </ListItem>
           ))}
+          {isExpired && (
+            <Alert severity="warning">
+              <AlertTitle>안내</AlertTitle>
+              마감된 설문입니다.
+            </Alert>
+          )}
           {data?.responses.length === 0 && (
             <ListItem>
               <ListItemButton>

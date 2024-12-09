@@ -1,9 +1,9 @@
 import { tokenAtom } from '@/recoils/token.atom';
 import AnswerItem from '@components/atoms/AnswerItem';
 import { SnapPoll } from '@models/SnapPoll';
-import { Stack, Typography, Toolbar } from '@mui/material';
+import { Stack, Toolbar, Typography } from '@mui/material';
 import { grey } from '@mui/material/colors';
-import dayjs from 'dayjs';
+import { printDateOrNot } from '@utils/printDateOrNot';
 import { useParams } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 
@@ -35,9 +35,7 @@ const PollResponseLayout: React.FC<PollResponseLayoutProps> = ({
           </Typography>
 
           <Typography className="font-maru" fontSize={16}>
-            {(poll.expiresAt &&
-              dayjs(poll.expiresAt).format('YYYY. MM. DD HH:mm') + ' 까지') ||
-              ''}
+            {printDateOrNot(poll.expiresAt)}
           </Typography>
 
           <Typography className="font-maru" fontSize={14} fontWeight={100}>

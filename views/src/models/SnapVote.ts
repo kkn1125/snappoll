@@ -13,7 +13,7 @@ export class SnapVote {
   description: string = '';
   isMultiple: boolean = false;
   useEtc: boolean = false;
-  expiresAt?: Date;
+  expiresAt: Date | null = null;
   createdAt: Date = new Date();
   updatedAt: Date = new Date();
 

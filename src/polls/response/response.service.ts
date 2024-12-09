@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateResponseDto } from './dto/create-response.dto';
 import { UpdateResponseDto } from './dto/update-response.dto';
 import { PrismaService } from '@database/prisma.service';
@@ -7,7 +7,19 @@ import { PrismaService } from '@database/prisma.service';
 export class ResponseService {
   constructor(private readonly prisma: PrismaService) {}
 
-  create(createResponseDto: CreateResponseDto) {
+  async create(createResponseDto: CreateResponseDto) {
+    /* validate poll expires */
+    const poll = await this.prisma.poll.findUnique({
+      where: { id: createResponseDto.pollId },
+    });
+
+    if (!poll) {
+      throw new BadRequestException('잘못된 요청입니다.');
+    }
+    if (poll.expiresAt !== null && poll.expiresAt < new Date()) {
+      throw new BadRequestException('이미 진행 마감된 설문지입니다.');
+    }
+
     const userId = createResponseDto.userId;
     const pollId = createResponseDto.pollId;
     const answer = {
@@ -48,7 +60,7 @@ export class ResponseService {
     });
   }
 
-  findOne(id: string) {
+  async findOne(id: string) {
     return this.prisma.response.findUnique({
       where: { id },
       include: {

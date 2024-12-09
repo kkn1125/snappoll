@@ -143,6 +143,7 @@ export class PollsService {
   }
 
   async findResponses(id: string, page: number) {
+    const poll = await this.prisma.poll.findUnique({ where: { id } });
     const responses = await this.prisma.response.findMany({
       where: {
         pollId: id,
@@ -172,7 +173,7 @@ export class PollsService {
       where: { pollId: id },
     });
 
-    return { responses, count };
+    return { poll, responses, count };
   }
 
   async findResponsesMe(userId: string, page: number) {
@@ -209,6 +210,72 @@ export class PollsService {
   }
 
   update(id: string, updatePollDto: UpdatePollDto) {
+    const title = updatePollDto.title;
+    const description = updatePollDto.description;
+    const createdBy = updatePollDto.createdBy;
+    const expiresAt = updatePollDto.expiresAt;
+
+    let question;
+    if (
+      'question' in updatePollDto &&
+      updatePollDto.question instanceof Array
+    ) {
+      question = {
+        update: updatePollDto.question.map(({ id, ...question }) => {
+          let option;
+          if ('option' in question && question.option instanceof Array) {
+            option = {
+              updateMany: question.option.map(({ id, ...option }: Option) => {
+                return {
+                  where: { id },
+                  data: {
+                    content: option.content,
+                  },
+                };
+              }),
+            };
+          }
+
+          const type = question.type;
+          const title = question.title;
+          const description = question.description;
+          const isMultiple = question.isMultiple;
+          const useEtc = question.useEtc;
+          const order = question.order;
+          return {
+            where: { id },
+            data: {
+              type,
+              title,
+              description,
+              isMultiple,
+              useEtc,
+              order,
+              option,
+            },
+          };
+        }),
+      };
+    }
+
+    return this.prisma.poll.update({
+      where: { id },
+      data: {
+        title,
+        description,
+        createdBy,
+        expiresAt,
+        question,
+      },
+      include: {
+        question: {
+          include: {
+            option: true,
+          },
+        },
+      },
+    });
+
     return this.prisma.poll.update({ where: { id }, data: updatePollDto });
   }
 

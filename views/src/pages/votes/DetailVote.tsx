@@ -10,8 +10,9 @@ import { SnapVote } from '@models/SnapVote';
 import { SnapVoteResponse } from '@models/SnapVoteResponse';
 import { Button, Container, Divider, Stack, Toolbar } from '@mui/material';
 import { useMutation, useQuery } from '@tanstack/react-query';
+import { validateExpired } from '@utils/validateExpired';
 import { AxiosError } from 'axios';
-import { FormEvent, useCallback } from 'react';
+import { FormEvent, useCallback, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
@@ -53,15 +54,9 @@ const DetailVote: React.FC<DetailVoteProps> = () => {
       if (!id) return;
 
       openInteractiveModal('작성을 완료하시겠습니까?', () => {
-        // const answerLength = responses.length;
-        // if (answerLength === 0) {
-        //   openModal(Message.Require.LeastResponse);
-        //   return false;
-        // }
         const copyResponse = SnapVoteResponse.copy(response);
         copyResponse.userId = user?.id;
         copyResponse.voteId = id;
-        // console.log(copyResponse);
         saveResponseMutate.mutate(copyResponse);
       });
 
@@ -71,14 +66,23 @@ const DetailVote: React.FC<DetailVoteProps> = () => {
     [id, response, user],
   );
 
+  const isExpired = useMemo(() => {
+    return validateExpired(data?.expiresAt);
+  }, [data]);
+
   return (
     <Container maxWidth="md">
       <Toolbar />
       <Stack component="form" gap={3} onSubmit={handleSavePollResult}>
-        {data && <VoteLayout vote={data} />}
+        {data && <VoteLayout vote={data} expired={isExpired} />}
         <Divider />
-        <Button variant="contained" size="large" type="submit">
-          제출
+        <Button
+          disabled={isExpired}
+          variant="contained"
+          size="large"
+          type="submit"
+        >
+          {isExpired ? '마감된 설문입니다.' : '제출'}
         </Button>
         <Button
           variant="contained"

@@ -12,7 +12,7 @@ import {
   Typography,
 } from '@mui/material';
 import { grey } from '@mui/material/colors';
-import dayjs from 'dayjs';
+import { printDateOrNot } from '@utils/printDateOrNot';
 import { useCallback } from 'react';
 
 interface VoteResponseLayoutProps {
@@ -65,9 +65,7 @@ const VoteResponseLayout: React.FC<VoteResponseLayoutProps> = ({
           </Typography>
 
           <Typography className="font-maru" fontSize={16}>
-            {(vote.expiresAt &&
-              dayjs(vote.expiresAt).format('YYYY. MM. DD HH:mm') + ' 까지') ||
-              ''}
+            {printDateOrNot(vote.expiresAt)}
           </Typography>
 
           <Typography

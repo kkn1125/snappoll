@@ -5,7 +5,7 @@ import useModal from '@hooks/useModal';
 import { SnapPoll } from '@models/SnapPoll';
 import { SnapPollOption } from '@models/SnapPollOption';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { IconButton, ListItem, ListItemText } from '@mui/material';
+import { IconButton, ListItem, ListItemText, Typography } from '@mui/material';
 import { ChangeEvent, memo, useCallback } from 'react';
 import { useSetRecoilState } from 'recoil';
 
@@ -57,6 +57,7 @@ const CreateOptionForm: React.FC<CreateOptionFormProps> = ({
           <DeleteIcon />
         </IconButton>
       }
+      sx={{ ml: 1 }}
     >
       <ListItemText>
         <CustomInput

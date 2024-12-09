@@ -29,7 +29,7 @@ import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 interface LoginProps {}
 const Login: React.FC<LoginProps> = () => {
-  const [validated, setValidated] = useState(false);
+  // const [validated, setValidated] = useState(false);
   const { openModal } = useModal();
   const locate = useLocation();
   const navigate = useNavigate();
@@ -39,7 +39,7 @@ const Login: React.FC<LoginProps> = () => {
     email: '',
     password: '',
   });
-  const { errors, validate } = useValidate(loginInfo);
+  const { errors, validate, validated, setValidated } = useValidate(loginInfo);
   const setToken = useSetRecoilState(tokenAtom);
   const mutation = useMutation({
     mutationKey: ['login'],

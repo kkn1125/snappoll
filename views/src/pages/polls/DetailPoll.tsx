@@ -9,8 +9,9 @@ import { SnapPoll } from '@models/SnapPoll';
 import { SnapResponse } from '@models/SnapResponse';
 import { Button, Container, Divider, Stack, Toolbar } from '@mui/material';
 import { useMutation, useQuery } from '@tanstack/react-query';
+import { validateExpired } from '@utils/validateExpired';
 import { AxiosError } from 'axios';
-import { FormEvent } from 'react';
+import { FormEvent, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 
@@ -77,14 +78,23 @@ const DetailPoll: React.FC<DetailPollProps> = () => {
     return false;
   }
 
+  const isExpired = useMemo(() => {
+    return validateExpired(data?.expiresAt);
+  }, [data]);
+
   return (
     <Container maxWidth="md">
       <Toolbar />
       <Stack component="form" gap={3} onSubmit={handleSavePollResult}>
-        {data && <PollLayout poll={data} />}
+        {data && <PollLayout poll={data} expired={isExpired} />}
         <Divider />
-        <Button variant="contained" size="large" type="submit">
-          제출
+        <Button
+          disabled={isExpired}
+          variant="contained"
+          size="large"
+          type="submit"
+        >
+          {isExpired ? '마감된 설문입니다.' : '제출'}
         </Button>
         <Button
           variant="contained"

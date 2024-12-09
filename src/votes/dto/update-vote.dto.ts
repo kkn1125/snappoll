@@ -5,6 +5,7 @@ class CustomUpdateDto {
   description: string;
   userId: string;
   isMultiple: boolean;
+  useEtc: boolean;
   expiresAt?: Date;
 }
 export class UpdateVoteDto extends PartialType(CustomUpdateDto) {}

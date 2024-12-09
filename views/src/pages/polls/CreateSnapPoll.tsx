@@ -1,4 +1,5 @@
 import { createPoll } from '@/apis/poll/create.poll';
+import { updatePoll } from '@/apis/poll/updatePoll';
 import { Action } from '@/models/Action';
 import { previousAtom } from '@/recoils/previous.atom';
 import { snapPollAtom } from '@/recoils/snapPoll.atom';
@@ -7,19 +8,24 @@ import CreatePollForm from '@components/moleculars/CreatePollForm';
 import CreateQuestionForm from '@components/moleculars/CreateQuestionForm';
 import useModal from '@hooks/useModal';
 import useToken from '@hooks/useToken';
+import useValidate from '@hooks/useValidate';
 import { SnapPoll } from '@models/SnapPoll';
 import { SnapPollQuestion } from '@models/SnapPollQuestion';
 import AddBoxIcon from '@mui/icons-material/AddBox';
 import SaveIcon from '@mui/icons-material/Save';
 import {
+  Box,
   Button,
   Container,
   Divider,
+  IconButton,
   SpeedDial,
   SpeedDialAction,
   SpeedDialIcon,
   Stack,
+  SvgIcon,
   Toolbar,
+  Tooltip,
 } from '@mui/material';
 import { useMutation } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
@@ -34,15 +40,16 @@ import {
 import { Link, useNavigate } from 'react-router-dom';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
-interface CreateSnapPollProps {}
-const CreateSnapPoll: React.FC<CreateSnapPollProps> = () => {
+interface CreateSnapPollProps {
+  edit?: boolean;
+}
+const CreateSnapPoll: React.FC<CreateSnapPollProps> = ({ edit = false }) => {
   const { user, logoutToken } = useToken();
   const previous = useRecoilValue(previousAtom);
   const { openInteractiveModal } = useModal();
-  // const [{ user }, setToken] = useRecoilState(tokenAtom);
   const navigate = useNavigate();
   const [snapPoll, setSnapPoll] = useRecoilState(snapPollAtom);
-  const [validated, setValidated] = useState(false);
+  const { validate, errors, validated, setValidated } = useValidate(snapPoll);
   const formRef = useRef<HTMLFormElement>(null);
   const createMutate = useMutation({
     mutationKey: ['createPoll'],
@@ -59,15 +66,27 @@ const CreateSnapPoll: React.FC<CreateSnapPollProps> = () => {
       }
     },
   });
+  const updateMutate = useMutation({
+    mutationKey: ['updatePoll'],
+    mutationFn: updatePoll,
+    onSuccess(data, variables, context) {
+      setSnapPoll(new SnapPoll());
+      navigate(previous || '/');
+    },
+    onError(error: AxiosError, variables, context) {
+      if (error.response?.status === 401) {
+        setSnapPoll(new SnapPoll());
+        logoutToken();
+        navigate('/');
+      }
+    },
+  });
+
   const actions = [
-    new Action('Add Question', <AddBoxIcon />, () => {
-      addQuestion();
-    }),
     new Action('Save', <SaveIcon />, () => {
       formRef.current?.requestSubmit();
     }),
   ];
-  const [errors, setErrors] = useState<ErrorMessage<SnapPoll>>({});
 
   useEffect(() => {
     function handleBeforeUnloaded(e: BeforeUnloadEvent) {
@@ -94,29 +113,12 @@ const CreateSnapPoll: React.FC<CreateSnapPollProps> = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const validateForm = useCallback((snapPoll: SnapPoll) => {
-    const copyErrors: ErrorMessage<SnapPoll> = {};
-    if (snapPoll.title === '') {
-      copyErrors['title'] = '필수입니다.';
-    }
-    if (snapPoll.description === '') {
-      copyErrors['description'] = '필수입니다.';
-    }
-    if (snapPoll.expiresAt && snapPoll.expiresAt < new Date()) {
-      copyErrors['expiresAt'] = '현재보다 과거일 수 없습니다.';
-    }
-
-    setErrors(copyErrors);
-
-    return Object.keys(copyErrors).length === 0;
-  }, []);
-
   const handleSubmit = useCallback(
     (e: FormEvent) => {
       e.preventDefault();
       setValidated(true);
 
-      if (!validateForm(snapPoll)) return;
+      if (!validate('snapPoll')) return;
 
       const copyPoll = SnapPoll.copy(snapPoll);
 
@@ -125,7 +127,11 @@ const CreateSnapPoll: React.FC<CreateSnapPollProps> = () => {
       }
 
       openInteractiveModal(Message.Single.Save, () => {
-        createMutate.mutate(copyPoll);
+        if (edit) {
+          updateMutate.mutate(copyPoll);
+        } else {
+          createMutate.mutate(copyPoll);
+        }
       });
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -171,6 +177,24 @@ const CreateSnapPoll: React.FC<CreateSnapPollProps> = () => {
               }
             />
           ))}
+          <Button
+            size="large"
+            fullWidth
+            variant="outlined"
+            onClick={addQuestion}
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              fontSize: '18px !important',
+              ['& svg']: {
+                fontSize: '24px !important',
+              },
+              gap: 1,
+            }}
+          >
+            <AddBoxIcon />
+            질문 추가
+          </Button>
         </Stack>
         <Toolbar />
         <SpeedDial

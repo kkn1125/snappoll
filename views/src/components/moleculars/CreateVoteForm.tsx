@@ -16,8 +16,9 @@ interface CreateVoteFormProps {
   errors: ErrorMessage<SnapVote>;
 }
 const CreateVoteForm: React.FC<CreateVoteFormProps> = ({ errors }) => {
-  const [useExpires, setUseExpires] = useState(true);
+  const [timeTemp, setTimeTemp] = useState<Date | null>(null);
   const [snapVote, setSnapVote] = useRecoilState(snapVoteAtom);
+  const [useExpires, setUseExpires] = useState(!!snapVote.expiresAt);
 
   const onChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     const name = e.target.name;
@@ -80,7 +81,7 @@ const CreateVoteForm: React.FC<CreateVoteFormProps> = ({ errors }) => {
           <DateTimePicker
             disabled={!useExpires}
             format="YYYY. MM. DD. HH:mm"
-            value={dayjs(snapVote.expiresAt)}
+            value={dayjs(snapVote.expiresAt ?? undefined)}
             sx={{
               ['&, & .MuiInputBase-root']: {
                 maxHeight: 40,
@@ -92,16 +93,26 @@ const CreateVoteForm: React.FC<CreateVoteFormProps> = ({ errors }) => {
           <FormControlLabel
             label="투표 기간 설정"
             onChange={(e, checked) => {
+              if (!timeTemp && snapVote.expiresAt) {
+                setTimeTemp(snapVote.expiresAt);
+              }
               if (checked) {
                 setSnapVote((snapVote) => {
                   const newSnapVote = SnapVote.copy(snapVote);
-                  newSnapVote['expiresAt'] = undefined;
+                  newSnapVote['expiresAt'] = null;
+                  return newSnapVote;
+                });
+              } else {
+                setSnapVote((snapVote) => {
+                  const newSnapVote = SnapVote.copy(snapVote);
+                  newSnapVote['expiresAt'] = timeTemp;
                   return newSnapVote;
                 });
               }
               setUseExpires(checked);
             }}
-            control={<Switch checked={useExpires} />}
+            checked={useExpires}
+            control={<Switch />}
           />
         </Stack>
       </Stack>

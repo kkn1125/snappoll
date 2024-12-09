@@ -56,63 +56,47 @@ const Graph: React.FC<GraphProps> = () => {
   );
 
   const handleRedirect = (to: string) => {
-    navigate(`/graph/${category}s/${to}`);
+    navigate(`/graph/${to}s`);
   };
 
   return (
     <Container maxWidth="md">
       <Toolbar />
-      <Stack>
-        {/* section 01 */}
-        <Stack direction="row" justifyContent="space-between">
-          <ButtonGroup>
-            <Button
-              variant={category === 'poll' ? 'contained' : 'outlined'}
-              onClick={() => setCategory('poll')}
-            >
-              Poll
-            </Button>
-            <Button
-              variant={category === 'vote' ? 'contained' : 'outlined'}
-              onClick={() => setCategory('vote')}
-            >
-              Vote
-            </Button>
-          </ButtonGroup>
-          {/* <ButtonGroup>
-            <Button>Poll</Button>
-            <Button>Vote</Button>
-          </ButtonGroup> */}
-        </Stack>
-        <Stack>
-          <List>
-            {myPolls.data?.polls.map((poll) => (
-              <ListItem key={poll.id}>
-                <ListItemButton onClick={() => handleRedirect(poll.id)}>
-                  {poll.title}
-                </ListItemButton>
-              </ListItem>
-            ))}
-            {myVotes.data?.votes.map((vote) => (
-              <ListItem key={vote.id}>
-                <ListItemButton onClick={() => handleRedirect(vote.id)}>
-                  {vote.title}
-                </ListItemButton>
-              </ListItem>
-            ))}
-            {myPolls.data?.count === 0 && myVotes.data?.count === 0 && (
-              <ListItem>
-                <ListItemText>데이터가 없습니다.</ListItemText>
-              </ListItem>
-            )}
-          </List>
-        </Stack>
-        <Stack alignItems="center">
-          <Pagination
-            page={page}
-            count={myPolls.data?.count || myVotes.data?.count || 0}
-          />
-        </Stack>
+      <Stack direction={{ xs: 'column', md: 'row' }} gap={5}>
+        <Button
+          variant="contained"
+          size="large"
+          onClick={() => handleRedirect('poll')}
+          sx={{
+            flex: 1,
+            height: 300,
+            fontSize: 32,
+            borderRadius: 5,
+            background: (theme) => theme.palette.info.dark + '56',
+            ['&:hover']: {
+              background: (theme) => theme.palette.info.dark,
+            },
+          }}
+        >
+          설문지 그래프
+        </Button>
+        <Button
+          variant="contained"
+          size="large"
+          onClick={() => handleRedirect('vote')}
+          sx={{
+            flex: 1,
+            height: 300,
+            fontSize: 32,
+            borderRadius: 5,
+            background: (theme) => theme.palette.info.dark + '56',
+            ['&:hover']: {
+              background: (theme) => theme.palette.info.dark,
+            },
+          }}
+        >
+          투표지 그래프
+        </Button>
       </Stack>
     </Container>
   );

@@ -1,26 +1,9 @@
 import { snapVoteResponseAtom } from '@/recoils/snapVoteResponse.atom';
 import { SnapVoteOption } from '@models/SnapVoteOption';
-import { SnapVoteResponse } from '@models/SnapVoteResponse';
-import {
-  Checkbox,
-  FormControlLabel,
-  List,
-  ListItemButton,
-  Stack,
-  TextField,
-} from '@mui/material';
-import {
-  ChangeEvent,
-  memo,
-  SyntheticEvent,
-  useCallback,
-  useMemo,
-  useState,
-} from 'react';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { Checkbox, FormControlLabel, ListItemButton } from '@mui/material';
+import { memo, SyntheticEvent, useMemo } from 'react';
+import { useRecoilValue } from 'recoil';
 import CheckedComponent from './CheckedComponent';
-import OptionItem from './OptionItem';
-import { SnapVoteAnswer } from '@models/SnapVoteAnswer';
 
 interface VoteOptionItemProps {
   option: SnapVoteOption;
@@ -44,6 +27,7 @@ const VoteOptionItem: React.FC<VoteOptionItemProps> = ({
         borderRadius: 1,
         p: 2,
         cursor: 'pointer',
+        whiteSpace: 'nowrap',
       }}
     >
       <CheckedComponent checked={checked} />

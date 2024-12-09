@@ -2,8 +2,7 @@ import { getMyPolls } from '@/apis/poll/getMyPolls';
 import ListDataItem from '@components/organisms/ListDataItem';
 import { SnapPoll } from '@models/SnapPoll';
 import { Container, List, Stack, Toolbar } from '@mui/material';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { useEffect } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { useSearchParams } from 'react-router-dom';
 
 interface MyPollsProps {}

@@ -1,10 +1,15 @@
 import { getVoteResponse } from '@/apis/vote/response/getVoteResponse';
 import { getVoteResponseMe } from '@/apis/vote/response/getVoteResponseMe';
+import { removeVoteResponse } from '@/apis/vote/response/removeVoteResponse';
 import { tokenAtom } from '@/recoils/token.atom';
-import ReadyAlert from '@components/atoms/ReadyAlert';
+import { Message } from '@common/messages';
+import useModal from '@hooks/useModal';
 import { SnapVote } from '@models/SnapVote';
 import { SnapVoteResponse } from '@models/SnapVoteResponse';
+import DeleteIcon from '@mui/icons-material/Delete';
 import {
+  Alert,
+  AlertTitle,
   Button,
   Container,
   Divider,
@@ -18,14 +23,11 @@ import {
   Typography,
 } from '@mui/material';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import dayjs from 'dayjs';
-import { useCallback } from 'react';
+import { formattedDate } from '@utils/formattedDate';
+import { validateExpired } from '@utils/validateExpired';
+import { useCallback, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
-import DeleteIcon from '@mui/icons-material/Delete';
-import { removeVoteResponse } from '@/apis/vote/response/removeVoteResponse';
-import useModal from '@hooks/useModal';
-import { Message } from '@common/messages';
 
 interface VoteResponseProps {
   me?: boolean;
@@ -36,7 +38,11 @@ const VoteResponse: React.FC<VoteResponseProps> = ({ me }) => {
   const { id } = useParams();
   const { openInteractiveModal } = useModal();
   const queryClient = useQueryClient();
-  const { data } = useQuery<{ responses: SnapVoteResponse[]; count: number }>({
+  const { data } = useQuery<{
+    vote: SnapVote;
+    responses: SnapVoteResponse[];
+    count: number;
+  }>({
     queryKey: ['voteResponse', id],
     queryFn: () => (me ? getVoteResponseMe() : getVoteResponse(id)),
   });
@@ -71,6 +77,10 @@ const VoteResponse: React.FC<VoteResponseProps> = ({ me }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const isExpired = useMemo(() => {
+    return validateExpired(data?.vote?.expiresAt);
+  }, [data?.vote?.expiresAt]);
+
   return (
     <Container maxWidth="md">
       <Toolbar />
@@ -97,13 +107,17 @@ const VoteResponse: React.FC<VoteResponseProps> = ({ me }) => {
                   <Typography>{i + 1}.</Typography>
                   <Typography>{getTitle(response)}</Typography>
                   <Typography>{getUser(response)}</Typography>
-                  <Typography>
-                    {dayjs(response.createdAt).format('YYYY. MM. DD. HH:mm')}
-                  </Typography>
+                  <Typography>{formattedDate(response.createdAt)}</Typography>
                 </Stack>
               </ListItemButton>
             </ListItem>
           ))}
+          {isExpired && (
+            <Alert severity="warning">
+              <AlertTitle>안내</AlertTitle>
+              마감된 투표입니다.
+            </Alert>
+          )}
           {data?.responses.length === 0 && (
             <ListItem>
               <ListItemButton>

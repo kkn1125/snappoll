@@ -19,6 +19,7 @@ import {
 import {
   ChangeEvent,
   Dispatch,
+  Fragment,
   memo,
   SetStateAction,
   SyntheticEvent,
@@ -29,6 +30,7 @@ import CreateOptionForm from './CreateOptionForm';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Message } from '@common/messages';
 import useModal from '@hooks/useModal';
+import ListIcon from '@mui/icons-material/List';
 
 interface CreateQuestionFormProps {
   index: number;
@@ -57,6 +59,7 @@ const CreateQuestionForm: React.FC<CreateQuestionFormProps> = ({
         return copySnapPoll;
       });
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const onChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
@@ -129,7 +132,7 @@ const CreateQuestionForm: React.FC<CreateQuestionFormProps> = ({
             onChange={onChange}
             errors={errors}
             sx={{
-              minWidth: '30vw',
+              minWidth: '50%',
               flex: 1,
               ['& .MuiInputBase-root']: {
                 fontSize: 18,
@@ -168,40 +171,68 @@ const CreateQuestionForm: React.FC<CreateQuestionFormProps> = ({
           onChange={onChange}
           errors={errors}
         />
-        {question.type !== 'text' && (
-          <Stack>
-            <Button onClick={addOption}>추가</Button>
-            <FormControlLabel
-              label="필수 여부"
-              checked={question.isRequired}
-              onChange={handleChangeOnOff}
-              control={<Switch name="isRequired" />}
-            />
-            {question.type === 'checkbox' && (
+        <Stack>
+          <FormControlLabel
+            label="필수 여부"
+            checked={question.isRequired}
+            onChange={handleChangeOnOff}
+            control={<Switch name="isRequired" />}
+          />
+          {question.type !== 'text' && (
+            <Fragment>
+              {question.type === 'checkbox' && (
+                <FormControlLabel
+                  label="다중 선택 허용"
+                  checked={question.isMultiple}
+                  onChange={handleChangeOnOff}
+                  control={<Switch name="isMultiple" />}
+                />
+              )}
               <FormControlLabel
-                label="다중 선택 허용"
-                checked={question.isMultiple}
+                label="기타 항목 추가"
+                checked={question.useEtc}
                 onChange={handleChangeOnOff}
-                control={<Switch name="isMultiple" />}
+                control={<Switch name="useEtc" />}
               />
-            )}
-            <FormControlLabel
-              label="기타 항목 추가"
-              checked={question.useEtc}
-              onChange={handleChangeOnOff}
-              control={<Switch name="useEtc" />}
-            />
-          </Stack>
+            </Fragment>
+          )}
+        </Stack>
+
+        {question.type !== 'text' && (
+          <List
+            sx={{
+              listStyle: 'none',
+              counterReset: 'list-counter',
+              position: 'relative',
+              ['& .MuiInputBase-root']: {
+                counterIncrement: 'list-counter',
+              },
+              ['& .MuiInputBase-root::before']: {
+                content: 'counter(list-counter) ". "',
+                position: 'absolute',
+                left: -20,
+                fontSize: 20,
+                lineHeight: 1.5,
+              },
+            }}
+          >
+            {question.option.map((option, i) => (
+              <CreateOptionForm
+                key={option.id}
+                questionId={question.id}
+                option={option}
+              />
+            ))}
+            <Button
+              fullWidth
+              variant="outlined"
+              onClick={addOption}
+              startIcon={<ListIcon />}
+            >
+              항목 추가
+            </Button>
+          </List>
         )}
-        <List>
-          {question.option.map((option) => (
-            <CreateOptionForm
-              key={option.id}
-              questionId={question.id}
-              option={option}
-            />
-          ))}
-        </List>
       </Stack>
     </Paper>
   );

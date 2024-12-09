@@ -12,7 +12,7 @@ export class SnapPoll {
   title: string = '';
   description: string = '';
   createdBy: string = '';
-  expiresAt?: Date;
+  expiresAt: Date | null = null;
   createdAt: Date = new Date();
   updatedAt: Date = new Date();
   question: SnapPollQuestion[] = [];
@@ -84,47 +84,4 @@ export class SnapPoll {
       return question;
     });
   }
-
-  // toData() {
-  //   const title = this.title;
-  //   const description = this.description;
-  //   const createdBy = this.createdBy;
-  //   const expiresAt = this.expiresAt;
-
-  //   const question = {
-  //     create: this.question.map((question) => {
-  //       const type = question.type;
-  //       const title = question.title;
-  //       const description = question.description;
-  //       const isMultiple = question.isMultiple;
-  //       const useEtc = question.useEtc;
-  //       const order = question.order;
-  //       const option = {
-  //         create: question.option.map((option) => {
-  //           const content = option.content;
-  //           return {
-  //             content,
-  //           };
-  //         }),
-  //       };
-  //       return {
-  //         type,
-  //         title,
-  //         description,
-  //         isMultiple,
-  //         useEtc,
-  //         order,
-  //         option,
-  //       };
-  //     }),
-  //   };
-
-  //   return {
-  //     title,
-  //     description,
-  //     createdBy,
-  //     expiresAt,
-  //     question,
-  //   };
-  // }
 }

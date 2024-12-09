@@ -42,11 +42,6 @@ export class VotesController {
     return this.votesService.findOne(id);
   }
 
-  // @Get(':id/response')
-  // findOneResponse(@Param('id') id: string) {
-  //   return this.votesService.findResponse(id);
-  // }
-
   @Get('me/response')
   findOneResponsesMe(@Req() req: Request, @Query('page') page: number = 1) {
     const id = req.user.id;

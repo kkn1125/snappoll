@@ -125,30 +125,9 @@ export class VotesService {
     });
   }
 
-  // findResponse(id: string) {
-  //   return this.prisma.vote.findUnique({
-  //     where: { id },
-  //     include: {
-  //       user: {
-  //         select: {
-  //           id: true,
-  //           email: true,
-  //           username: true,
-  //           createdAt: true,
-  //           updatedAt: true,
-  //         },
-  //       },
-  //       voteOption: true,
-  //       voteResponse: {
-  //         include: {
-  //           user: true,
-  //         },
-  //       },
-  //     },
-  //   });
-  // }
-
   async findResponses(id: string, page: number) {
+    const vote = await this.prisma.vote.findUnique({ where: { id } });
+
     const responses = await this.prisma.voteResponse.findMany({
       where: {
         voteId: id,
@@ -178,7 +157,7 @@ export class VotesService {
       where: { voteId: id },
     });
 
-    return { responses, count };
+    return { vote, responses, count };
   }
 
   async findResponsesMe(userId: string, page: number) {
@@ -214,8 +193,46 @@ export class VotesService {
     return { responses, count };
   }
 
-  update(id: string, updateVoteDto: UpdateVoteDto) {
-    return this.prisma.vote.update({ where: { id }, data: updateVoteDto });
+  async update(id: string, updateVoteDto: UpdateVoteDto) {
+    const title = updateVoteDto.title;
+    const description = updateVoteDto.description;
+    const userId = updateVoteDto.userId;
+    const isMultiple = updateVoteDto.isMultiple;
+    const useEtc = updateVoteDto.useEtc;
+    const expiresAt = updateVoteDto.expiresAt || null;
+    console.log('expiresAt', expiresAt);
+
+    let voteOption;
+    if (
+      'voteOption' in updateVoteDto &&
+      updateVoteDto.voteOption instanceof Array
+    ) {
+      voteOption = {
+        updateMany: updateVoteDto.voteOption.map(({ id, ...option }) => ({
+          where: { id },
+          data: {
+            content: option.content,
+          },
+        })),
+      };
+    }
+
+    const data = {
+      title,
+      description,
+      userId,
+      isMultiple,
+      useEtc,
+      expiresAt,
+      voteOption,
+    };
+    return this.prisma.vote.update({
+      where: { id },
+      data,
+      include: {
+        voteOption: true,
+      },
+    });
   }
 
   remove(id: string) {

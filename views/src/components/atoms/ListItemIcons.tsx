@@ -4,6 +4,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import TimelineIcon from '@mui/icons-material/Timeline';
 import { Message } from '@common/messages';
 import useModal from '@hooks/useModal';
+import BorderColorIcon from '@mui/icons-material/BorderColor';
 
 interface ListItemIconsProps {
   dataId: string;
@@ -26,6 +27,17 @@ const ListItemIcons: React.FC<ListItemIconsProps> = ({
           to={`/${type}s/${dataId}/response`}
         >
           <TimelineIcon />
+        </IconButton>
+      </Tooltip>
+      <Tooltip placement="top" title="수정">
+        <IconButton
+          component={Link}
+          edge="end"
+          aria-label="delete"
+          color="primary"
+          to={`/${type}s/edit/${dataId}`}
+        >
+          <BorderColorIcon />
         </IconButton>
       </Tooltip>
       <Tooltip placement="top" title="제거">

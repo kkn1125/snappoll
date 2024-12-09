@@ -1,4 +1,5 @@
 import { sidebarAtom } from '@/recoils/sidebar.atom';
+import SnapBreadCrumbs from '@components/atoms/SnapBreadCrumbs';
 import Footer from '@components/organisms/Footer';
 import Header from '@components/organisms/Header';
 import Sidebar from '@components/organisms/Sidebar';
@@ -85,6 +86,7 @@ const Layout: React.FC<LayoutProps> = ({ isCrew = true }) => {
             },
           }}
         >
+          {isCrew && <SnapBreadCrumbs />}
           <Outlet />
         </Stack>
       </Stack>

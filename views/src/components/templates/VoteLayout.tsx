@@ -5,7 +5,10 @@ import VoteOptionItem from '@components/atoms/VoteOptionItem';
 import { SnapVote } from '@models/SnapVote';
 import { SnapVoteAnswer } from '@models/SnapVoteAnswer';
 import { SnapVoteResponse } from '@models/SnapVoteResponse';
+import { AccessTime } from '@mui/icons-material';
 import {
+  Alert,
+  AlertTitle,
   Checkbox,
   FormControlLabel,
   ListItemButton,
@@ -15,14 +18,16 @@ import {
   Typography,
 } from '@mui/material';
 import { grey } from '@mui/material/colors';
-import dayjs from 'dayjs';
+import { formattedDate } from '@utils/formattedDate';
+import { printDateOrNot } from '@utils/printDateOrNot';
 import { ChangeEvent, SyntheticEvent, useCallback, useState } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 interface VoteLayoutProps {
   vote: SnapVote;
+  expired: boolean;
 }
-const VoteLayout: React.FC<VoteLayoutProps> = ({ vote }) => {
+const VoteLayout: React.FC<VoteLayoutProps> = ({ vote, expired }) => {
   const [useEtc, setUseEtc] = useState(false);
   const setSnapVoteResponse = useSetRecoilState(snapVoteResponseAtom);
   const { user } = useRecoilValue(tokenAtom);
@@ -100,20 +105,34 @@ const VoteLayout: React.FC<VoteLayoutProps> = ({ vote }) => {
         >
           {vote.title}
         </Typography>
-        <Stack alignItems="flex-end" mb={1} flex={1} gap={1}>
-          <Typography className="font-maru" fontSize={16} fontWeight={100}>
-            {user?.username}
+        <Stack
+          alignItems="flex-end"
+          mb={2}
+          flex={1}
+          gap={1}
+          sx={{ backgroundColor: '#f9f9f9', padding: 2, borderRadius: 2 }}
+        >
+          <Typography
+            className="font-maru"
+            fontSize={18}
+            fontWeight={600}
+            color="#333"
+          >
+            {user?.username} 작성
           </Typography>
 
-          <Typography className="font-maru" fontSize={16}>
-            {(vote.expiresAt &&
-              dayjs(vote.expiresAt).format('YYYY. MM. DD HH:mm') + ' 까지') ||
-              ''}
-          </Typography>
+          <Stack direction="row" alignItems="center" gap={1}>
+            <AccessTime fontSize="small" color={expired ? 'error' : 'action'} />
+            <Typography
+              className="font-maru"
+              fontSize={16}
+              color={expired ? 'error' : '#555'}
+            >
+              {printDateOrNot(vote.expiresAt)}
+            </Typography>
+          </Stack>
         </Stack>
       </Stack>
-
-      <Toolbar />
 
       {vote.description && (
         <Typography
@@ -131,75 +150,83 @@ const VoteLayout: React.FC<VoteLayoutProps> = ({ vote }) => {
         </Typography>
       )}
 
-      <Toolbar />
-
-      <Stack gap={10}>
-        <Stack
-          direction="row"
-          component="label"
-          sx={{ border: '1px solid #eee', borderRadius: 1, p: 2 }}
-        >
-          <Stack direction="row" gap={1}>
-            {vote.voteOption.map((option) => (
-              <VoteOptionItem
-                key={option.id}
-                option={option}
-                onChange={handleChangeCheckbox}
-              />
-            ))}
-            {vote.useEtc && (
-              <ListItemButton
-                component="label"
-                sx={{
-                  border: '1px solid #eee',
-                  borderRadius: 1,
-                  p: 2,
-                }}
-              >
-                <CheckedComponent checked={useEtc} />
-                <FormControlLabel
-                  label="기타"
+      {expired ? (
+        <Alert severity="warning">
+          <AlertTitle>안내</AlertTitle> {formattedDate(vote.expiresAt) + ' '}에
+          마감된 투표입니다.
+        </Alert>
+      ) : (
+        <Stack gap={10}>
+          <Stack
+            direction="row"
+            sx={{ border: '1px solid #eee', borderRadius: 1, p: 2 }}
+          >
+            <Stack direction="row" gap={1} flexWrap="wrap">
+              {vote.voteOption.map((option) => (
+                <VoteOptionItem
+                  key={option.id}
+                  option={option}
+                  onChange={handleChangeCheckbox}
+                />
+              ))}
+              {vote.useEtc && (
+                <ListItemButton
+                  component="label"
+                  sx={{
+                    border: '1px solid #eee',
+                    borderRadius: 1,
+                    p: 2,
+                    whiteSpace: 'nowrap',
+                    flex: '0 1 auto',
+                  }}
+                >
+                  <CheckedComponent checked={useEtc} />
+                  <FormControlLabel
+                    label="기타"
+                    slotProps={{
+                      typography: {
+                        className: 'font-maru',
+                      },
+                    }}
+                    checked={useEtc}
+                    onChange={(e, checked) => {
+                      if (!checked) {
+                        handleClearValue();
+                      } else {
+                        if (!vote.isMultiple) {
+                          setSnapVoteResponse((response) => {
+                            const copyVoteResponse =
+                              SnapVoteResponse.copy(response);
+                            copyVoteResponse.voteAnswer = [];
+                            return copyVoteResponse;
+                          });
+                        }
+                      }
+                      setUseEtc(checked);
+                    }}
+                    control={
+                      <Checkbox name="useEtc" sx={{ display: 'none' }} />
+                    }
+                  />
+                </ListItemButton>
+              )}
+              {useEtc && (
+                <TextField
+                  variant="filled"
+                  name="value"
                   slotProps={{
-                    typography: {
+                    input: {
                       className: 'font-maru',
                     },
                   }}
-                  checked={useEtc}
-                  onChange={(e, checked) => {
-                    if (!checked) {
-                      handleClearValue();
-                    } else {
-                      if (!vote.isMultiple) {
-                        setSnapVoteResponse((response) => {
-                          const copyVoteResponse =
-                            SnapVoteResponse.copy(response);
-                          copyVoteResponse.voteAnswer = [];
-                          return copyVoteResponse;
-                        });
-                      }
-                    }
-                    setUseEtc(checked);
-                  }}
-                  control={<Checkbox name="useEtc" sx={{ display: 'none' }} />}
+                  placeholder="작성해주세요."
+                  onChange={handleChange}
                 />
-              </ListItemButton>
-            )}
-            {useEtc && (
-              <TextField
-                variant="filled"
-                name="value"
-                slotProps={{
-                  input: {
-                    className: 'font-maru',
-                  },
-                }}
-                placeholder="작성해주세요."
-                onChange={handleChange}
-              />
-            )}
+              )}
+            </Stack>
           </Stack>
         </Stack>
-      </Stack>
+      )}
     </Stack>
   );
 };

@@ -1,4 +1,5 @@
 import { createVote } from '@/apis/vote/create.vote';
+import { updateVote } from '@/apis/vote/updateVote';
 import { Action } from '@/models/Action';
 import { previousAtom } from '@/recoils/previous.atom';
 import { snapVoteAtom } from '@/recoils/snapVote.atom';
@@ -27,8 +28,10 @@ import { FormEvent, useCallback, useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
-interface CreateSnapVoteProps {}
-const CreateSnapVote: React.FC<CreateSnapVoteProps> = () => {
+interface CreateSnapVoteProps {
+  edit?: boolean;
+}
+const CreateSnapVote: React.FC<CreateSnapVoteProps> = ({ edit = false }) => {
   const previous = useRecoilValue(previousAtom);
   const [snapVote, setSnapVote] = useRecoilState(snapVoteAtom);
   const { openModal, openInteractiveModal } = useModal();
@@ -39,6 +42,22 @@ const CreateSnapVote: React.FC<CreateSnapVoteProps> = () => {
   const createMutate = useMutation({
     mutationKey: ['createVote'],
     mutationFn: createVote,
+    onSuccess(data, variables, context) {
+      setSnapVote(new SnapVote());
+      navigate(previous || '/');
+    },
+    onError(error: AxiosError, variables, context) {
+      if (error.response?.status === 401) {
+        setSnapVote(new SnapVote());
+        logoutToken();
+        navigate('/');
+      }
+    },
+  });
+
+  const updateMutate = useMutation({
+    mutationKey: ['updateVote'],
+    mutationFn: updateVote,
     onSuccess(data, variables, context) {
       setSnapVote(new SnapVote());
       navigate(previous || '/');
@@ -63,9 +82,6 @@ const CreateSnapVote: React.FC<CreateSnapVoteProps> = () => {
   }, []);
 
   const actions = [
-    new Action('Add Option', <AddBoxIcon />, () => {
-      addOption();
-    }),
     new Action('Save', <SaveIcon />, () => {
       formRef.current?.requestSubmit();
     }),
@@ -95,7 +111,11 @@ const CreateSnapVote: React.FC<CreateSnapVoteProps> = () => {
         const copyVote = SnapVote.copy(snapVote);
         if (user) {
           copyVote.userId = user.id;
-          createMutate.mutate(copyVote);
+          if (edit) {
+            updateMutate.mutate(copyVote);
+          } else {
+            createMutate.mutate(copyVote);
+          }
         }
       });
       return false;
@@ -137,6 +157,15 @@ const CreateSnapVote: React.FC<CreateSnapVoteProps> = () => {
               }
             />
           ))}
+          <Button
+            fullWidth
+            size="large"
+            variant="outlined"
+            startIcon={<AddBoxIcon />}
+            onClick={addOption}
+          >
+            항목 추가
+          </Button>
         </Stack>
 
         <Toolbar />
