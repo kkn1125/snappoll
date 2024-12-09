@@ -5,7 +5,6 @@ import HowToVoteIcon from '@mui/icons-material/HowToVote';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import StackedLineChartIcon from '@mui/icons-material/StackedLineChart';
 import { List } from '@mui/material';
-import { useCallback, useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
 
 interface SidebarProps {}
@@ -15,6 +14,16 @@ const Sidebar: React.FC<SidebarProps> = () => {
   const paths = [
     { name: '나의 설문지', path: '/polls/me', icon: <HistoryEduIcon /> },
     { name: '나의 투표지', path: '/votes/me', icon: <HowToVoteIcon /> },
+    {
+      name: '내가 응답한 설문지',
+      path: '/polls/me/response',
+      icon: <HistoryEduIcon />,
+    },
+    {
+      name: '내가 응답한 투표지',
+      path: '/votes/me/response',
+      icon: <HowToVoteIcon />,
+    },
     { name: '통계보기', path: '/graph', icon: <StackedLineChartIcon /> },
     {
       name: '알림',
@@ -31,7 +40,7 @@ const Sidebar: React.FC<SidebarProps> = () => {
         overflowX: 'hidden',
       }}
     >
-      {/* {paths.map((menu) => (
+      {paths.map((menu) => (
         <FlexibleMenu
           key={menu.name}
           name={menu.name}
@@ -39,8 +48,8 @@ const Sidebar: React.FC<SidebarProps> = () => {
           icon={menu.icon}
           badge={menu.badge}
         />
-      ))} */}
-      <FlexibleMenu
+      ))}
+      {/* <FlexibleMenu
         name="나의 설문지"
         to="/polls/me"
         icon={<HistoryEduIcon />}
@@ -60,7 +69,7 @@ const Sidebar: React.FC<SidebarProps> = () => {
         to="/notice"
         badge={message.notReadMessages.length}
         icon={<NotificationsIcon />}
-      />
+      /> */}
     </List>
   );
 };

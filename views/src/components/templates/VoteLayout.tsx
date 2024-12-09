@@ -118,7 +118,7 @@ const VoteLayout: React.FC<VoteLayoutProps> = ({ vote, expired }) => {
             fontWeight={600}
             color="#333"
           >
-            {user?.username} 작성
+            {vote.user?.username} 작성
           </Typography>
 
           <Stack direction="row" alignItems="center" gap={1}>

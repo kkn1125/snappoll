@@ -1,24 +1,30 @@
 import { removePoll } from '@/apis/removePoll';
+import { removeVote } from '@/apis/removeVote';
 import { tokenAtom } from '@/recoils/token.atom';
 import { Message } from '@common/messages';
 import useModal from '@hooks/useModal';
 import { SnapPoll } from '@models/SnapPoll';
 import { SnapVote } from '@models/SnapVote';
+import { AccessTime } from '@mui/icons-material';
+import ThreePIcon from '@mui/icons-material/ThreeP';
 import {
   Button,
-  Divider,
+  Chip,
   List,
   ListItem,
   ListItemButton,
   ListItemText,
   Pagination,
   Stack,
+  Tooltip,
 } from '@mui/material';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { formattedDate } from '@utils/formattedDate';
+import { isNil } from '@utils/isNil';
+import { useCallback } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import ListItemIcons from '../atoms/ListItemIcons';
-import { removeVote } from '@/apis/removeVote';
 
 interface ListDataItemProps<T extends SnapPoll | SnapVote> {
   name: 'poll' | 'vote';
@@ -27,6 +33,7 @@ interface ListDataItemProps<T extends SnapPoll | SnapVote> {
   count: number;
   emptyComment?: string;
   disableCreateButton?: boolean;
+  limit?: number;
 }
 
 function ListDataItem<T extends SnapPoll | SnapVote>({
@@ -36,6 +43,7 @@ function ListDataItem<T extends SnapPoll | SnapVote>({
   count,
   emptyComment = '등록한 데이터가 없습니다.',
   disableCreateButton = false,
+  limit,
 }: ListDataItemProps<T>) {
   const { openInteractiveModal } = useModal();
   const { user } = useRecoilValue(tokenAtom);
@@ -61,6 +69,17 @@ function ListDataItem<T extends SnapPoll | SnapVote>({
 
   const total = Math.ceil(count / 10);
 
+  const respondAmount = useCallback((data: SnapPoll | SnapVote) => {
+    const response =
+      'response' in data
+        ? data.response
+        : 'voteResponse' in data
+          ? data.voteResponse
+          : undefined;
+    if (!response) return 0;
+    return response.length;
+  }, []);
+
   return (
     <Stack>
       {!disableCreateButton && (
@@ -77,18 +96,43 @@ function ListDataItem<T extends SnapPoll | SnapVote>({
       )}
       <List>
         {dataList && dataList.length > 0 ? (
-          dataList.map((data, i) => (
+          (limit ? dataList.slice(0, limit) : dataList).map((data, i) => (
             <ListItem
               key={data.id}
               disablePadding
               secondaryAction={
-                data.user?.id === user?.id && (
-                  <ListItemIcons
-                    dataId={data.id}
-                    type={name}
-                    handleRemove={() => handleRemove(data.id)}
-                  />
-                )
+                <Stack direction="row" gap={1} alignItems="center">
+                  <Tooltip title="응답자" placement="top">
+                    <Chip
+                      size="small"
+                      icon={<ThreePIcon />}
+                      label={respondAmount(data)}
+                      sx={{ pl: 0.5 }}
+                    />
+                  </Tooltip>
+                  <Tooltip title="응답 기간" placement="top">
+                    <Chip
+                      size="small"
+                      variant="outlined"
+                      icon={<AccessTime />}
+                      label={
+                        formattedDate(data.createdAt, 'YYYY. MM. DD.') +
+                        ' ~ ' +
+                        (!isNil(data.expiresAt)
+                          ? formattedDate(data.expiresAt, 'YYYY. MM. DD.')
+                          : '계속')
+                      }
+                    />
+                  </Tooltip>
+
+                  {data.user?.id === user?.id && (
+                    <ListItemIcons
+                      dataId={data.id}
+                      type={name}
+                      handleRemove={() => handleRemove(data.id)}
+                    />
+                  )}
+                </Stack>
               }
               sx={{
                 boxSizing: 'border-box',
@@ -117,7 +161,7 @@ function ListDataItem<T extends SnapPoll | SnapVote>({
           </ListItem>
         )}
       </List>
-      {total > 0 && (
+      {isNil(limit) && total > 0 && (
         <Stack direction="row" justifyContent="center">
           <Pagination
             onChange={(e, page) => {

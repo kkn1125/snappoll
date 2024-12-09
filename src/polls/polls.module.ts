@@ -1,4 +1,4 @@
-import { AuthService } from '@/auth/auth.service';
+import { AuthModule } from '@auth/auth.module';
 import { PrismaService } from '@database/prisma.service';
 import { Module } from '@nestjs/common';
 import { RouterModule } from '@nestjs/core';
@@ -9,8 +9,8 @@ import { QuestionsModule } from './questions/questions.module';
 import { ResponseModule } from './response/response.module';
 
 @Module({
-  controllers: [PollsController],
   imports: [
+    AuthModule,
     ResponseModule,
     QuestionsModule,
     AnswersModule,
@@ -31,6 +31,7 @@ import { ResponseModule } from './response/response.module';
     // ResponseModule,
     // AnswersModule,
   ],
-  providers: [AuthService, PrismaService, PollsService],
+  controllers: [PollsController],
+  providers: [PrismaService, PollsService],
 })
 export class PollsModule {}

@@ -3,13 +3,12 @@ import { verifyLogin } from '@/apis/verifyLogin';
 import { tokenAtom } from '@/recoils/token.atom';
 import { Message } from '@common/messages';
 import { guestDisallowPaths, userDisallowPaths } from '@common/variables';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useRecoilState, useSetRecoilState } from 'recoil';
+import { useRecoilState } from 'recoil';
 import useModal from './useModal';
-import { logout } from '@/apis/logout';
 
 const useToken = () => {
   const navigate = useNavigate();

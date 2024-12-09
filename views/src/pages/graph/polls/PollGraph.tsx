@@ -8,6 +8,11 @@ import {
   Container,
   Divider,
   Stack,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
   Toolbar,
   Typography,
 } from '@mui/material';
@@ -16,6 +21,9 @@ import { MakeOptional } from '@mui/x-date-pickers/internals';
 import { useQuery } from '@tanstack/react-query';
 import { useCallback } from 'react';
 import { useParams } from 'react-router-dom';
+import FeaturedPlayListIcon from '@mui/icons-material/FeaturedPlayList';
+import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
+import ThreePIcon from '@mui/icons-material/ThreeP';
 
 interface PollGraphProps {}
 const PollGraph: React.FC<PollGraphProps> = () => {
@@ -43,12 +51,62 @@ const PollGraph: React.FC<PollGraphProps> = () => {
 
   return (
     <Container>
-      <Stack spacing={4} alignItems="center">
+      <Stack spacing={4} alignItems="center" mb={5}>
         <Typography variant="h3" fontWeight={700}>
           설문지: {data.title}
         </Typography>
+
+        <Container maxWidth="sm">
+          <Table>
+            <TableBody>
+              <TableRow
+                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+              >
+                <TableCell
+                  sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
+                >
+                  <FeaturedPlayListIcon fontSize="small" color="info" /> 총 질문
+                  개수
+                </TableCell>
+                <TableCell align="right">
+                  {data.question?.length ?? 0}개
+                </TableCell>
+              </TableRow>
+              <TableRow
+                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+              >
+                <TableCell
+                  sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
+                >
+                  <FormatListBulletedIcon fontSize="small" color="info" /> 총
+                  문항 개수
+                </TableCell>
+                <TableCell align="right">
+                  {data.question.reduce(
+                    (acc, cur) => acc + (cur.option.length ?? 0),
+                    0,
+                  )}
+                  개
+                </TableCell>
+              </TableRow>
+              <TableRow
+                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+              >
+                <TableCell
+                  sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
+                >
+                  <ThreePIcon fontSize="small" color="info" /> 참여 인원
+                </TableCell>
+                <TableCell align="right">
+                  {data.response?.length ?? 0}명
+                </TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+        </Container>
+
         <Typography variant="h4" fontWeight={700}>
-          질문 타입 빈도
+          질문 타입 비율
         </Typography>
         <PieChart
           series={[
@@ -118,18 +176,22 @@ const PollGraph: React.FC<PollGraphProps> = () => {
             </Stack>
           ))}
       </Stack>
+
       <Divider flexItem sx={{ my: 5 }} />
-      <Typography variant="h4" fontWeight={700} gutterBottom>
-        사용자 설정 그래프
-      </Typography>
-      {data.question.length > 1 ? (
-        <CorrelationChart data={data} />
-      ) : (
-        <Alert severity="info">
-          <AlertTitle>안내</AlertTitle>
-          비교 그래프 생성은 최소 2개 일 때 이용가능합니다.
-        </Alert>
-      )}
+
+      <Container maxWidth="md">
+        <Typography variant="h4" fontWeight={700} gutterBottom>
+          사용자 설정 그래프
+        </Typography>
+        {data.question.length > 1 ? (
+          <CorrelationChart data={data} />
+        ) : (
+          <Alert severity="info">
+            <AlertTitle>안내</AlertTitle>
+            비교 그래프 생성은 최소 2개 일 때 이용가능합니다.
+          </Alert>
+        )}
+      </Container>
       <Toolbar />
     </Container>
   );

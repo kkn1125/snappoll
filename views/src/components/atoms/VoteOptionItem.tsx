@@ -28,6 +28,7 @@ const VoteOptionItem: React.FC<VoteOptionItemProps> = ({
         p: 2,
         cursor: 'pointer',
         whiteSpace: 'nowrap',
+        flex: '0 1 auto',
       }}
     >
       <CheckedComponent checked={checked} />

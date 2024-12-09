@@ -122,7 +122,9 @@ const PollResponse: React.FC<PollResponseProps> = ({ me }) => {
             <ListItem>
               <ListItemButton>
                 <ListItemText>
-                  아직 설문조사에 참여한 사람이 없습니다.
+                  {me
+                    ? '아직 응답한 설문이 없습니다.'
+                    : '아직 설문조사에 참여한 사람이 없습니다.'}
                 </ListItemText>
               </ListItemButton>
             </ListItem>

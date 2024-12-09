@@ -13,10 +13,15 @@ import { VotesModule } from '@votes/votes.module';
 import { WebsocketGateway } from '@websocket/websocket.gateway';
 import path from 'path';
 import { BasicModule } from './basic/basic.module';
+import { MailerModule } from './mailer/mailer.module';
+import emailConf from '@common/email.conf';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true, load: [commonConf] }),
+    ScheduleModule.forRoot(),
+    ConfigModule.forRoot({ isGlobal: true, load: [commonConf, emailConf] }),
+    MailerModule,
     BasicModule,
     AuthModule,
     VotesModule,

@@ -81,6 +81,7 @@ export class PollsService {
             updatedAt: true,
           },
         },
+        response: true,
       },
     });
     const count = await this.prisma.poll.count();
@@ -106,6 +107,7 @@ export class PollsService {
             updatedAt: true,
           },
         },
+        response: true,
         _count: true,
       },
     });

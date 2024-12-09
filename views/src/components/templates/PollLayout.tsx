@@ -40,7 +40,7 @@ const PollLayout: React.FC<PollLayoutProps> = ({ poll, expired }) => {
             fontWeight={600}
             color="#333"
           >
-            {user?.username} 작성
+            {poll.user?.username} 작성
           </Typography>
 
           <Stack direction="row" alignItems="center" gap={1}>

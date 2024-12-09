@@ -1,10 +1,13 @@
+import { checkEmail } from '@/apis/checkEmail';
 import { signup } from '@/apis/signup';
-import { previousAtom } from '@/recoils/previous.atom';
 import { Message } from '@common/messages';
 import CustomInput from '@components/atoms/CustomInput';
 import useModal from '@hooks/useModal';
 import useValidate from '@hooks/useValidate';
+import AutorenewIcon from '@mui/icons-material/Autorenew';
 import CasinoIcon from '@mui/icons-material/Casino';
+import ForwardToInboxIcon from '@mui/icons-material/ForwardToInbox';
+import MarkEmailReadIcon from '@mui/icons-material/MarkEmailRead';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import {
@@ -12,6 +15,7 @@ import {
   Container,
   Divider,
   IconButton,
+  keyframes,
   Stack,
   Toolbar,
   Tooltip,
@@ -19,7 +23,6 @@ import {
 } from '@mui/material';
 import { useMutation } from '@tanstack/react-query';
 import { getRandomUsername } from '@utils/getRandomUsername';
-import { WatcherEvent } from '@utils/WatcherEvent';
 import { AxiosError } from 'axios';
 import {
   ChangeEvent,
@@ -31,11 +34,11 @@ import {
   useState,
 } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useRecoilValue } from 'recoil';
 
 interface SignupProps {}
 const Signup: React.FC<SignupProps> = () => {
-  const previous = useRecoilValue(previousAtom);
+  const [pendingValidate, setPendingValidate] = useState(false);
+  const [emailValidated, setEmailValidated] = useState(false);
   const [validated, setValidated] = useState(false);
   const { openModal, noSaveModal } = useModal();
   const [visible, setVisible] = useState({
@@ -50,6 +53,32 @@ const Signup: React.FC<SignupProps> = () => {
     checkPassword: '',
   });
   const { errors, validate } = useValidate(signupInfo);
+
+  const pendingAnimation = keyframes`
+    0%   { transform: rotate(0deg) }
+    100% { transform: rotate(359deg) }
+  `;
+
+  const checkEmailMutation = useMutation({
+    mutationKey: ['checkEmail'],
+    mutationFn: checkEmail,
+    onSuccess(data, variables, context) {
+      setPendingValidate(false);
+      setEmailValidated(true);
+      console.log('done!!!');
+    },
+    onError(error: AxiosError, variables, context) {
+      const { response } = error;
+      const { data } = response as { data: any };
+      setPendingValidate(false);
+      setEmailValidated(false);
+      console.log(response);
+      if (response?.status === 409) {
+        openModal(Message.WrongRequest(data?.message));
+      }
+    },
+  });
+
   const mutation = useMutation({
     mutationKey: ['signup'],
     mutationFn: signup,
@@ -64,46 +93,15 @@ const Signup: React.FC<SignupProps> = () => {
   });
 
   useEffect(() => {
-    //   function handleWatchEvent(e: WatchEvent) {
-    //     e.preventDefault();
-    //     openInteractiveModal(
-    //       {
-    //         title: '사이트를 새로고침하시겠습니까?',
-    //         content: Message.Single.Redirect,
-    //       },
-    //       () => {
-    //         console.log(e.detail);
-    //         if (e.detail.reload) {
-    //           if (e.detail.path) {
-    //             location.href = location.origin + e.detail.path;
-    //           } else {
-    //             history.go(0);
-    //           }
-    //         } else if (e.detail.path) {
-    //           navigate(e.detail.path);
-    //         }
-    //       },
-    //     );
-    //   }
     function handleBeforeUnload(e: BeforeUnloadEvent) {
-      // new WatcherEvent('watch', { detail: { reload: true } });
       e.preventDefault();
-      // e.returnValue = '';
       return '';
     }
     window.addEventListener('beforeunload', handleBeforeUnload);
-    //   window.addEventListener('watch', handleWatchEvent as EventListener);
     return () => {
       window.removeEventListener('beforeunload', handleBeforeUnload);
-      //     window.removeEventListener('watch', handleWatchEvent as EventListener);
     };
   }, []);
-
-  // const watcher = useCallback((detail: { path?: string; reload?: boolean }) => {
-  //   return new WatcherEvent('watch', {
-  //     detail,
-  //   });
-  // }, []);
 
   useEffect(() => {
     if (validated) {
@@ -146,22 +144,74 @@ const Signup: React.FC<SignupProps> = () => {
     }));
   }, []);
 
+  const handleCheckEmail = useCallback(() => {
+    if (!validate('onlyEmail')) {
+      openModal({ title: '안내', content: '이메일 형식을 확인해주세요.' });
+      return;
+    }
+
+    if (!signupInfo.email) {
+      openModal({ title: '안내', content: '이메일을 입력해주세요.' });
+      return;
+    }
+    checkEmailMutation.mutate(signupInfo.email);
+    openModal({
+      title: '안내',
+      content: '입력한 이메일의 메세지함을 확인해주세요.',
+    });
+
+    setPendingValidate(true);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [signupInfo.email]);
+
   const emailComponent = useMemo(() => {
     return (
-      <CustomInput
-        autoFocus
-        label="Email"
-        name="email"
-        type="email"
-        value={signupInfo.email}
-        autoComplete="username"
-        onChange={onChange}
-        required
-        errors={errors}
-      />
+      <Stack direction="row" gap={2} flexWrap="wrap">
+        <CustomInput
+          autoFocus
+          disabled={emailValidated}
+          label="Email"
+          name="email"
+          type="email"
+          value={signupInfo.email}
+          autoComplete="username"
+          onChange={onChange}
+          required
+          errors={errors}
+          sx={{ minWidth: 200, flex: 1 }}
+        />
+        <Stack direction="row" alignItems="center">
+          <Tooltip
+            title={
+              pendingValidate
+                ? '이메일 확인 중'
+                : emailValidated
+                  ? '본인확인 완료'
+                  : '이메일 본인인증'
+            }
+            placement="top"
+          >
+            <IconButton size="large" color="primary" onClick={handleCheckEmail}>
+              {pendingValidate ? (
+                <AutorenewIcon
+                  sx={{
+                    animation: `${pendingAnimation} 1s linear both infinite`,
+                  }}
+                />
+              ) : emailValidated ? (
+                <MarkEmailReadIcon />
+              ) : (
+                <ForwardToInboxIcon fontSize="medium" />
+              )}
+            </IconButton>
+          </Tooltip>
+        </Stack>
+      </Stack>
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [signupInfo.email, errors.email]);
+  }, [emailValidated, signupInfo.email, errors, pendingValidate]);
+
   const usernameComponent = useMemo(() => {
     return (
       <Stack position="relative">
@@ -195,6 +245,7 @@ const Signup: React.FC<SignupProps> = () => {
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [signupInfo.username, errors.username]);
+
   const passwordComponent = useMemo(() => {
     return (
       <Stack position="relative">
@@ -221,6 +272,7 @@ const Signup: React.FC<SignupProps> = () => {
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [signupInfo.password, visible.password, errors.password]);
+
   const checkPasswordComponent = useMemo(() => {
     return (
       <Stack position="relative">
@@ -274,12 +326,6 @@ const Signup: React.FC<SignupProps> = () => {
           to="/user/login"
           reloadDocument
           color="success"
-          // onClick={() => {
-          //   noSaveModal(() => {
-          //     navigate('/user/login');
-          //   });
-          //   // window.dispatchEvent(watcher({ path: '/user/login' }));
-          // }}
         >
           이미 계정이 있어요
         </Button>
@@ -290,12 +336,6 @@ const Signup: React.FC<SignupProps> = () => {
           to="/"
           reloadDocument
           color="inherit"
-          // onClick={() => {
-          //   noSaveModal(() => {
-          //     navigate('/');
-          //   });
-          //   // window.dispatchEvent(watcher({ path: '/' }));
-          // }}
         >
           메인으로
         </Button>

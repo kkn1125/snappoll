@@ -121,7 +121,11 @@ const VoteResponse: React.FC<VoteResponseProps> = ({ me }) => {
           {data?.responses.length === 0 && (
             <ListItem>
               <ListItemButton>
-                <ListItemText>아직 투표에 참여한 사람이 없습니다.</ListItemText>
+                <ListItemText>
+                  {me
+                    ? '아직 응답한 투표가 없습니다.'
+                    : '아직 투표에 참여한 사람이 없습니다.'}
+                </ListItemText>
               </ListItemButton>
             </ListItem>
           )}

@@ -82,9 +82,11 @@ const Profile: React.FC<ProfileProps> = () => {
   const logoutMutate = useMutation({
     mutationKey: ['logout'],
     mutationFn: logout,
+    onMutate(variables) {
+      logoutToken();
+    },
     onSuccess(data, variables, context) {
       if (data.ok) {
-        logoutToken();
         // localStorage.setItem('logged_in', 'false');
         // window.location.pathname = '/';
       }

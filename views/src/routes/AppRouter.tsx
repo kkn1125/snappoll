@@ -46,8 +46,9 @@ function AppRouter() {
   /* when change page */
   useEffect(() => {
     const pathname = locate.pathname;
+    const loggedIn = localStorage.getItem('logged_in');
 
-    verify();
+    if (loggedIn === 'true') verify();
 
     return () => {
       setPrevious(pathname);

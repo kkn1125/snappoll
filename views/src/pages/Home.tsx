@@ -1,14 +1,20 @@
 import { getPolls } from '@/apis/poll/getPolls';
+import { getVotes } from '@/apis/vote/getVotes';
 import { BRAND_NAME } from '@common/variables';
 import ListDataItem from '@components/organisms/ListDataItem';
 import { SnapPoll } from '@models/SnapPoll';
+import { SnapVote } from '@models/SnapVote';
 import { Container, List, Stack, Typography } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
 
 const Home = () => {
-  const { data } = useQuery<{ polls: SnapPoll[]; count: number }>({
+  const poll = useQuery<{ polls: SnapPoll[]; count: number }>({
     queryKey: ['polls'],
     queryFn: getPolls,
+  });
+  const vote = useQuery<{ votes: SnapVote[]; count: number }>({
+    queryKey: ['votes'],
+    queryFn: getVotes,
   });
 
   return (
@@ -38,14 +44,34 @@ const Home = () => {
           </Typography>
 
           <List>
-            {data && (
+            {poll.data && (
               <ListDataItem
                 name="poll"
                 queryKey="polls"
-                dataList={data.polls}
-                count={data.count}
+                dataList={poll.data.polls}
+                count={poll.data.count}
                 emptyComment="등록한 설문지가 없습니다."
                 disableCreateButton
+                limit={3}
+              />
+            )}
+          </List>
+        </Stack>
+        <Stack gap={2}>
+          <Typography align="center" fontSize={36} fontWeight={700}>
+            최근 투표
+          </Typography>
+
+          <List>
+            {vote.data && (
+              <ListDataItem
+                name="vote"
+                queryKey="votes"
+                dataList={vote.data.votes}
+                count={vote.data.count}
+                emptyComment="등록한 설문지가 없습니다."
+                disableCreateButton
+                limit={3}
               />
             )}
           </List>

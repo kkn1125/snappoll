@@ -65,6 +65,7 @@ export class VotesService {
           },
         },
         voteOption: true,
+        voteResponse: true,
       },
     });
     const count = await this.prisma.vote.count();

@@ -6,11 +6,11 @@ import {
   ButtonGroup,
   Stack,
   Toolbar,
-  Typography,
+  Typography
 } from '@mui/material';
 import { BarChart, BarSeriesType } from '@mui/x-charts';
 import { MakeOptional } from '@mui/x-date-pickers/internals';
-import { ChangeEvent, useCallback, useMemo, useState } from 'react';
+import { useCallback, useState } from 'react';
 
 interface CorrelationChartProps {
   data: SnapPoll;
@@ -137,12 +137,12 @@ const CorrelationChart: React.FC<CorrelationChartProps> = ({ data }) => {
         )}
       </Stack>
       <Toolbar />
-      <Stack alignItems="center">
+      <Stack alignItems="center" gap={10}>
         {baseQuestion &&
           questions.map((question) => (
             <Stack key={baseQuestion.id + question.id}>
-              <Typography>
-                {baseQuestion.title} {'↔️'} {question.title}
+              <Typography variant="h5">
+                {baseQuestion.title} {'⇒'} {question.title}
               </Typography>
               <BarChart
                 axisHighlight={{ y: 'line' }}

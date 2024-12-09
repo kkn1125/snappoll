@@ -8,18 +8,22 @@ const SnapBreadCrumbs: React.FC<SnapBreadCrumbsProps> = () => {
   const locate = useLocation();
   const breadcrumbs = useMemo(() => {
     const splitted = locate.pathname.split(/\//g);
-    const removeDuplicate = [...new Set(splitted)];
+    const removeDuplicate = [...new Set(splitted)].filter(
+      (path) => path !== 'edit',
+    );
     const getPath = (i: number) => removeDuplicate.slice(0, i + 1).join('/');
     return removeDuplicate.map((path, i) => (
       <Chip
         key={path}
-        component={Link}
-        to={getPath(i) || '/'}
+        {...(i < removeDuplicate.length - 1 && {
+          component: Link,
+          to: getPath(i) || '/',
+        })}
         size="small"
         variant={i === removeDuplicate.length - 1 ? 'filled' : 'outlined'}
         label={removeDuplicate[i] || 'HOME'}
         sx={{
-          cursor: 'pointer',
+          cursor: i < removeDuplicate.length - 1 ? 'pointer' : 'auto',
           ['&:hover']: {
             backgroundColor: '#eee',
           },

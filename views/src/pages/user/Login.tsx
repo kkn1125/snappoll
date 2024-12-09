@@ -1,10 +1,8 @@
 import { login } from '@/apis/login';
-import { previousAtom } from '@/recoils/previous.atom';
 import { tokenAtom } from '@/recoils/token.atom';
 import { Message } from '@common/messages';
 import CustomInput from '@components/atoms/CustomInput';
 import useModal from '@hooks/useModal';
-import useToken from '@hooks/useToken';
 import useValidate from '@hooks/useValidate';
 import {
   Button,
@@ -14,7 +12,7 @@ import {
   Toolbar,
   Typography,
 } from '@mui/material';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import {
   ChangeEvent,
@@ -25,11 +23,10 @@ import {
   useState,
 } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useSetRecoilState } from 'recoil';
 
 interface LoginProps {}
 const Login: React.FC<LoginProps> = () => {
-  // const [validated, setValidated] = useState(false);
   const { openModal } = useModal();
   const locate = useLocation();
   const navigate = useNavigate();
@@ -103,15 +100,6 @@ const Login: React.FC<LoginProps> = () => {
   }, []);
 
   const memoErrors = useMemo(() => errors, [errors]);
-
-  // const onFormChange = useCallback(
-  //   (e: FormEvent<HTMLFormElement>) => {
-  //     if (validated) {
-  //       validateForm(loginInfo);
-  //     }
-  //   },
-  //   [loginInfo, validateForm, validated],
-  // );
 
   return (
     <Container component={Stack} maxWidth="sm" gap={2}>
