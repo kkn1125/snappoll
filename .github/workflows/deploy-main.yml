@@ -39,6 +39,10 @@ jobs:
                   value: "8080"
                 - name: SECRET_KEY
                   secret: SECRET_KEY
+                - name: EMAIL_ADDRESS
+                  secret: EMAIL_ADDRESS
+                - name: EMAIL_PASSWORD
+                  secret: EMAIL_PASSWORD
               buildenv: []
               strategy: rolling
             context:
