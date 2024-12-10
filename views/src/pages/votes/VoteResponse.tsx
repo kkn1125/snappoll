@@ -3,6 +3,7 @@ import { getVoteResponseMe } from '@/apis/vote/response/getVoteResponseMe';
 import { removeVoteResponse } from '@/apis/vote/response/removeVoteResponse';
 import { tokenAtom } from '@/recoils/token.atom';
 import { Message } from '@common/messages';
+import SkeletonResponseList from '@components/moleculars/SkeletonResponseList';
 import useModal from '@hooks/useModal';
 import { SnapVote } from '@models/SnapVote';
 import { SnapVoteResponse } from '@models/SnapVoteResponse';
@@ -18,6 +19,7 @@ import {
   ListItem,
   ListItemButton,
   ListItemText,
+  Pagination,
   Stack,
   Toolbar,
   Typography,
@@ -26,7 +28,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { formattedDate } from '@utils/formattedDate';
 import { validateExpired } from '@utils/validateExpired';
 import { useCallback, useMemo } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 
 interface VoteResponseProps {
@@ -38,7 +40,10 @@ const VoteResponse: React.FC<VoteResponseProps> = ({ me }) => {
   const { id } = useParams();
   const { openInteractiveModal } = useModal();
   const queryClient = useQueryClient();
-  const { data } = useQuery<{
+  const [params, setParams] = useSearchParams({ page: '1' });
+  const page = +(params.get('page') || 1);
+
+  const { data, isLoading } = useQuery<{
     vote: SnapVote;
     responses: SnapVoteResponse[];
     count: number;
@@ -46,6 +51,7 @@ const VoteResponse: React.FC<VoteResponseProps> = ({ me }) => {
     queryKey: ['voteResponse', id],
     queryFn: () => (me ? getVoteResponseMe() : getVoteResponse(id)),
   });
+  const total = data ? Math.ceil(data.count / 10) : 0;
 
   const removeMutation = useMutation({
     mutationKey: ['removeMutate'],
@@ -81,12 +87,14 @@ const VoteResponse: React.FC<VoteResponseProps> = ({ me }) => {
     return validateExpired(data?.vote?.expiresAt);
   }, [data?.vote?.expiresAt]);
 
+  if (isLoading) return <SkeletonResponseList />;
+
   return (
     <Container maxWidth="md">
       <Toolbar />
       <Stack gap={3}>
         <List>
-          {data?.responses.map((response, i) => (
+          {data?.responses.slice(0, 10).map((response, i) => (
             <ListItem
               key={response.id}
               secondaryAction={
@@ -130,6 +138,23 @@ const VoteResponse: React.FC<VoteResponseProps> = ({ me }) => {
             </ListItem>
           )}
         </List>
+        {total > 0 && (
+          <Stack direction="row" justifyContent="center">
+            <Pagination
+              onChange={(e, page) => {
+                if (page === 1) {
+                  setParams({});
+                } else {
+                  setParams({ page: '' + page });
+                }
+              }}
+              page={page}
+              count={total}
+              showFirstButton
+              showLastButton
+            />
+          </Stack>
+        )}
         <Divider />
         <Button
           variant="contained"

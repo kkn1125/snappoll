@@ -1,11 +1,8 @@
-import { MODE } from '@common/variables';
+import { BASE_URL } from '@common/variables';
 import axios from 'axios';
 
 export const snapApi = axios.create({
-  baseURL:
-    MODE === 'development'
-      ? 'http://localhost:8080/api'
-      : location.origin + '/api',
+  baseURL: BASE_URL,
   withCredentials: true,
   timeout: 1000,
 });

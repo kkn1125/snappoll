@@ -1,4 +1,5 @@
 import { sidebarAtom } from '@/recoils/sidebar.atom';
+import { scrollSize } from '@common/variables';
 import SnapBreadCrumbs from '@components/atoms/SnapBreadCrumbs';
 import Footer from '@components/organisms/Footer';
 import Header from '@components/organisms/Header';
@@ -13,7 +14,6 @@ const sidebarWidth = {
   min: 56,
   max: 250,
 };
-const scrollSize = 5;
 
 interface LayoutProps {
   isCrew?: boolean;

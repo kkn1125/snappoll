@@ -3,11 +3,98 @@ import { Injectable } from '@nestjs/common';
 import { Option } from '@prisma/client';
 import { CreatePollDto } from './dto/create-poll.dto';
 import { UpdatePollDto } from './dto/update-poll.dto';
+import { CreateSharePollDto } from './dto/create-share-poll.dto';
 
 @Injectable()
 export class PollsService {
   constructor(private readonly prisma: PrismaService) {}
 
+  /* share poll */
+  findShareOneById(id: string) {
+    return this.prisma.poll.findUnique({
+      where: { id },
+      include: {
+        user: {
+          select: {
+            id: true,
+            email: true,
+            username: true,
+            createdAt: true,
+            updatedAt: true,
+          },
+        },
+        question: {
+          include: {
+            option: true,
+            answer: true,
+          },
+        },
+        response: {
+          include: {
+            answer: true,
+          },
+        },
+        sharePoll: true,
+      },
+    });
+  }
+
+  findShareOne(url: string) {
+    return this.prisma.sharePoll.findUnique({
+      where: { url },
+      include: {
+        poll: {
+          include: {
+            user: {
+              select: {
+                id: true,
+                email: true,
+                username: true,
+                createdAt: true,
+                updatedAt: true,
+              },
+            },
+            question: {
+              include: {
+                option: true,
+                answer: true,
+              },
+            },
+            response: {
+              include: {
+                answer: true,
+              },
+            },
+          },
+        },
+      },
+    });
+  }
+
+  createShareUrl(createSharePollDto: CreateSharePollDto) {
+    const url = this.prisma.generateShareUrl(
+      createSharePollDto.pollId,
+      'public-poll',
+    );
+    createSharePollDto.url = url;
+    return this.prisma.sharePoll.create({ data: createSharePollDto });
+  }
+
+  revokeShareUrl(id: string) {
+    return this.prisma.sharePoll.update({
+      where: { id },
+      data: { deletedAt: new Date() },
+    });
+  }
+
+  resumeShareUrl(id: string) {
+    return this.prisma.sharePoll.update({
+      where: { id },
+      data: { deletedAt: null },
+    });
+  }
+
+  /* polls */
   create(createPollDto: CreatePollDto) {
     const title = createPollDto.title;
     const description = createPollDto.description;
@@ -82,6 +169,7 @@ export class PollsService {
           },
         },
         response: true,
+        sharePoll: true,
       },
     });
     const count = await this.prisma.poll.count();
@@ -109,6 +197,7 @@ export class PollsService {
         },
         response: true,
         _count: true,
+        sharePoll: true,
       },
     });
     const count = await this.prisma.poll.count({ where: { createdBy: id } });
@@ -140,6 +229,7 @@ export class PollsService {
             answer: true,
           },
         },
+        sharePoll: true,
       },
     });
   }

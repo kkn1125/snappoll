@@ -1,6 +1,7 @@
 import { v4 } from 'uuid';
 import { SnapVoteOption } from './SnapVoteOption';
 import { SnapVoteResponse } from './SnapVoteResponse';
+import { SnapShareVote } from './SnapShareVote';
 
 export class SnapVote {
   static copy(snapVote: SnapVote) {
@@ -20,6 +21,7 @@ export class SnapVote {
   user?: User;
   voteResponse?: SnapVoteResponse[];
   voteOption: SnapVoteOption[] = [];
+  shareVote?: SnapShareVote;
 
   constructor(props?: SnapVote) {
     if (props) {
@@ -33,6 +35,7 @@ export class SnapVote {
       this.createdAt = props.createdAt;
       this.updatedAt = props.updatedAt;
       this.voteOption = [...props.voteOption];
+      if (props.shareVote) this.shareVote = props.shareVote;
     }
   }
 

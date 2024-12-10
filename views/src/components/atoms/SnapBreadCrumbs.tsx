@@ -1,5 +1,5 @@
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
-import { Container, Breadcrumbs, Typography, Chip } from '@mui/material';
+import { Breadcrumbs, Chip, Container } from '@mui/material';
 import { useMemo } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
@@ -21,7 +21,7 @@ const SnapBreadCrumbs: React.FC<SnapBreadCrumbsProps> = () => {
         })}
         size="small"
         variant={i === removeDuplicate.length - 1 ? 'filled' : 'outlined'}
-        label={removeDuplicate[i] || 'HOME'}
+        label={(removeDuplicate[i] || 'home').toUpperCase()}
         sx={{
           cursor: i < removeDuplicate.length - 1 ? 'pointer' : 'auto',
           ['&:hover']: {

@@ -2,6 +2,7 @@ import { v4 } from 'uuid';
 import { SnapPollQuestion } from './SnapPollQuestion';
 import { SnapPollOption } from './SnapPollOption';
 import { SnapResponse } from './SnapResponse';
+import { SnapSharePoll } from './SnapSharePoll';
 
 export class SnapPoll {
   static copy(origin: SnapPoll) {
@@ -18,6 +19,7 @@ export class SnapPoll {
   question: SnapPollQuestion[] = [];
   user?: User;
   response?: SnapResponse[];
+  sharePoll?: SnapSharePoll;
 
   constructor(props?: SnapPoll) {
     if (props) {
@@ -29,6 +31,10 @@ export class SnapPoll {
       this.question = [...props.question];
       this.createdAt = props.createdAt;
       this.updatedAt = props.updatedAt;
+      this.question = props.question;
+      this.user = props.user;
+      this.response = props.response;
+      if (props.sharePoll) this.sharePoll = props.sharePoll;
     }
   }
 

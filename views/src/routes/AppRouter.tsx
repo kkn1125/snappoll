@@ -1,6 +1,7 @@
 import { previousAtom } from '@/recoils/previous.atom';
 import { VERSION } from '@common/variables';
 import Layout from '@components/templates/Layout';
+import ShareLayout from '@components/templates/ShareLayout';
 import useLoading from '@hooks/useLoading';
 import useModal from '@hooks/useModal';
 import useToken from '@hooks/useToken';
@@ -21,6 +22,7 @@ import MyPolls from '@pages/polls/MyPolls';
 import PollListV2 from '@pages/polls/PollListV2';
 import PollResponse from '@pages/polls/PollResponse';
 import DetailPollResponse from '@pages/polls/response/DetailPollResponse';
+import SharePage from '@pages/share/SharePage';
 import Login from '@pages/user/Login';
 import Profile from '@pages/user/Profile';
 import Signup from '@pages/user/Signup';
@@ -111,7 +113,6 @@ function AppRouter() {
             element={<DetailVoteResponse />}
           />
         </Route>
-        <Route path="about" element={<About />} />
         <Route path="graph">
           <Route index element={<Graph />} />
           <Route path="polls">
@@ -124,6 +125,12 @@ function AppRouter() {
           </Route>
         </Route>
         <Route path="notice" element={<Notice />} />
+        <Route path="about" element={<About />} />
+      </Route>
+      <Route element={<ShareLayout />}>
+        <Route path="share" element={<SharePage />} />
+      </Route>
+      <Route element={<Layout isCrew={isCrew} />}>
         <Route path="*" element={<Notfound />} />
       </Route>
     </Routes>

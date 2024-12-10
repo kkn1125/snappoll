@@ -1,10 +1,11 @@
-import { Module } from '@nestjs/common';
-import { ResponseService } from './response.service';
-import { ResponseController } from './response.controller';
+import { AuthModule } from '@auth/auth.module';
 import { PrismaService } from '@database/prisma.service';
+import { Module } from '@nestjs/common';
+import { ResponseController } from './response.controller';
+import { ResponseService } from './response.service';
 
 @Module({
-  imports: [],
+  imports: [AuthModule],
   controllers: [ResponseController],
   providers: [PrismaService, ResponseService],
 })

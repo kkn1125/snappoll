@@ -15,6 +15,8 @@ import { Request } from 'express';
 import { CreatePollDto } from './dto/create-poll.dto';
 import { UpdatePollDto } from './dto/update-poll.dto';
 import { PollsService } from './polls.service';
+import { CreateSharePollDto } from './dto/create-share-poll.dto';
+import { IgnoreGuard } from '@auth/ignore.guards.decorator';
 
 // @Roles([Role.User])
 @UseGuards(RoleGuard)
@@ -64,5 +66,32 @@ export class PollsController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.pollsService.remove(id);
+  }
+
+  @IgnoreGuard()
+  @Get('share/:id')
+  getSharePollBy(@Param('id') id: string) {
+    return this.pollsService.findShareOneById(id);
+  }
+
+  @IgnoreGuard()
+  @Get('share/url/:url')
+  getSharePoll(@Param('url') url: string) {
+    return this.pollsService.findShareOne(url);
+  }
+
+  @Post('share')
+  createShareUrl(@Body() createSharePollDto: CreateSharePollDto) {
+    return this.pollsService.createShareUrl(createSharePollDto);
+  }
+
+  @Delete('share/:id')
+  revokeShareUrl(@Param('id') id: string) {
+    return this.pollsService.revokeShareUrl(id);
+  }
+
+  @Put('share/:id')
+  resumeShareUrl(@Param('id') id: string) {
+    return this.pollsService.resumeShareUrl(id);
   }
 }

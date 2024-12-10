@@ -2,11 +2,86 @@ import { Injectable } from '@nestjs/common';
 import { CreateVoteDto } from './dto/create-vote.dto';
 import { UpdateVoteDto } from './dto/update-vote.dto';
 import { PrismaService } from '@database/prisma.service';
+import { CreateShareVoteDto } from './dto/create-share-vote.dto';
 
 @Injectable()
 export class VotesService {
   constructor(private readonly prisma: PrismaService) {}
 
+  /* share vote */
+  findShareOneById(id: string) {
+    return this.prisma.vote.findUnique({
+      where: { id },
+      include: {
+        user: {
+          select: {
+            id: true,
+            email: true,
+            username: true,
+            createdAt: true,
+            updatedAt: true,
+          },
+        },
+        voteOption: {
+          include: {
+            voteAnswer: true,
+          },
+        },
+        shareVote: true,
+      },
+    });
+  }
+
+  findShareOne(url: string) {
+    return this.prisma.shareVote.findUnique({
+      where: { url },
+      include: {
+        vote: {
+          include: {
+            user: {
+              select: {
+                id: true,
+                email: true,
+                username: true,
+                createdAt: true,
+                updatedAt: true,
+              },
+            },
+            voteOption: {
+              include: {
+                voteAnswer: true,
+              },
+            },
+          },
+        },
+      },
+    });
+  }
+
+  createShareUrl(createShareVoteDto: CreateShareVoteDto) {
+    const url = this.prisma.generateShareUrl(
+      createShareVoteDto.voteId,
+      'public-vote',
+    );
+    createShareVoteDto.url = url;
+    return this.prisma.shareVote.create({ data: createShareVoteDto });
+  }
+
+  revokeShareUrl(id: string) {
+    return this.prisma.shareVote.update({
+      where: { id },
+      data: { deletedAt: new Date() },
+    });
+  }
+
+  resumeShareUrl(id: string) {
+    return this.prisma.shareVote.update({
+      where: { id },
+      data: { deletedAt: null },
+    });
+  }
+
+  /* votes */
   create(createVoteDto: CreateVoteDto) {
     const title = createVoteDto.title;
     const description = createVoteDto.description;
@@ -66,6 +141,7 @@ export class VotesService {
         },
         voteOption: true,
         voteResponse: true,
+        shareVote: true,
       },
     });
     const count = await this.prisma.vote.count();
@@ -97,6 +173,7 @@ export class VotesService {
             voteAnswer: true,
           },
         },
+        shareVote: true,
       },
     });
     const count = await this.prisma.vote.count({ where: { userId: id } });
@@ -122,6 +199,7 @@ export class VotesService {
             voteAnswer: true,
           },
         },
+        shareVote: true,
       },
     });
   }

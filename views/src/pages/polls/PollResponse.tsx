@@ -3,6 +3,7 @@ import { getPollResponseMe } from '@/apis/poll/response/getPollResponseMe';
 import { removeResponse } from '@/apis/poll/response/removeResponse';
 import { tokenAtom } from '@/recoils/token.atom';
 import { Message } from '@common/messages';
+import SkeletonResponseList from '@components/moleculars/SkeletonResponseList';
 import useModal from '@hooks/useModal';
 import { SnapPoll } from '@models/SnapPoll';
 import { SnapResponse } from '@models/SnapResponse';
@@ -18,6 +19,7 @@ import {
   ListItem,
   ListItemButton,
   ListItemText,
+  Pagination,
   Stack,
   Toolbar,
   Typography,
@@ -25,8 +27,8 @@ import {
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { formattedDate } from '@utils/formattedDate';
 import { validateExpired } from '@utils/validateExpired';
-import { useCallback, useMemo } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useCallback, useMemo, useState } from 'react';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 
 interface PollResponseProps {
@@ -38,14 +40,18 @@ const PollResponse: React.FC<PollResponseProps> = ({ me }) => {
   const { openInteractiveModal } = useModal();
   const { id } = useParams();
   const queryClient = useQueryClient();
-  const { data } = useQuery<{
+  const [params, setParams] = useSearchParams({ page: '1' });
+  const page = +(params.get('page') || 1);
+
+  const { data, isLoading } = useQuery<{
     poll: SnapPoll;
     responses: SnapResponse[];
     count: number;
   }>({
-    queryKey: ['pollResponses', id],
-    queryFn: () => (me ? getPollResponseMe() : getPollResponse(id)),
+    queryKey: ['pollResponses', id, page],
+    queryFn: () => (me ? getPollResponseMe(page) : getPollResponse(id, page)),
   });
+  const total = data ? Math.ceil(data.count / 10) : 0;
 
   const removeMutation = useMutation({
     mutationKey: ['removeMutate'],
@@ -81,12 +87,14 @@ const PollResponse: React.FC<PollResponseProps> = ({ me }) => {
     return validateExpired(data?.poll?.expiresAt);
   }, [data?.poll?.expiresAt]);
 
+  if (isLoading) return <SkeletonResponseList />;
+
   return (
     <Container maxWidth="md">
       <Toolbar />
       <Stack gap={3}>
         <List>
-          {data?.responses.map((response, i) => (
+          {data?.responses.slice(0, 10).map((response, i) => (
             <ListItem
               key={response.id}
               secondaryAction={
@@ -103,9 +111,9 @@ const PollResponse: React.FC<PollResponseProps> = ({ me }) => {
               <ListItemButton
                 onClick={() => navigate(`/polls/${id}/response/${response.id}`)}
               >
-                <Stack direction="row" gap={3}>
-                  <Typography>{i + 1}.</Typography>
-                  <Typography>{getTitle(response)}</Typography>
+                <Stack direction="row" gap={3} flexWrap="wrap">
+                  <Typography>{i + 1 + (page - 1) * 10}.</Typography>
+                  <Typography flex={1}>{getTitle(response)}</Typography>
                   <Typography>{getUser(response)}</Typography>
                   <Typography>{formattedDate(response.createdAt)}</Typography>
                 </Stack>
@@ -130,6 +138,23 @@ const PollResponse: React.FC<PollResponseProps> = ({ me }) => {
             </ListItem>
           )}
         </List>
+        {total > 0 && (
+          <Stack direction="row" justifyContent="center">
+            <Pagination
+              onChange={(e, page) => {
+                if (page === 1) {
+                  setParams({});
+                } else {
+                  setParams({ page: '' + page });
+                }
+              }}
+              page={page}
+              count={total}
+              showFirstButton
+              showLastButton
+            />
+          </Stack>
+        )}
         <Divider />
         <Button
           variant="contained"

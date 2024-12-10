@@ -16,12 +16,14 @@ import {
   ListItemText,
   Pagination,
   Stack,
+  Toolbar,
   Tooltip,
+  Typography,
 } from '@mui/material';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { formattedDate } from '@utils/formattedDate';
 import { isNil } from '@utils/isNil';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import ListItemIcons from '../atoms/ListItemIcons';
@@ -80,10 +82,14 @@ function ListDataItem<T extends SnapPoll | SnapVote>({
     return response.length;
   }, []);
 
+  const kor = useMemo(() => {
+    return name === 'poll' ? '설문' : '투표';
+  }, [name]);
+
   return (
     <Stack>
-      {!disableCreateButton && (
-        <Stack direction="row">
+      <Stack direction="row" justifyContent="space-between">
+        {!disableCreateButton && (
           <Button
             component={Link}
             variant="contained"
@@ -92,16 +98,31 @@ function ListDataItem<T extends SnapPoll | SnapVote>({
           >
             등록하기
           </Button>
-        </Stack>
-      )}
+        )}
+        {user && (
+          <Button
+            component={Link}
+            to={`/${name}s/me/response`}
+            variant="contained"
+            color="secondary"
+          >
+            나의 {kor}응답 보기
+          </Button>
+        )}
+      </Stack>
+
       <List>
         {dataList && dataList.length > 0 ? (
           (limit ? dataList.slice(0, limit) : dataList).map((data, i) => (
             <ListItem
               key={data.id}
-              disablePadding
               secondaryAction={
-                <Stack direction="row" gap={1} alignItems="center">
+                <Stack
+                  direction="row"
+                  gap={1}
+                  alignItems="center"
+                  flexWrap="wrap"
+                >
                   <Tooltip title="응답자" placement="top">
                     <Chip
                       size="small"
@@ -110,17 +131,15 @@ function ListDataItem<T extends SnapPoll | SnapVote>({
                       sx={{ pl: 0.5 }}
                     />
                   </Tooltip>
-                  <Tooltip title="응답 기간" placement="top">
+                  <Tooltip title="유효기간" placement="top">
                     <Chip
                       size="small"
                       variant="outlined"
                       icon={<AccessTime />}
                       label={
-                        formattedDate(data.createdAt, 'YYYY. MM. DD.') +
-                        ' ~ ' +
-                        (!isNil(data.expiresAt)
+                        !isNil(data.expiresAt)
                           ? formattedDate(data.expiresAt, 'YYYY. MM. DD.')
-                          : '계속')
+                          : '상시'
                       }
                     />
                   </Tooltip>
@@ -139,19 +158,21 @@ function ListDataItem<T extends SnapPoll | SnapVote>({
                 ['&:not(:last-of-type)']: {
                   borderBottom: '1px solid #eee',
                 },
-                // ['& .MuiListItemSecondaryAction-root']: {
-                //   transition: '150ms ease-in-out',
-                //   opacity: 0,
-                // },
-                // ['&:hover .MuiListItemSecondaryAction-root']: {
-                //   opacity: 1,
-                // },
+                flexDirection: {
+                  xs: 'column',
+                  md: 'row',
+                },
+                ['.MuiListItemSecondaryAction-root']: {
+                  position: { xs: 'static', md: 'auto' },
+                  transform: { xs: 'none' },
+                },
               }}
             >
               <ListItemButton onClick={() => navigate(`/${name}s/${data.id}`)}>
-                <ListItemText secondary={data.user?.username}>
-                  {data.title}
-                </ListItemText>
+                <ListItemText
+                  primary={data.title}
+                  secondary={`작성자: ${data.user?.username} | 생성일: ${new Date(data.createdAt).toLocaleDateString()}`}
+                />
               </ListItemButton>
             </ListItem>
           ))

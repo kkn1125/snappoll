@@ -1,8 +1,9 @@
 import { tokenAtom } from '@/recoils/token.atom';
 import QuestionItem from '@components/atoms/QuestionItem';
+import ShareControlButton from '@components/atoms/ShareControlButton';
 import { SnapPoll } from '@models/SnapPoll';
 import { AccessTime } from '@mui/icons-material';
-import { Alert, AlertTitle, Stack, Toolbar, Typography } from '@mui/material';
+import { Alert, AlertTitle, Stack, Typography } from '@mui/material';
 import { grey } from '@mui/material/colors';
 import { formattedDate } from '@utils/formattedDate';
 import { printDateOrNot } from '@utils/printDateOrNot';
@@ -11,8 +12,13 @@ import { useRecoilValue } from 'recoil';
 interface PollLayoutProps {
   poll: SnapPoll;
   expired: boolean;
+  refetchPoll: () => void;
 }
-const PollLayout: React.FC<PollLayoutProps> = ({ poll, expired }) => {
+const PollLayout: React.FC<PollLayoutProps> = ({
+  poll,
+  expired,
+  refetchPoll,
+}) => {
   const { user } = useRecoilValue(tokenAtom);
 
   return (
@@ -62,6 +68,7 @@ const PollLayout: React.FC<PollLayoutProps> = ({ poll, expired }) => {
           >
             (문항 {poll.question.length}개)
           </Typography>
+          <ShareControlButton data={poll} user={user} refetch={refetchPoll} />
         </Stack>
       </Stack>
 

@@ -1,4 +1,5 @@
 import { getMyVotes } from '@/apis/vote/getMyVotes';
+import SkeletonMeList from '@components/moleculars/SkeletonMeList';
 import ListDataItem from '@components/organisms/ListDataItem';
 import { SnapVote } from '@models/SnapVote';
 import { Container, List, Stack, Toolbar } from '@mui/material';
@@ -9,10 +10,12 @@ interface MyVotesProps {}
 const MyVotes: React.FC<MyVotesProps> = () => {
   const [params, setParams] = useSearchParams({ page: '1' });
   const page = +(params.get('page') || 1);
-  const { data } = useQuery<{ votes: SnapVote[]; count: number }>({
+  const { data, isLoading } = useQuery<{ votes: SnapVote[]; count: number }>({
     queryKey: ['my-votes', page],
     queryFn: getMyVotes,
   });
+
+  if (isLoading) return <SkeletonMeList />;
 
   return (
     <Stack>
@@ -30,6 +33,7 @@ const MyVotes: React.FC<MyVotesProps> = () => {
           )}
         </List>
       </Container>
+      <Toolbar />
     </Stack>
   );
 };

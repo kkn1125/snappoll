@@ -41,12 +41,27 @@ model User {
 }
 
 model SharePoll {
-  id     String @id @default(uuid()) @db.Uuid
-  pollId String @unique @map("poll_id") @db.Uuid
+  id        String    @id @default(uuid()) @db.Uuid
+  pollId    String    @unique @map("poll_id") @db.Uuid
+  url       String    @unique
+  createdAt DateTime  @default(now()) @map("created_at")
+  deletedAt DateTime? @map("deleted_at")
 
   poll Poll @relation(fields: [pollId], references: [id])
 
   @@map("share_poll")
+}
+
+model ShareVote {
+  id        String    @id @default(uuid()) @db.Uuid
+  voteId    String    @unique @map("vote_id") @db.Uuid
+  url       String    @unique
+  createdAt DateTime  @default(now()) @map("created_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  vote Vote @relation(fields: [voteId], references: [id])
+
+  @@map("share_vote")
 }
 
 model Poll {
@@ -143,6 +158,7 @@ model Vote {
 
   voteOption   VoteOption[]
   voteResponse VoteResponse[]
+  shareVote    ShareVote?
 
   @@map("vote")
 }

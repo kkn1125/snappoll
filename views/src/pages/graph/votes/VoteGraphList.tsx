@@ -1,5 +1,7 @@
 import { getMyVotes } from '@/apis/vote/getMyVotes';
+import SkeletonGraphList from '@components/moleculars/SkeletonGraphList';
 import { SnapVote } from '@models/SnapVote';
+import BarChartIcon from '@mui/icons-material/BarChart';
 import {
   Container,
   List,
@@ -30,17 +32,39 @@ const VoteGraphList: React.FC<VoteGraphListProps> = () => {
     return Math.ceil(count / 10);
   }, [myVotes.data?.count]);
 
+  if (myVotes.isLoading) return <SkeletonGraphList />;
+
   return (
     <Container maxWidth="md">
       <Stack>
         <List>
           {myVotes.data?.votes.map((vote) => (
             <ListItem key={vote.id}>
-              <ListItemButton onClick={() => handleRedirect(vote.id)}>
-                {vote.title}
+              <ListItemButton
+                onClick={() => handleRedirect(vote.id)}
+                sx={{ display: 'flex', gap: 2.5 }}
+              >
+                <Stack
+                  justifyContent="center"
+                  alignItems="center"
+                  width={50}
+                  minWidth={50}
+                  height={50}
+                  minHeight={50}
+                  sx={{
+                    borderRadius: '100%',
+                    boxShadow: '3px 3px 5px 0 #00000056',
+                  }}
+                >
+                  <BarChartIcon color="success" fontSize="large" />
+                </Stack>
+                <ListItemText
+                  primary={vote.title}
+                  secondary={`작성자: ${vote.user?.username} | 생성일: ${new Date(vote.createdAt).toLocaleDateString()}`}
+                />
               </ListItemButton>
             </ListItem>
-          ))}{' '}
+          ))}
           {myVotes.data?.count === 0 && (
             <ListItem>
               <ListItemText>데이터가 없습니다.</ListItemText>

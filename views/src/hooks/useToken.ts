@@ -67,6 +67,11 @@ const useToken = () => {
       }
     },
     onError(error: AxiosError, variables, context) {
+      console.log(error);
+      if (error.code === 'ECONNABORTED') {
+        openModal(Message.Info.ServerEConnection);
+        return;
+      }
       const clt = localStorage.getItem('clt');
       if (clt === 'true') return;
       const loggedIn = localStorage.getItem('logged_in');

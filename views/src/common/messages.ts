@@ -2,9 +2,17 @@ export const CustomMessage = {
   Login: { title: '안내', content: '로그인이 필요합니다.' },
   Logout: { title: '안내', content: '로그아웃 되었습니다.' },
   Token: { title: '안내', content: '토큰이 만료되었습니다.' },
+  CreateShareUrl: { title: '안내', content: '공개 URL이 생성되었습니다.' },
+  ResumeShareUrl: { title: '안내', content: '공개 URL이 복구되었습니다.' },
+  RevokeShareUrl: { title: '안내', content: '공개 URL이 정지되었습니다.' },
   NoDeleteOne: { title: '안내', content: '최소 하나의 질문은 있어야합니다.' },
   LeastResponse: { title: '안내', content: '최소 한 개 이상 응답해야합니다.' },
   MustFill: { title: '안내', content: '필수 질문을 완성해주세요.' },
+  ServerEConnection: {
+    title: '서버 안내',
+    content:
+      '서버 연결이 원활하지 않습니다. 계속 같은 현상이 반복된다면 관리자에게 문의해주세요.',
+  },
   ServerError: { title: '서버 안내', content: '서버에서 문제가 발생했습니다.' },
 } as const;
 export type CustomMessage = (typeof CustomMessage)[keyof typeof CustomMessage];
@@ -28,7 +36,11 @@ export const Require = {
 export type Require = (typeof Require)[keyof typeof Require];
 
 export const Info = {
+  CreateShareUrl: CustomMessage.CreateShareUrl,
+  ResumeShareUrl: CustomMessage.ResumeShareUrl,
+  RevokeShareUrl: CustomMessage.RevokeShareUrl,
   NoDeleteOne: CustomMessage.NoDeleteOne,
+  ServerEConnection: CustomMessage.ServerEConnection,
   ServerError: CustomMessage.ServerError,
 } as const;
 export type Info = (typeof Info)[keyof typeof Info];

@@ -1,7 +1,9 @@
 import { snapApi } from '@/apis';
 
-export const getPollResponse = async (pollId?: string) => {
+export const getPollResponse = async (pollId?: string, page: number = 1) => {
   if (!pollId) return {};
-  const { data } = await snapApi.get(`/polls/${pollId}/response`);
+  const { data } = await snapApi.get(`/polls/${pollId}/response`, {
+    params: { page: '' + page },
+  });
   return data;
 };

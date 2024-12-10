@@ -1,5 +1,8 @@
+import { createShareVote } from '@/apis/vote/share/createShareVote';
 import { snapVoteResponseAtom } from '@/recoils/snapVoteResponse.atom';
 import { tokenAtom } from '@/recoils/token.atom';
+import { Message } from '@common/messages';
+import { BASE_CLIENT_URL } from '@common/variables';
 import CheckedComponent from '@components/atoms/CheckedComponent';
 import VoteOptionItem from '@components/atoms/VoteOptionItem';
 import { SnapVote } from '@models/SnapVote';
@@ -9,7 +12,9 @@ import { AccessTime } from '@mui/icons-material';
 import {
   Alert,
   AlertTitle,
+  Button,
   Checkbox,
+  Chip,
   FormControlLabel,
   ListItemButton,
   Stack,
@@ -18,19 +23,33 @@ import {
   Typography,
 } from '@mui/material';
 import { grey } from '@mui/material/colors';
+import { useMutation } from '@tanstack/react-query';
 import { formattedDate } from '@utils/formattedDate';
 import { printDateOrNot } from '@utils/printDateOrNot';
 import { ChangeEvent, SyntheticEvent, useCallback, useState } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
+import ShareIcon from '@mui/icons-material/Share';
+import useModal from '@hooks/useModal';
+import { Link } from 'react-router-dom';
+import { resumeShareUrl } from '@/apis/vote/share/resumeShareUrl';
+import { revokeShareUrl } from '@/apis/vote/share/revokeShareUrl';
+import { isNil } from '@utils/isNil';
+import ShareControlButton from '@components/atoms/ShareControlButton';
 
 interface VoteLayoutProps {
   vote: SnapVote;
   expired: boolean;
+  refetchVote: () => void;
 }
-const VoteLayout: React.FC<VoteLayoutProps> = ({ vote, expired }) => {
+const VoteLayout: React.FC<VoteLayoutProps> = ({
+  vote,
+  expired,
+  refetchVote,
+}) => {
+  const { user } = useRecoilValue(tokenAtom);
   const [useEtc, setUseEtc] = useState(false);
   const setSnapVoteResponse = useSetRecoilState(snapVoteResponseAtom);
-  const { user } = useRecoilValue(tokenAtom);
+  const { openModal } = useModal();
 
   const handleChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -131,6 +150,8 @@ const VoteLayout: React.FC<VoteLayoutProps> = ({ vote, expired }) => {
               {printDateOrNot(vote.expiresAt)}
             </Typography>
           </Stack>
+
+          <ShareControlButton data={vote} user={user} refetch={refetchVote} />
         </Stack>
       </Stack>
 

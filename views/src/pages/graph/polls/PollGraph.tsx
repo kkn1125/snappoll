@@ -2,6 +2,9 @@ import { getPoll } from '@/apis/poll/getPoll';
 import CorrelationChart from '@components/organisms/CorrelationChart';
 import { SnapPoll } from '@models/SnapPoll';
 import { SnapPollQuestion } from '@models/SnapPollQuestion';
+import FeaturedPlayListIcon from '@mui/icons-material/FeaturedPlayList';
+import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
+import ThreePIcon from '@mui/icons-material/ThreeP';
 import {
   Alert,
   AlertTitle,
@@ -11,7 +14,6 @@ import {
   Table,
   TableBody,
   TableCell,
-  TableHead,
   TableRow,
   Toolbar,
   Typography,
@@ -21,9 +23,6 @@ import { MakeOptional } from '@mui/x-date-pickers/internals';
 import { useQuery } from '@tanstack/react-query';
 import { useCallback } from 'react';
 import { useParams } from 'react-router-dom';
-import FeaturedPlayListIcon from '@mui/icons-material/FeaturedPlayList';
-import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
-import ThreePIcon from '@mui/icons-material/ThreeP';
 
 interface PollGraphProps {}
 const PollGraph: React.FC<PollGraphProps> = () => {
@@ -122,20 +121,16 @@ const PollGraph: React.FC<PollGraphProps> = () => {
               data: data.question.reduce(
                 (acc, question) => {
                   const typed = acc.find((a) => a.label === question.type);
-                  if (!typed) {
-                    acc.push({
-                      id: acc.length + 1,
-                      value: 1,
-                      label: question.type,
-                    });
-                  } else {
-                    if (typeof typed.value === 'number') {
-                      typed.value += 1;
-                    }
+                  if (typed && typeof typed.value === 'number') {
+                    typed.value += 1;
                   }
                   return acc;
                 },
-                [] as MakeOptional<PieValueType, 'id'>[],
+                [
+                  { label: 'text', value: 0, id: 0 },
+                  { label: 'select', value: 0, id: 1 },
+                  { label: 'checkbox', value: 0, id: 2 },
+                ] as MakeOptional<PieValueType, 'id'>[],
               ),
               arcLabel(item) {
                 return item.label || 'unknown';

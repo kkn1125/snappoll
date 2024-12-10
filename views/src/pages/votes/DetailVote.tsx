@@ -1,34 +1,37 @@
 import { getVote } from '@/apis/vote/getVote';
 import { saveVoteResult } from '@/apis/vote/saveVoteResult';
+import { getShareVoteBy } from '@/apis/vote/share/getShareVoteBy';
 import { snapVoteResponseAtom } from '@/recoils/snapVoteResponse.atom';
-import { tokenAtom } from '@/recoils/token.atom';
-import { Message } from '@common/messages';
 import VoteLayout from '@components/templates/VoteLayout';
 import useModal from '@hooks/useModal';
 import useToken from '@hooks/useToken';
 import { SnapVote } from '@models/SnapVote';
 import { SnapVoteResponse } from '@models/SnapVoteResponse';
 import { Button, Container, Divider, Stack, Toolbar } from '@mui/material';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { validateExpired } from '@utils/validateExpired';
 import { AxiosError } from 'axios';
 import { FormEvent, useCallback, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState } from 'recoil';
 
-interface DetailVoteProps {}
-const DetailVote: React.FC<DetailVoteProps> = () => {
-  const { logoutToken } = useToken();
-  const { openModal, openInteractiveModal } = useModal();
+interface DetailVoteProps {
+  voteId?: string;
+  refetchShare?: () => void;
+}
+const DetailVote: React.FC<DetailVoteProps> = ({ voteId, refetchShare }) => {
+  const { user, logoutToken } = useToken();
+  const { openInteractiveModal } = useModal();
+  const queryClient = useQueryClient();
   const navigate = useNavigate();
-  const [{ user }, setToken] = useRecoilState(tokenAtom);
   const [response, setResponse] = useRecoilState(snapVoteResponseAtom);
 
   const { id } = useParams();
+  const detailId = voteId || id;
 
   const { data, isPending } = useQuery<SnapVote>({
-    queryKey: ['vote', id],
-    queryFn: () => getVote(id),
+    queryKey: ['vote', detailId],
+    queryFn: () => (voteId ? getShareVoteBy(detailId) : getVote(detailId)),
   });
 
   const saveResponseMutate = useMutation({
@@ -47,23 +50,31 @@ const DetailVote: React.FC<DetailVoteProps> = () => {
     },
   });
 
+  const refetchVote = useCallback(() => {
+    queryClient.invalidateQueries({
+      queryKey: ['vote'],
+    });
+    refetchShare?.();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const handleSavePollResult = useCallback(
     (e: FormEvent) => {
       e.preventDefault();
 
-      if (!id) return;
+      if (!data?.id) return;
 
       openInteractiveModal('작성을 완료하시겠습니까?', () => {
         const copyResponse = SnapVoteResponse.copy(response);
         copyResponse.userId = user?.id;
-        copyResponse.voteId = id;
+        copyResponse.voteId = data?.id;
         saveResponseMutate.mutate(copyResponse);
       });
 
       return false;
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [id, response, user],
+    [data?.id, response, user],
   );
 
   const isExpired = useMemo(() => {
@@ -74,7 +85,13 @@ const DetailVote: React.FC<DetailVoteProps> = () => {
     <Container maxWidth="md">
       <Toolbar />
       <Stack component="form" gap={3} onSubmit={handleSavePollResult}>
-        {data && <VoteLayout vote={data} expired={isExpired} />}
+        {data && (
+          <VoteLayout
+            vote={data}
+            expired={isExpired}
+            refetchVote={refetchVote}
+          />
+        )}
         <Divider />
         <Button
           disabled={isExpired}
