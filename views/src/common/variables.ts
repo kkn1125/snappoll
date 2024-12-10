@@ -5,6 +5,8 @@ export const defaultProfile = import.meta.resolve(
 );
 export const illu01 = import.meta.resolve('/images/illu-01.webp');
 export const illu02 = import.meta.resolve('/images/illu-02.webp');
+export const surveyImage = import.meta.resolve('/images/survey.webp');
+export const voteImage = import.meta.resolve('/images/vote.webp');
 export const BRAND_NAME = 'SnapPoll';
 
 export const MODE = process.env.MODE;

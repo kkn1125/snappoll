@@ -1,4 +1,5 @@
-import { Button, Container, Stack, Toolbar } from '@mui/material';
+import { surveyImage, voteImage } from '@common/variables';
+import { Box, Button, Paper, Stack } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 
 interface GraphProps {}
@@ -10,52 +11,42 @@ const Graph: React.FC<GraphProps> = () => {
   };
 
   return (
-    <Container maxWidth="md">
-      <Toolbar />
-      <Stack direction={{ xs: 'column', md: 'row' }} gap={5}>
+    <Stack direction="row" gap={5} justifyContent="center" flexWrap="wrap">
+      <Paper component={Stack} p={1} justifyContent="space-between">
+        <Box
+          component="img"
+          width="100%"
+          maxWidth={250}
+          src={surveyImage}
+          alt="survey"
+          sx={{ objectFit: 'cover' }}
+        />
         <Button
           variant="contained"
           size="large"
           onClick={() => handleRedirect('poll')}
-          sx={{
-            flex: 1,
-            height: 300,
-            fontSize: {
-              xs: 20,
-              md: 40,
-            },
-            borderRadius: 3,
-            background: (theme) => theme.palette.info.dark + '56',
-            ['&:hover']: {
-              background: (theme) => theme.palette.info.dark,
-            },
-          }}
         >
-          설문지 그래프
+          설문 그래프
         </Button>
+      </Paper>
+      <Paper component={Stack} p={1} justifyContent="space-between">
+        <Box
+          component="img"
+          width="100%"
+          maxWidth={250}
+          src={voteImage}
+          alt="survey"
+          sx={{ objectFit: 'cover' }}
+        />
         <Button
           variant="contained"
           size="large"
           onClick={() => handleRedirect('vote')}
-          sx={{
-            flex: 1,
-            height: 300,
-            fontSize: {
-              xs: 20,
-              md: 40,
-            },
-            borderRadius: 3,
-            background: (theme) => theme.palette.info.dark + '56',
-            ['&:hover']: {
-              background: (theme) => theme.palette.info.dark,
-            },
-          }}
         >
-          투표지 그래프
+          투표 그래프
         </Button>
-      </Stack>
-      <Toolbar />
-    </Container>
+      </Paper>
+    </Stack>
   );
 };
 

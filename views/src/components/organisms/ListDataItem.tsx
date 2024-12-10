@@ -111,7 +111,7 @@ function ListDataItem<T extends SnapPoll | SnapVote>({
         )}
       </Stack>
 
-      <List>
+      <List disablePadding>
         {dataList && dataList.length > 0 ? (
           (limit ? dataList.slice(0, limit) : dataList).map((data, i) => (
             <ListItem
@@ -154,6 +154,7 @@ function ListDataItem<T extends SnapPoll | SnapVote>({
                 </Stack>
               }
               sx={{
+                px: '0 !important',
                 boxSizing: 'border-box',
                 ['&:not(:last-of-type)']: {
                   borderBottom: '1px solid #eee',
@@ -168,7 +169,12 @@ function ListDataItem<T extends SnapPoll | SnapVote>({
                 },
               }}
             >
-              <ListItemButton onClick={() => navigate(`/${name}s/${data.id}`)}>
+              <ListItemButton
+                onClick={() => navigate(`/${name}s/${data.id}`)}
+                sx={{
+                  px: '0 !important',
+                }}
+              >
                 <ListItemText
                   primary={data.title}
                   secondary={`작성자: ${data.user?.username} | 생성일: ${new Date(data.createdAt).toLocaleDateString()}`}

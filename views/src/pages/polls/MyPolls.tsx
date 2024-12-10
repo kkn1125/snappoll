@@ -19,21 +19,15 @@ const MyPolls: React.FC<MyPollsProps> = () => {
 
   return (
     <Stack>
-      <Toolbar />
-      <Container>
-        <List>
-          {data?.polls && (
-            <ListDataItem
-              name="poll"
-              queryKey="my-polls"
-              dataList={data.polls}
-              count={data.count}
-              emptyComment="등록한 설문지가 없습니다."
-            />
-          )}
-        </List>
-        <Toolbar />
-      </Container>
+      {data?.polls && (
+        <ListDataItem
+          name="poll"
+          queryKey="my-polls"
+          dataList={data.polls}
+          count={data.count}
+          emptyComment="등록한 설문지가 없습니다."
+        />
+      )}
     </Stack>
   );
 };

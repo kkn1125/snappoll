@@ -1,12 +1,13 @@
 import { SnapPoll } from '@models/SnapPoll';
 import { SnapPollQuestion } from '@models/SnapPollQuestion';
+import SyncAltIcon from '@mui/icons-material/SyncAlt';
 import {
   Badge,
   Button,
   ButtonGroup,
   Stack,
   Toolbar,
-  Typography
+  Typography,
 } from '@mui/material';
 import { BarChart, BarSeriesType } from '@mui/x-charts';
 import { MakeOptional } from '@mui/x-date-pickers/internals';
@@ -47,13 +48,8 @@ const CorrelationChart: React.FC<CorrelationChartProps> = ({ data }) => {
       if (baseQuestion === null) return [];
       if (!baseQuestion.answer) return [];
 
-      // {data: [q1, q2, q3, q4]}
       const result: MakeOptional<BarSeriesType, 'type'>[] = question.option.map(
         (option) => {
-          // const answer = baseQuestion.answer?.find(
-          //   (answer) => answer.optionId === option.id,
-          // );
-          // const responseId = answer?.responseId;
           return {
             data: (baseQuestion.option?.map((opt) => {
               return question.answer?.reduce((acc, cur) => {
@@ -80,10 +76,10 @@ const CorrelationChart: React.FC<CorrelationChartProps> = ({ data }) => {
 
   return (
     <Stack>
-      <Stack direction="row" justifyContent="space-between">
+      <Stack direction="row" justifyContent="space-between" flexWrap="wrap">
         <Stack>
           <Typography variant="h5">기준 질문</Typography>
-          <ButtonGroup>
+          <ButtonGroup sx={{ flexWrap: 'wrap' }}>
             {(baseQuestion !== null ? [baseQuestion] : data.question).map(
               (question) => (
                 <Badge
@@ -108,7 +104,7 @@ const CorrelationChart: React.FC<CorrelationChartProps> = ({ data }) => {
         {baseQuestion !== null && (
           <Stack>
             <Typography variant="h5">비교 질문</Typography>
-            <ButtonGroup>
+            <ButtonGroup sx={{ flexWrap: 'wrap' }}>
               {data.question
                 .filter((question) => question !== baseQuestion)
                 .map((question) => (
@@ -137,28 +133,37 @@ const CorrelationChart: React.FC<CorrelationChartProps> = ({ data }) => {
         )}
       </Stack>
       <Toolbar />
-      <Stack alignItems="center" gap={10}>
+      <Stack alignItems="center" gap={5}>
         {baseQuestion &&
           questions.map((question) => (
-            <Stack key={baseQuestion.id + question.id}>
-              <Typography variant="h5">
-                {baseQuestion.title} {'⇒'} {question.title}
+            <Stack key={baseQuestion.id + question.id} width="100%">
+              <Typography variant="h5" gutterBottom>
+                {baseQuestion.title} <SyncAltIcon /> {question.title}
               </Typography>
-              <BarChart
-                axisHighlight={{ y: 'line' }}
-                borderRadius={10}
-                xAxis={[
-                  {
-                    scaleType: 'band',
-                    data:
-                      baseQuestion.option?.map((option) => option.content) ||
-                      [],
-                  },
-                ]}
-                series={getCounter(question)}
-                width={700}
-                height={300}
-              />
+              <Stack direction="row" width="100%">
+                <BarChart
+                  axisHighlight={{ y: 'line' }}
+                  borderRadius={10}
+                  xAxis={[
+                    {
+                      scaleType: 'band',
+                      data:
+                        baseQuestion.option?.map((option) => option.content) ||
+                        [],
+                    },
+                  ]}
+                  series={getCounter(question)}
+                  slotProps={{
+                    legend: {
+                      itemMarkWidth: 10,
+                      itemMarkHeight: 10,
+                    },
+                  }}
+                  width={500}
+                  height={300}
+                  sx={{ flex: 1 }}
+                />
+              </Stack>
             </Stack>
           ))}
       </Stack>

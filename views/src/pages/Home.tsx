@@ -18,7 +18,7 @@ const Home = () => {
   });
 
   return (
-    <Stack p={2} gap={5}>
+    <Stack gap={5}>
       {/* first section */}
       <Stack gap={2}>
         <Typography align="center" fontSize={36} fontWeight={700}>
@@ -37,46 +37,44 @@ const Home = () => {
         </Typography>
       </Stack>
       {/* second section */}
-      <Container maxWidth="md">
-        <Stack gap={2}>
-          <Typography align="center" fontSize={36} fontWeight={700}>
-            최근 설문조사
-          </Typography>
+      <Stack gap={2}>
+        <Typography align="center" fontSize={36} fontWeight={700}>
+          최근 설문조사
+        </Typography>
 
-          <List>
-            {poll.data && (
-              <ListDataItem
-                name="poll"
-                queryKey="polls"
-                dataList={poll.data.polls}
-                count={poll.data.count}
-                emptyComment="등록한 설문지가 없습니다."
-                disableCreateButton
-                limit={3}
-              />
-            )}
-          </List>
-        </Stack>
-        <Stack gap={2}>
-          <Typography align="center" fontSize={36} fontWeight={700}>
-            최근 투표
-          </Typography>
+        <List>
+          {poll.data && (
+            <ListDataItem
+              name="poll"
+              queryKey="polls"
+              dataList={poll.data.polls}
+              count={poll.data.count}
+              emptyComment="등록한 설문지가 없습니다."
+              disableCreateButton
+              limit={3}
+            />
+          )}
+        </List>
+      </Stack>
+      <Stack gap={2}>
+        <Typography align="center" fontSize={36} fontWeight={700}>
+          최근 투표
+        </Typography>
 
-          <List>
-            {vote.data && (
-              <ListDataItem
-                name="vote"
-                queryKey="votes"
-                dataList={vote.data.votes}
-                count={vote.data.count}
-                emptyComment="등록한 설문지가 없습니다."
-                disableCreateButton
-                limit={3}
-              />
-            )}
-          </List>
-        </Stack>
-      </Container>
+        <List>
+          {vote.data && (
+            <ListDataItem
+              name="vote"
+              queryKey="votes"
+              dataList={vote.data.votes}
+              count={vote.data.count}
+              emptyComment="등록한 설문지가 없습니다."
+              disableCreateButton
+              limit={3}
+            />
+          )}
+        </List>
+      </Stack>
     </Stack>
   );
 };

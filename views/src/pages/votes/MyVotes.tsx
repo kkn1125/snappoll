@@ -2,7 +2,6 @@ import { getMyVotes } from '@/apis/vote/getMyVotes';
 import SkeletonMeList from '@components/moleculars/SkeletonMeList';
 import ListDataItem from '@components/organisms/ListDataItem';
 import { SnapVote } from '@models/SnapVote';
-import { Container, List, Stack, Toolbar } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
 import { useSearchParams } from 'react-router-dom';
 
@@ -15,26 +14,16 @@ const MyVotes: React.FC<MyVotesProps> = () => {
     queryFn: getMyVotes,
   });
 
-  if (isLoading) return <SkeletonMeList />;
+  if (!data || isLoading) return <SkeletonMeList />;
 
   return (
-    <Stack>
-      <Toolbar />
-      <Container>
-        <List>
-          {data && (
-            <ListDataItem
-              name="vote"
-              queryKey="my-votes"
-              dataList={data.votes}
-              count={data.count}
-              emptyComment="등록한 투표지가 없습니다."
-            />
-          )}
-        </List>
-      </Container>
-      <Toolbar />
-    </Stack>
+    <ListDataItem
+      name="vote"
+      queryKey="my-votes"
+      dataList={data.votes}
+      count={data.count}
+      emptyComment="등록한 투표지가 없습니다."
+    />
   );
 };
 

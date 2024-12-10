@@ -1,5 +1,5 @@
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
-import { Breadcrumbs, Chip, Container } from '@mui/material';
+import { Breadcrumbs, Chip } from '@mui/material';
 import { useMemo } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
@@ -35,16 +35,14 @@ const SnapBreadCrumbs: React.FC<SnapBreadCrumbsProps> = () => {
   if (breadcrumbs.length === 1) return <></>;
 
   return (
-    <Container sx={{ py: 2 }}>
-      <Breadcrumbs
-        key={locate.pathname}
-        maxItems={4}
-        separator={<NavigateNextIcon fontSize="small" />}
-        aria-label="breadcrumb"
-      >
-        {breadcrumbs}
-      </Breadcrumbs>
-    </Container>
+    <Breadcrumbs
+      key={locate.pathname}
+      maxItems={4}
+      separator={<NavigateNextIcon fontSize="small" />}
+      aria-label="breadcrumb"
+    >
+      {breadcrumbs}
+    </Breadcrumbs>
   );
 };
 

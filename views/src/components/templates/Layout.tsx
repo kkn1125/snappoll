@@ -71,6 +71,7 @@ const Layout: React.FC<LayoutProps> = ({ isCrew = true }) => {
           id="main"
           flex={1}
           overflow="auto"
+          p={2}
           sx={{
             ['&::-webkit-scrollbar']: {
               width: scrollSize,
@@ -87,7 +88,9 @@ const Layout: React.FC<LayoutProps> = ({ isCrew = true }) => {
           }}
         >
           {isCrew && <SnapBreadCrumbs />}
+          <Toolbar />
           <Outlet />
+          <Toolbar />
         </Stack>
       </Stack>
       {/* footer */}
