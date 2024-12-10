@@ -60,7 +60,7 @@ const AnswerItem: React.FC<AnswerItemProps> = ({ question, answer }) => {
               sx={{
                 border: '1px solid #eee',
                 borderRadius: 1,
-                p: 2,
+                // p: 2,
               }}
             >
               <CheckedComponent checked={answer?.optionId === option.id} />

@@ -23,6 +23,8 @@ const reducer = (state: ModalInitialValue, action: ModalReducerAction) => {
       if (action.title) newState['title'] = action.title;
       if (action.content) newState['content'] = action.content;
       if (action.callback) newState['callback'] = action.callback;
+      if (action.closeCallback)
+        newState['closeCallback'] = action.closeCallback;
       return newState;
     }
     case ModalActionType.Close: {
@@ -31,6 +33,7 @@ const reducer = (state: ModalInitialValue, action: ModalReducerAction) => {
       newState['title'] = '';
       newState['content'] = [];
       newState['callback'] = () => {};
+      newState['closeCallback'] = () => {};
       newState['interactive'] = false;
       return newState;
     }

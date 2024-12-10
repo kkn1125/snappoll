@@ -39,8 +39,23 @@ const DetailPoll: React.FC<DetailPollProps> = ({ pollId, refetchShare }) => {
     mutationKey: ['saveResponse'],
     mutationFn: savePollResult,
     onSuccess(data, variables, context) {
-      setResponse(new SnapResponse());
-      navigate(-1);
+      if (pollId !== undefined) {
+        /* 비회원 */
+        openInteractiveModal(
+          Message.Info.SuccessResponse,
+          () => {
+            setResponse(new SnapResponse());
+            navigate('/');
+          },
+          () => {
+            setResponse(new SnapResponse());
+          },
+        );
+      } else {
+        /* 회원 */
+        setResponse(new SnapResponse());
+        navigate(-1);
+      }
     },
     onError(error: AxiosError, variables, context) {
       if (error.response?.status === 401) {
@@ -62,7 +77,6 @@ const DetailPoll: React.FC<DetailPollProps> = ({ pollId, refetchShare }) => {
   const handleSavePollResult = useCallback(
     (e: FormEvent) => {
       e.preventDefault();
-
       if (!data?.id) return;
 
       openInteractiveModal('작성을 완료하시겠습니까?', () => {

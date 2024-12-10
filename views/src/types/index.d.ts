@@ -195,7 +195,7 @@ export declare global {
   }
   interface MessageTemplate {
     title: string;
-    content: string | string[];
+    content: string | readonly string[];
   }
   interface DateTemplate {
     createdAt: Date;

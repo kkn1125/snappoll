@@ -31,6 +31,7 @@ const useModal = () => {
     function <Q extends string, T = void>(
       content: { title: string; content: Q | readonly Q[] } | Q | readonly Q[],
       callback: () => T | Promise<T>,
+      closeCallback?: () => T | Promise<T>,
     ) {
       const concatContent = [];
       let title = '';
@@ -56,6 +57,7 @@ const useModal = () => {
         title: title || '안내',
         content: concatContent,
         callback,
+        closeCallback,
       });
     },
     [modalDispatch],

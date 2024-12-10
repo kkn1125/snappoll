@@ -1,15 +1,25 @@
-import { getMe } from '@/apis/getMe';
+import { logout } from '@/apis/logout';
+import { removeAccount } from '@/apis/removeAccount';
+import { uploadProfileImage } from '@/apis/uploadProfileImage';
+import { Message } from '@common/messages';
+import { defaultProfile } from '@common/variables';
+import CustomInput from '@components/atoms/CustomInput';
+import useModal from '@hooks/useModal';
+import useToken from '@hooks/useToken';
+import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import {
   Box,
   Button,
   Container,
   Divider,
   Stack,
-  TextField,
   Toolbar,
   Typography,
 } from '@mui/material';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
+import { getImageDataUrl } from '@utils/getImageDataUrl';
+import { makeBlobToImageUrl } from '@utils/makeBlobToImageUrl';
+import { AxiosError } from 'axios';
 import {
   ChangeEvent,
   FormEvent,
@@ -18,35 +28,14 @@ import {
   useEffect,
   useState,
 } from 'react';
-import {
-  defaultProfile,
-  DefaultProfile,
-  guestDisallowPaths,
-  userDisallowPaths,
-} from '@common/variables';
-import ExitToAppIcon from '@mui/icons-material/ExitToApp';
-import { logout } from '@/apis/logout';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { useRecoilState, useRecoilValue } from 'recoil';
-import { tokenAtom } from '@/recoils/token.atom';
-import { removeAccount } from '@/apis/removeAccount';
-import CustomInput from '@components/atoms/CustomInput';
-import useModal from '@hooks/useModal';
-import { Message } from '@common/messages';
-import { getImageDataUrl } from '@utils/getImageDataUrl';
-import { uploadProfileImage } from '@/apis/uploadProfileImage';
-import { makeBlobToImageUrl } from '@utils/makeBlobToImageUrl';
-import { AxiosError } from 'axios';
-import { verifyLogin } from '@/apis/verifyLogin';
-import useToken from '@hooks/useToken';
+import { useNavigate } from 'react-router-dom';
 
 interface ProfileProps {}
 const Profile: React.FC<ProfileProps> = () => {
-  const { logoutToken, refetchGetMe } = useToken();
+  const { user, logoutToken, refetchGetMe } = useToken();
   const [uploadFile, setUploadFile] = useState<File | null>(null);
   const navigate = useNavigate();
   const { openModal, openInteractiveModal } = useModal();
-  const { user } = useRecoilValue(tokenAtom);
   const [current, setCurrent] = useState<
     Partial<
       Omit<User, 'id' | 'userProfile' | 'password' | 'createdAt' | 'updatedAt'>
@@ -59,7 +48,6 @@ const Profile: React.FC<ProfileProps> = () => {
     mutationFn: uploadProfileImage,
     onSuccess(data, variables, context) {
       openModal({ title: '안내', content: '프로필 변경되었습니다.' });
-      // queryClient.invalidateQueries({ queryKey: ['getMe'] });
       refetchGetMe();
     },
     onError(error: AxiosError<{ message?: any }>, variables, context) {
@@ -87,8 +75,7 @@ const Profile: React.FC<ProfileProps> = () => {
     },
     onSuccess(data, variables, context) {
       if (data.ok) {
-        // localStorage.setItem('logged_in', 'false');
-        // window.location.pathname = '/';
+        //
       }
     },
   });
@@ -98,24 +85,23 @@ const Profile: React.FC<ProfileProps> = () => {
     mutationFn: removeAccount,
     onSuccess(data, variables, context) {
       logoutToken();
-      // window.location.pathname = '/';
     },
   });
 
   useEffect(() => {
     if (!user) return;
-    if (!user.userProfile) return;
-    const { url, revokeUrl } = makeBlobToImageUrl(user.userProfile);
-
-    setImage(url);
     setCurrent({
       email: user.email,
       username: user.username,
     });
 
-    return () => {
-      revokeUrl();
-    };
+    if (user.userProfile) {
+      const { url, revokeUrl } = makeBlobToImageUrl(user.userProfile);
+      setImage(url);
+      return () => {
+        revokeUrl();
+      };
+    }
   }, [user]);
 
   const onChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {

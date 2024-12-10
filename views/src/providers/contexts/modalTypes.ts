@@ -4,6 +4,7 @@ export type ModalInitialValue<T = any> = {
   open: boolean;
   interactive: boolean;
   callback: () => T | Promise<T>;
+  closeCallback?: () => T | Promise<T>;
 };
 export const initialValue = {
   title: '',
@@ -11,6 +12,7 @@ export const initialValue = {
   open: false,
   interactive: false,
   callback: () => {},
+  closeCallback: () => {},
 } as ModalInitialValue;
 export const ModalActionType = {
   Open: 'Open',
@@ -24,4 +26,5 @@ export type ModalReducerAction<T = any> = {
   title?: string;
   content?: string[];
   callback?: () => T | Promise<T>;
+  closeCallback?: () => T | Promise<T>;
 };

@@ -35,8 +35,8 @@ const Modal: React.FC<ModalProps> = () => {
   `;
 
   function handleConfirm(callback: () => void | Promise<void>) {
-    callback();
     modalDispatch({ type: ModalActionType.Close });
+    callback();
   }
 
   function handleClose() {
@@ -110,7 +110,10 @@ const Modal: React.FC<ModalProps> = () => {
               <Button
                 variant="contained"
                 color="inherit"
-                onClick={handleClose}
+                onClick={() => {
+                  handleClose();
+                  modalState.closeCallback?.();
+                }}
                 fullWidth
               >
                 닫기

@@ -29,13 +29,7 @@ const ShareLayout: React.FC<ShareLayoutProps> = () => {
       }}
     >
       <Toolbar />
-      <Container maxWidth="md">
-        <Alert>
-          <AlertTitle>안내</AlertTitle>
-          SnapPoll에서 제공하는 공개 {label}지입니다.
-        </Alert>
-      </Container>
-      <Stack>
+      <Stack height="inherit">
         <Outlet />
       </Stack>
       <Toolbar />

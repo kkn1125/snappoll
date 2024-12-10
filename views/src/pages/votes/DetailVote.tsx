@@ -2,6 +2,7 @@ import { getVote } from '@/apis/vote/getVote';
 import { saveVoteResult } from '@/apis/vote/saveVoteResult';
 import { getShareVoteBy } from '@/apis/vote/share/getShareVoteBy';
 import { snapVoteResponseAtom } from '@/recoils/snapVoteResponse.atom';
+import { Message } from '@common/messages';
 import VoteLayout from '@components/templates/VoteLayout';
 import useModal from '@hooks/useModal';
 import useToken from '@hooks/useToken';
@@ -38,8 +39,23 @@ const DetailVote: React.FC<DetailVoteProps> = ({ voteId, refetchShare }) => {
     mutationKey: ['saveResponse'],
     mutationFn: saveVoteResult,
     onSuccess(data, variables, context) {
-      setResponse(new SnapVoteResponse());
-      navigate(-1);
+      if (voteId !== undefined) {
+        /* 비회원 */
+        openInteractiveModal(
+          Message.Info.SuccessResponse,
+          () => {
+            setResponse(new SnapVoteResponse());
+            navigate('/');
+          },
+          () => {
+            setResponse(new SnapVoteResponse());
+          },
+        );
+      } else {
+        /* 회원 */
+        setResponse(new SnapVoteResponse());
+        navigate(-1);
+      }
     },
     onError(error: AxiosError, variables, context) {
       if (error.response?.status === 401) {

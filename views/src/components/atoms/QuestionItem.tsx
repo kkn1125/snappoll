@@ -97,7 +97,7 @@ const QuestionItem: React.FC<QuestionItemProps> = ({ question }) => {
   );
 
   return (
-    <Stack gap={3}>
+    <Stack>
       <Stack>
         <Typography className="font-maru" fontSize={24} fontWeight={700}>
           {question.title}
