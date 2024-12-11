@@ -16,7 +16,13 @@ export class BasicService {
       include: { voteResponse: true },
     });
 
-    const base = new PathDomain('').addPath('notice', 'graph', 'about');
+    const base = new PathDomain('').addPath('notice', 'about');
+    const graph = new PathDomain('graph').addPath(
+      'polls',
+      'votes',
+      ...polls.map((p) => 'polls/' + p.id),
+      ...votes.map((p) => 'votes/' + p.id),
+    );
     const user = new PathDomain('user').addPath('login', 'signup', 'profile');
     const poll = new PathDomain('polls').include.addPath(
       'me',
@@ -41,7 +47,7 @@ export class BasicService {
 
     const pages = [
       DOMAIN,
-      ...[base, user, poll, vote].flatMap((domain) => domain.output()),
+      ...[base, user, graph, poll, vote].flatMap((domain) => domain.output()),
     ];
     const SitemapGeneratedDate = new Date().toISOString().slice(0, 10);
 
@@ -59,11 +65,17 @@ export class BasicService {
 
     const sitemapTemplate = `
   <?xml version="1.0" encoding="UTF-8"?>
-  <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <urlset
+  xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+  xmlns:news="http://www.google.com/schemas/sitemap-news/0.9"
+  xmlns:xhtml="http://www.w3.org/1999/xhtml"
+  xmlns:mobile="http://www.google.com/schemas/sitemap-mobile/1.0"
+  xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
+  xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">
     ${generateSitemap()}
   </urlset>
   `;
-    const formatted = await prettier.format(sitemapTemplate, {
+    const formatted = await prettier.format(sitemapTemplate.trim(), {
       parser: 'html',
     });
 

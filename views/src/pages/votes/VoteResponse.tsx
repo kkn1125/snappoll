@@ -116,7 +116,11 @@ const VoteResponse: React.FC<VoteResponseProps> = ({ me }) => {
               }
             >
               <ListItemButton
-                onClick={() => navigate(`/votes/${id}/response/${response.id}`)}
+                onClick={() =>
+                  navigate(
+                    `/votes/${me ? response.voteId : id}/response/${response.id}`,
+                  )
+                }
               >
                 <Stack direction="row" gap={3}>
                   <Typography>{i + 1}.</Typography>

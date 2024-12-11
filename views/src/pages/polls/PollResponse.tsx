@@ -116,7 +116,11 @@ const PollResponse: React.FC<PollResponseProps> = ({ me }) => {
               }
             >
               <ListItemButton
-                onClick={() => navigate(`/polls/${id}/response/${response.id}`)}
+                onClick={() =>
+                  navigate(
+                    `/polls/${me ? response.pollId : id}/response/${response.id}`,
+                  )
+                }
               >
                 <Stack direction="row" gap={3} flexWrap="wrap">
                   <Typography>{i + 1 + (page - 1) * 10}.</Typography>

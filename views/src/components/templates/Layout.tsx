@@ -4,7 +4,7 @@ import SnapBreadCrumbs from '@components/atoms/SnapBreadCrumbs';
 import Footer from '@components/organisms/Footer';
 import Header from '@components/organisms/Header';
 import Sidebar from '@components/organisms/Sidebar';
-import { Stack, Toolbar, useMediaQuery, useTheme } from '@mui/material';
+import { Box, Stack, Toolbar, useMediaQuery, useTheme } from '@mui/material';
 import { useMemo } from 'react';
 import Helmet from 'react-helmet';
 import { Outlet, useLocation } from 'react-router-dom';
@@ -91,7 +91,7 @@ const Layout: React.FC<LayoutProps> = ({ isCrew = true }) => {
           }}
         >
           {isCrew && <SnapBreadCrumbs />}
-          {!isMain && <Toolbar />}
+          {!isMain && <Box minHeight={20} maxHeight={20} />}
           <Outlet />
           <Toolbar />
         </Stack>

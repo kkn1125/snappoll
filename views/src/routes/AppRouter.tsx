@@ -1,7 +1,6 @@
 import { previousAtom } from '@/recoils/previous.atom';
 import { VERSION } from '@common/variables';
 import Layout from '@components/templates/Layout';
-import MainLayout from '@components/templates/MainLayout';
 import ShareLayout from '@components/templates/ShareLayout';
 import useLoading from '@hooks/useLoading';
 import useModal from '@hooks/useModal';
