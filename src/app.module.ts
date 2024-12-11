@@ -16,9 +16,28 @@ import { BasicModule } from './basic/basic.module';
 import { MailerModule } from './mailer/mailer.module';
 import emailConf from '@common/email.conf';
 import { ScheduleModule } from '@nestjs/schedule';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { APP_GUARD } from '@nestjs/core';
+import { CustomThrottlerGuard } from '@auth/custom.throttler.guard';
 
 @Module({
   imports: [
+    ThrottlerModule.forRoot([
+      {
+        name: 'short',
+        ttl: 1000,
+        limit: 3,
+      },
+      {
+        name: 'medium',
+        ttl: 10000,
+        limit: 20,
+      },
+      {
+        ttl: 60000,
+        limit: 100,
+      },
+    ]),
     ScheduleModule.forRoot(),
     ConfigModule.forRoot({ isGlobal: true, load: [commonConf, emailConf] }),
     MailerModule,
@@ -35,7 +54,12 @@ import { ScheduleModule } from '@nestjs/schedule';
     BoardsModule,
   ],
   controllers: [],
-  providers: [ConfigService, PrismaService, WebsocketGateway],
+  providers: [
+    { provide: APP_GUARD, useClass: CustomThrottlerGuard },
+    ConfigService,
+    PrismaService,
+    WebsocketGateway,
+  ],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

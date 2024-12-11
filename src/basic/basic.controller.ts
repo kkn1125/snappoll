@@ -1,7 +1,8 @@
-import { Controller, Get, Res } from '@nestjs/common';
+import { Controller, Get, Res, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { BasicService } from './basic.service';
+import { ThrottlerGuard } from '@nestjs/throttler';
 import { Response } from 'express';
+import { BasicService } from './basic.service';
 
 @Controller()
 export class BasicController {

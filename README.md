@@ -2,6 +2,11 @@
 
 서버사이드 구현
 
+- 2024-12-11
+  - add
+    - 429 too many requests 예외 추가
+    - throttler 미들웨어 추가
+    - 전역 exception filter 추가
 - 2024-12-10
   - feat
     - 이메일 본인인증 구현

@@ -8,6 +8,7 @@ import compression from 'compression';
 import cookieParser from 'cookie-parser';
 import { AppModule } from './app.module';
 import { ResponseInterceptor } from '@middleware/response.interceptor';
+import { HttpExceptionFilter } from '@middleware/http-exception.filter';
 
 console.log('Current working directory:', process.cwd());
 console.log(
@@ -32,6 +33,7 @@ async function bootstrap() {
     exclude: [{ path: 'sitemap.xml', method: RequestMethod.GET }],
   });
   app.useGlobalInterceptors(new ResponseInterceptor());
+  app.useGlobalFilters(new HttpExceptionFilter());
   app.use(cookieParser());
   app.use(compression());
 
