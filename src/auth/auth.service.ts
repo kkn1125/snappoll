@@ -1,5 +1,7 @@
 import { MailerService } from '@/mailer/mailer.service';
+import { CURRENT_DOMAIN } from '@common/variables';
 import { PrismaService } from '@database/prisma.service';
+import { HttpService } from '@nestjs/axios';
 import {
   BadRequestException,
   ConflictException,
@@ -8,6 +10,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 import * as jwt from 'jsonwebtoken';
 import Mail from 'nodemailer/lib/mailer';
+import { firstValueFrom } from 'rxjs';
 
 @Injectable()
 export class AuthService {
@@ -15,7 +18,40 @@ export class AuthService {
     private readonly mailer: MailerService,
     public readonly prisma: PrismaService,
     private readonly configService: ConfigService,
+    private readonly httpService: HttpService,
   ) {}
+
+  async getKakaoLoginToken(code: string) {
+    try {
+      const kakaoKey = this.configService.get('common.KAKAO_KEY');
+      const config = {
+        grant_type: 'authorization_code',
+        client_id: kakaoKey,
+        redirect_uri: `${CURRENT_DOMAIN}/api/auth/login/kakao`,
+        code,
+      };
+      const params = new URLSearchParams(config).toString();
+      const tokenHeader = {
+        'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
+      };
+      const { data } = await firstValueFrom(
+        this.httpService.post(
+          `https://kauth.kakao.com/oauth/token?${params}`,
+          '',
+          {
+            headers: tokenHeader,
+          },
+        ),
+      );
+      console.log(data);
+      const userData = jwt.decode(data.id_token);
+      console.log('user:', userData);
+      return data;
+    } catch (error) {
+      console.log(error);
+      throw new BadRequestException('잘못된 요청입니다.');
+    }
+  }
 
   async validateUser(email: string, userPassword: string) {
     const user = await this.prisma.user.findUnique({
@@ -122,5 +158,15 @@ export class AuthService {
         userProfile: true,
       },
     });
+  }
+
+  async requestLoginKakao() {
+    const { data } = await firstValueFrom(
+      this.httpService.get(
+        `https://kauth.kakao.com/oauth/authorize?client_id=7043de6fabb4db468e0530f5cdd0e209&redirect_uri=${encodeURIComponent('http://localhost:8080/api/auth/login/kakao')}`,
+      ),
+    );
+    console.log(data);
+    return data;
   }
 }

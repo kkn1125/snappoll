@@ -23,6 +23,7 @@ import { AxiosError } from 'axios';
 import {
   ChangeEvent,
   FormEvent,
+  Fragment,
   MouseEvent,
   useCallback,
   useEffect,
@@ -88,6 +89,8 @@ const Profile: React.FC<ProfileProps> = () => {
     },
   });
 
+  const isSocial = typeof user?.userProfile?.image === 'string';
+
   useEffect(() => {
     if (!user) return;
     setCurrent({
@@ -96,13 +99,17 @@ const Profile: React.FC<ProfileProps> = () => {
     });
 
     if (user.userProfile) {
-      const { url, revokeUrl } = makeBlobToImageUrl(user.userProfile);
-      setImage(url);
-      return () => {
-        revokeUrl();
-      };
+      if (isSocial) {
+        setImage(user.userProfile.image as unknown as string);
+      } else {
+        const { url, revokeUrl } = makeBlobToImageUrl(user.userProfile);
+        setImage(url);
+        return () => {
+          revokeUrl();
+        };
+      }
     }
-  }, [user]);
+  }, [isSocial, user]);
 
   const onChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     const name = e.target.name;
@@ -172,17 +179,20 @@ const Profile: React.FC<ProfileProps> = () => {
           Logout
         </Button>
       </Stack>
+
       <Stack gap={3}>
         <Stack
-          component="form"
           alignItems="center"
           gap={3}
-          onSubmit={handleSubmitUploadProfile}
+          {...(!isSocial && {
+            component: 'form',
+            onSubmit: handleSubmitUploadProfile,
+          })}
         >
           <Typography fontSize={32} fontWeight={700} gutterBottom>
             [{user?.username}] 님의 프로필
           </Typography>
-          <Stack gap={4}>
+          <Stack gap={4} alignItems="center">
             <Stack
               sx={{
                 // background: 'black',
@@ -191,6 +201,7 @@ const Profile: React.FC<ProfileProps> = () => {
                 backgroundColor: '#fff',
                 boxShadow: '5px 5px 1rem 0 #55555556',
                 // (theme) => image ? theme.palette.text.disabled : undefined,
+                width: 300,
               }}
             >
               <Stack component="label">
@@ -204,7 +215,7 @@ const Profile: React.FC<ProfileProps> = () => {
                     sx={{
                       objectFit: 'cover',
                       objectPosition: 'center',
-                      cursor: 'pointer',
+                      cursor: isSocial ? undefined : 'pointer',
                     }}
                   />
                 ) : (
@@ -217,50 +228,61 @@ const Profile: React.FC<ProfileProps> = () => {
                     sx={{ cursor: 'pointer' }}
                   />
                 )}
-                <input
-                  hidden
-                  type="file"
-                  name="profile"
-                  accept=".png,.webp,.avif,.jpeg,.jpg"
-                  onChange={handleUploadFile}
-                />
+                {!isSocial && (
+                  <input
+                    hidden
+                    type="file"
+                    name="profile"
+                    accept=".png,.webp,.avif,.jpeg,.jpg"
+                    onChange={handleUploadFile}
+                  />
+                )}
               </Stack>
             </Stack>
-            <Button size="large" variant="contained" type="submit">
-              변경
-            </Button>
+            {!isSocial && (
+              <Button size="large" variant="contained" type="submit">
+                변경
+              </Button>
+            )}
+            {isSocial && (
+              <Typography>
+                프로필 수정은 스냅폴 회원가입해야 사용가능합니다.
+              </Typography>
+            )}
           </Stack>
         </Stack>
-        <Divider flexItem />
-        <Container maxWidth="sm">
-          <Stack component="form" gap={2} onSubmit={handleSubmit}>
-            <Stack>
-              <Typography>Email</Typography>
-              <CustomInput
-                fullWidth
-                size="small"
-                name="email"
-                type="email"
-                autoComplete="new-username"
-                value={current.email || ''}
-                disabled
-                // onChange={onChange}
-              />
-            </Stack>
-            <Stack>
-              <Typography>Username</Typography>
-              <CustomInput
-                fullWidth
-                size="small"
-                name="username"
-                type="text"
-                autoComplete="new-username"
-                value={current.username || ''}
-                onChange={onChange}
-              />
-            </Stack>
+        {!isSocial && (
+          <Fragment>
+            <Divider flexItem />
+            <Container maxWidth="sm">
+              <Stack component="form" gap={2} onSubmit={handleSubmit}>
+                <Stack>
+                  <Typography>Email</Typography>
+                  <CustomInput
+                    fullWidth
+                    size="small"
+                    name="email"
+                    type="email"
+                    autoComplete="new-username"
+                    value={current.email || ''}
+                    disabled
+                    // onChange={onChange}
+                  />
+                </Stack>
+                <Stack>
+                  <Typography>Username</Typography>
+                  <CustomInput
+                    fullWidth
+                    size="small"
+                    name="username"
+                    type="text"
+                    autoComplete="new-username"
+                    value={current.username || ''}
+                    onChange={onChange}
+                  />
+                </Stack>
 
-            {/* <Stack>
+                {/* <Stack>
               <Typography>Password</Typography>
               <TextField
                 fullWidth
@@ -272,24 +294,26 @@ const Profile: React.FC<ProfileProps> = () => {
                 onChange={onChange}
               />
             </Stack> */}
-            <Button type="submit" variant="contained" size="large">
-              정보 수정
-            </Button>
-            <Divider />
-            <Button
-              color="error"
-              variant="outlined"
-              size="large"
-              onClick={() => {
-                openInteractiveModal(Message.Single.LeaveAlert, () => {
-                  handleRemoveAccount(user?.id);
-                });
-              }}
-            >
-              회원탈퇴
-            </Button>
-          </Stack>
-        </Container>
+                <Button type="submit" variant="contained" size="large">
+                  정보 수정
+                </Button>
+                <Divider />
+                <Button
+                  color="error"
+                  variant="outlined"
+                  size="large"
+                  onClick={() => {
+                    openInteractiveModal(Message.Single.LeaveAlert, () => {
+                      handleRemoveAccount(user?.id);
+                    });
+                  }}
+                >
+                  회원탈퇴
+                </Button>
+              </Stack>
+            </Container>
+          </Fragment>
+        )}
       </Stack>
       <Toolbar />
     </Container>

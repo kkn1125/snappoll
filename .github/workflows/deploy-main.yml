@@ -43,6 +43,8 @@ jobs:
                   secret: EMAIL_ADDRESS
                 - name: EMAIL_PASSWORD
                   secret: EMAIL_PASSWORD
+                - name: KAKAO_KEY
+                  secret: KAKAO_KEY
               buildenv: []
               strategy: rolling
             context:

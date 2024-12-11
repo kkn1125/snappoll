@@ -20,5 +20,12 @@ export const SECRET_KEY = process.env.SECRET_KEY;
 export const VERSION = pkg.version;
 export const DOMAIN = 'https://snappoll.kro.kr';
 
+export const CLIENT_DOMAIN =
+  MODE === 'development' ? 'http://localhost:5000' : DOMAIN;
+export const CURRENT_DOMAIN =
+  MODE === 'development' ? 'http://localhost:8080' : DOMAIN;
+
 export const EMAIL_ADDRESS = process.env.EMAIL_ADDRESS as string;
 export const EMAIL_PASSWORD = process.env.EMAIL_PASSWORD as string;
+
+export const KAKAO_KEY = process.env.KAKAO_KEY as string;

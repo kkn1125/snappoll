@@ -3,6 +3,7 @@ import {
   DATABASE_URL,
   DIRECT_URL,
   HOST,
+  KAKAO_KEY,
   MODE,
   PORT,
   SECRET_KEY,
@@ -17,4 +18,5 @@ export default registerAs('common', () => ({
   DIRECT_URL,
   SECRET_KEY,
   VERSION,
+  KAKAO_KEY,
 }));

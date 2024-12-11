@@ -1,5 +1,4 @@
 import { login } from '@/apis/login';
-import { tokenAtom } from '@/recoils/token.atom';
 import { Message } from '@common/messages';
 import CustomInput from '@components/atoms/CustomInput';
 import useModal from '@hooks/useModal';
@@ -23,7 +22,6 @@ import {
   useState,
 } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { useSetRecoilState } from 'recoil';
 
 interface LoginProps {}
 const Login: React.FC<LoginProps> = () => {
@@ -37,7 +35,7 @@ const Login: React.FC<LoginProps> = () => {
     password: '',
   });
   const { errors, validate, validated, setValidated } = useValidate(loginInfo);
-  const setToken = useSetRecoilState(tokenAtom);
+  // const setToken = useSetRecoilState(tokenAtom);
   const mutation = useMutation({
     mutationKey: ['login'],
     mutationFn: login,

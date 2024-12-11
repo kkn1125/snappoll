@@ -1,25 +1,30 @@
+import { CLIENT_DOMAIN } from '@common/variables';
 import {
   Body,
   Controller,
   Get,
+  Header,
   Param,
   Post,
+  Query,
   Req,
   Res,
   UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { AuthGuard } from '@nestjs/passport';
 import { Request, Response } from 'express';
 import { AuthService } from './auth.service';
-import { CookieGuard } from './cookie.guard';
 import { BatchService } from './batch.service';
+import { CookieGuard } from './cookie.guard';
 
 @Controller('auth')
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
     private readonly batchService: BatchService,
+    private readonly configService: ConfigService,
   ) {}
 
   @Get('check/email/:email')
@@ -172,6 +177,29 @@ export class AuthController {
     } else {
       throw new UnauthorizedException('회원정보를 다시 확인해주세요.');
     }
+  }
+
+  @Get('request/kakao')
+  @Header('Content-Type', 'text/html')
+  async requestAsKakao(@Res() res: Response) {
+    // const data = await this.authService.requestLoginKakao();
+    const kakaoKey = this.configService.get('common.KAKAO_KEY');
+    res.redirect(
+      `https://kauth.kakao.com/oauth/authorize?client_id=${kakaoKey}&redirect_uri=${encodeURIComponent('http://localhost:8080/api/auth/login/kakao')}&response_type=code`,
+    );
+  }
+
+  @Get('login/kakao')
+  async loginAsKakao(@Query('code') code: string, @Res() res: Response) {
+    const data = await this.authService.getKakaoLoginToken(code);
+    const params = {
+      access_token: data.access_token,
+      refresh_token: data.refresh_token,
+      id_token: data.id_token,
+    };
+
+    res.cookie('token', data.id_token);
+    res.redirect(`${CLIENT_DOMAIN}/user/choice?${new URLSearchParams(params)}`);
   }
 
   @UseGuards(CookieGuard)

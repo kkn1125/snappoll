@@ -31,6 +31,29 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 
 const headerBgChangePoint = 100;
 
+const menuList = [
+  { name: 'SnapPoll이란?', to: '/about', allow: ['guest', 'user'] },
+  { name: '설문조사', to: '/polls', allow: ['user'] },
+  { name: '투표', to: '/votes', allow: ['user'] },
+  {
+    name: (username?: string) => username,
+    to: '/user/profile',
+    allow: ['user'],
+    icon: (username?: string, profileImage?: string) =>
+      username && profileImage ? (
+        <Avatar
+          src={profileImage}
+          alt={username}
+          sx={{ width: 32, height: 32, mr: 1 }}
+        />
+      ) : (
+        <DefaultProfile width={32} height={32} style={{ marginRight: 8 }} />
+      ),
+  },
+  { name: '회원가입/로그인', to: '/user/choice', allow: ['guest'] },
+  // { name: 'Login', to: '/user/login', allow: ['guest'] },
+];
+
 interface HeaderProps {
   isCrew: boolean;
 }
@@ -90,12 +113,17 @@ const Header: React.FC<HeaderProps> = ({ isCrew }) => {
 
   useEffect(() => {
     if (!(user && user?.userProfile)) return;
-    const { url, revokeUrl } = makeBlobToImageUrl(user.userProfile);
-    setProfileImage(url);
-    return () => {
-      revokeUrl();
-    };
-  }, [user]);
+    if (profileImage) return;
+    if (typeof user.userProfile.image === 'string') {
+      setProfileImage(user.userProfile.image);
+    } else {
+      const { url } = makeBlobToImageUrl(user.userProfile);
+      setProfileImage(url);
+    }
+    // return () => {
+    //   revokeUrl();
+    // };
+  }, [user, profileImage]);
 
   function redirectTo(to: string) {
     return () => {
@@ -169,110 +197,39 @@ const Header: React.FC<HeaderProps> = ({ isCrew }) => {
                   <WidgetsIcon />
                 </IconButton>
                 <Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
-                  {isCrew ? (
-                    <Stack>
-                      <MenuItem onClick={redirectTo('/about')}>About</MenuItem>
-                      <MenuItem onClick={redirectTo('/polls')}>Polls</MenuItem>
-                      <MenuItem onClick={redirectTo('/votes')}>Votes</MenuItem>
-                      <MenuItem onClick={redirectTo('/user/profile')}>
-                        {profileImage ? (
-                          <Avatar
-                            src={profileImage}
-                            sx={{ width: 32, height: 32 }}
-                            alt={user?.username}
-                          />
-                        ) : (
-                          <DefaultProfile width={32} height={32} />
-                        )}
-                        {user?.username}
-                      </MenuItem>
-                    </Stack>
-                  ) : (
-                    <Stack>
-                      <MenuItem onClick={redirectTo('/about')}>About</MenuItem>
-                      <MenuItem onClick={redirectTo('/user/signup')}>
-                        Signup
-                      </MenuItem>
-                      <MenuItem onClick={redirectTo('/user/login')}>
-                        Login
-                      </MenuItem>
-                    </Stack>
-                  )}
+                  <Stack>
+                    {menuList
+                      .filter(({ allow }) =>
+                        allow.includes(isCrew ? 'user' : 'guest'),
+                      )
+                      .map(({ name, to, icon }) => (
+                        <MenuItem key={to} onClick={redirectTo(to)}>
+                          {icon?.(user?.username, profileImage)}
+                          {typeof name === 'string'
+                            ? name
+                            : name(user?.username)}
+                        </MenuItem>
+                      ))}
+                  </Stack>
                 </Menu>
               </Stack>
-            ) : isCrew ? (
-              <>
-                <Button
-                  component={Link}
-                  size="large"
-                  color="inherit"
-                  to="/about"
-                >
-                  About
-                </Button>
-                <Button
-                  component={Link}
-                  size="large"
-                  color="inherit"
-                  to="/polls"
-                >
-                  Polls
-                </Button>
-                <Button
-                  component={Link}
-                  size="large"
-                  color="inherit"
-                  to="/votes"
-                >
-                  Votes
-                </Button>
-                <Button
-                  component={Link}
-                  size="large"
-                  color="inherit"
-                  to="/user/profile"
-                  startIcon={
-                    profileImage ? (
-                      <Avatar
-                        src={profileImage}
-                        sx={{ width: 32, height: 32 }}
-                        alt={user?.username}
-                      />
-                    ) : (
-                      <DefaultProfile width={32} height={32} />
-                    )
-                  }
-                >
-                  {user?.username}
-                </Button>
-              </>
             ) : (
-              <>
-                <Button
-                  component={Link}
-                  size="large"
-                  color="inherit"
-                  to="/about"
-                >
-                  About
-                </Button>
-                <Button
-                  component={Link}
-                  size="large"
-                  color="inherit"
-                  to="/user/signup"
-                >
-                  Signup
-                </Button>
-                <Button
-                  component={Link}
-                  size="large"
-                  color="inherit"
-                  to="/user/login"
-                >
-                  Login
-                </Button>
-              </>
+              menuList
+                .filter(({ allow }) =>
+                  allow.includes(isCrew ? 'user' : 'guest'),
+                )
+                .map(({ name, to, icon }) => (
+                  <Button
+                    key={to}
+                    component={Link}
+                    size="large"
+                    color="inherit"
+                    to={to}
+                  >
+                    {icon?.(user?.username, profileImage)}
+                    {typeof name === 'string' ? name : name(user?.username)}
+                  </Button>
+                ))
             )}
           </Stack>
         </Stack>

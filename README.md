@@ -7,6 +7,7 @@
     - 429 too many requests 예외 추가
     - throttler 미들웨어 추가
     - 전역 exception filter 추가
+    - 소셜 로그인 추가 (카카오)
 - 2024-12-10
   - feat
     - 이메일 본인인증 구현

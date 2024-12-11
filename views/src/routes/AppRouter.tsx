@@ -23,6 +23,7 @@ import PollListV2 from '@pages/polls/PollListV2';
 import PollResponse from '@pages/polls/PollResponse';
 import DetailPollResponse from '@pages/polls/response/DetailPollResponse';
 import SharePage from '@pages/share/SharePage';
+import Choice from '@pages/user/Choice';
 import Login from '@pages/user/Login';
 import Profile from '@pages/user/Profile';
 import Signup from '@pages/user/Signup';
@@ -83,6 +84,7 @@ function AppRouter() {
         <Route index element={isCrew ? <Home /> : <GuestHome />} />
         <Route path="user">
           <Route path="login" element={<Login />}></Route>
+          <Route path="choice" element={<Choice />} />
           <Route path="signup" element={<Signup />} />
           <Route path="profile" element={<Profile />} />
         </Route>

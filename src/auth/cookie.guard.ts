@@ -20,10 +20,28 @@ export class CookieGuard implements CanActivate {
     const res = http.getResponse() as Response;
     const secretKey = this.configService.get('common.SECRET_KEY');
     try {
+      const isSocial = jwt.decode(req.cookies.token) as JwtPayload;
+      console.log('isSocial:', isSocial);
+      if (isSocial.iss === 'https://kauth.kakao.com') {
+        req.verify = isSocial;
+        req.token = req.cookies.token;
+        const customData = {
+          id: isSocial.aud[0],
+          // createdAt: Date,
+          email: isSocial.email,
+          username: isSocial.nickname,
+          userProfile: {
+            image: isSocial.picture,
+          },
+        };
+        req.user = customData as any;
+        return !!isSocial;
+      }
+
       const result = jwt.verify(req.cookies.token, secretKey, {
         algorithms: ['HS256'],
       }) as JwtPayload;
-      // console.log('result:', result);
+
       const user = await this.authService.getMe(result.email);
       if (result) {
         req.verify = result;

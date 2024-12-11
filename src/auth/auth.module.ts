@@ -7,9 +7,10 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { LocalStrategy } from './local.strategy';
 import { BatchService } from './batch.service';
+import { HttpModule } from '@nestjs/axios';
 
 @Module({
-  imports: [PassportModule, MailerModule],
+  imports: [PassportModule, MailerModule, HttpModule],
   providers: [
     PrismaService,
     AuthService,
