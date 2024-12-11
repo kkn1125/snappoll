@@ -7,7 +7,7 @@ import Sidebar from '@components/organisms/Sidebar';
 import { Stack, Toolbar, useMediaQuery, useTheme } from '@mui/material';
 import { useMemo } from 'react';
 import Helmet from 'react-helmet';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 
 const sidebarWidth = {
@@ -23,11 +23,14 @@ const Layout: React.FC<LayoutProps> = ({ isCrew = true }) => {
   const theme = useTheme();
   const isMdDown = useMediaQuery(theme.breakpoints.down('md'));
   const sidebarOpened = isMdDown ? !sidebarState.opened : sidebarState.opened;
+  const locate = useLocation();
 
   const canonical = useMemo(() => {
     return location.origin + location.pathname;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.pathname]);
+
+  const isMain = !isCrew && locate.pathname === '/';
 
   return (
     <Stack height="inherit">
@@ -71,7 +74,7 @@ const Layout: React.FC<LayoutProps> = ({ isCrew = true }) => {
           id="main"
           flex={1}
           overflow="auto"
-          p={2}
+          p={isMain ? 0 : 2}
           sx={{
             ['&::-webkit-scrollbar']: {
               width: scrollSize,
@@ -88,7 +91,7 @@ const Layout: React.FC<LayoutProps> = ({ isCrew = true }) => {
           }}
         >
           {isCrew && <SnapBreadCrumbs />}
-          <Toolbar />
+          {!isMain && <Toolbar />}
           <Outlet />
           <Toolbar />
         </Stack>

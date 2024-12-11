@@ -1,6 +1,7 @@
 import { previousAtom } from '@/recoils/previous.atom';
 import { VERSION } from '@common/variables';
 import Layout from '@components/templates/Layout';
+import MainLayout from '@components/templates/MainLayout';
 import ShareLayout from '@components/templates/ShareLayout';
 import useLoading from '@hooks/useLoading';
 import useModal from '@hooks/useModal';
@@ -80,12 +81,12 @@ function AppRouter() {
   return (
     <Routes>
       <Route element={<Layout isCrew={isCrew} />}>
+        <Route index element={isCrew ? <Home /> : <GuestHome />} />
         <Route path="user">
           <Route path="login" element={<Login />}></Route>
           <Route path="signup" element={<Signup />} />
           <Route path="profile" element={<Profile />} />
         </Route>
-        <Route index element={isCrew ? <Home /> : <GuestHome />} />
         <Route path="polls">
           <Route index element={<PollListV2 />} />
           <Route path="me" element={<MyPolls />} />
