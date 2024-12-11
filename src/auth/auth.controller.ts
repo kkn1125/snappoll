@@ -1,4 +1,4 @@
-import { CLIENT_DOMAIN } from '@common/variables';
+import { CLIENT_DOMAIN, CURRENT_DOMAIN } from '@common/variables';
 import {
   Body,
   Controller,
@@ -185,7 +185,7 @@ export class AuthController {
     // const data = await this.authService.requestLoginKakao();
     const kakaoKey = this.configService.get('common.KAKAO_KEY');
     res.redirect(
-      `https://kauth.kakao.com/oauth/authorize?client_id=${kakaoKey}&redirect_uri=${encodeURIComponent('http://localhost:8080/api/auth/login/kakao')}&response_type=code`,
+      `https://kauth.kakao.com/oauth/authorize?client_id=${kakaoKey}&redirect_uri=${encodeURIComponent(`${CURRENT_DOMAIN}/api/auth/login/kakao`)}&response_type=code`,
     );
   }
 
