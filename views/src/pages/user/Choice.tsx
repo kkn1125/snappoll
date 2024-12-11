@@ -49,7 +49,7 @@ const Choice: React.FC<ChoiceProps> = () => {
           간편한 설문조사, 스냅폴
         </Typography>
 
-        <Button
+        {/* <Button
           variant="contained"
           color="inherit"
           size="large"
@@ -63,7 +63,7 @@ const Choice: React.FC<ChoiceProps> = () => {
           onClick={handleRedirectKakaoLogin}
         >
           카카오 계정으로 계속하기
-        </Button>
+        </Button> */}
 
         <Button
           component={Link}
