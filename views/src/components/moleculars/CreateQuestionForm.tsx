@@ -199,26 +199,11 @@ const CreateQuestionForm: React.FC<CreateQuestionFormProps> = ({
         </Stack>
 
         {question.type !== 'text' && (
-          <List
-            sx={{
-              listStyle: 'none',
-              counterReset: 'list-counter',
-              position: 'relative',
-              ['& .MuiInputBase-root']: {
-                counterIncrement: 'list-counter',
-              },
-              ['& .MuiInputBase-root::before']: {
-                content: 'counter(list-counter) ". "',
-                position: 'absolute',
-                left: -20,
-                fontSize: 20,
-                lineHeight: 1.5,
-              },
-            }}
-          >
+          <List>
             {question.option.map((option, i) => (
               <CreateOptionForm
                 key={option.id}
+                index={i + 1}
                 questionId={question.id}
                 option={option}
               />

@@ -93,6 +93,13 @@ const PollResponse: React.FC<PollResponseProps> = ({ me }) => {
     <Container maxWidth="md">
       <Toolbar />
       <Stack gap={3}>
+        {isExpired && (
+          <Alert severity="warning">
+            <AlertTitle>안내</AlertTitle>
+            마감된 설문입니다.
+          </Alert>
+        )}
+
         <List>
           {data?.responses.slice(0, 10).map((response, i) => (
             <ListItem
@@ -120,12 +127,7 @@ const PollResponse: React.FC<PollResponseProps> = ({ me }) => {
               </ListItemButton>
             </ListItem>
           ))}
-          {isExpired && (
-            <Alert severity="warning">
-              <AlertTitle>안내</AlertTitle>
-              마감된 설문입니다.
-            </Alert>
-          )}
+
           {data?.responses.length === 0 && (
             <ListItem>
               <ListItemButton>

@@ -8,6 +8,8 @@ import {
   Stack,
   Toolbar,
   Typography,
+  useMediaQuery,
+  useTheme,
 } from '@mui/material';
 import { BarChart, BarSeriesType } from '@mui/x-charts';
 import { MakeOptional } from '@mui/x-date-pickers/internals';
@@ -17,10 +19,12 @@ interface CorrelationChartProps {
   data: SnapPoll;
 }
 const CorrelationChart: React.FC<CorrelationChartProps> = ({ data }) => {
+  const theme = useTheme();
   const [baseQuestion, setBaseQuestion] = useState<SnapPollQuestion | null>(
     null,
   );
   const [questions, setQuestions] = useState<SnapPollQuestion[]>([]);
+  const isMdDown = useMediaQuery(theme.breakpoints.down('md'));
 
   function handleSetBaseQuestion(question: SnapPollQuestion) {
     setBaseQuestion((q) => (q !== question ? question : null));
@@ -140,7 +144,13 @@ const CorrelationChart: React.FC<CorrelationChartProps> = ({ data }) => {
               <Typography variant="h5" gutterBottom>
                 {baseQuestion.title} <SyncAltIcon /> {question.title}
               </Typography>
-              <Stack direction="row" width="100%">
+              <Stack
+                direction="row"
+                width="100%"
+                minHeight="30vh"
+                height="100vh"
+                maxHeight={400}
+              >
                 <BarChart
                   axisHighlight={{ y: 'line' }}
                   borderRadius={10}
@@ -150,6 +160,11 @@ const CorrelationChart: React.FC<CorrelationChartProps> = ({ data }) => {
                       data:
                         baseQuestion.option?.map((option) => option.content) ||
                         [],
+                      tickLabelStyle: {
+                        angle: -20,
+                        textAnchor: 'end',
+                        fontSize: 10,
+                      },
                     },
                   ]}
                   series={getCounter(question)}
@@ -157,10 +172,11 @@ const CorrelationChart: React.FC<CorrelationChartProps> = ({ data }) => {
                     legend: {
                       itemMarkWidth: 10,
                       itemMarkHeight: 10,
+                      padding: 0,
+                      markGap: 3,
+                      itemGap: 5,
                     },
                   }}
-                  width={500}
-                  height={300}
                   sx={{ flex: 1 }}
                 />
               </Stack>

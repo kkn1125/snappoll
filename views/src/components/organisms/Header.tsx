@@ -107,7 +107,7 @@ const Header: React.FC<HeaderProps> = ({ isCrew }) => {
   return (
     <AppBar
       position="absolute"
-      color={headerShadowActivate ? 'sky' : 'inherit'}
+      color="inherit"
       sx={{
         top: 0,
         transition:
@@ -115,8 +115,7 @@ const Header: React.FC<HeaderProps> = ({ isCrew }) => {
         ...(!headerShadowActivate && {
           '--Paper-shadow': '0 0 0 0 #ffffffff !important',
         }),
-        borderBottom: (theme) =>
-          `1px solid ${headerShadowActivate ? theme.palette.sky.main : '#eee'}`,
+        borderBottom: '1px solid #eee',
       }}
     >
       <Toolbar>

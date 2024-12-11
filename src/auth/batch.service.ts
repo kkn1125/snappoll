@@ -30,7 +30,7 @@ export class BatchService {
         temp.push(key);
       }
     });
-    console.log(`tokens expired: ${temp.length} /`, temp);
+    // console.log(`tokens expired: ${temp.length} /`, temp);
   }
   @Cron('0 */20 * * * *', {
     name: 'removeTokens',
@@ -43,6 +43,6 @@ export class BatchService {
         this.mapper.delete(key);
       }
     });
-    console.log(`tokens remove: ${temp.length} /`, temp);
+    // console.log(`tokens remove: ${temp.length} /`, temp);
   }
 }

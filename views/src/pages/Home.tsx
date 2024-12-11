@@ -20,7 +20,7 @@ const Home = () => {
   return (
     <Stack gap={5}>
       {/* first section */}
-      <Stack gap={2}>
+      {/* <Stack gap={2}>
         <Typography align="center" fontSize={36} fontWeight={700}>
           모두의 설문 조사
         </Typography>
@@ -35,7 +35,7 @@ const Home = () => {
             {BRAND_NAME}
           </Typography>
         </Typography>
-      </Stack>
+      </Stack> */}
       {/* second section */}
       <Stack gap={2}>
         <Typography align="center" fontSize={36} fontWeight={700}>

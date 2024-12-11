@@ -18,6 +18,8 @@ import {
   TableRow,
   Toolbar,
   Typography,
+  useMediaQuery,
+  useTheme,
 } from '@mui/material';
 import { BarChart, PieChart, PieValueType } from '@mui/x-charts';
 import { MakeOptional } from '@mui/x-date-pickers/internals';
@@ -27,6 +29,7 @@ import { useParams } from 'react-router-dom';
 
 interface PollGraphProps {}
 const PollGraph: React.FC<PollGraphProps> = () => {
+  const theme = useTheme();
   const { id } = useParams();
   const { data } = useQuery<SnapPoll>({
     queryKey: ['getPoll', id],
@@ -46,6 +49,7 @@ const PollGraph: React.FC<PollGraphProps> = () => {
     });
     return counted;
   }, []);
+  const isMdDown = useMediaQuery(theme.breakpoints.down('md'));
 
   if (!data) return <></>;
 
@@ -144,7 +148,13 @@ const PollGraph: React.FC<PollGraphProps> = () => {
               <Typography variant="h5" fontWeight={700} whiteSpace="wrap">
                 질문: {question.title}
               </Typography>
-              <Stack direction="row" width="100%">
+              <Stack
+                direction="row"
+                width="100%"
+                minHeight="30vh"
+                height="100vh"
+                maxHeight={400}
+              >
                 <BarChart
                   axisHighlight={{ y: 'line' }}
                   borderRadius={10}
@@ -153,6 +163,13 @@ const PollGraph: React.FC<PollGraphProps> = () => {
                       scaleType: 'band',
                       data:
                         question.option?.map((option) => option.content) || [],
+                      ...(isMdDown && {
+                        tickLabelStyle: {
+                          angle: -20,
+                          textAnchor: 'end',
+                          fontSize: 10,
+                        },
+                      }),
                     },
                   ]}
                   series={[
@@ -161,8 +178,6 @@ const PollGraph: React.FC<PollGraphProps> = () => {
                       highlightScope: { highlight: 'item', fade: 'global' },
                     },
                   ]}
-                  width={500}
-                  height={300}
                 />
               </Stack>
             </Stack>

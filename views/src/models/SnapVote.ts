@@ -42,4 +42,10 @@ export class SnapVote {
   addOption(option: SnapVoteOption) {
     this.voteOption.push(option);
   }
+
+  deleteOption(id: string) {
+    this.voteOption = this.voteOption.filter(
+      (voteOption) => voteOption.id !== id,
+    );
+  }
 }

@@ -16,6 +16,7 @@ import {
   Button,
   Container,
   Divider,
+  List,
   SpeedDial,
   SpeedDialAction,
   SpeedDialIcon,
@@ -144,7 +145,7 @@ const CreateSnapVote: React.FC<CreateSnapVoteProps> = ({ edit = false }) => {
 
         <Divider />
 
-        <Stack gap={3}>
+        <List>
           {snapVote.voteOption.map((option, i) => (
             <CreateVoteOptionItem
               key={option.id}
@@ -157,16 +158,16 @@ const CreateSnapVote: React.FC<CreateSnapVoteProps> = ({ edit = false }) => {
               }
             />
           ))}
-          <Button
-            fullWidth
-            size="large"
-            variant="outlined"
-            startIcon={<AddBoxIcon />}
-            onClick={addOption}
-          >
-            항목 추가
-          </Button>
-        </Stack>
+        </List>
+        <Button
+          fullWidth
+          size="large"
+          variant="outlined"
+          startIcon={<AddBoxIcon />}
+          onClick={addOption}
+        >
+          항목 추가
+        </Button>
 
         <Toolbar />
 

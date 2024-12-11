@@ -1,19 +1,19 @@
 import { snapPollAtom } from '@/recoils/snapPoll.atom';
 import { Message } from '@common/messages';
-import CustomInput from '@components/atoms/CustomInput';
+import InputItem from '@components/atoms/InputItem';
 import useModal from '@hooks/useModal';
 import { SnapPoll } from '@models/SnapPoll';
 import { SnapPollOption } from '@models/SnapPollOption';
-import DeleteIcon from '@mui/icons-material/Delete';
-import { IconButton, ListItem, ListItemText, Typography } from '@mui/material';
 import { ChangeEvent, memo, useCallback } from 'react';
 import { useSetRecoilState } from 'recoil';
 
 interface CreateOptionFormProps {
+  index: number;
   questionId: string;
   option: SnapPollOption;
 }
 const CreateOptionForm: React.FC<CreateOptionFormProps> = ({
+  index,
   questionId,
   option,
 }) => {
@@ -46,33 +46,12 @@ const CreateOptionForm: React.FC<CreateOptionFormProps> = ({
   }, []);
 
   return (
-    <ListItem
-      secondaryAction={
-        <IconButton
-          edge="end"
-          aria-label="delete"
-          color="error"
-          onClick={handleRemove}
-        >
-          <DeleteIcon />
-        </IconButton>
-      }
-      sx={{ ml: 1 }}
-    >
-      <ListItemText>
-        <CustomInput
-          autoFocus
-          fullWidth
-          label="내용"
-          size="small"
-          name="content"
-          variant="standard"
-          value={option.content}
-          onChange={onChange}
-          type="text"
-        />
-      </ListItemText>
-    </ListItem>
+    <InputItem
+      index={index}
+      content={option.content}
+      onChange={onChange}
+      handleRemove={handleRemove}
+    />
   );
 };
 

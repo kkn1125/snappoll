@@ -7,6 +7,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { IconButton, Stack, TextField } from '@mui/material';
 import { ChangeEvent, useCallback } from 'react';
 import { useSetRecoilState } from 'recoil';
+import InputItem from './InputItem';
 
 interface CreateVoteOptionItemProps {
   index: number;
@@ -21,7 +22,7 @@ const CreateVoteOptionItem: React.FC<CreateVoteOptionItemProps> = ({
   const { openInteractiveModal } = useModal();
   const setSnapVote = useSetRecoilState(snapVoteAtom);
 
-  const handleChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+  const onChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setSnapVote((snapVote) => {
       const copySnapVote = SnapVote.copy(snapVote);
@@ -38,13 +39,11 @@ const CreateVoteOptionItem: React.FC<CreateVoteOptionItemProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleRemoveVote = useCallback((id: string) => {
+  const handleRemove = useCallback(() => {
     openInteractiveModal(Message.Single.Remove, () => {
       setSnapVote((snapVote) => {
         const copySnapVote = SnapVote.copy(snapVote);
-        copySnapVote.voteOption = copySnapVote.voteOption.filter(
-          (option) => option.id !== id,
-        );
+        copySnapVote.deleteOption(option.id);
         return copySnapVote;
       });
     });
@@ -52,29 +51,12 @@ const CreateVoteOptionItem: React.FC<CreateVoteOptionItemProps> = ({
   }, []);
 
   return (
-    <Stack direction="row" gap={2}>
-      <TextField
-        fullWidth
-        autoFocus
-        size="small"
-        variant="filled"
-        value={option.content}
-        onChange={handleChange}
-        required
-        placeholder="항목을 입력하세요."
-        sx={{
-          ['& .MuiInputBase-root']: {
-            flex: 1,
-            ['& .MuiInputBase-input']: {
-              pt: 1,
-            },
-          },
-        }}
-      />
-      <IconButton color="error" onClick={() => handleRemoveVote(option.id)}>
-        <DeleteIcon />
-      </IconButton>
-    </Stack>
+    <InputItem
+      index={index}
+      content={option.content}
+      onChange={onChange}
+      handleRemove={handleRemove}
+    />
   );
 };
 
