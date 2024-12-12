@@ -39,6 +39,7 @@ import VoteResponse from '@pages/votes/VoteResponse';
 import { useEffect, useState } from 'react';
 import { Route, Routes, useLocation } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
+import { guestDisallowPaths } from '../common/variables';
 
 function AppRouter() {
   const { isCrew, verify } = useToken();
@@ -53,7 +54,7 @@ function AppRouter() {
     const pathname = locate.pathname;
     const loggedIn = localStorage.getItem('logged_in');
 
-    if (loggedIn === 'true') verify();
+    if (loggedIn === 'true' || guestDisallowPaths.test(pathname)) verify();
 
     return () => {
       setPrevious(pathname);

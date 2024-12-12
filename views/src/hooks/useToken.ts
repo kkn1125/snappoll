@@ -67,20 +67,26 @@ const useToken = () => {
       }
     },
     onError(error: AxiosError, variables, context) {
-      console.log(error);
+      // console.log(error);
       if (error.code === 'ECONNABORTED') {
         openModal(Message.Info.ServerEConnection);
         return;
       }
+      if (error.response?.status === 401) {
+        openModal(Message.Expired.Token);
+        logoutToken();
+        // console.log(location.pathname.match(guestDisallowPaths));
+      }
       const clt = localStorage.getItem('clt');
       if (clt === 'true') return;
       const loggedIn = localStorage.getItem('logged_in');
-      if (loggedIn === 'true') {
+      if (error.response?.status === 401) {
         openModal(Message.Expired.Token);
-      } else if (error.response?.status === 401) {
+      } else if (loggedIn === 'true') {
         openModal(Message.Expired.Token);
       }
       logoutToken();
+      // console.log(location.pathname.match(guestDisallowPaths));
       localStorage.setItem('clt', 'true');
     },
   });

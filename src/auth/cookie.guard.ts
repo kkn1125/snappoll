@@ -1,4 +1,9 @@
-import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+import {
+  CanActivate,
+  ExecutionContext,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Request, Response } from 'express';
 import jwt, { JwtPayload } from 'jsonwebtoken';
@@ -19,10 +24,15 @@ export class CookieGuard implements CanActivate {
     const req = http.getRequest() as Request;
     const res = http.getResponse() as Response;
     const secretKey = this.configService.get('common.SECRET_KEY');
+
+    if (!req.cookies.token) {
+      throw new UnauthorizedException('잘못된 요청입니다.');
+    }
+
     try {
       const isSocial = jwt.decode(req.cookies.token) as JwtPayload;
       console.log('isSocial:', isSocial);
-      if (isSocial.iss === 'https://kauth.kakao.com') {
+      if (isSocial?.iss === 'https://kauth.kakao.com') {
         req.verify = isSocial;
         req.token = req.cookies.token;
         const customData = {
@@ -37,7 +47,6 @@ export class CookieGuard implements CanActivate {
         req.user = customData as any;
         return !!isSocial;
       }
-
       const result = jwt.verify(req.cookies.token, secretKey, {
         algorithms: ['HS256'],
       }) as JwtPayload;
@@ -52,7 +61,12 @@ export class CookieGuard implements CanActivate {
       }
       // return !!result;
     } catch (error: any) {
-      if (error.name === 'TokenExpiredError') {
+      console.log(error);
+      if (error.name === 'JsonWebTokenError') {
+        if (error.message === 'jwt must be provided') {
+          throw new UnauthorizedException('잘못된 요청입니다.');
+        }
+      } else if (error.name === 'TokenExpiredError') {
         // console.log(error.message);
         try {
           /* refresh check */
