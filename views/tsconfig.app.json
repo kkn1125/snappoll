@@ -39,5 +39,5 @@
       "@/*": ["src/*"]
     }
   },
-  "include": ["src"]
+  "include": ["src", "__tests__"]
 }

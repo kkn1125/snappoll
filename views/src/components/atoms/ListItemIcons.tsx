@@ -24,7 +24,7 @@ const ListItemIcons: React.FC<ListItemIconsProps> = ({
           edge="end"
           aria-label="delete"
           color="success"
-          to={`/${type}s/${dataId}/response`}
+          to={`/service/${type}/${dataId}/response`}
         >
           <TimelineIcon />
         </IconButton>
@@ -35,7 +35,7 @@ const ListItemIcons: React.FC<ListItemIconsProps> = ({
           edge="end"
           aria-label="delete"
           color="primary"
-          to={`/${type}s/edit/${dataId}`}
+          to={`/service/${type}/edit/${dataId}`}
         >
           <BorderColorIcon />
         </IconButton>

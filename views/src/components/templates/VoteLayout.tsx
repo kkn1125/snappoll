@@ -1,10 +1,9 @@
-import { createShareVote } from '@/apis/vote/share/createShareVote';
 import { snapVoteResponseAtom } from '@/recoils/snapVoteResponse.atom';
 import { tokenAtom } from '@/recoils/token.atom';
-import { Message } from '@common/messages';
-import { BASE_CLIENT_URL } from '@common/variables';
 import CheckedComponent from '@components/atoms/CheckedComponent';
+import ShareControlButton from '@components/atoms/ShareControlButton';
 import VoteOptionItem from '@components/atoms/VoteOptionItem';
+import useModal from '@hooks/useModal';
 import { SnapVote } from '@models/SnapVote';
 import { SnapVoteAnswer } from '@models/SnapVoteAnswer';
 import { SnapVoteResponse } from '@models/SnapVoteResponse';
@@ -12,29 +11,19 @@ import { AccessTime } from '@mui/icons-material';
 import {
   Alert,
   AlertTitle,
-  Button,
   Checkbox,
-  Chip,
   FormControlLabel,
   ListItemButton,
   Stack,
   TextField,
-  Toolbar,
   Typography,
 } from '@mui/material';
 import { grey } from '@mui/material/colors';
-import { useMutation } from '@tanstack/react-query';
 import { formattedDate } from '@utils/formattedDate';
 import { printDateOrNot } from '@utils/printDateOrNot';
 import { ChangeEvent, SyntheticEvent, useCallback, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
-import ShareIcon from '@mui/icons-material/Share';
-import useModal from '@hooks/useModal';
-import { Link } from 'react-router-dom';
-import { resumeShareUrl } from '@/apis/vote/share/resumeShareUrl';
-import { revokeShareUrl } from '@/apis/vote/share/revokeShareUrl';
-import { isNil } from '@utils/isNil';
-import ShareControlButton from '@components/atoms/ShareControlButton';
 
 interface VoteLayoutProps {
   vote: SnapVote;
@@ -50,6 +39,8 @@ const VoteLayout: React.FC<VoteLayoutProps> = ({
   const [useEtc, setUseEtc] = useState(false);
   const setSnapVoteResponse = useSetRecoilState(snapVoteResponseAtom);
   const { openModal } = useModal();
+  const locate = useLocation();
+  const isShare = locate.pathname.startsWith('/service/poll/share');
 
   const handleChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -151,7 +142,9 @@ const VoteLayout: React.FC<VoteLayoutProps> = ({
             </Typography>
           </Stack>
 
-          <ShareControlButton data={vote} user={user} refetch={refetchVote} />
+          {!isShare && (
+            <ShareControlButton data={vote} user={user} refetch={refetchVote} />
+          )}
         </Stack>
       </Stack>
 

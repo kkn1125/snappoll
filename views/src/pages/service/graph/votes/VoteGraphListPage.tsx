@@ -23,7 +23,7 @@ const VoteGraphListPage: React.FC<VoteGraphListPageProps> = () => {
     queryFn: getMyVotes,
   });
   const handleRedirect = (to: string) => {
-    navigate(`/graph/votes/${to}`);
+    navigate(`/service/graph/vote/${to}`);
   };
 
   const totalPage = useMemo(() => {

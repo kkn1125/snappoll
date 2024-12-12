@@ -1,7 +1,7 @@
 import { getVote } from '@/apis/vote/getVote';
 import { SnapVote } from '@models/SnapVote';
 import { SnapVoteOption } from '@models/SnapVoteOption';
-import { Stack, Typography } from '@mui/material';
+import { Box, Button, Stack, Typography } from '@mui/material';
 import { PieChart, PieValueType } from '@mui/x-charts';
 import { MakeOptional } from '@mui/x-date-pickers/internals';
 import { useQuery } from '@tanstack/react-query';
@@ -30,42 +30,53 @@ const DetailVoteGraphPage: React.FC<DetailVoteGraphPageProps> = () => {
   if (!data) return <></>;
 
   return (
-    <Stack spacing={4} alignItems="center">
-      <Typography variant="h4" fontWeight={700}>
-        투표지: {data.title}
-      </Typography>
-      <Typography variant="h5" fontWeight={700}>
-        빈도
-      </Typography>
-      <PieChart
-        series={[
-          {
-            innerRadius: 50,
-            outerRadius: 150,
-            paddingAngle: 1,
-            startAngle: 0,
-            endAngle: 360,
-            cornerRadius: 10,
-            arcLabelMinAngle: 35,
-            highlightScope: { fade: 'global', highlight: 'item' },
-            data: data.voteOption.map(
-              (option, i) => {
-                return {
-                  id: i,
-                  label: option.content,
-                  value: option.voteAnswer?.length || 0,
-                };
+    <Stack gap={4}>
+      <Box>
+        <Button
+          onClick={() => {
+            history.back();
+          }}
+        >
+          이전으로
+        </Button>
+      </Box>
+      <Stack spacing={4} alignItems="center">
+        <Typography variant="h4" fontWeight={700}>
+          투표지: {data.title}
+        </Typography>
+        <Typography variant="h5" fontWeight={700}>
+          빈도
+        </Typography>
+        <PieChart
+          series={[
+            {
+              innerRadius: 50,
+              outerRadius: 150,
+              paddingAngle: 1,
+              startAngle: 0,
+              endAngle: 360,
+              cornerRadius: 10,
+              arcLabelMinAngle: 35,
+              highlightScope: { fade: 'global', highlight: 'item' },
+              data: data.voteOption.map(
+                (option, i) => {
+                  return {
+                    id: i,
+                    label: option.content,
+                    value: option.voteAnswer?.length || 0,
+                  };
+                },
+                [] as MakeOptional<PieValueType, 'id'>[],
+              ),
+              arcLabel(item) {
+                return item.label || 'unknown';
               },
-              [] as MakeOptional<PieValueType, 'id'>[],
-            ),
-            arcLabel(item) {
-              return item.label || 'unknown';
             },
-          },
-        ]}
-        width={500}
-        height={300}
-      />
+          ]}
+          width={500}
+          height={300}
+        />
+      </Stack>
     </Stack>
   );
 };

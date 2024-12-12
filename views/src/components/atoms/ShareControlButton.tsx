@@ -41,7 +41,7 @@ const ShareControlButton: React.FC<ShareControlButtonProps> = ({
     if (share) {
       navigator.clipboard
         .writeText(
-          `${BASE_CLIENT_URL}/share/?url=${encodeURIComponent(share.url)}`,
+          `${BASE_CLIENT_URL}/service/${name}/share/?url=${encodeURIComponent(share.url)}`,
         )
         .then(() => {
           setCopy(true);
@@ -50,7 +50,7 @@ const ShareControlButton: React.FC<ShareControlButtonProps> = ({
           }, 3000);
         });
     }
-  }, [share]);
+  }, [name, share]);
 
   const createPublicUrlMutation = useMutation({
     mutationKey: ['createPublicUrl'],
@@ -141,8 +141,8 @@ const ShareControlButton: React.FC<ShareControlButtonProps> = ({
           component={Link}
           size="small"
           color="info"
-          to={`${BASE_CLIENT_URL}/share/?url=${encodeURIComponent(share.url)}`}
-          label={`/share/?url=${encodeURIComponent(share.url)}`}
+          to={`${BASE_CLIENT_URL}/service/${name}/share/?url=${encodeURIComponent(share.url)}`}
+          label={`/service/share/?url=${encodeURIComponent(share.url)}`}
           sx={{
             cursor: 'pointer',
             whiteSpace: 'nowrap',

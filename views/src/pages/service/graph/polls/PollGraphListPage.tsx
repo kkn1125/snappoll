@@ -23,7 +23,7 @@ const PollGraphListPage: React.FC<PollGraphListPageProps> = () => {
     queryFn: getMyPolls,
   });
   const handleRedirect = (to: string) => {
-    navigate(`/graph/polls/${to}`);
+    navigate(`/service/graph/poll/${to}`);
   };
 
   const totalPage = useMemo(() => {

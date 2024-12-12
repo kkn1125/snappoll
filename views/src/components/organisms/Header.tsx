@@ -15,6 +15,7 @@ import {
   MenuItem,
   Stack,
   Toolbar,
+  Tooltip,
   Typography,
   useMediaQuery,
   useTheme,
@@ -33,24 +34,31 @@ const headerBgChangePoint = 100;
 
 const menuList = [
   { name: 'SnapPoll이란?', to: '/about', allow: ['guest', 'user'] },
-  { name: '설문조사', to: '/polls', allow: ['user'] },
-  { name: '투표', to: '/votes', allow: ['user'] },
+  { name: '서비스', to: '/service', allow: ['user'] },
+  // { name: '설문조사', to: '/polls', allow: ['user'] },
+  // { name: '투표', to: '/votes', allow: ['user'] },
   {
     name: (username?: string) => username,
-    to: '/profile',
+    to: '/user',
     allow: ['user'],
     icon: (username?: string, profileImage?: string) =>
       username && profileImage ? (
-        <Avatar
-          src={profileImage}
-          alt={username}
-          sx={{ width: 32, height: 32, mr: 1 }}
-        />
+        <Tooltip placement="bottom" title="사용자 정보">
+          <Avatar
+            src={profileImage}
+            alt={username}
+            sx={{
+              width: 40,
+              height: 40,
+              boxShadow: '2px 2px 5px 0 #00000056',
+            }}
+          />
+        </Tooltip>
       ) : (
         <DefaultProfile width={32} height={32} style={{ marginRight: 8 }} />
       ),
   },
-  { name: '회원가입/로그인', to: '/user/choice', allow: ['guest'] },
+  { name: '회원가입/로그인', to: '/auth', allow: ['guest'] },
   // { name: 'Login', to: '/user/login', allow: ['guest'] },
 ];
 
@@ -218,18 +226,23 @@ const Header: React.FC<HeaderProps> = ({ isCrew }) => {
                 .filter(({ allow }) =>
                   allow.includes(isCrew ? 'user' : 'guest'),
                 )
-                .map(({ name, to, icon }) => (
-                  <Button
-                    key={to}
-                    component={Link}
-                    size="large"
-                    color="inherit"
-                    to={to}
-                  >
-                    {icon?.(user?.username, profileImage)}
-                    {typeof name === 'string' ? name : name(user?.username)}
-                  </Button>
-                ))
+                .map(({ name, to, icon }) =>
+                  typeof name === 'string' ? (
+                    <Button
+                      key={to}
+                      component={Link}
+                      size="large"
+                      color="inherit"
+                      to={to}
+                    >
+                      {name}
+                    </Button>
+                  ) : (
+                    <IconButton key={to}>
+                      {icon?.(user?.username, profileImage)}
+                    </IconButton>
+                  ),
+                )
             )}
           </Stack>
         </Stack>

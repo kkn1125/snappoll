@@ -1,6 +1,6 @@
 import Notfound from '@pages/NotfoundPage';
-import SharePoll from '@pages/service/polls/share/SharePoll';
-import ShareVote from '@pages/service/votes/share/ShareVote';
+import SharePoll from '@pages/service/poll/share/SharePoll';
+import ShareVote from '@pages/service/vote/share/ShareVote';
 import { useSearchParams } from 'react-router-dom';
 
 interface SharePageProps {}

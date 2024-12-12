@@ -7,7 +7,7 @@ const SelectGraphPage: React.FC<SelectGraphPageProps> = () => {
   const navigate = useNavigate();
 
   const handleRedirect = (to: string) => {
-    navigate(`/graph/${to}s`);
+    navigate(`/service/graph/${to}`);
   };
 
   return (

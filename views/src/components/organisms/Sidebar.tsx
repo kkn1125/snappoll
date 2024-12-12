@@ -12,8 +12,8 @@ const Sidebar: React.FC<SidebarProps> = () => {
   const message = useRecoilValue(messageAtom);
 
   const paths = [
-    { name: '나의 설문지', path: '/polls/me', icon: <HistoryEduIcon /> },
-    { name: '나의 투표지', path: '/votes/me', icon: <HowToVoteIcon /> },
+    { name: '나의 설문지', path: '/service/poll/me', icon: <HistoryEduIcon /> },
+    { name: '나의 투표지', path: '/service/vote/me', icon: <HowToVoteIcon /> },
     // {
     //   name: '내가 응답한 설문지',
     //   path: '/polls/me/response',
@@ -24,7 +24,7 @@ const Sidebar: React.FC<SidebarProps> = () => {
     //   path: '/votes/me/response',
     //   icon: <HowToVoteIcon />,
     // },
-    { name: '통계보기', path: '/graph', icon: <StackedLineChartIcon /> },
+    { name: '통계보기', path: '/service/graph', icon: <StackedLineChartIcon /> },
     {
       name: '알림',
       path: '/notice',

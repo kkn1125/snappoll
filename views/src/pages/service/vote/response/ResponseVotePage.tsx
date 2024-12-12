@@ -1,12 +1,12 @@
-import { getPollResponse } from '@/apis/poll/response/getPollResponse';
-import { getPollResponseMe } from '@/apis/poll/response/getPollResponseMe';
-import { removeResponse } from '@/apis/poll/response/removeResponse';
+import { getVoteResponse } from '@/apis/vote/response/getVoteResponse';
+import { getVoteResponseMe } from '@/apis/vote/response/getVoteResponseMe';
+import { removeVoteResponse } from '@/apis/vote/response/removeVoteResponse';
 import { tokenAtom } from '@/recoils/token.atom';
 import { Message } from '@common/messages';
 import SkeletonResponseList from '@components/moleculars/SkeletonResponseList';
 import useModal from '@hooks/useModal';
-import { SnapPoll } from '@models/SnapPoll';
-import { SnapResponse } from '@models/SnapResponse';
+import { SnapVote } from '@models/SnapVote';
+import { SnapVoteResponse } from '@models/SnapVoteResponse';
 import DeleteIcon from '@mui/icons-material/Delete';
 import {
   Alert,
@@ -27,47 +27,47 @@ import {
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { formattedDate } from '@utils/formattedDate';
 import { validateExpired } from '@utils/validateExpired';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 
-interface ResponsePollPageProps {
+interface ResponseVotePageProps {
   me?: boolean;
 }
-const ResponsePollPage: React.FC<ResponsePollPageProps> = ({ me }) => {
+const ResponseVotePage: React.FC<ResponseVotePageProps> = ({ me }) => {
   const { user } = useRecoilValue(tokenAtom);
   const navigate = useNavigate();
-  const { openInteractiveModal } = useModal();
   const { id } = useParams();
+  const { openInteractiveModal } = useModal();
   const queryClient = useQueryClient();
   const [params, setParams] = useSearchParams({ page: '1' });
   const page = +(params.get('page') || 1);
 
   const { data, isLoading } = useQuery<{
-    poll: SnapPoll;
-    responses: SnapResponse[];
+    vote: SnapVote;
+    responses: SnapVoteResponse[];
     count: number;
   }>({
-    queryKey: ['pollResponses', id, page],
-    queryFn: () => (me ? getPollResponseMe(page) : getPollResponse(id, page)),
+    queryKey: ['voteResponse', id],
+    queryFn: () => (me ? getVoteResponseMe() : getVoteResponse(id)),
   });
   const total = data ? Math.ceil(data.count / 10) : 0;
 
   const removeMutation = useMutation({
     mutationKey: ['removeMutate'],
-    mutationFn: removeResponse,
+    mutationFn: removeVoteResponse,
     onSuccess(data, variables, context) {
-      queryClient.invalidateQueries({ queryKey: ['pollResponses'] });
+      queryClient.invalidateQueries({ queryKey: ['voteResponse'] });
     },
   });
 
-  const getTitle = useCallback((response: SnapResponse) => {
-    return response.poll?.title;
+  const getTitle = useCallback((response: SnapVoteResponse) => {
+    return response.vote?.title;
   }, []);
 
   const getUser = useCallback(
-    (response: SnapResponse) => {
-      return response.user
+    (response?: SnapVoteResponse) => {
+      return response?.user
         ? response.user.username === user?.username
           ? '나'
           : response.user.username
@@ -84,8 +84,8 @@ const ResponsePollPage: React.FC<ResponsePollPageProps> = ({ me }) => {
   }, []);
 
   const isExpired = useMemo(() => {
-    return validateExpired(data?.poll?.expiresAt);
-  }, [data?.poll?.expiresAt]);
+    return validateExpired(data?.vote?.expiresAt);
+  }, [data?.vote?.expiresAt]);
 
   if (isLoading) return <SkeletonResponseList />;
 
@@ -96,7 +96,7 @@ const ResponsePollPage: React.FC<ResponsePollPageProps> = ({ me }) => {
         {isExpired && (
           <Alert severity="warning">
             <AlertTitle>안내</AlertTitle>
-            마감된 설문입니다.
+            마감된 투표입니다.
           </Alert>
         )}
 
@@ -118,13 +118,13 @@ const ResponsePollPage: React.FC<ResponsePollPageProps> = ({ me }) => {
               <ListItemButton
                 onClick={() =>
                   navigate(
-                    `/polls/${me ? response.pollId : id}/response/${response.id}`,
+                    `/service/vote/${me ? response.voteId : id}/response/${response.id}`,
                   )
                 }
               >
-                <Stack direction="row" gap={3} flexWrap="wrap">
-                  <Typography>{i + 1 + (page - 1) * 10}.</Typography>
-                  <Typography flex={1}>{getTitle(response)}</Typography>
+                <Stack direction="row" gap={3}>
+                  <Typography>{i + 1}.</Typography>
+                  <Typography>{getTitle(response)}</Typography>
                   <Typography>{getUser(response)}</Typography>
                   <Typography>{formattedDate(response.createdAt)}</Typography>
                 </Stack>
@@ -137,8 +137,8 @@ const ResponsePollPage: React.FC<ResponsePollPageProps> = ({ me }) => {
               <ListItemButton>
                 <ListItemText>
                   {me
-                    ? '아직 응답한 설문이 없습니다.'
-                    : '아직 설문조사에 참여한 사람이 없습니다.'}
+                    ? '아직 응답한 투표가 없습니다.'
+                    : '아직 투표에 참여한 사람이 없습니다.'}
                 </ListItemText>
               </ListItemButton>
             </ListItem>
@@ -177,4 +177,4 @@ const ResponsePollPage: React.FC<ResponsePollPageProps> = ({ me }) => {
   );
 };
 
-export default ResponsePollPage;
+export default ResponseVotePage;

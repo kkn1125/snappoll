@@ -12,19 +12,12 @@ import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import LoadingScreenProvider from '@providers/LoadingScreenProvider.js';
 import ModalProvider from '@providers/ModalProvider.js';
+import AppRoot from '@routes/AppRoot.js';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import 'dayjs/locale/ko';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import { RecoilRoot } from 'recoil';
-import AppRouter from './routes/AppRouter.js';
-
-// if (typeof window !== 'undefined') {
-//   scan({
-//     enabled: import.meta.env.DEV,
-//     log: import.meta.env.DEV,
-//   });
-// }
 
 const skyColor = '#98cfff';
 const skyColorMain = alpha(skyColor, 0.7);
@@ -84,7 +77,7 @@ createRoot(document.getElementById('root')!).render(
               <LoadingScreenProvider>
                 <ModalProvider>
                   <CssBaseline />
-                  <AppRouter />
+                  <AppRoot />
                   <Modal />
                 </ModalProvider>
               </LoadingScreenProvider>

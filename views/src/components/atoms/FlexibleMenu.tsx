@@ -1,5 +1,4 @@
 import { sidebarAtom } from '@/recoils/sidebar.atom';
-import InboxIcon from '@mui/icons-material/Inbox';
 import {
   Badge,
   Fade,
@@ -13,7 +12,7 @@ import {
 } from '@mui/material';
 import { memo, useCallback, useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState } from 'recoil';
 
 interface FlexibleMenuProps {
   name: string;
@@ -37,8 +36,8 @@ const FlexibleMenu: React.FC<FlexibleMenuProps> = ({
   const locate = useLocation();
 
   const highlight = useMemo(() => {
-    const [first] = to.split('/').filter(($) => $);
-    const current = '/' + first;
+    const paths = to.split('/').filter(($) => $).slice(0,2);
+    const current = '/' + paths.join('/');
     return locate.pathname.startsWith(current);
   }, [locate.pathname, to]);
 

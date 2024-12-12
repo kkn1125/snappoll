@@ -7,6 +7,7 @@ import { Alert, AlertTitle, Stack, Typography } from '@mui/material';
 import { grey } from '@mui/material/colors';
 import { formattedDate } from '@utils/formattedDate';
 import { printDateOrNot } from '@utils/printDateOrNot';
+import { useLocation } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 
 interface PollLayoutProps {
@@ -20,6 +21,8 @@ const PollLayout: React.FC<PollLayoutProps> = ({
   refetchPoll,
 }) => {
   const { user } = useRecoilValue(tokenAtom);
+  const locate = useLocation();
+  const isShare = locate.pathname.startsWith('/service/poll/share');
 
   return (
     <Stack gap={1}>
@@ -68,7 +71,9 @@ const PollLayout: React.FC<PollLayoutProps> = ({
           >
             (문항 {poll.question.length}개)
           </Typography>
-          <ShareControlButton data={poll} user={user} refetch={refetchPoll} />
+          {!isShare && (
+            <ShareControlButton data={poll} user={user} refetch={refetchPoll} />
+          )}
         </Stack>
       </Stack>
 

@@ -1,7 +1,6 @@
 import { createVote } from '@/apis/vote/create.vote';
 import { updateVote } from '@/apis/vote/updateVote';
 import { Action } from '@/models/Action';
-import { previousAtom } from '@/recoils/previous.atom';
 import { snapVoteAtom } from '@/recoils/snapVote.atom';
 import { Message } from '@common/messages';
 import CreateVoteOptionItem from '@components/atoms/CreateVoteOptionItem';
@@ -34,13 +33,13 @@ import {
   useState,
 } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState } from 'recoil';
 
 interface CreateVotePageProps {
   edit?: boolean;
 }
 const CreateVotePage: React.FC<CreateVotePageProps> = ({ edit = false }) => {
-  const previous = useRecoilValue(previousAtom);
+  // const previous = useRecoilValue(previousAtom);
   const [snapVote, setSnapVote] = useRecoilState(snapVoteAtom);
   const { openModal, openInteractiveModal } = useModal();
   const { user, logoutToken } = useToken();
@@ -52,7 +51,7 @@ const CreateVotePage: React.FC<CreateVotePageProps> = ({ edit = false }) => {
     mutationFn: createVote,
     onSuccess(data, variables, context) {
       setSnapVote(new SnapVote());
-      navigate(previous || '/');
+      navigate('/service/vote');
     },
     onError(error: AxiosError, variables, context) {
       if (error.response?.status === 401) {
@@ -68,7 +67,7 @@ const CreateVotePage: React.FC<CreateVotePageProps> = ({ edit = false }) => {
     mutationFn: updateVote,
     onSuccess(data, variables, context) {
       setSnapVote(new SnapVote());
-      navigate(previous || '/');
+      navigate('/service/vote');
     },
     onError(error: AxiosError, variables, context) {
       if (error.response?.status === 401) {
@@ -139,7 +138,7 @@ const CreateVotePage: React.FC<CreateVotePageProps> = ({ edit = false }) => {
         <Stack direction="row">
           <Button
             component={Link}
-            to={previous || '/'}
+            to={'/service/vote'}
             color="inherit"
             variant="contained"
             reloadDocument

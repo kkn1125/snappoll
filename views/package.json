@@ -1,7 +1,7 @@
 {
   "name": "realtime-poll-view",
   "private": true,
-  "version": "0.0.19",
+  "version": "0.0.20",
   "type": "module",
   "author": {
     "name": "devkimson",
@@ -12,6 +12,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "test": "vitest",
     "lint": "eslint .",
     "preview": "vite preview"
   },
@@ -24,6 +25,7 @@
     "@mui/x-date-pickers": "^7.22.3",
     "@tanstack/react-query": "^5.61.0",
     "axios": "^1.7.7",
+    "chalk": "^4.1.2",
     "dayjs": "^1.11.13",
     "react": "^18.3.1",
     "react-cookie": "^7.2.2",
@@ -56,6 +58,6 @@
     "vite": "^5.4.10",
     "vite-plugin-svgr": "^4.3.0",
     "vite-tsconfig-paths": "^5.1.3",
-    "vitest": "^2.1.5"
+    "vitest": "^2.1.8"
   }
 }

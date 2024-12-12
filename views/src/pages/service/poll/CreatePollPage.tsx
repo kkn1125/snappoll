@@ -1,7 +1,6 @@
 import { createPoll } from '@/apis/poll/create.poll';
 import { updatePoll } from '@/apis/poll/updatePoll';
 import { Action } from '@/models/Action';
-import { previousAtom } from '@/recoils/previous.atom';
 import { snapPollAtom } from '@/recoils/snapPoll.atom';
 import { Message } from '@common/messages';
 import CreatePollForm from '@components/moleculars/CreatePollForm';
@@ -14,38 +13,27 @@ import { SnapPollQuestion } from '@models/SnapPollQuestion';
 import AddBoxIcon from '@mui/icons-material/AddBox';
 import SaveIcon from '@mui/icons-material/Save';
 import {
-  Box,
   Button,
   Container,
   Divider,
-  IconButton,
   SpeedDial,
   SpeedDialAction,
   SpeedDialIcon,
   Stack,
-  SvgIcon,
   Toolbar,
-  Tooltip,
 } from '@mui/material';
 import { useMutation } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
-import {
-  FormEvent,
-  memo,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import { FormEvent, memo, useCallback, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState } from 'recoil';
 
 interface CreatePollPageProps {
   edit?: boolean;
 }
 const CreatePollPage: React.FC<CreatePollPageProps> = ({ edit = false }) => {
   const { user, logoutToken } = useToken();
-  const previous = useRecoilValue(previousAtom);
+  // const previous = useRecoilValue(previousAtom);
   const { openInteractiveModal } = useModal();
   const navigate = useNavigate();
   const [snapPoll, setSnapPoll] = useRecoilState(snapPollAtom);
@@ -56,7 +44,7 @@ const CreatePollPage: React.FC<CreatePollPageProps> = ({ edit = false }) => {
     mutationFn: createPoll,
     onSuccess(data, variables, context) {
       setSnapPoll(new SnapPoll());
-      navigate(previous || '/');
+      navigate('/service/poll');
     },
     onError(error: AxiosError, variables, context) {
       if (error.response?.status === 401) {
@@ -71,7 +59,7 @@ const CreatePollPage: React.FC<CreatePollPageProps> = ({ edit = false }) => {
     mutationFn: updatePoll,
     onSuccess(data, variables, context) {
       setSnapPoll(new SnapPoll());
-      navigate(previous || '/');
+      navigate('/service/poll');
     },
     onError(error: AxiosError, variables, context) {
       if (error.response?.status === 401) {
@@ -151,7 +139,7 @@ const CreatePollPage: React.FC<CreatePollPageProps> = ({ edit = false }) => {
         <Stack direction="row">
           <Button
             component={Link}
-            to={previous || '/'}
+            to={'/service/poll'}
             reloadDocument
             variant="contained"
             color="inherit"

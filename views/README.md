@@ -2,6 +2,14 @@
 
 실시간 설문조사 프론트엔드
 
+- 2024-12-13
+  - add
+    - vitest 설치
+  - fix
+    - pages 파일 구조 재설계
+    - pages 경로 재설계
+    - pages 파일명 *Page로 통일
+    - redirect path 전체 수정
 - 2024-12-12
   - add
     - 비밀번호 찾기 기능 구현

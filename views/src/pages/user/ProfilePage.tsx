@@ -326,7 +326,7 @@ const ProfilePage: React.FC<ProfilePageProps> = () => {
                 </Button>
                 <Button
                   component={Link}
-                  to="/profile/change-pass"
+                  to="/user/password"
                   variant="outlined"
                   color="warning"
                   size="large"

@@ -7,7 +7,7 @@ const MyResponsePage: React.FC<MyResponsePageProps> = () => {
     <Stack gap={3}>
       <Button
         component={NavLink}
-        to="/service/poll/me"
+        to="/service/poll/me/response"
         variant="outlined"
         color="inherit"
         fullWidth
@@ -17,7 +17,7 @@ const MyResponsePage: React.FC<MyResponsePageProps> = () => {
       </Button>
       <Button
         component={NavLink}
-        to="/service/vote/me"
+        to="/service/vote/me/response"
         variant="outlined"
         color="inherit"
         fullWidth

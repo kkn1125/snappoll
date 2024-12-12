@@ -94,7 +94,7 @@ function ListDataItem<T extends SnapPoll | SnapVote>({
             component={Link}
             variant="contained"
             size="large"
-            to={`/${name}s/new`}
+            to={`/service/${name}/new`}
           >
             등록하기
           </Button>
@@ -102,7 +102,7 @@ function ListDataItem<T extends SnapPoll | SnapVote>({
         {user && (
           <Button
             component={Link}
-            to={`/${name}s/me/response`}
+            to={`/service/${name}/me/response`}
             variant="contained"
             color="secondary"
           >
@@ -170,7 +170,7 @@ function ListDataItem<T extends SnapPoll | SnapVote>({
               }}
             >
               <ListItemButton
-                onClick={() => navigate(`/${name}s/${data.id}`)}
+                onClick={() => navigate(`/service/${name}/${data.id}`)}
                 sx={{
                   px: '0 !important',
                 }}
