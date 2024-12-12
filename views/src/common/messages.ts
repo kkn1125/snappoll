@@ -2,12 +2,24 @@ export const CustomMessage = {
   Login: { title: '안내', content: '로그인이 필요합니다.' },
   Logout: { title: '안내', content: '로그아웃 되었습니다.' },
   Token: { title: '안내', content: '토큰이 만료되었습니다.' },
+  SuccessChangeProfile: {
+    title: '안내',
+    content: ['개인정보를 변경했습니다.'],
+  },
   SuccessResponse: {
     title: '안내',
     content: [
       '응답을 성공적으로 제출했습니다. 확인을 누르면 사이트로 이동, 닫기를 누르면 창이 종료됩니다.',
       '사이트로 이동하시겠습니까?',
     ],
+  },
+  SuccessChangePassword: {
+    title: '안내',
+    content: ['비밀번호를 변경하였습니다.'],
+  },
+  CheckYourEmail: {
+    title: '안내',
+    content: '메일을 전송하였습니다. 입력하신 이메일의 수신함을 확인해주세요.',
   },
   CreateShareUrl: { title: '안내', content: '공개 URL이 생성되었습니다.' },
   ResumeShareUrl: { title: '안내', content: '공개 URL이 복구되었습니다.' },
@@ -43,6 +55,9 @@ export const Require = {
 export type Require = (typeof Require)[keyof typeof Require];
 
 export const Info = {
+  CheckYourEmail: CustomMessage.CheckYourEmail,
+  SuccessChangeProfile: CustomMessage.SuccessChangeProfile,
+  SuccessChangePassword: CustomMessage.SuccessChangePassword,
   SuccessResponse: CustomMessage.SuccessResponse,
   CreateShareUrl: CustomMessage.CreateShareUrl,
   ResumeShareUrl: CustomMessage.ResumeShareUrl,

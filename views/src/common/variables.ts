@@ -33,7 +33,7 @@ export { default as DefaultProfile } from '@assets/illustrations/default_profile
 
 /* disallow */
 export const guestDisallowPaths =
-  /\/user\/profile|\/(votes|polls|notice|graph)\/?(.*)/;
+  /\/profile\/?(.*)|\/(votes|polls|notice|graph)\/?(.*)/;
 export const userDisallowPaths = /\/user\/(choice|login|signup)\/?(.*)/;
 
 export const scrollSize = 5;

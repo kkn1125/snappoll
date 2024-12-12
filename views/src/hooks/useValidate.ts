@@ -54,6 +54,34 @@ function useValidate<T extends { [k in string]: any }>(data: T) {
             });
           }
         }
+        if ('currentPassword' === key) {
+          if (value === '') {
+            Object.assign(validateErrors, { currentPassword: '필수입니다.' });
+          } else {
+            if (type !== 'login') {
+              if (
+                value.match(
+                  /^((?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*./?\-+])[A-Za-z0-9!@#$%^&*./?\-+]{5,12})$/g,
+                ) === null
+              ) {
+                Object.assign(validateErrors, {
+                  currentPassword: Message.Wrong.PasswordFormat,
+                });
+              } else if (
+                ((value.match(/[!@#$%^&*./?\-+]/g) as Array<string> | null)
+                  ?.length || 0) < 1
+              ) {
+                Object.assign(validateErrors, {
+                  currentPassword: Message.Wrong.PasswordFormat,
+                });
+              } else if (value.length < 5 || value.length > 12) {
+                Object.assign(validateErrors, {
+                  currentPassword: Message.Wrong.Password,
+                });
+              }
+            }
+          }
+        }
         if ('password' === key) {
           if (value === '') {
             Object.assign(validateErrors, { password: '필수입니다.' });

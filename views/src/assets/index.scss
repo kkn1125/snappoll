@@ -1,4 +1,53 @@
 @font-face {
+  font-family: 'NotoSans';
+  src:
+    // url('/fonts/notosans/NotoSansKR-VariableFont_wght.woff2') format('woff2'),
+    url('/fonts/notosans/NotoSansKR-VariableFont_wght.woff') format('woff'),
+    url('/fonts/notosans/NotoSansKR-VariableFont_wght.ttf') format('truetype');
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Nanum';
+  src:
+    url('/fonts/nanum/NanumBarunGothicBold.woff2') format('woff2'),
+    url('/fonts/nanum/NanumBarunGothicBold.woff') format('woff'),
+    url('/fonts/nanum/NanumBarunGothicBold.ttf') format('truetype');
+  font-weight: bold;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Nanum';
+  src:
+    url('/fonts/nanum/NanumBarunGothic.woff2') format('woff2'),
+    url('/fonts/nanum/NanumBarunGothic.woff') format('woff'),
+    url('/fonts/nanum/NanumBarunGothic.ttf') format('truetype');
+  font-weight: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Nanum';
+  src:
+    url('/fonts/nanum/NanumBarunGothicLight.woff2') format('woff2'),
+    url('/fonts/nanum/NanumBarunGothicLight.woff') format('woff'),
+    url('/fonts/nanum/NanumBarunGothicLight.ttf') format('truetype');
+  font-weight: lighter;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Nanum';
+  src:
+    url('/fonts/nanum/NanumBarunGothicUltraLight.woff2') format('woff2'),
+    url('/fonts/nanum/NanumBarunGothicUltraLight.woff') format('woff'),
+    url('/fonts/nanum/NanumBarunGothicUltraLight.ttf') format('truetype');
+  font-weight: 100;
+  font-display: swap;
+}
+
+@font-face {
   font-family: 'Montserrat';
   src:
     url('/fonts/montserrat/Montserrat-BoldItalic.woff2') format('woff2'),
@@ -216,6 +265,10 @@
   font-display: swap;
 }
 
+:root {
+  font-weight: 500;
+}
+
 html,
 body,
 #root {
@@ -227,12 +280,17 @@ body,
   user-select: none;
   -webkit-font-smoothing: antialiased;
   text-size-adjust: 100%;
+  font-family: 'NotoSans', 'Nanum', Arial, Helvetica, sans-serif;
   // color-scheme: dark;
 }
 
 [disabled] {
   cursor: not-allowed !important;
   pointer-events: all !important;
+}
+
+.font-nanum {
+  font-family: 'Nanum', Arial, Helvetica, sans-serif !important;
 }
 
 .font-maru {

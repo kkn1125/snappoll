@@ -37,7 +37,7 @@ const menuList = [
   { name: '투표', to: '/votes', allow: ['user'] },
   {
     name: (username?: string) => username,
-    to: '/user/profile',
+    to: '/profile',
     allow: ['user'],
     icon: (username?: string, profileImage?: string) =>
       username && profileImage ? (

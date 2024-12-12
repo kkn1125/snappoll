@@ -1,5 +1,6 @@
 import { logout } from '@/apis/logout';
 import { removeAccount } from '@/apis/removeAccount';
+import { updateProfile } from '@/apis/updateProfile';
 import { uploadProfileImage } from '@/apis/uploadProfileImage';
 import { Message } from '@common/messages';
 import { defaultProfile } from '@common/variables';
@@ -29,13 +30,12 @@ import {
   useEffect,
   useState,
 } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 interface ProfileProps {}
 const Profile: React.FC<ProfileProps> = () => {
   const { user, logoutToken, refetchGetMe } = useToken();
   const [uploadFile, setUploadFile] = useState<File | null>(null);
-  const navigate = useNavigate();
   const { openModal, openInteractiveModal } = useModal();
   const [current, setCurrent] = useState<
     Partial<
@@ -43,6 +43,27 @@ const Profile: React.FC<ProfileProps> = () => {
     >
   >({});
   const [image, setImage] = useState('');
+
+  const updateProfileMutation = useMutation({
+    mutationKey: ['updateProfile'],
+    mutationFn: updateProfile,
+    onSuccess(data, variables, context) {
+      openModal(Message.Info.SuccessChangeProfile);
+      refetchGetMe();
+    },
+    onError(error: AxiosError, variables, context) {
+      if (
+        error.response &&
+        error.response.data &&
+        error.response.data instanceof Object &&
+        'message' in error.response.data
+      )
+        openModal({
+          title: '안내',
+          content: error.response.data.message as string,
+        });
+    },
+  });
 
   const profileUploadMutate = useMutation({
     mutationKey: ['uploadProfile'],
@@ -125,8 +146,14 @@ const Profile: React.FC<ProfileProps> = () => {
   const handleSubmit = useCallback(
     (e: FormEvent) => {
       e.preventDefault();
+      const id = user?.id;
+      const username = current.username;
+      if (!id || !username) return;
       openInteractiveModal(Message.Single.Save, () => {
-        // console.log(current);
+        updateProfileMutation.mutate({
+          id: id,
+          username,
+        });
       });
       return false;
     },
@@ -296,6 +323,15 @@ const Profile: React.FC<ProfileProps> = () => {
             </Stack> */}
                 <Button type="submit" variant="contained" size="large">
                   정보 수정
+                </Button>
+                <Button
+                  component={Link}
+                  to="/profile/change-pass"
+                  variant="outlined"
+                  color="warning"
+                  size="large"
+                >
+                  비밀번호 변경
                 </Button>
                 <Divider />
                 <Button

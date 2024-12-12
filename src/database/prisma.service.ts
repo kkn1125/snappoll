@@ -2,15 +2,20 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PrismaClient } from '@prisma/client';
 import * as CryptoJS from 'crypto-js';
+import * as crypto from 'crypto';
 
 @Injectable()
 export class PrismaService extends PrismaClient implements OnModuleInit {
   constructor(private readonly configService: ConfigService) {
-    super();
+    super({ log: ['query', 'info'] });
   }
 
   async onModuleInit() {
     await this.$connect();
+  }
+
+  randomHex() {
+    return crypto.randomBytes(10).toString('hex');
   }
 
   encryptPassword(originalPassword: string) {

@@ -4,5 +4,16 @@ import axios from 'axios';
 export const snapApi = axios.create({
   baseURL: BASE_URL,
   withCredentials: true,
-  timeout: 1000,
+  timeout: 5000,
 });
+
+snapApi.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  (error) => {
+    console.log(error);
+
+    return Promise.reject(error);
+  },
+);

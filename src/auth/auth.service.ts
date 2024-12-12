@@ -14,12 +14,138 @@ import { firstValueFrom } from 'rxjs';
 
 @Injectable()
 export class AuthService {
+  style = `
+    <style>
+      html, body {
+        margin: 0;
+        height: 100%;
+        overflow: hidden;
+      }
+      .header {
+        font-size: 1.5rem;
+        margin-bottom: 1em;
+      }
+      button {
+        border-radius: 0.3rem;
+        border-width: 1px;
+        border-color: #5193cf;
+        border-style: solid;
+        transition: all 150ms ease-in-out;
+        box-sizing: border-box;
+        background: transparent;
+        padding: 0.3rem 0.8rem;
+        font-weight: 700;
+        font-size: 1rem;
+        &:hover {
+          cursor: pointer;
+          border-color: #ffffff00;
+          background: #5193cf;
+          color: white;
+        }
+      }
+      .wrap {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+      }
+    </style>`;
+
   constructor(
     private readonly mailer: MailerService,
     public readonly prisma: PrismaService,
     private readonly configService: ConfigService,
     private readonly httpService: HttpService,
   ) {}
+
+  async initializeUserPassword(email: string) {
+    const special = [
+      '!',
+      '@',
+      '#',
+      '$',
+      '%',
+      '^',
+      '&',
+      '*',
+      '.',
+      '/',
+      '?',
+      '\\',
+      '-',
+      '+',
+    ];
+
+    const randomSpecial = special[Math.floor(Math.random() * special.length)];
+    const random = Math.floor(Math.random() * (90 - 65 + 1)) + 65;
+    const alphabet = String.fromCharCode(random);
+
+    const hex = this.prisma.randomHex();
+
+    const hashedPassword = hex.slice(0, 10) + alphabet + randomSpecial;
+    const password = this.prisma.encryptPassword(hashedPassword);
+    await this.prisma.user.update({
+      where: { email },
+      data: { password },
+    });
+    return hashedPassword;
+  }
+
+  async sendInitializeConfirmMail(email: string) {
+    const user = await this.prisma.user.findUnique({ where: { email } });
+
+    if (!user) {
+      throw new BadRequestException('계정을 찾을 수 없습니다.');
+    }
+
+    console.log('to:', email);
+
+    const address = this.configService.get('email.ADDRESS');
+    const mode = this.configService.get('common.MODE');
+
+    const clientDomain =
+      mode === 'development'
+        ? 'http://localhost:5000'
+        : 'https://snappoll.kro.kr';
+    const domain =
+      mode === 'development'
+        ? 'http://localhost:8080'
+        : 'https://snappoll.kro.kr';
+
+    console.log('admin email', address);
+
+    const token = this.prisma.encryptPassword(email);
+
+    const message = {
+      from: `SnapPollHelper <${address}>`,
+      to: `${email}`,
+      subject: 'SnapPoll 계정 비밀번호 초기화 안내',
+      text: '확인해주세요.',
+      html: `<div>
+        <img src="${clientDomain}/logo/original.png" alt="snappoll-logo" width="50" height="50" />
+        <h2>SnapPoll 계정 비밀번호 초기화</h2>
+        <p>계정 비밀번호 초기화 후 로그인하여 프로필 > 비밀번호 변경으로 이동하여 자신의 비밀번호로 변경해주시기 바랍니다. 본인에 의한 확인 메일이 아닌 경우, 아래 메일로 문의해주세요.</p>
+
+        <form method="post" action="${domain}/api/auth/init/confirm">
+          <input type="hidden" name="token" value="${token}" />
+          <input type="hidden" name="domain" value="snappollhelper" />
+          <button type="submit">확인</button>
+        </form>
+        
+        <a href="mailto:devkimsonhelper@gmail.com">devkimsonhelper@gmail.com</a>
+      </div>`,
+    } as Mail.Options;
+
+    const result = await this.mailer.sendConfirmMail(message);
+
+    console.log(result);
+
+    console.log(`send email to ${email}`);
+
+    return token;
+  }
 
   async getKakaoLoginToken(code: string) {
     try {
@@ -83,6 +209,10 @@ export class AuthService {
     const address = this.configService.get('email.ADDRESS');
     const mode = this.configService.get('common.MODE');
 
+    const clientDomain =
+      mode === 'development'
+        ? 'http://localhost:5000'
+        : 'https://snappoll.kro.kr';
     const domain =
       mode === 'development'
         ? 'http://localhost:8080'
@@ -98,6 +228,7 @@ export class AuthService {
       subject: 'SnapPoll 이메일 확인 요청',
       text: '확인해주세요.',
       html: `<div>
+        <img src="${clientDomain}/logo/original.png" alt="snappoll-logo" width="50" height="50" />
         <h2>이메일 본인인증</h2>
         <p>본인인증을 위한 메일입니다. 본인에 의한 확인 메일이 아닌 경우, 아래 메일로 문의해주세요.</p>
 

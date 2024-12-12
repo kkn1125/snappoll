@@ -38,6 +38,12 @@ const darkTheme = createTheme({
     MuiTypography: {
       defaultProps: {
         component: 'div',
+        fontWeight: 700,
+      },
+    },
+    MuiButton: {
+      defaultProps: {
+        sx: { fontWeight: 700 },
       },
     },
   },
@@ -51,7 +57,7 @@ const darkTheme = createTheme({
     },
   },
   typography: {
-    fontFamily: "'Montserrat', 'moneyg', 'Maruburi'",
+    fontFamily: "'NotoSans', 'Nanum', 'Montserrat', 'moneyg', 'Maruburi'",
   },
 });
 

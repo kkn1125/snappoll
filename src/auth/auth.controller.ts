@@ -1,5 +1,6 @@
 import { CLIENT_DOMAIN, CURRENT_DOMAIN } from '@common/variables';
 import {
+  BadRequestException,
   Body,
   Controller,
   Get,
@@ -27,8 +28,107 @@ export class AuthController {
     private readonly configService: ConfigService,
   ) {}
 
+  @Post('init')
+  async initializeUserPasswordFromEmail(
+    @Body() data: { email: string },
+    @Res() res: Response,
+  ) {
+    const mapper = this.batchService.mapper;
+    const token = await this.authService.sendInitializeConfirmMail(data.email);
+
+    const response = await new Promise<{ token: string } | boolean>(
+      (resolve) => {
+        mapper.set(token, { start: Date.now(), email: data.email, resolve });
+      },
+    );
+
+    if (response && response instanceof Object && 'token' in response) {
+      this.batchService.mapper.delete(response.token);
+    }
+
+    res.json({
+      ok: !!response,
+    });
+  }
+
+  @Post('init/confirm')
+  async confirmInitializeUserPasswordFromEmail(
+    @Body() data: any,
+    @Res() res: Response,
+  ) {
+    const mapper = this.batchService.mapper.get(data.token);
+
+    if (!mapper) {
+      res.send(`
+        ${this.authService.style}
+        <div class="wrap">
+          <h3>초기화 확인 시간이 만료되었습니다. 다시 시도해주세요. -100</h3>
+          <button onclick="window.close()">닫기</button>
+        </div>
+      `);
+      return;
+    }
+
+    const { resolve, email, start, expired } = mapper;
+
+    const gap = Date.now() - start;
+    const expiresAt = gap > this.batchService.cacheTime;
+
+    const compareToken = this.authService.prisma.encryptPassword(email);
+    // console.log(compareToken, data.token, email);
+    const matched = compareToken === data.token;
+    const has = !!resolve;
+
+    if (expired || expiresAt) {
+      this.batchService.mapper.delete(data.token);
+
+      res.send(`
+          ${this.authService.style}
+          <div class="wrap">
+            <h3>초기화 확인 시간이 만료되었습니다. 다시 시도해주세요. -101</h3>
+            <button onclick="window.close()">닫기</button>
+          </div>
+        `);
+      return;
+    }
+
+    if (has && matched) {
+      resolve(data);
+
+      const hashedPassword =
+        await this.authService.initializeUserPassword(email);
+
+      res.send(`
+          ${this.authService.style}
+          <div class="wrap">
+            <h3>${email}님의 계정이 확인되었습니다.</h3>
+            <h5>페이지로 돌아가 남은 과정을 진행해주세요.</h5>
+            <h5>발급된 비밀번호는 <strong>${hashedPassword}</strong> 입니다.</h5>
+            <button onclick="window.close()">닫기</button>
+          </div>
+        `);
+    } else {
+      resolve(false);
+      res.send(`
+          ${this.authService.style}
+          <div class="wrap">
+            <h3>초기화 확인 시간이 만료되었습니다. 다시 시도해주세요. -102</h3>
+            <button onclick="window.close()">닫기</button>
+          </div>
+        `);
+    }
+  }
+
+  @Get('')
   @Get('check/email/:email')
-  async checkEmail(@Res() res: Response, @Param('email') email: string) {
+  async checkEmail(
+    @Res() res: Response,
+    @Param('email') email: string,
+    @Param('domain') domain: string,
+  ) {
+    if (!domain || domain !== 'snappollhelper') {
+      throw new BadRequestException('잘못된 요청입니다.');
+    }
     const token = await this.authService.checkEmail(email);
 
     const data = await new Promise<{ token: string } | boolean>((resolve) =>
@@ -50,50 +150,11 @@ export class AuthController {
 
   @Post('validate')
   validateEmail(@Body() data: any, @Res() res: Response) {
-    const style = `
-    <style>
-      html, body {
-        margin: 0;
-        height: 100%;
-        overflow: hidden;
-      }
-      .header {
-        font-size: 1.5rem;
-        margin-bottom: 1em;
-      }
-      button {
-        border-radius: 0.3rem;
-        border-width: 1px;
-        border-color: #5193cf;
-        border-style: solid;
-        transition: all 150ms ease-in-out;
-        box-sizing: border-box;
-        background: transparent;
-        padding: 0.3rem 0.8rem;
-        font-weight: 700;
-        font-size: 1rem;
-        &:hover {
-          cursor: pointer;
-          border-color: #ffffff00;
-          background: #5193cf;
-          color: white;
-        }
-      }
-      .wrap {
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-        justify-content: center;
-        align-items: center;
-        height: 100%;
-      }
-    </style>`;
-
     const mapper = this.batchService.mapper.get(data.token);
 
     if (!mapper) {
       res.send(`
-        ${style}
+        ${this.authService.style}
         <div class="wrap">
           <h3>존재하지 않는 토큰입니다.</h3>
           <button onclick="window.close()">닫기</button>
@@ -116,7 +177,7 @@ export class AuthController {
       this.batchService.mapper.delete(data.token);
 
       res.send(`
-          ${style}
+          ${this.authService.style}
           <div class="wrap">
             <h3>토큰 유효기간이 만료되었습니다.</h3>
             <button onclick="window.close()">닫기</button>
@@ -128,7 +189,7 @@ export class AuthController {
     if (has && matched) {
       resolve(data);
       res.send(`
-          ${style}
+          ${this.authService.style}
           <div class="wrap">
             <h3>${email}님의 계정이 확인되었습니다.</h3>
             <h5>페이지로 돌아가 남은 과정을 진행해주세요.</h5>
@@ -138,7 +199,7 @@ export class AuthController {
     } else {
       resolve(false);
       res.send(`
-          ${style}
+          ${this.authService.style}
           <div class="wrap">
             <h3>잘못된 토큰 형식입니다.</h3>
             <button onclick="window.close()">닫기</button>

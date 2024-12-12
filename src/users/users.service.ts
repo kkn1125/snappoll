@@ -1,7 +1,12 @@
 import { PrismaService } from '@database/prisma.service';
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { UpdateUserPasswordDto } from './dto/update-user-password.dto';
 
 @Injectable()
 export class UsersService {
@@ -58,13 +63,13 @@ export class UsersService {
 
   findAll() {
     return this.prisma.user.findMany({
-      where: { deletedAt: { not: null } },
+      where: { deletedAt: null },
     });
   }
 
   findOne(id: string) {
     return this.prisma.user.findUnique({
-      where: { id, deletedAt: { not: null } },
+      where: { id, deletedAt: null },
     });
   }
 
@@ -94,9 +99,42 @@ export class UsersService {
   }
 
   update(id: string, updateUserDto: UpdateUserDto) {
+    const { username } = updateUserDto;
     return this.prisma.user.update({
-      where: { id, deletedAt: { not: null } },
-      data: updateUserDto,
+      where: { id, deletedAt: null },
+      data: {
+        username,
+      },
+    });
+  }
+
+  async updatePassword(
+    id: string,
+    currentPassword: string,
+    updateUserDto: UpdateUserPasswordDto,
+  ) {
+    const user = await this.prisma.user.findUnique({ where: { id } });
+
+    const encryptedCurrentPassword =
+      this.prisma.encryptPassword(currentPassword);
+
+    console.log('currentPassword:', currentPassword);
+
+    if (user.password !== encryptedCurrentPassword) {
+      throw new BadRequestException(
+        '잘못된 정보입니다. 비밀번호를 확인해주세요.',
+      );
+    }
+
+    const encryptedPassword = this.prisma.encryptPassword(
+      updateUserDto.password,
+    );
+    console.log(id, encryptedPassword);
+    return this.prisma.user.update({
+      where: { id, deletedAt: null },
+      data: {
+        password: encryptedPassword,
+      },
     });
   }
 

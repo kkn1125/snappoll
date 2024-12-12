@@ -1,5 +1,6 @@
 import { RoleGuard } from '@/auth/role.guard';
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -15,6 +16,7 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Request } from 'express';
 import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserPasswordDto } from './dto/update-user-password.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersService } from './users.service';
 
@@ -60,6 +62,19 @@ export class UsersController {
   @Put(':id')
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.usersService.update(id, updateUserDto);
+  }
+
+  @UseGuards(RoleGuard)
+  @Put(':id/password')
+  updatePassword(
+    @Param('id') id: string,
+    @Body('currentPassword') currentPassword: string,
+    @Body() updateUserDto: UpdateUserPasswordDto,
+  ) {
+    if (!currentPassword || currentPassword === updateUserDto.password) {
+      throw new BadRequestException('잘못된 요청입니다.');
+    }
+    return this.usersService.updatePassword(id, currentPassword, updateUserDto);
   }
 
   @UseGuards(RoleGuard)

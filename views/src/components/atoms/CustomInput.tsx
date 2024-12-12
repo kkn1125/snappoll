@@ -1,11 +1,14 @@
-import { SxProps, TextField } from '@mui/material';
+import { SxProps, TextField, TextFieldPropsSizeOverrides } from '@mui/material';
 import { ChangeEvent, memo } from 'react';
 
 interface CustomInputProps {
   name: string;
   label?: string;
   type?: string;
-  size?: 'small' | 'medium' | 'large';
+  size?: OverridableStringUnion<
+    'small' | 'medium',
+    TextFieldPropsSizeOverrides
+  >;
   value: string;
   variant?: 'outlined' | 'filled' | 'standard';
   fullWidth?: boolean;
@@ -19,6 +22,7 @@ interface CustomInputProps {
   multiline?: boolean;
   sx?: SxProps;
   endAdornment?: React.ReactNode;
+  defaultValue?: string;
   disabled?: boolean;
 }
 function CustomInput({
@@ -39,6 +43,7 @@ function CustomInput({
   required = false,
   sx = {},
   endAdornment,
+  defaultValue,
   disabled = false,
 }: CustomInputProps) {
   return (
@@ -48,6 +53,7 @@ function CustomInput({
       placeholder={placeholder && placeholder + (required ? '*' : '')}
       label={label}
       name={name}
+      size={size}
       type={type}
       value={value}
       rows={rows}
@@ -58,6 +64,7 @@ function CustomInput({
       required={required}
       error={!!errors?.[name]}
       helperText={errors?.[name]}
+      defaultValue={defaultValue}
       sx={sx}
       disabled={disabled}
       slotProps={{

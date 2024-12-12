@@ -1,7 +1,7 @@
 import { requestKakaoLogin } from '@/apis/requestKakaoLogin';
 import { Kakao } from '@common/variables';
 import useToken from '@hooks/useToken';
-import { Button, Container, Stack, Typography } from '@mui/material';
+import { Button, Container, Divider, Stack, Typography } from '@mui/material';
 import { useMutation } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
@@ -31,25 +31,29 @@ const Choice: React.FC<ChoiceProps> = () => {
   }, [param]);
 
   return (
-    <Container
-      maxWidth="xs"
-      sx={{
-        flex: 1,
-        height: 'inherit',
-      }}
-    >
-      <Stack gap={2}>
-        <Typography fontSize={24} fontWeight={700} align="center">
-          쉽고 빠르게!
-        </Typography>
-        <Typography fontSize={24} fontWeight={700} align="center">
-          간편하게 로그인하세요.
-        </Typography>
-        <Typography align="center" mb={5}>
-          간편한 설문조사, 스냅폴
-        </Typography>
-
-        {/* <Button
+    <Stack gap={5} justifyContent="center" flex={1}>
+      <Container maxWidth="xs">
+        <Stack gap={4}>
+          <Stack>
+            <Typography fontSize={30} fontWeight={700} align="center">
+              간편하게 로그인하세요.
+            </Typography>
+            <Typography
+              fontSize={30}
+              fontWeight={700}
+              align="center"
+            ></Typography>
+            <Typography
+              fontSize={20}
+              align="center"
+              fontWeight={700}
+              color="textDisabled"
+            >
+              간편한 설문조사, 스냅폴
+            </Typography>
+          </Stack>
+          <Stack gap={1}>
+            {/* <Button
           variant="contained"
           color="inherit"
           size="large"
@@ -65,27 +69,50 @@ const Choice: React.FC<ChoiceProps> = () => {
           카카오 계정으로 계속하기
         </Button> */}
 
-        <Button
-          component={Link}
-          variant="outlined"
-          color="inherit"
-          size="large"
-          to="/user/login"
-        >
-          SnapPoll 계정으로 계속하기
-        </Button>
+            <Button
+              component={Link}
+              variant="outlined"
+              color="inherit"
+              size="large"
+              to="/user/login"
+              sx={{ fontSize: 18, fontWeight: 700 }}
+            >
+              이메일로 계속하기
+            </Button>
 
-        <Button
-          component={Link}
-          variant="outlined"
-          color="inherit"
-          size="large"
-          to="/user/signup"
-        >
-          SnapPoll 회원가입
-        </Button>
-      </Stack>
-    </Container>
+            <Button
+              component={Link}
+              variant="outlined"
+              color="inherit"
+              size="large"
+              to="/user/signup"
+              sx={{ fontSize: 18, fontWeight: 700 }}
+            >
+              SnapPoll 회원가입
+            </Button>
+          </Stack>
+          <Stack direction="row" justifyContent="center" gap={1}>
+            <Typography
+              component={Link}
+              to="/user/validate"
+              color="textSecondary"
+              sx={{ textDecoration: 'none' }}
+            >
+              계정 찾기
+            </Typography>
+            <Divider flexItem orientation="vertical" />
+            <Typography
+              component={Link}
+              to="/"
+              color="textSecondary"
+              sx={{ textDecoration: 'none' }}
+            >
+              메인으로
+            </Typography>
+          </Stack>
+        </Stack>
+      </Container>
+    </Stack>
   );
 };
 
