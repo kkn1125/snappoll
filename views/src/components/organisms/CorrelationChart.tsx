@@ -84,8 +84,9 @@ const CorrelationChart: React.FC<CorrelationChartProps> = ({ data }) => {
         <Stack>
           <Typography variant="h5">기준 질문</Typography>
           <ButtonGroup sx={{ flexWrap: 'wrap' }}>
-            {(baseQuestion !== null ? [baseQuestion] : data.question).map(
-              (question) => (
+            {(baseQuestion !== null ? [baseQuestion] : data.question)
+              .filter((question) => question.type !== 'text')
+              .map((question) => (
                 <Badge
                   key={question.id}
                   color="error"
@@ -101,8 +102,7 @@ const CorrelationChart: React.FC<CorrelationChartProps> = ({ data }) => {
                     {slicedTitle(question)}
                   </Button>
                 </Badge>
-              ),
-            )}
+              ))}
           </ButtonGroup>
         </Stack>
         {baseQuestion !== null && (
@@ -110,7 +110,10 @@ const CorrelationChart: React.FC<CorrelationChartProps> = ({ data }) => {
             <Typography variant="h5">비교 질문</Typography>
             <ButtonGroup sx={{ flexWrap: 'wrap' }}>
               {data.question
-                .filter((question) => question !== baseQuestion)
+                .filter(
+                  (question) =>
+                    question !== baseQuestion && question.type !== 'text',
+                )
                 .map((question) => (
                   <Badge
                     key={question.id}

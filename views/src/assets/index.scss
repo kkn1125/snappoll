@@ -1,11 +1,13 @@
-@font-face {
-  font-family: 'NotoSans';
-  src:
-    // url('/fonts/notosans/NotoSansKR-VariableFont_wght.woff2') format('woff2'),
-    url('/fonts/notosans/NotoSansKR-VariableFont_wght.woff') format('woff'),
-    url('/fonts/notosans/NotoSansKR-VariableFont_wght.ttf') format('truetype');
-  font-display: swap;
-}
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap');
+
+// @font-face {
+//   font-family: 'NotoSans';
+//   src:
+//     // url('/fonts/notosans/NotoSansKR-VariableFont_wght.woff2') format('woff2'),
+//     url('/fonts/notosans/NotoSansKR-VariableFont_wght.woff') format('woff'),
+//     url('/fonts/notosans/NotoSansKR-VariableFont_wght.ttf') format('truetype');
+//   font-display: swap;
+// }
 
 @font-face {
   font-family: 'Nanum';
@@ -280,13 +282,19 @@ body,
   user-select: none;
   -webkit-font-smoothing: antialiased;
   text-size-adjust: 100%;
-  font-family: 'NotoSans', 'Nanum', Arial, Helvetica, sans-serif;
+  font-family: 'Noto Sans KR', 'Nanum', Arial, Helvetica, sans-serif;
   // color-scheme: dark;
 }
 
 [disabled] {
   cursor: not-allowed !important;
   pointer-events: all !important;
+}
+
+.font-notosans {
+  font-family: 'Noto Sans KR', serif;
+  font-optical-sizing: auto;
+  font-style: normal;
 }
 
 .font-nanum {

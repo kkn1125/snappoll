@@ -57,7 +57,7 @@ const darkTheme = createTheme({
     },
   },
   typography: {
-    fontFamily: "'NotoSans', 'Nanum', 'Montserrat', 'moneyg', 'Maruburi'",
+    fontFamily: "'Noto Sans KR', 'Nanum', 'Montserrat', 'moneyg', 'Maruburi'",
   },
 });
 
