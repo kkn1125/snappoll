@@ -1,7 +1,7 @@
-import { Controller, Get, Res, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param, Res } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { ThrottlerGuard } from '@nestjs/throttler';
 import { Response } from 'express';
+import * as path from 'path';
 import { BasicService } from './basic.service';
 
 @Controller()
@@ -24,5 +24,10 @@ export class BasicController {
       ok: true,
       version,
     };
+  }
+
+  @Get('upload/:filename')
+  getImageFile(@Param('filename') filename: string, @Res() res: Response) {
+    res.sendFile(path.join(path.resolve(), 'upload', filename));
   }
 }

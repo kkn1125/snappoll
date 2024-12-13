@@ -16,34 +16,30 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
+    const timestamp = new Date().toISOString();
+    const requestUrl = request.url;
+
+    this.logger.error('에러 확인 필요', exception);
 
     if (exception instanceof PrismaClientKnownRequestError) {
       response.status(400).json({
         statusCode: exception.name,
         message: exception.code,
-        path: request.url,
-        timestamp: new Date().toISOString(),
+        path: requestUrl,
+        timestamp,
       });
       return;
     }
 
     const httpException = exception as HttpException;
-    this.logger.log(exception);
-
     const status = httpException.getStatus();
-    const cause = (httpException.cause || {}) as {
-      codeDomain: string;
-      status: number;
-      errorStatus: number;
-      message: string;
-    };
-    cause.message = httpException.message;
+    const exceptionResponse = httpException.getResponse();
 
     response.status(status).json({
       httpCode: status,
-      errorCode: cause,
-      path: request.url,
-      timestamp: new Date().toISOString(),
+      errorCode: exceptionResponse,
+      path: requestUrl,
+      timestamp,
     });
   }
 }

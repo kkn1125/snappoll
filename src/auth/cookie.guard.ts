@@ -30,6 +30,7 @@ export class CookieGuard implements CanActivate {
     );
 
     if (isPublic) {
+      this.logger.debug('쿠키 통과');
       return true;
     }
 
@@ -105,15 +106,22 @@ export class CookieGuard implements CanActivate {
           if (result) {
             console.log('토큰 재발급 완료');
           }
-          const user = jwt.decode(req.cookies.token, {
-            json: true,
-          }) as JwtPayload;
+          const decoded = jwt.decode(req.cookies.token) as JwtPayload;
           const { token, refreshToken } = this.authService.getToken({
-            id: user.id,
-            email: user.email,
-            username: user.username,
+            id: decoded.id,
+            email: decoded.email,
+            username: decoded.username,
           });
-          req.verify = user;
+
+          const user = await this.authService.getMe(result.email);
+          if (result) {
+            req.verify = result;
+          }
+          if (user) {
+            const { localUser, socialUser, ...users } = user;
+            req.user = users;
+          }
+
           res.cookie('token', token, {
             httpOnly: true,
             secure: true,

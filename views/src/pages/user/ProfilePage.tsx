@@ -19,6 +19,7 @@ import {
 } from '@mui/material';
 import { useMutation } from '@tanstack/react-query';
 import { getImageDataUrl } from '@utils/getImageDataUrl';
+import { getServerProfileImage } from '@utils/getServerProfileImage';
 import { makeBlobToImageUrl } from '@utils/makeBlobToImageUrl';
 import { AxiosError } from 'axios';
 import {
@@ -110,7 +111,7 @@ const ProfilePage: React.FC<ProfilePageProps> = () => {
     },
   });
 
-  const isSocial = typeof user?.userProfile?.image === 'string';
+  const isSocial = user?.authProvider !== 'Local';
 
   useEffect(() => {
     if (!user) return;
@@ -120,15 +121,15 @@ const ProfilePage: React.FC<ProfilePageProps> = () => {
     });
 
     if (user.userProfile) {
-      if (isSocial) {
-        setImage(user.userProfile.image as unknown as string);
-      } else {
-        const { url, revokeUrl } = makeBlobToImageUrl(user.userProfile);
-        setImage(url);
-        return () => {
-          revokeUrl();
-        };
-      }
+      setImage(user.userProfile.image);
+      // if (isSocial) {
+      // } else {
+      //   // const { url, revokeUrl } = makeBlobToImageUrl(user.userProfile);
+      //   setImage(user.userProfile.image);
+      //   return () => {
+      //     revokeUrl();
+      //   };
+      // }
     }
   }, [isSocial, user]);
 
@@ -237,7 +238,7 @@ const ProfilePage: React.FC<ProfilePageProps> = () => {
                     component="img"
                     width={300}
                     height={300}
-                    src={image}
+                    src={getServerProfileImage(image)}
                     alt="profileImage"
                     sx={{
                       objectFit: 'cover',

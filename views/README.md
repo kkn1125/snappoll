@@ -2,13 +2,20 @@
 
 실시간 설문조사 프론트엔드
 
+- 2024-12-14
+  - fix
+    - 토큰 검증 방식 변경
+      - 최초 렌더 verify, get me
+  - todo
+    - 프론트에서 토큰 시간 계산 후 refresh 하도록
+    - 미사용 리소스 제거
 - 2024-12-13
   - add
     - vitest 설치
   - fix
     - pages 파일 구조 재설계
     - pages 경로 재설계
-    - pages 파일명 *Page로 통일
+    - pages 파일명 \*Page로 통일
     - redirect path 전체 수정
     - 토큰 적용 방식 수정
 - 2024-12-12

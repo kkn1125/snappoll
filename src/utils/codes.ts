@@ -221,25 +221,31 @@ export const ErrorMessage = {
     [104, ErrorName.NotFound, '사용자를 찾을 수 없습니다.'],
     [
       105,
+      ErrorName.RequiredData,
+      '입력하지 않은 정보가 있습니다. 모두 입력해주세요.',
+    ],
+    [106, ErrorName.CheckUserData, '회원정보를 다시 확인해주세요.'],
+    [
+      107,
       ErrorName.UploadFileSize,
       '업로드 파일 크기는 10Kb이하만 가능합니다.',
     ],
     [
-      106,
+      108,
       ErrorName.UploadFileType,
       '업로드 파일 타입은 jpg, png만 가능합니다.',
     ],
     [
-      107,
+      109,
       ErrorName.SleepUser,
       '휴면상태입니다. 이메일 인증을 통해 계정을 활성화해주세요.',
     ],
     [
-      108,
+      110,
       ErrorName.RemovedUser,
       '탈퇴한 계정입니다. 철회하시려면 관리자 메일로 문의해주세요.',
     ],
-    [109, ErrorName.OnlyLocalUser, '사이트 회원만 가능합니다.'],
+    [111, ErrorName.OnlyLocalUser, '사이트 회원만 가능합니다.'],
   ],
   /* poll */
   poll: [

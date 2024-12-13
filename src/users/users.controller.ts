@@ -22,6 +22,7 @@ import { UpdateUserPasswordDto } from './dto/update-user-password.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersService } from './users.service';
 import { CookieGuard } from '@auth/cookie.guard';
+import { diskStorage } from 'multer';
 
 @Controller('users')
 export class UsersController {
@@ -47,14 +48,25 @@ export class UsersController {
     return this.usersService.findOne(id);
   }
 
-  @UseInterceptors(FileInterceptor('file'))
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: diskStorage({
+        destination: './upload',
+        filename(req, file, callback) {
+          const uniqueSuffix =
+            Date.now() + '-' + Math.round(Math.random() * 1e9);
+          callback(null, `${uniqueSuffix}-${file.originalname}`);
+        },
+      }),
+    }),
+  )
   @Put('profile')
   async uploadProfile(
     @Req() req: Request,
     @UploadedFile(
       new ParseFilePipeBuilder()
         .addMaxSizeValidator({
-          maxSize: 10000,
+          maxSize: 200 * 1000,
         })
         .build({
           errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
@@ -62,6 +74,7 @@ export class UsersController {
     )
     file: Express.Multer.File,
   ) {
+    console.log(file, req.user);
     const id = req.user.id;
     const savedPath = file.path;
     return await this.usersService.uploadProfile(id, savedPath);

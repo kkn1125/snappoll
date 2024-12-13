@@ -31,9 +31,6 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
     const [status] = ErrorCode.find((ec) => ec[1] === code);
     const [errorStatus] = ErrorMessage[code].find((em) => em[1] === errorCode);
 
-    this.logger.debug('status:', status);
-    this.logger.debug('errorStatus:', errorStatus);
-
     const result: CustomErrorFormat = await this.$queryRaw`
       SELECT
         code.status AS status,

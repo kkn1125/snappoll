@@ -20,7 +20,7 @@ import {
   useMediaQuery,
   useTheme,
 } from '@mui/material';
-import { makeBlobToImageUrl } from '@utils/makeBlobToImageUrl';
+import { getServerProfileImage } from '@utils/getServerProfileImage';
 import {
   MouseEvent as ReactMouseEvent,
   useEffect,
@@ -45,7 +45,7 @@ const menuList = [
       username && profileImage ? (
         <Tooltip placement="bottom" title="사용자 정보">
           <Avatar
-            src={profileImage}
+            src={getServerProfileImage(profileImage)}
             alt={username}
             sx={{
               width: 40,
@@ -122,15 +122,7 @@ const Header: React.FC<HeaderProps> = ({ isCrew }) => {
   useEffect(() => {
     if (!(user && user?.userProfile)) return;
     if (profileImage) return;
-    if (typeof user.userProfile.image === 'string') {
-      setProfileImage(user.userProfile.image);
-    } else {
-      const { url } = makeBlobToImageUrl(user.userProfile);
-      setProfileImage(url);
-    }
-    // return () => {
-    //   revokeUrl();
-    // };
+    setProfileImage(user.userProfile.image);
   }, [user, profileImage]);
 
   function redirectTo(to: string) {

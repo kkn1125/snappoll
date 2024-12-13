@@ -167,7 +167,7 @@ export declare global {
   type ErrorMessage<T = object> = Partial<{ [k in keyof T]: string }>;
   interface UserToken {
     // token?: string;
-    user?: Pick<User, 'id' | 'email' | 'username' | 'userProfile'>;
+    user?: User;
     // signed: boolean;
     // expired: boolean;
   }

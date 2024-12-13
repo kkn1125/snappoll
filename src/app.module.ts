@@ -1,4 +1,5 @@
 import { AuthModule } from '@auth/auth.module';
+import { CookieGuard } from '@auth/cookie.guard';
 import { CustomThrottlerGuard } from '@auth/custom.throttler.guard';
 import { BoardsModule } from '@boards/boards.module';
 import commonConf from '@common/common.conf';
@@ -20,7 +21,6 @@ import { WebsocketGateway } from '@websocket/websocket.gateway';
 import path from 'path';
 import { BasicModule } from './basic/basic.module';
 import { MailerModule } from './mailer/mailer.module';
-import { CookieGuard } from '@auth/cookie.guard';
 
 @Module({
   imports: [

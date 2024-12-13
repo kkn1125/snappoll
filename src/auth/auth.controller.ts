@@ -1,10 +1,11 @@
 import { CLIENT_DOMAIN, CURRENT_DOMAIN } from '@common/variables';
 import {
-  BadRequestException,
   Body,
   Controller,
   Get,
   Header,
+  HttpCode,
+  HttpStatus,
   Param,
   Post,
   Query,
@@ -15,13 +16,16 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { AuthGuard } from '@nestjs/passport';
+import Logger from '@utils/Logger';
 import { Request, Response } from 'express';
 import { AuthService } from './auth.service';
 import { BatchService } from './batch.service';
-import { CookieGuard } from './cookie.guard';
+import { IgnoreCookie } from './ignore-cookie.decorator';
 
 @Controller('auth')
 export class AuthController {
+  logger = new Logger(this);
+
   constructor(
     private readonly authService: AuthService,
     private readonly batchService: BatchService,
@@ -119,16 +123,10 @@ export class AuthController {
     }
   }
 
-  @Get('')
+  @IgnoreCookie()
   @Get('check/email/:email')
-  async checkEmail(
-    @Res() res: Response,
-    @Param('email') email: string,
-    @Param('domain') domain: string,
-  ) {
-    if (!domain || domain !== 'snappollhelper') {
-      throw new BadRequestException('잘못된 요청입니다.');
-    }
+  async checkEmail(@Res() res: Response, @Param('email') email: string) {
+    this.logger.debug(email);
     const token = await this.authService.checkEmail(email);
 
     const data = await new Promise<{ token: string } | boolean>((resolve) =>
@@ -148,6 +146,7 @@ export class AuthController {
     });
   }
 
+  @IgnoreCookie()
   @Post('validate')
   validateEmail(@Body() data: any, @Res() res: Response) {
     const mapper = this.batchService.mapper.get(data.token);
@@ -208,38 +207,36 @@ export class AuthController {
     }
   }
 
+  @IgnoreCookie()
   @UseGuards(AuthGuard('local'))
   @Post('login')
   async login(@Req() req: Request, @Res() res: Response) {
-    if (req.user) {
-      const user = req.user;
-      const { token, refreshToken } = this.authService.getToken({
-        id: user.id,
-        username: user.username,
-        email: user.email,
-      });
+    const user = req.user;
+    const { token, refreshToken } = this.authService.getToken({
+      id: user.id,
+      username: user.username,
+      email: user.email,
+    });
 
-      res.cookie('token', token, {
-        httpOnly: true,
-        secure: true,
-        sameSite: 'lax',
-        path: '/',
-      });
-      res.cookie('refresh', refreshToken, {
-        httpOnly: true,
-        secure: true,
-        sameSite: 'lax',
-        path: '/',
-      });
+    res.cookie('token', token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'lax',
+      path: '/',
+    });
+    res.cookie('refresh', refreshToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'lax',
+      path: '/',
+    });
 
-      res.json({
-        ok: true,
-      });
-    } else {
-      throw new UnauthorizedException('회원정보를 다시 확인해주세요.');
-    }
+    res.json({
+      ok: true,
+    });
   }
 
+  @IgnoreCookie()
   @Get('request/kakao')
   @Header('Content-Type', 'text/html')
   async requestAsKakao(@Res() res: Response) {
@@ -263,7 +260,6 @@ export class AuthController {
     res.redirect(`${CLIENT_DOMAIN}/user/choice?${new URLSearchParams(params)}`);
   }
 
-  @UseGuards(CookieGuard)
   @Post('logout')
   logout(@Req() req: Request, @Res() res: Response) {
     if (req.user) {
@@ -288,24 +284,12 @@ export class AuthController {
     }
   }
 
-  @UseGuards(CookieGuard)
+  @HttpCode(HttpStatus.NO_CONTENT)
   @Post('verify')
   async verify(@Req() req: Request, @Res() res: Response) {
     if (!req.verify) {
       throw new UnauthorizedException('토큰이 만료되었습니다.');
     }
-    // const profile = req.user?.['userProfile'];
-    // console.log('profile:', profile);
-    // const blob = new Blob([new Uint8Array(profile.data)], {
-    //   type: 'image/jpeg',
-    // });
-    // const dataUrl = URL.createObjectURL(blob);
-    res.json({
-      ok: !!req.user,
-      token: req.cookies?.token,
-      // userId: req.user?.id,
-      // username: req.user?.username,
-      // profile: profile?.[0]?.image,
-    });
+    res.json();
   }
 }

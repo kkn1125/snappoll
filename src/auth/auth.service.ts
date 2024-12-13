@@ -183,7 +183,7 @@ export class AuthService {
 
   async validateUser(email: string, userPassword: string) {
     const user = await this.prisma.user.findUnique({
-      where: { email },
+      where: { email, deletedAt: null },
       include: {
         localUser: true,
         socialUser: true,
@@ -201,7 +201,6 @@ export class AuthService {
     if (user.localUser.password !== encryptedPassword) return null;
 
     const { socialUser, localUser, ...users } = user;
-    this.logger.debug('users:', users);
     return users;
   }
 
@@ -209,7 +208,11 @@ export class AuthService {
     const user = await this.prisma.user.findUnique({ where: { email } });
 
     if (user) {
-      throw new ConflictException('이미 사용중인 이메일입니다.');
+      const errorCode = await this.prisma.getErrorCode(
+        'user',
+        'AlreadyUsedEmail',
+      );
+      throw new ConflictException(errorCode);
     }
 
     this.logger.debug('to:', email);

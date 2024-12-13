@@ -41,7 +41,8 @@ export class UsersService {
     if (
       !(createUserDto.email && createUserDto.password && createUserDto.username)
     ) {
-      throw new BadRequestException('입력 정보가 누락되었습니다.');
+      const errorCode = await this.prisma.getErrorCode('user', 'RequiredData');
+      throw new BadRequestException(errorCode);
     }
 
     const password = this.prisma.encryptPassword(createUserDto.password);
@@ -64,9 +65,11 @@ export class UsersService {
     });
 
     if (!!existsUser) {
-      throw new BadRequestException('이메일이 중복됩니다.', {
-        cause: createUserDto.email,
-      });
+      const errorCode = await this.prisma.getErrorCode(
+        'user',
+        'AlreadyUsedEmail',
+      );
+      throw new BadRequestException(errorCode);
     }
 
     createUserDto.username += await this.getNextUserNumber(
@@ -104,13 +107,8 @@ export class UsersService {
     });
 
     if (!user) {
-      const { message, ...status } = await this.prisma.getErrorCode(
-        'user',
-        'NotFound',
-      );
-      this.logger.debug('message:', message);
-      this.logger.debug('status:', status);
-      throw new NotFoundException(message, { cause: status });
+      const errorCode = await this.prisma.getErrorCode('user', 'NotFound');
+      throw new NotFoundException(errorCode);
     }
 
     this.logger.debug('사용자 찾기:', user);
