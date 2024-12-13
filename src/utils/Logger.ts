@@ -33,9 +33,10 @@ export default class Logger<T = string> {
       Object.defineProperty(this, level, {
         get() {
           const index = this.levels.indexOf(level);
+          const icon = this.icon[index];
           return console[level].bind(
             this,
-            `${this.icon[index]} [${level.toUpperCase()}]`,
+            `${icon} [${level.toUpperCase()}] ${this.context} ---`,
           );
         },
       });

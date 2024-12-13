@@ -7,9 +7,14 @@ import {
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UpdateUserPasswordDto } from './dto/update-user-password.dto';
+import { $Enums } from '@prisma/client';
+import { ErrorCodeType } from '@utils/codes';
+import Logger from '@utils/Logger';
 
 @Injectable()
 export class UsersService {
+  logger = new Logger(this);
+
   constructor(private readonly prisma: PrismaService) {}
 
   async getNextUserNumber(username: string) {
@@ -32,11 +37,26 @@ export class UsersService {
     return '';
   }
 
-  async create(createUserDto: CreateUserDto) {
+  async createLocalUser(createUserDto: CreateUserDto) {
     if (
       !(createUserDto.email && createUserDto.password && createUserDto.username)
     ) {
       throw new BadRequestException('입력 정보가 누락되었습니다.');
+    }
+
+    const password = this.prisma.encryptPassword(createUserDto.password);
+    createUserDto.password = password;
+  }
+
+  async create(createUserDto: CreateUserDto) {
+    if (!createUserDto.authProvider) {
+      createUserDto.authProvider = $Enums.AuthProvider.Local;
+    }
+    if (!createUserDto.role) {
+      createUserDto.role = $Enums.Role.User;
+    }
+    if (!createUserDto.grade) {
+      createUserDto.grade = $Enums.Grade.Free;
     }
 
     const existsUser = await this.prisma.user.findUnique({
@@ -49,16 +69,27 @@ export class UsersService {
       });
     }
 
-    const password = this.prisma.encryptPassword(createUserDto.password);
-    createUserDto.password = password;
-
     createUserDto.username += await this.getNextUserNumber(
       createUserDto.username,
     );
 
-    return this.prisma.user.create({
-      data: createUserDto,
-    });
+    if (createUserDto.authProvider === $Enums.AuthProvider.Local) {
+      await this.createLocalUser(createUserDto);
+      const { password, provider, ...userCommon } = createUserDto;
+      this.logger.debug(password);
+
+      return this.prisma.user.create({
+        data: { ...userCommon, localUser: { create: { password } } },
+        include: { localUser: true },
+      });
+    } else {
+      const { password, provider, ...userCommon } = createUserDto;
+
+      return this.prisma.user.create({
+        data: { ...userCommon, socialUser: { create: { provider } } },
+        include: { socialUser: true },
+      });
+    }
   }
 
   findAll() {
@@ -67,13 +98,26 @@ export class UsersService {
     });
   }
 
-  findOne(id: string) {
-    return this.prisma.user.findUnique({
+  async findOne(id: string) {
+    const user = await this.prisma.user.findUnique({
       where: { id, deletedAt: null },
     });
+
+    if (!user) {
+      const { message, ...status } = await this.prisma.getErrorCode(
+        'user',
+        'NotFound',
+      );
+      this.logger.debug('message:', message);
+      this.logger.debug('status:', status);
+      throw new NotFoundException(message, { cause: status });
+    }
+
+    this.logger.debug('사용자 찾기:', user);
+    return user;
   }
 
-  async uploadProfile(id: string, image: Buffer) {
+  async uploadProfile(id: string, imagePath: string) {
     const profile = await this.prisma.userProfile.findUnique({
       where: { userId: id },
     });
@@ -81,14 +125,14 @@ export class UsersService {
       return this.prisma.userProfile.update({
         where: { userId: id },
         data: {
-          image,
+          image: imagePath,
         },
       });
     } else {
       return this.prisma.userProfile.create({
         data: {
           userId: id,
-          image,
+          image: imagePath,
         },
       });
     }
@@ -113,14 +157,26 @@ export class UsersService {
     currentPassword: string,
     updateUserDto: UpdateUserPasswordDto,
   ) {
-    const user = await this.prisma.user.findUnique({ where: { id } });
+    const user = await this.prisma.user.findUnique({
+      where: { id },
+      include: { localUser: true, socialUser: true },
+    });
+
+    if (user.authProvider !== $Enums.AuthProvider.Local) {
+      const { message, ...status } = await this.prisma.getErrorCode(
+        'server',
+        'BadRequest',
+      );
+
+      throw new BadRequestException(message, { cause: status });
+    }
 
     const encryptedCurrentPassword =
       this.prisma.encryptPassword(currentPassword);
 
     console.log('currentPassword:', currentPassword);
 
-    if (user.password !== encryptedCurrentPassword) {
+    if (user.localUser.password !== encryptedCurrentPassword) {
       throw new BadRequestException(
         '잘못된 정보입니다. 비밀번호를 확인해주세요.',
       );
@@ -133,7 +189,11 @@ export class UsersService {
     return this.prisma.user.update({
       where: { id, deletedAt: null },
       data: {
-        password: encryptedPassword,
+        localUser: {
+          update: {
+            password: encryptedPassword,
+          },
+        },
       },
     });
   }

@@ -16,7 +16,7 @@ import { CreateVoteDto } from './dto/create-vote.dto';
 import { UpdateVoteDto } from './dto/update-vote.dto';
 import { VotesService } from './votes.service';
 import { CreateShareVoteDto } from './dto/create-share-vote.dto';
-import { IgnoreGuard } from '@auth/ignore.guards.decorator';
+import { IgnoreCookie } from '@auth/ignore-cookie.decorator';
 
 @UseGuards(RoleGuard)
 @Controller('votes')
@@ -65,13 +65,13 @@ export class VotesController {
     return this.votesService.remove(id);
   }
 
-  @IgnoreGuard()
+  @IgnoreCookie()
   @Get('share/:id')
   getShareVoteBy(@Param('id') id: string) {
     return this.votesService.findShareOneById(id);
   }
 
-  @IgnoreGuard()
+  @IgnoreCookie()
   @Get('share/url/:url')
   getShareVote(@Param('url') url: string) {
     return this.votesService.findShareOne(url);

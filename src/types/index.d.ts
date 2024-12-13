@@ -10,6 +10,13 @@ export declare global {
       user?: User;
     }
   }
+
+  export declare interface CustomErrorFormat {
+    status: number;
+    domain: string;
+    errorStatus: number;
+    message: string;
+  }
 }
 
 declare module 'jsonwebtoken' {

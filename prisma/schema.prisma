@@ -8,10 +8,31 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
+model ErrorMessage {
+  id         Int    @id @default(autoincrement())
+  codeDomain String @map("code_domain") @db.VarChar(100)
+  status     Int
+  message    String @db.VarChar(250)
+
+  code Code @relation(fields: [codeDomain], references: [domain])
+
+  @@map("error_message")
+}
+
+model Code {
+  id     Int    @id @default(autoincrement())
+  status Int    @unique
+  domain String @unique @db.VarChar(100) // 코드 영역 예) Auth, API, User, DB, Board...
+
+  errorMessage ErrorMessage[]
+
+  @@map("code")
+}
+
 model UserProfile {
   id        String   @id @default(uuid()) @db.Uuid
   userId    String   @unique @map("user_id") @db.Uuid
-  image     Bytes    @db.ByteA
+  image     String   @db.Text
   createdAt DateTime @default(now()) @map("created_at")
 
   user User @relation(fields: [userId], references: [id])
@@ -19,23 +40,83 @@ model UserProfile {
   @@map("user_profile")
 }
 
-model User {
+enum Role {
+  User
+  Admin
+}
+
+enum Grade {
+  Free
+  Hobby
+  Pro
+}
+
+enum AuthProvider {
+  Local
+  Kakao
+  Google
+}
+
+// model Grade {
+//   id        String    @id @default(uuid()) @db.Uuid
+//   userId    String    @unique @map("user_id") @db.Uuid
+//   gradeType GradeType @default(Free) @map("grade_type")
+
+//   user User @relation(fields: [userId], references: [id])
+
+//   @@map("grade")
+// }
+
+model SocialUser {
   id        String    @id @default(uuid()) @db.Uuid
-  email     String    @unique
-  username  String
-  password  String    @db.VarChar(200)
+  userId    String    @unique @map("user_id") @db.Uuid
+  provider  String
   createdAt DateTime  @default(now()) @map("created_at")
   updatedAt DateTime  @updatedAt @map("updated_at")
   deletedAt DateTime? @map("deleted_at")
 
-  userProfile    UserProfile?
-  poll           Poll[]
-  vote           Vote[]
-  response       Response[]
-  voteResponse   VoteResponse[]
-  sendMessage    Message[]      @relation("sendMessage")
-  receiveMessage Message[]      @relation("receiveMessage")
-  Board          Board[]
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("social_user")
+}
+
+model LocalUser {
+  id         String   @id @default(uuid()) @db.Uuid
+  userId     String   @unique @map("user_id") @db.Uuid
+  password   String   @db.VarChar(200)
+  signupDate DateTime @default(now()) @map("signup_date")
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("local_user")
+}
+
+model User {
+  id           String       @id @default(uuid()) @db.Uuid
+  email        String       @unique
+  username     String
+  isActive     Boolean      @default(true) @map("is_active")
+  lastLogin    DateTime?    @map("last_login")
+  authProvider AuthProvider @default(Local) @map("auth_provider")
+  grade        Grade        @default(Free)
+  role         Role         @default(User)
+  createdAt    DateTime     @default(now()) @map("created_at")
+  updatedAt    DateTime     @updatedAt @map("updated_at")
+  deletedAt    DateTime?    @map("deleted_at")
+
+  sendMessage    Message[] @relation("sendMessage")
+  receiveMessage Message[] @relation("receiveMessage")
+
+  userProfile UserProfile?
+  localUser   LocalUser?
+  socialUser  SocialUser?
+  // grade       Grade?
+
+  poll         Poll[]
+  vote         Vote[]
+  response     Response[]
+  voteResponse VoteResponse[]
+  board        Board[]
 
   @@map("user")
 }

@@ -5,7 +5,9 @@ import {
   Controller,
   Delete,
   Get,
+  HttpStatus,
   Param,
+  ParseFilePipeBuilder,
   Post,
   Put,
   Req,
@@ -19,6 +21,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserPasswordDto } from './dto/update-user-password.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersService } from './users.service';
+import { CookieGuard } from '@auth/cookie.guard';
 
 @Controller('users')
 export class UsersController {
@@ -29,42 +32,46 @@ export class UsersController {
     return this.usersService.create(createUserDto);
   }
 
-  @UseGuards(RoleGuard)
   @Get()
   findAll() {
     return this.usersService.findAll();
   }
 
-  @UseGuards(RoleGuard)
   @Get('me')
   findMe(@Req() req: Request) {
-    return {
-      ok: true,
-      user: req.user,
-    };
+    return req.user;
   }
 
-  @UseGuards(RoleGuard)
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.usersService.findOne(id);
   }
 
-  @UseGuards(RoleGuard)
   @UseInterceptors(FileInterceptor('file'))
   @Put('profile')
-  async uploadProfile(@Req() req: Request, @UploadedFile() file) {
+  async uploadProfile(
+    @Req() req: Request,
+    @UploadedFile(
+      new ParseFilePipeBuilder()
+        .addMaxSizeValidator({
+          maxSize: 10000,
+        })
+        .build({
+          errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+        }),
+    )
+    file: Express.Multer.File,
+  ) {
     const id = req.user.id;
-    return await this.usersService.uploadProfile(id, Buffer.from(file.buffer));
+    const savedPath = file.path;
+    return await this.usersService.uploadProfile(id, savedPath);
   }
 
-  @UseGuards(RoleGuard)
   @Put(':id')
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.usersService.update(id, updateUserDto);
   }
 
-  @UseGuards(RoleGuard)
   @Put(':id/password')
   updatePassword(
     @Param('id') id: string,
@@ -77,14 +84,12 @@ export class UsersController {
     return this.usersService.updatePassword(id, currentPassword, updateUserDto);
   }
 
-  @UseGuards(RoleGuard)
   @Delete('profile')
   deleteProfileImage(@Req() req: Request) {
     const id = req.user.id;
     return this.usersService.deleteProfileImage(id);
   }
 
-  @UseGuards(RoleGuard)
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.usersService.remove(id);

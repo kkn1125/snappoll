@@ -16,10 +16,9 @@ import { CreatePollDto } from './dto/create-poll.dto';
 import { UpdatePollDto } from './dto/update-poll.dto';
 import { PollsService } from './polls.service';
 import { CreateSharePollDto } from './dto/create-share-poll.dto';
-import { IgnoreGuard } from '@auth/ignore.guards.decorator';
+import { IgnoreCookie } from '@auth/ignore-cookie.decorator';
+import { CookieGuard } from '@auth/cookie.guard';
 
-// @Roles([Role.User])
-@UseGuards(RoleGuard)
 @Controller('polls')
 export class PollsController {
   constructor(private readonly pollsService: PollsService) {}
@@ -68,13 +67,13 @@ export class PollsController {
     return this.pollsService.remove(id);
   }
 
-  @IgnoreGuard()
+  @IgnoreCookie()
   @Get('share/:id')
   getSharePollBy(@Param('id') id: string) {
     return this.pollsService.findShareOneById(id);
   }
 
-  @IgnoreGuard()
+  @IgnoreCookie()
   @Get('share/url/:url')
   getSharePoll(@Param('url') url: string) {
     return this.pollsService.findShareOne(url);

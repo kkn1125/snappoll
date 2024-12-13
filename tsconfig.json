@@ -37,6 +37,9 @@
       "@/*": ["src/*"]
     }
   },
-  "include": ["src"],
+  "ts-node": {
+    "require": ["tsconfig-paths/register"]
+  },
+  "include": ["src", "prisma/**/*", "webpack-hmr.config.js"],
   "exclude": ["views", "views/**"]
 }

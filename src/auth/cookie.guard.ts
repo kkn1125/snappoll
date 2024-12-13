@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   CanActivate,
   ExecutionContext,
   Injectable,
@@ -9,44 +10,72 @@ import { Request, Response } from 'express';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import { Observable } from 'rxjs';
 import { AuthService } from './auth.service';
+import { Reflector } from '@nestjs/core';
+import Logger from '@utils/Logger';
 
 @Injectable()
 export class CookieGuard implements CanActivate {
+  logger = new Logger(this);
+
   constructor(
+    private readonly reflector: Reflector,
     private readonly configService: ConfigService,
     private readonly authService: AuthService,
   ) {}
 
-  async canActivate(
-    context: ExecutionContext,
-  ) /* : boolean | Promise<boolean> | Observable<boolean> */ {
+  async canActivate(context: ExecutionContext) {
+    const isPublic = this.reflector.get<boolean>(
+      'isPublic',
+      context.getHandler(),
+    );
+
+    if (isPublic) {
+      return true;
+    }
+
     const http = context.switchToHttp();
     const req = http.getRequest() as Request;
     const res = http.getResponse() as Response;
     const secretKey = this.configService.get('common.SECRET_KEY');
 
     if (!req.cookies.token) {
+      this.logger.debug('쿠키 토큰 없음');
       throw new UnauthorizedException('잘못된 요청입니다.');
     }
 
+    let decodedToken: JwtPayload;
+
     try {
-      const isSocial = jwt.decode(req.cookies.token) as JwtPayload;
-      console.log('isSocial:', isSocial);
-      if (isSocial?.iss === 'https://kauth.kakao.com') {
-        req.verify = isSocial;
+      decodedToken = jwt.decode(req.cookies.token) as JwtPayload;
+      this.logger.debug('쿠키 토큰 디코딩 됨', decodedToken);
+    } catch (error) {
+      const { message, ...status } = await this.authService.prisma.getErrorCode(
+        'auth',
+        'BadRequest',
+      );
+      throw new BadRequestException(message, { cause: status });
+    }
+
+    try {
+      const isSocial = decodedToken.iss === 'https://kauth.kakao.com';
+      this.logger.debug('소셜계정 여부:', isSocial);
+
+      if (isSocial) {
+        req.verify = decodedToken;
         req.token = req.cookies.token;
         const customData = {
-          id: isSocial.aud[0],
+          id: decodedToken.aud[0],
           // createdAt: Date,
-          email: isSocial.email,
-          username: isSocial.nickname,
+          email: decodedToken.email,
+          username: decodedToken.nickname,
           userProfile: {
-            image: isSocial.picture,
+            image: decodedToken.picture,
           },
         };
         req.user = customData as any;
-        return !!isSocial;
+        return !!decodedToken;
       }
+
       const result = jwt.verify(req.cookies.token, secretKey, {
         algorithms: ['HS256'],
       }) as JwtPayload;
@@ -56,7 +85,7 @@ export class CookieGuard implements CanActivate {
         req.verify = result;
       }
       if (user) {
-        const { password, ...users } = user;
+        const { localUser, socialUser, ...users } = user;
         req.user = users;
       }
       // return !!result;

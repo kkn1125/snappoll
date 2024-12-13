@@ -2,6 +2,18 @@
 
 서버사이드 구현
 
+- 2024-12-13
+  - add
+    - Grade, AuthProvider, Role Enum 타입 추가
+    - 로컬, 소셜 유저 dto 생성
+  - fix
+    - 로거 클래스 컨텍스트 표기
+    - prisma 유저 로컬, 소셜 테이블 분리 상하 관계로 변경
+    - 테이블 변경 사항 코드레벨 반영
+    - RoleGuard 로직 변경, 단일책임
+    - CookieGuard 로직 수정
+    - CookieGuard 전역 가드로 설정
+    - IgnoreCookie 데코레이터 수정
 - 2024-12-12
   - add
     - 계정 비밀번호 초기화 및 임시 발급 기능 구현

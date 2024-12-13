@@ -8,12 +8,14 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import Logger from '@utils/Logger';
 import * as jwt from 'jsonwebtoken';
 import Mail from 'nodemailer/lib/mailer';
 import { firstValueFrom } from 'rxjs';
 
 @Injectable()
 export class AuthService {
+  logger = new Logger(this);
   style = `
     <style>
       html, body {
@@ -88,7 +90,7 @@ export class AuthService {
     const password = this.prisma.encryptPassword(hashedPassword);
     await this.prisma.user.update({
       where: { email },
-      data: { password },
+      data: { localUser: { update: { password } } },
     });
     return hashedPassword;
   }
@@ -100,7 +102,7 @@ export class AuthService {
       throw new BadRequestException('계정을 찾을 수 없습니다.');
     }
 
-    console.log('to:', email);
+    this.logger.debug('to:', email);
 
     const address = this.configService.get('email.ADDRESS');
     const mode = this.configService.get('common.MODE');
@@ -114,7 +116,7 @@ export class AuthService {
         ? 'http://localhost:8080'
         : 'https://snappoll.kro.kr';
 
-    console.log('admin email', address);
+    this.logger.debug('admin email', address);
 
     const token = this.prisma.encryptPassword(email);
 
@@ -140,9 +142,9 @@ export class AuthService {
 
     const result = await this.mailer.sendConfirmMail(message);
 
-    console.log(result);
+    this.logger.debug(result);
 
-    console.log(`send email to ${email}`);
+    this.logger.debug(`send email to ${email}`);
 
     return token;
   }
@@ -169,12 +171,12 @@ export class AuthService {
           },
         ),
       );
-      console.log(data);
+      this.logger.debug(data);
       const userData = jwt.decode(data.id_token);
-      console.log('user:', userData);
+      this.logger.debug('user:', userData);
       return data;
     } catch (error) {
-      console.log(error);
+      this.logger.debug(error);
       throw new BadRequestException('잘못된 요청입니다.');
     }
   }
@@ -182,6 +184,11 @@ export class AuthService {
   async validateUser(email: string, userPassword: string) {
     const user = await this.prisma.user.findUnique({
       where: { email },
+      include: {
+        localUser: true,
+        socialUser: true,
+        userProfile: true,
+      },
     });
 
     if (!user) return null;
@@ -191,10 +198,11 @@ export class AuthService {
 
     const encryptedPassword = this.prisma.encryptPassword(userPassword);
 
-    if (user.password !== encryptedPassword) return null;
+    if (user.localUser.password !== encryptedPassword) return null;
 
-    const { password, ...result } = user;
-    return result;
+    const { socialUser, localUser, ...users } = user;
+    this.logger.debug('users:', users);
+    return users;
   }
 
   async checkEmail(email: string) {
@@ -204,7 +212,7 @@ export class AuthService {
       throw new ConflictException('이미 사용중인 이메일입니다.');
     }
 
-    console.log('to:', email);
+    this.logger.debug('to:', email);
 
     const address = this.configService.get('email.ADDRESS');
     const mode = this.configService.get('common.MODE');
@@ -218,7 +226,7 @@ export class AuthService {
         ? 'http://localhost:8080'
         : 'https://snappoll.kro.kr';
 
-    console.log('admin email', address);
+    this.logger.debug('admin email', address);
 
     const token = this.prisma.encryptPassword(email);
 
@@ -241,12 +249,12 @@ export class AuthService {
         <a href="mailto:devkimsonhelper@gmail.com">devkimsonhelper@gmail.com</a>
       </div>`,
     } as Mail.Options;
-    console.log(this.mailer);
+    this.logger.debug(this.mailer);
     const result = await this.mailer.sendConfirmMail(message);
 
-    console.log(result);
+    this.logger.debug(result);
 
-    console.log(`send email to ${email}`);
+    this.logger.debug(`send email to ${email}`);
 
     return token;
   }
@@ -286,6 +294,8 @@ export class AuthService {
       where: { email },
       include: {
         // poll: true,
+        localUser: true,
+        socialUser: true,
         userProfile: true,
       },
     });
@@ -297,7 +307,7 @@ export class AuthService {
         `https://kauth.kakao.com/oauth/authorize?client_id=7043de6fabb4db468e0530f5cdd0e209&redirect_uri=${encodeURIComponent('http://localhost:8080/api/auth/login/kakao')}`,
       ),
     );
-    console.log(data);
+    this.logger.debug(data);
     return data;
   }
 }
