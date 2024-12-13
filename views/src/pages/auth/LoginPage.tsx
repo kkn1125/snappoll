@@ -28,9 +28,7 @@ const LoginPage: React.FC<LoginPageProps> = () => {
   const { openModal } = useModal();
   const locate = useLocation();
   const navigate = useNavigate();
-  const [loginInfo, setLoginInfo] = useState<
-    Pick<LoginUser, 'email' | 'password'>
-  >({
+  const [loginInfo, setLoginInfo] = useState<LoginDto>({
     email: '',
     password: '',
   });
@@ -55,7 +53,7 @@ const LoginPage: React.FC<LoginPageProps> = () => {
         email: loginInfo.email,
         password: '',
       }));
-      openModal(Message.WrongRequest(data.message));
+      openModal(Message.WrongRequest(data.errorCode.message));
     },
   });
 

@@ -238,7 +238,7 @@ const Header: React.FC<HeaderProps> = ({ isCrew }) => {
                       {name}
                     </Button>
                   ) : (
-                    <IconButton key={to}>
+                    <IconButton key={to} component={Link} to={to}>
                       {icon?.(user?.username, profileImage)}
                     </IconButton>
                   ),

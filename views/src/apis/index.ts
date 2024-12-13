@@ -1,5 +1,8 @@
 import { BASE_URL } from '@common/variables';
+import { Logger } from '@utils/Logger';
 import axios from 'axios';
+
+const logger = new Logger('SnapApi');
 
 export const snapApi = axios.create({
   baseURL: BASE_URL,
@@ -12,7 +15,7 @@ snapApi.interceptors.response.use(
     return response;
   },
   (error) => {
-    console.log(error);
+    logger.error(error);
 
     return Promise.reject(error);
   },

@@ -121,14 +121,26 @@ export declare global {
   //   expiresAt: Date;
   //   user?: User;
   // };
-  interface User {
-    id: string;
-    username: string;
+  interface LoginDto {
     email: string;
     password: string;
+  }
+  interface SnapResponseType<T = object> {
+    ok: boolean;
+    data: T;
+  }
+  interface User {
+    id: string;
+    email: string;
+    username: string;
+    isActive: boolean;
+    lastLogin: Date;
+    authProvider: 'Kakao' | 'Google' | 'Local';
+    role: 'Admin' | 'User';
+    grade: 'Free' | 'Hobby' | 'Pro';
     createdAt: Date;
     updatedAt: Date;
-    poll?: UserPoll[];
+    deletedAt: Date | null;
     userProfile?: Profile;
   }
   interface UserPoll {
@@ -144,14 +156,14 @@ export declare global {
   interface Profile {
     id: string;
     userId: string;
-    image: object;
+    image: string;
     createdAt: Date;
   }
   interface SignupUser extends Omit<User, 'id' | 'createdAt' | 'updatedAt'> {
     checkPassword: string;
   }
-  interface LoginUser
-    extends Omit<User, 'id' | 'username' | 'createdAt' | 'updatedAt'> {}
+  // interface LoginUser
+  //   extends Omit<User, 'id' | 'username' | 'createdAt' | 'updatedAt'> {}
   type ErrorMessage<T = object> = Partial<{ [k in keyof T]: string }>;
   interface UserToken {
     // token?: string;

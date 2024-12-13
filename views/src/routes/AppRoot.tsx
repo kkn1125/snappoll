@@ -53,10 +53,12 @@ const AppRoot: React.FC<AppRootProps> = () => {
 
   /* when change page */
   useLayoutEffect(() => {
-    log('first and last');
+    log('render init');
     openLoading('Loading...');
     /* version save */
     localStorage.setItem('version', VERSION);
+
+    verify();
 
     return () => {
       closeLoading();
@@ -67,15 +69,11 @@ const AppRoot: React.FC<AppRootProps> = () => {
 
   useLayoutEffect(() => {
     const pathname = locate.pathname;
-    const loggedIn = localStorage.getItem('logged_in');
-
-    if (loggedIn === 'true' || guestDisallowPaths.test(pathname)) verify();
 
     return () => {
       // setPrevious(pathname);
       closeModal();
     };
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [locate.pathname]);
 

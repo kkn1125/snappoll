@@ -1,10 +1,4 @@
-import {
-  guestMainImage,
-  illu01,
-  Illu01,
-  illu02,
-  Illu02,
-} from '@common/variables';
+import { guestMainImage, illu01, illu02 } from '@common/variables';
 import {
   Box,
   Button,
@@ -27,13 +21,6 @@ const GuestHomePage: React.FC<GuestHomePageProps> = () => {
         position="relative"
         height={`calc(100vh * ${screenRatio})`}
         overflow="hidden"
-        // sx={{
-        //   backgroundColor: (theme) => theme.palette.info.light + '56',
-        //   backgroundImage: `url(${guestMainImage})`,
-        //   backgroundSize: 'cover',
-        //   backgroundRepeat: 'no-repeat',
-        //   backgroundPosition: 'center',
-        // }}
       >
         <Box
           component="img"

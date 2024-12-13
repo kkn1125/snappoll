@@ -10,6 +10,7 @@
     - pages 경로 재설계
     - pages 파일명 *Page로 통일
     - redirect path 전체 수정
+    - 토큰 적용 방식 수정
 - 2024-12-12
   - add
     - 비밀번호 찾기 기능 구현

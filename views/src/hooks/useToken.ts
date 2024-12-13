@@ -15,14 +15,8 @@ const useToken = () => {
   const [state, setToken] = useRecoilState(tokenAtom);
   const { openModal } = useModal();
 
-  // 로그인
-  const loginToken = useCallback(() => {
-    localStorage.setItem('logged_in', 'true');
-  }, []);
-
   // 로그아웃
   const logoutToken = useCallback(() => {
-    localStorage.setItem('logged_in', 'false');
     setToken({
       user: undefined,
     });
@@ -33,18 +27,13 @@ const useToken = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const clearTokenCheck = useCallback(() => {
-    // 최종 로그아웃 처리 확인
-    localStorage.setItem('clt', 'true');
-  }, []);
-
-  const getMeMutate = useMutation({
+  const getMeMutate = useMutation<SnapResponseType<User>>({
     mutationKey: ['getMe'],
     mutationFn: getMe,
-    onSuccess(data, variables, context) {
-      if (data.ok) {
+    onSuccess({ ok, data }, variables, context) {
+      if (ok) {
         setToken({
-          user: data.user,
+          user: data,
         });
       }
     },
@@ -57,37 +46,20 @@ const useToken = () => {
     mutationKey: ['verify'],
     mutationFn: verifyLogin,
     onSuccess(data, variables, context) {
-      if (data.ok) {
-        localStorage.setItem('logged_in', 'true');
-        localStorage.setItem('clt', 'false');
-        getMeMutate.mutate();
-        if (location.pathname.match(userDisallowPaths)) {
-          navigate('/');
-        }
+      getMeMutate.mutate();
+      if (location.pathname.match(userDisallowPaths)) {
+        navigate('/');
       }
     },
     onError(error: AxiosError, variables, context) {
-      // console.log(error);
       if (error.code === 'ECONNABORTED') {
         openModal(Message.Info.ServerEConnection);
         return;
       }
       if (error.response?.status === 401) {
         openModal(Message.Expired.Token);
-        logoutToken();
-        // console.log(location.pathname.match(guestDisallowPaths));
-      }
-      const clt = localStorage.getItem('clt');
-      if (clt === 'true') return;
-      const loggedIn = localStorage.getItem('logged_in');
-      if (error.response?.status === 401) {
-        openModal(Message.Expired.Token);
-      } else if (loggedIn === 'true') {
-        openModal(Message.Expired.Token);
       }
       logoutToken();
-      // console.log(location.pathname.match(guestDisallowPaths));
-      localStorage.setItem('clt', 'true');
     },
   });
 
@@ -97,14 +69,12 @@ const useToken = () => {
 
   const saveTokenData = useCallback(
     (user: User) => {
-      localStorage.setItem('logged_in', 'true');
       setToken({ user });
     },
     [setToken],
   );
 
   const clearTokenData = useCallback(() => {
-    localStorage.setItem('logged_in', 'false');
     setToken({ user: undefined });
   }, [setToken]);
 
@@ -119,9 +89,7 @@ const useToken = () => {
     refetchGetMe,
     saveTokenData,
     clearTokenData,
-    loginToken,
     logoutToken,
-    clearTokenCheck,
   };
 };
 
