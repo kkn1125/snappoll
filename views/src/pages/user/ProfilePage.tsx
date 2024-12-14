@@ -20,7 +20,6 @@ import {
 import { useMutation } from '@tanstack/react-query';
 import { getImageDataUrl } from '@utils/getImageDataUrl';
 import { getServerProfileImage } from '@utils/getServerProfileImage';
-import { makeBlobToImageUrl } from '@utils/makeBlobToImageUrl';
 import { AxiosError } from 'axios';
 import {
   ChangeEvent,
