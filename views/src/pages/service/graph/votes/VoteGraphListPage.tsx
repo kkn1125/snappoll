@@ -1,4 +1,5 @@
 import { getMyVotes } from '@/apis/vote/getMyVotes';
+import CommonPagination from '@components/atoms/CommonPagination';
 import SkeletonGraphList from '@components/moleculars/SkeletonGraphList';
 import { SnapVote } from '@models/SnapVote';
 import BarChartIcon from '@mui/icons-material/BarChart';
@@ -18,25 +19,28 @@ interface VoteGraphListPageProps {}
 const VoteGraphListPage: React.FC<VoteGraphListPageProps> = () => {
   const navigate = useNavigate();
   const [page, setPage] = useState(1);
-  const myVotes = useQuery<{ votes: SnapVote[]; count: number }>({
+  const { data, isLoading } = useQuery<
+    SnapResponseType<{ votes: SnapVote[]; count: number }>
+  >({
     queryKey: ['my-votes', page],
     queryFn: getMyVotes,
   });
   const handleRedirect = (to: string) => {
     navigate(`/service/graph/vote/${to}`);
   };
+  const responseData = data?.data;
 
-  const totalPage = useMemo(() => {
-    const count = myVotes.data?.count || 0;
+  const total = useMemo(() => {
+    const count = responseData?.count || 0;
     return Math.ceil(count / 10);
-  }, [myVotes.data?.count]);
+  }, [responseData?.count]);
 
-  if (myVotes.isLoading) return <SkeletonGraphList />;
+  if (isLoading) return <SkeletonGraphList />;
 
   return (
     <Stack>
       <List>
-        {myVotes.data?.votes.map((vote) => (
+        {responseData?.votes.map((vote) => (
           <ListItem key={vote.id}>
             <ListItemButton
               onClick={() => handleRedirect(vote.id)}
@@ -63,15 +67,13 @@ const VoteGraphListPage: React.FC<VoteGraphListPageProps> = () => {
             </ListItemButton>
           </ListItem>
         ))}
-        {myVotes.data?.count === 0 && (
+        {responseData?.count === 0 && (
           <ListItem>
             <ListItemText>데이터가 없습니다.</ListItemText>
           </ListItem>
         )}
       </List>
-      <Stack alignItems="center">
-        <Pagination page={page} count={totalPage} />
-      </Stack>
+      <CommonPagination total={total} />
     </Stack>
   );
 };

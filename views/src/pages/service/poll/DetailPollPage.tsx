@@ -33,10 +33,11 @@ const DetailPollPage: React.FC<DetailPollPageProps> = ({
   const { id } = useParams();
   const detailId = pollId || id;
 
-  const { data, isPending } = useQuery<SnapPoll>({
+  const { data, isPending } = useQuery<SnapResponseType<SnapPoll>>({
     queryKey: ['poll', detailId],
     queryFn: () => (pollId ? getSharePollBy(detailId) : getPoll(detailId)),
   });
+  const responseData = data?.data;
 
   const saveResponseMutate = useMutation({
     mutationKey: ['saveResponse'],
@@ -80,7 +81,7 @@ const DetailPollPage: React.FC<DetailPollPageProps> = ({
   const handleSavePollResult = useCallback(
     (e: FormEvent) => {
       e.preventDefault();
-      if (!data?.id) return;
+      if (!responseData?.id) return;
 
       openInteractiveModal('작성을 완료하시겠습니까?', () => {
         const answerLength = response.answer.length;
@@ -89,7 +90,7 @@ const DetailPollPage: React.FC<DetailPollPageProps> = ({
           return false;
         }
 
-        const answered = data?.question.every((question) => {
+        const answered = responseData?.question.every((question) => {
           if (!question.isRequired) return true;
           const answer = response.answer.find(
             (answer) => answer.questionId === question.id,
@@ -102,27 +103,27 @@ const DetailPollPage: React.FC<DetailPollPageProps> = ({
         }
         const copyResponse = SnapResponse.copy(response);
         copyResponse.userId = user?.id;
-        copyResponse.pollId = data?.id;
+        copyResponse.pollId = responseData?.id;
         saveResponseMutate.mutate(copyResponse);
       });
 
       return false;
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [data?.id, data?.question, response, user?.id],
+    [responseData?.id, responseData?.question, response, user?.id],
   );
 
   const isExpired = useMemo(() => {
-    return validateExpired(data?.expiresAt);
-  }, [data]);
+    return validateExpired(responseData?.expiresAt);
+  }, [responseData]);
 
   return (
     <Container maxWidth="md">
       <Toolbar />
       <Stack component="form" gap={3} onSubmit={handleSavePollResult}>
-        {data && (
+        {responseData && (
           <PollLayout
-            poll={data}
+            poll={responseData}
             expired={isExpired}
             refetchPoll={refetchPoll}
           />

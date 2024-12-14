@@ -33,10 +33,11 @@ const DetailVotePage: React.FC<DetailVotePageProps> = ({
   const { id } = useParams();
   const detailId = voteId || id;
 
-  const { data, isPending } = useQuery<SnapVote>({
+  const { data, isPending } = useQuery<SnapResponseType<SnapVote>>({
     queryKey: ['vote', detailId],
     queryFn: () => (voteId ? getShareVoteBy(detailId) : getVote(detailId)),
   });
+  const responseData = data?.data;
 
   const saveResponseMutate = useMutation({
     mutationKey: ['saveResponse'],
@@ -81,32 +82,32 @@ const DetailVotePage: React.FC<DetailVotePageProps> = ({
     (e: FormEvent) => {
       e.preventDefault();
 
-      if (!data?.id) return;
+      if (!responseData?.id) return;
 
       openInteractiveModal('작성을 완료하시겠습니까?', () => {
         const copyResponse = SnapVoteResponse.copy(response);
         copyResponse.userId = user?.id;
-        copyResponse.voteId = data?.id;
+        copyResponse.voteId = responseData?.id;
         saveResponseMutate.mutate(copyResponse);
       });
 
       return false;
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [data?.id, response, user],
+    [responseData?.id, response, user],
   );
 
   const isExpired = useMemo(() => {
-    return validateExpired(data?.expiresAt);
-  }, [data]);
+    return validateExpired(responseData?.expiresAt);
+  }, [responseData]);
 
   return (
     <Container maxWidth="md">
       <Toolbar />
       <Stack component="form" gap={3} onSubmit={handleSavePollResult}>
-        {data && (
+        {responseData && (
           <VoteLayout
-            vote={data}
+            vote={responseData}
             expired={isExpired}
             refetchVote={refetchVote}
           />

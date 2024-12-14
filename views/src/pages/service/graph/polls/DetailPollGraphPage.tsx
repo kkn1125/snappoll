@@ -30,10 +30,11 @@ interface DetailPollGraphPageProps {}
 const DetailPollGraphPage: React.FC<DetailPollGraphPageProps> = () => {
   const theme = useTheme();
   const { id } = useParams();
-  const { data } = useQuery<SnapPoll>({
+  const { data } = useQuery<SnapResponseType<SnapPoll>>({
     queryKey: ['getPoll', id],
     queryFn: () => getPoll(id),
   });
+  const responseData = data?.data;
   const getCounter = useCallback((question?: SnapPollQuestion) => {
     if (!question) return [];
     const counted = question.option.map((option) => {
@@ -50,7 +51,7 @@ const DetailPollGraphPage: React.FC<DetailPollGraphPageProps> = () => {
   }, []);
   const isMdDown = useMediaQuery(theme.breakpoints.down('md'));
 
-  if (!data) return <></>;
+  if (!responseData) return <></>;
 
   return (
     <Stack gap={4}>
@@ -65,7 +66,7 @@ const DetailPollGraphPage: React.FC<DetailPollGraphPageProps> = () => {
       </Box>
       <Stack spacing={4} alignItems="center">
         <Typography variant="h4" fontWeight={700}>
-          설문지: {data.title}
+          설문지: {responseData.title}
         </Typography>
 
         <Table>
@@ -78,7 +79,7 @@ const DetailPollGraphPage: React.FC<DetailPollGraphPageProps> = () => {
                 개수
               </TableCell>
               <TableCell align="right">
-                {data.question?.length ?? 0}개
+                {responseData.question?.length ?? 0}개
               </TableCell>
             </TableRow>
             <TableRow
@@ -89,7 +90,7 @@ const DetailPollGraphPage: React.FC<DetailPollGraphPageProps> = () => {
                 개수
               </TableCell>
               <TableCell align="right">
-                {data.question.reduce(
+                {responseData.question.reduce(
                   (acc, cur) => acc + (cur.option.length ?? 0),
                   0,
                 )}
@@ -103,7 +104,7 @@ const DetailPollGraphPage: React.FC<DetailPollGraphPageProps> = () => {
                 <ThreePIcon fontSize="small" color="info" /> 참여 인원
               </TableCell>
               <TableCell align="right">
-                {data.response?.length ?? 0}명
+                {responseData.response?.length ?? 0}명
               </TableCell>
             </TableRow>
           </TableBody>
@@ -124,7 +125,7 @@ const DetailPollGraphPage: React.FC<DetailPollGraphPageProps> = () => {
                 cornerRadius: 10,
                 arcLabelMinAngle: 35,
                 highlightScope: { fade: 'global', highlight: 'item' },
-                data: data.question.reduce(
+                data: responseData.question.reduce(
                   (acc, question) => {
                     const typed = acc.find((a) => a.label === question.type);
                     if (typed && typeof typed.value === 'number') {
@@ -149,7 +150,7 @@ const DetailPollGraphPage: React.FC<DetailPollGraphPageProps> = () => {
         </Stack>
       </Stack>
       <Stack spacing={4} alignItems="center">
-        {data.question
+        {responseData.question
           .filter((question) => question.type !== 'text')
           .map((question) => (
             <Stack key={question.id} width="100%">
@@ -198,8 +199,8 @@ const DetailPollGraphPage: React.FC<DetailPollGraphPageProps> = () => {
         <Typography variant="h4" fontWeight={700} gutterBottom>
           사용자 설정 그래프
         </Typography>
-        {data.question.length > 1 ? (
-          <CorrelationChart data={data} />
+        {responseData.question.length > 1 ? (
+          <CorrelationChart data={responseData} />
         ) : (
           <Alert severity="info">
             <AlertTitle>안내</AlertTitle>

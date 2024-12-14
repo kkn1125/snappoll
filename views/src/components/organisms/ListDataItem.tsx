@@ -27,6 +27,7 @@ import { useCallback, useMemo } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import ListItemIcons from '../atoms/ListItemIcons';
+import CommonPagination from '@components/atoms/CommonPagination';
 
 interface ListDataItemProps<T extends SnapPoll | SnapVote> {
   name: 'poll' | 'vote';
@@ -51,7 +52,7 @@ function ListDataItem<T extends SnapPoll | SnapVote>({
   const { user } = useRecoilValue(tokenAtom);
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const [params, setParams] = useSearchParams({ page: '1' });
+  // const [params, setParams] = useSearchParams({ page: '1' });
 
   const removeMutate = useMutation({
     mutationKey: [`remove${name}`],
@@ -188,23 +189,7 @@ function ListDataItem<T extends SnapPoll | SnapVote>({
           </ListItem>
         )}
       </List>
-      {isNil(limit) && total > 0 && (
-        <Stack direction="row" justifyContent="center">
-          <Pagination
-            onChange={(e, page) => {
-              if (page === 1) {
-                setParams({});
-              } else {
-                setParams({ page: '' + page });
-              }
-            }}
-            page={+(params.get('page') || 1)}
-            count={total}
-            showFirstButton
-            showLastButton
-          />
-        </Stack>
-      )}
+      <CommonPagination total={total} limit={limit} />
     </Stack>
   );
 }

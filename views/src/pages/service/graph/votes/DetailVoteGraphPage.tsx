@@ -11,10 +11,11 @@ import { useParams } from 'react-router-dom';
 interface DetailVoteGraphPageProps {}
 const DetailVoteGraphPage: React.FC<DetailVoteGraphPageProps> = () => {
   const { id } = useParams();
-  const { data } = useQuery<SnapVote>({
+  const { data } = useQuery<SnapResponseType<SnapVote>>({
     queryKey: ['getVote', id],
     queryFn: () => getVote(id),
   });
+  const responseData = data?.data;
   const getCounter = useCallback((option?: SnapVoteOption) => {
     if (!option) return [];
     const counted =
@@ -27,7 +28,7 @@ const DetailVoteGraphPage: React.FC<DetailVoteGraphPageProps> = () => {
     return counted;
   }, []);
 
-  if (!data) return <></>;
+  if (!responseData) return <></>;
 
   return (
     <Stack gap={4}>
@@ -42,7 +43,7 @@ const DetailVoteGraphPage: React.FC<DetailVoteGraphPageProps> = () => {
       </Box>
       <Stack spacing={4} alignItems="center">
         <Typography variant="h4" fontWeight={700}>
-          투표지: {data.title}
+          투표지: {responseData.title}
         </Typography>
         <Typography variant="h5" fontWeight={700}>
           빈도
@@ -58,7 +59,7 @@ const DetailVoteGraphPage: React.FC<DetailVoteGraphPageProps> = () => {
               cornerRadius: 10,
               arcLabelMinAngle: 35,
               highlightScope: { fade: 'global', highlight: 'item' },
-              data: data.voteOption.map(
+              data: responseData.voteOption.map(
                 (option, i) => {
                   return {
                     id: i,

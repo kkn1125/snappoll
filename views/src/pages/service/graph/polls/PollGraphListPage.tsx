@@ -1,4 +1,5 @@
 import { getMyPolls } from '@/apis/poll/getMyPolls';
+import CommonPagination from '@components/atoms/CommonPagination';
 import SkeletonGraphList from '@components/moleculars/SkeletonGraphList';
 import { SnapPoll } from '@models/SnapPoll';
 import BarChartIcon from '@mui/icons-material/BarChart';
@@ -18,25 +19,28 @@ interface PollGraphListPageProps {}
 const PollGraphListPage: React.FC<PollGraphListPageProps> = () => {
   const navigate = useNavigate();
   const [page, setPage] = useState(1);
-  const myPolls = useQuery<{ polls: SnapPoll[]; count: number }>({
+  const { data, isLoading } = useQuery<
+    SnapResponseType<{ polls: SnapPoll[]; count: number }>
+  >({
     queryKey: ['my-polls', page],
     queryFn: getMyPolls,
   });
+  const responseData = data?.data;
   const handleRedirect = (to: string) => {
     navigate(`/service/graph/poll/${to}`);
   };
 
-  const totalPage = useMemo(() => {
-    const count = myPolls.data?.count || 0;
+  const total = useMemo(() => {
+    const count = responseData?.count || 0;
     return Math.ceil(count / 10);
-  }, [myPolls.data?.count]);
+  }, [responseData?.count]);
 
-  if (myPolls.isLoading) return <SkeletonGraphList />;
+  if (isLoading) return <SkeletonGraphList />;
 
   return (
     <Stack>
       <List>
-        {myPolls.data?.polls.map((poll) => (
+        {responseData?.polls.map((poll) => (
           <ListItem key={poll.id}>
             <ListItemButton
               onClick={() => handleRedirect(poll.id)}
@@ -63,15 +67,13 @@ const PollGraphListPage: React.FC<PollGraphListPageProps> = () => {
             </ListItemButton>
           </ListItem>
         ))}
-        {myPolls.data?.count === 0 && (
+        {responseData?.count === 0 && (
           <ListItem>
             <ListItemText>데이터가 없습니다.</ListItemText>
           </ListItem>
         )}
       </List>
-      <Stack alignItems="center">
-        <Pagination page={page} count={totalPage} />
-      </Stack>
+      <CommonPagination total={total} />
     </Stack>
   );
 };

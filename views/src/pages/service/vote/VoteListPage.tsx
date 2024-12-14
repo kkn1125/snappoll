@@ -9,21 +9,26 @@ interface VoteListPageProps {}
 const VoteListPage: React.FC<VoteListPageProps> = () => {
   const [params, setParams] = useSearchParams({ page: '1' });
   const page = +(params.get('page') || 1);
-  const { data, isLoading } = useQuery<{ votes: SnapVote[]; count: number }>({
+  const { data, isLoading } = useQuery<
+    SnapResponseType<{ votes: SnapVote[]; count: number }>
+  >({
     queryKey: ['votes', page],
     queryFn: getVotes,
   });
+  const responseData = data?.data;
 
-  if (!data || isLoading) return <SkeletonMeList />;
+  if (isLoading) return <SkeletonMeList />;
 
   return (
-    <ListDataItem
-      name="vote"
-      queryKey="votes"
-      dataList={data.votes}
-      count={data.count}
-      emptyComment="등록한 투표지가 없습니다."
-    />
+    responseData?.votes && (
+      <ListDataItem
+        name="vote"
+        queryKey="votes"
+        dataList={responseData.votes}
+        count={responseData.count}
+        emptyComment="등록한 투표지가 없습니다."
+      />
+    )
   );
 };
 

@@ -4,8 +4,10 @@
 
 - 2024-12-14
   - add
+    - pagination 공통 컴포넌트로 분리
     - 메일 확인 메세지 추가
   - fix
+    - 데이터 응답 포맷 변경으로 전체 데이터 받는 부분 변수 수정
     - 토큰 검증 방식 변경
       - 최초 렌더 verify, get me
     - useToken hook verify 로직 개선

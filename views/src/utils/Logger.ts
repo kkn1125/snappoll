@@ -1,4 +1,7 @@
+import { MODE } from '@common/variables';
 import dayjs from 'dayjs';
+
+const mode = MODE === 'development';
 
 export class Logger<T extends string | object> {
   private levels = ['log', 'info', 'debug', 'warn', 'error'] as const;
@@ -26,6 +29,7 @@ export class Logger<T extends string | object> {
   }
 
   update() {
+    if (!mode) return;
     for (const level of this.levels) {
       const index = this.levels.indexOf(level);
       const icon = this.icons[index];

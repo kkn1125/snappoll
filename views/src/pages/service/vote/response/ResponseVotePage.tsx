@@ -3,6 +3,7 @@ import { getVoteResponseMe } from '@/apis/vote/response/getVoteResponseMe';
 import { removeVoteResponse } from '@/apis/vote/response/removeVoteResponse';
 import { tokenAtom } from '@/recoils/token.atom';
 import { Message } from '@common/messages';
+import CommonPagination from '@components/atoms/CommonPagination';
 import SkeletonResponseList from '@components/moleculars/SkeletonResponseList';
 import useModal from '@hooks/useModal';
 import { SnapVote } from '@models/SnapVote';
@@ -43,15 +44,18 @@ const ResponseVotePage: React.FC<ResponseVotePageProps> = ({ me }) => {
   const [params, setParams] = useSearchParams({ page: '1' });
   const page = +(params.get('page') || 1);
 
-  const { data, isLoading } = useQuery<{
-    vote: SnapVote;
-    responses: SnapVoteResponse[];
-    count: number;
-  }>({
+  const { data, isLoading } = useQuery<
+    SnapResponseType<{
+      vote: SnapVote;
+      responses: SnapVoteResponse[];
+      count: number;
+    }>
+  >({
     queryKey: ['voteResponse', id],
     queryFn: () => (me ? getVoteResponseMe() : getVoteResponse(id)),
   });
-  const total = data ? Math.ceil(data.count / 10) : 0;
+  const responseData = data?.data;
+  const total = responseData ? Math.ceil(responseData.count / 10) : 0;
 
   const removeMutation = useMutation({
     mutationKey: ['removeMutate'],
@@ -84,8 +88,8 @@ const ResponseVotePage: React.FC<ResponseVotePageProps> = ({ me }) => {
   }, []);
 
   const isExpired = useMemo(() => {
-    return validateExpired(data?.vote?.expiresAt);
-  }, [data?.vote?.expiresAt]);
+    return validateExpired(responseData?.vote?.expiresAt);
+  }, [responseData?.vote?.expiresAt]);
 
   if (isLoading) return <SkeletonResponseList />;
 
@@ -101,7 +105,7 @@ const ResponseVotePage: React.FC<ResponseVotePageProps> = ({ me }) => {
         )}
 
         <List>
-          {data?.responses.slice(0, 10).map((response, i) => (
+          {responseData?.responses.slice(0, 10).map((response, i) => (
             <ListItem
               key={response.id}
               secondaryAction={
@@ -132,7 +136,7 @@ const ResponseVotePage: React.FC<ResponseVotePageProps> = ({ me }) => {
             </ListItem>
           ))}
 
-          {data?.responses.length === 0 && (
+          {responseData?.responses.length === 0 && (
             <ListItem>
               <ListItemButton>
                 <ListItemText>
@@ -144,23 +148,7 @@ const ResponseVotePage: React.FC<ResponseVotePageProps> = ({ me }) => {
             </ListItem>
           )}
         </List>
-        {total > 0 && (
-          <Stack direction="row" justifyContent="center">
-            <Pagination
-              onChange={(e, page) => {
-                if (page === 1) {
-                  setParams({});
-                } else {
-                  setParams({ page: '' + page });
-                }
-              }}
-              page={page}
-              count={total}
-              showFirstButton
-              showLastButton
-            />
-          </Stack>
-        )}
+        <CommonPagination total={total} />
         <Divider />
         <Button
           variant="contained"

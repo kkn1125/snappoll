@@ -3,6 +3,7 @@ import { getPollResponseMe } from '@/apis/poll/response/getPollResponseMe';
 import { removeResponse } from '@/apis/poll/response/removeResponse';
 import { tokenAtom } from '@/recoils/token.atom';
 import { Message } from '@common/messages';
+import CommonPagination from '@components/atoms/CommonPagination';
 import SkeletonResponseList from '@components/moleculars/SkeletonResponseList';
 import useModal from '@hooks/useModal';
 import { SnapPoll } from '@models/SnapPoll';
@@ -26,10 +27,13 @@ import {
 } from '@mui/material';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { formattedDate } from '@utils/formattedDate';
+import { Logger } from '@utils/Logger';
 import { validateExpired } from '@utils/validateExpired';
 import { useCallback, useMemo, useState } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
+
+const logger = new Logger('ResponsePollPage');
 
 interface ResponsePollPageProps {
   me?: boolean;
@@ -43,16 +47,18 @@ const ResponsePollPage: React.FC<ResponsePollPageProps> = ({ me }) => {
   const [params, setParams] = useSearchParams({ page: '1' });
   const page = +(params.get('page') || 1);
 
-  const { data, isLoading } = useQuery<{
-    poll: SnapPoll;
-    responses: SnapResponse[];
-    count: number;
-  }>({
+  const { data, isLoading } = useQuery<
+    SnapResponseType<{
+      poll: SnapPoll;
+      responses: SnapResponse[];
+      count: number;
+    }>
+  >({
     queryKey: ['pollResponses', id, page],
     queryFn: () => (me ? getPollResponseMe(page) : getPollResponse(id, page)),
   });
-  const total = data ? Math.ceil(data.count / 10) : 0;
-
+  const responseData = data?.data;
+  const total = responseData ? Math.ceil(responseData.count / 10) : 0;
   const removeMutation = useMutation({
     mutationKey: ['removeMutate'],
     mutationFn: removeResponse,
@@ -60,6 +66,8 @@ const ResponsePollPage: React.FC<ResponsePollPageProps> = ({ me }) => {
       queryClient.invalidateQueries({ queryKey: ['pollResponses'] });
     },
   });
+
+  logger.debug('data:', data);
 
   const getTitle = useCallback((response: SnapResponse) => {
     return response.poll?.title;
@@ -84,8 +92,8 @@ const ResponsePollPage: React.FC<ResponsePollPageProps> = ({ me }) => {
   }, []);
 
   const isExpired = useMemo(() => {
-    return validateExpired(data?.poll?.expiresAt);
-  }, [data?.poll?.expiresAt]);
+    return validateExpired(responseData?.poll?.expiresAt);
+  }, [responseData?.poll?.expiresAt]);
 
   if (isLoading) return <SkeletonResponseList />;
 
@@ -101,7 +109,7 @@ const ResponsePollPage: React.FC<ResponsePollPageProps> = ({ me }) => {
         )}
 
         <List>
-          {data?.responses.slice(0, 10).map((response, i) => (
+          {responseData?.responses.slice(0, 10).map((response, i) => (
             <ListItem
               key={response.id}
               secondaryAction={
@@ -132,7 +140,7 @@ const ResponsePollPage: React.FC<ResponsePollPageProps> = ({ me }) => {
             </ListItem>
           ))}
 
-          {data?.responses.length === 0 && (
+          {responseData?.responses.length === 0 && (
             <ListItem>
               <ListItemButton>
                 <ListItemText>
@@ -144,23 +152,7 @@ const ResponsePollPage: React.FC<ResponsePollPageProps> = ({ me }) => {
             </ListItem>
           )}
         </List>
-        {total > 0 && (
-          <Stack direction="row" justifyContent="center">
-            <Pagination
-              onChange={(e, page) => {
-                if (page === 1) {
-                  setParams({});
-                } else {
-                  setParams({ page: '' + page });
-                }
-              }}
-              page={page}
-              count={total}
-              showFirstButton
-              showLastButton
-            />
-          </Stack>
-        )}
+        <CommonPagination total={total} />
         <Divider />
         <Button
           variant="contained"
