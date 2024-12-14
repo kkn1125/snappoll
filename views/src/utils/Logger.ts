@@ -29,7 +29,6 @@ export class Logger<T extends string | object> {
   }
 
   update() {
-    if (!mode) return;
     for (const level of this.levels) {
       const index = this.levels.indexOf(level);
       const icon = this.icons[index];
@@ -37,6 +36,7 @@ export class Logger<T extends string | object> {
       Object.defineProperty(this, level, {
         get() {
           const time = dayjs().format('mm:ss.SSS');
+          if (!mode) return () => {};
           return console.log.bind(
             this,
             `%c${icon} [${time}] ${this.context} --- `,

@@ -55,6 +55,7 @@ export class AuthController {
     });
   }
 
+  @IgnoreCookie()
   @Post('init/confirm')
   async confirmInitializeUserPasswordFromEmail(
     @Body() data: any,
@@ -255,6 +256,7 @@ export class AuthController {
     );
   }
 
+  @IgnoreCookie()
   @Get('login/kakao')
   async loginAsKakao(@Query('code') code: string, @Res() res: Response) {
     const data = await this.authService.getKakaoLoginToken(code);
