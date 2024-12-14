@@ -7,14 +7,20 @@ import { List, Stack, Typography } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
 
 const HomePage = () => {
-  const poll = useQuery<{ polls: SnapPoll[]; count: number }>({
-    queryKey: ['polls'],
-    queryFn: getPolls,
-  });
-  const vote = useQuery<{ votes: SnapVote[]; count: number }>({
-    queryKey: ['votes'],
-    queryFn: getVotes,
-  });
+  const poll = useQuery<SnapResponseType<{ polls: SnapPoll[]; count: number }>>(
+    {
+      queryKey: ['polls'],
+      queryFn: getPolls,
+    },
+  );
+  const vote = useQuery<SnapResponseType<{ votes: SnapVote[]; count: number }>>(
+    {
+      queryKey: ['votes'],
+      queryFn: getVotes,
+    },
+  );
+  const pollData = poll.data?.data;
+  const voteData = vote.data?.data;
 
   return (
     <Stack gap={5}>
@@ -26,12 +32,12 @@ const HomePage = () => {
         </Typography>
 
         <List>
-          {poll.data && (
+          {pollData && (
             <ListDataItem
               name="poll"
               queryKey="polls"
-              dataList={poll.data.polls}
-              count={poll.data.count}
+              dataList={pollData.polls}
+              count={pollData.count}
               emptyComment="등록한 설문지가 없습니다."
               disableCreateButton
               limit={3}
@@ -45,12 +51,12 @@ const HomePage = () => {
         </Typography>
 
         <List>
-          {vote.data && (
+          {voteData && (
             <ListDataItem
               name="vote"
               queryKey="votes"
-              dataList={vote.data.votes}
-              count={vote.data.count}
+              dataList={voteData.votes}
+              count={voteData.count}
               emptyComment="등록한 설문지가 없습니다."
               disableCreateButton
               limit={3}

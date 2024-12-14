@@ -4,32 +4,32 @@ import VoteResponseLayout from '@components/templates/VoteResponseLayout';
 import { SnapVoteResponse } from '@models/SnapVoteResponse';
 import { Button, Container, Divider, Stack, Toolbar } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 
 interface DetailResponseVotePageProps {}
 const DetailResponseVotePage: React.FC<DetailResponseVotePageProps> = () => {
   const { user } = useRecoilValue(tokenAtom);
-  const navigate = useNavigate();
   const { responseId: id } = useParams();
-  const { data } = useQuery<SnapVoteResponse>({
+  const { data } = useQuery<SnapResponseType<SnapVoteResponse>>({
     queryKey: ['voteResponse'],
     queryFn: () => getResponse(id),
   });
+  const responseData = data?.data;
 
   return (
     <Container maxWidth="md">
       <Toolbar />
       <Stack gap={3}>
-        {data?.vote && (
+        {responseData?.vote && (
           <VoteResponseLayout
-            vote={data.vote}
-            answer={data.voteAnswer}
+            vote={responseData.vote}
+            answer={responseData.voteAnswer}
             contributor={
-              data.user
-                ? data.user.username === user?.username
+              responseData.user
+                ? responseData.user.username === user?.username
                   ? '나'
-                  : data.user.username
+                  : responseData.user.username
                 : 'Unknown'
             }
           />

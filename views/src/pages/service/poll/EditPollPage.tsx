@@ -13,11 +13,17 @@ const EditPollPage: React.FC<EditPollPageProps> = () => {
   const { id } = useParams();
   const setSnapPoll = useSetRecoilState(snapPollAtom);
 
-  const mutate = useMutation({
+  const mutate = useMutation<
+    SnapResponseType<SnapPoll>,
+    Error,
+    string | undefined
+  >({
     mutationKey: ['getPoll', id],
     mutationFn: getPoll,
     onSuccess(data, variables, context) {
-      setSnapPoll(data);
+      if (data.data) {
+        setSnapPoll(data.data);
+      }
     },
   });
 

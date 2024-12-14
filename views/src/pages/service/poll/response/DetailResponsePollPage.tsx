@@ -11,21 +11,22 @@ interface DetailResponsePollPageProps {}
 const DetailResponsePollPage: React.FC<DetailResponsePollPageProps> = () => {
   const { user } = useRecoilValue(tokenAtom);
   const { responseId: id } = useParams();
-  const { data } = useQuery<SnapResponse>({
+  const { data } = useQuery<SnapResponseType<SnapResponse>>({
     queryKey: ['pollResponse', id],
     queryFn: () => getResponse(id),
   });
+  const responseData = data?.data;
 
   return (
     <Stack gap={3}>
-      {data?.poll && (
+      {responseData?.poll && (
         <PollResponseLayout
-          poll={data.poll}
+          poll={responseData.poll}
           contributor={
-            data.user
-              ? data.user.username === user?.username
+            responseData.user
+              ? responseData.user.username === user?.username
                 ? '나'
-                : data.user.username
+                : responseData.user.username
               : 'Unknown'
           }
         />

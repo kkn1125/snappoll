@@ -13,11 +13,17 @@ const EditVotePage: React.FC<EditVotePageProps> = () => {
   const { id } = useParams();
   const setSnapVote = useSetRecoilState(snapVoteAtom);
 
-  const mutate = useMutation({
+  const mutate = useMutation<
+    SnapResponseType<SnapVote>,
+    Error,
+    string | undefined
+  >({
     mutationKey: ['getVote', id],
     mutationFn: getVote,
     onSuccess(data, variables, context) {
-      setSnapVote(data);
+      if (data.data) {
+        setSnapVote(data.data);
+      }
     },
   });
 

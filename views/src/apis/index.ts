@@ -16,7 +16,6 @@ snapApi.interceptors.response.use(
   },
   (error) => {
     logger.error(error);
-
     return Promise.reject(error);
   },
 );
