@@ -33,7 +33,6 @@ const LoginPage: React.FC<LoginPageProps> = () => {
     password: '',
   });
   const { errors, validate, validated, setValidated } = useValidate(loginInfo);
-  // const setToken = useSetRecoilState(tokenAtom);
   const mutation = useMutation({
     mutationKey: ['login'],
     mutationFn: login,
@@ -43,17 +42,19 @@ const LoginPage: React.FC<LoginPageProps> = () => {
         navigate('/');
       }
     },
-    onError(error: AxiosError, _variables, _context) {
-      const { response } = error;
-      const { data } = response as { data: any };
-
+    onError(error: AxiosError<AxsiosException>, _variables, _context) {
       localStorage.setItem('logged_in', 'false');
 
       setLoginInfo((loginInfo) => ({
         email: loginInfo.email,
         password: '',
       }));
-      openModal(Message.WrongRequest(data.errorCode.message));
+
+      if (error.response) {
+        const { data } = error.response;
+
+        openModal(Message.WrongRequest(data.errorCode.message));
+      }
     },
   });
 

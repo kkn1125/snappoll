@@ -35,7 +35,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
       SELECT
         code.status AS status,
         code.domain AS domain,
-        error_message.status AS errorStatus,
+        error_message.status AS "errorStatus",
         error_message.message AS message
       FROM code
       LEFT JOIN error_message

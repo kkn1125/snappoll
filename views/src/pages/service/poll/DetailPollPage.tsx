@@ -60,7 +60,7 @@ const DetailPollPage: React.FC<DetailPollPageProps> = ({
         navigate(-1);
       }
     },
-    onError(error: AxiosError, variables, context) {
+    onError(error: AxiosError<AxsiosException>, variables, context) {
       if (error.response?.status === 401) {
         setResponse(new SnapResponse());
         logoutToken();

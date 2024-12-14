@@ -52,16 +52,11 @@ const ProfilePage: React.FC<ProfilePageProps> = () => {
       openModal(Message.Info.SuccessChangeProfile);
       refetchGetMe();
     },
-    onError(error: AxiosError, variables, context) {
-      if (
-        error.response &&
-        error.response.data &&
-        error.response.data instanceof Object &&
-        'message' in error.response.data
-      )
+    onError(error: AxiosError<AxsiosException>, variables, context) {
+      if (error.response && error.response.data)
         openModal({
           title: '안내',
-          content: error.response.data.message as string,
+          content: error.response.data.errorCode.message,
         });
     },
   });
@@ -73,19 +68,13 @@ const ProfilePage: React.FC<ProfilePageProps> = () => {
       openModal({ title: '안내', content: '프로필 변경되었습니다.' });
       refetchGetMe();
     },
-    onError(error: AxiosError<{ message?: any }>, variables, context) {
-      if (!error.response) {
-        openModal({ title: '안내', content: '서버에 문제가 발생했습니다.' });
-        return;
-      }
-
-      if (error.response.status === 401) {
-        logoutToken();
-      } else {
+    onError(error: AxiosError<AxsiosException>, variables, context) {
+      if (error.response && error.response.data) {
         openModal({
           title: '안내',
-          content: error.response?.data?.message || '잘못된 접근입니다.',
+          content: error.response.data.errorCode.message,
         });
+        return;
       }
     },
   });

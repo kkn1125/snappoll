@@ -6,6 +6,7 @@ import {
   BadRequestException,
   ConflictException,
   Injectable,
+  NotFoundException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import Logger from '@utils/Logger';
@@ -107,10 +108,6 @@ export class AuthService {
     const address = this.configService.get('email.ADDRESS');
     const mode = this.configService.get('common.MODE');
 
-    const clientDomain =
-      mode === 'development'
-        ? 'http://localhost:5000'
-        : 'https://snappoll.kro.kr';
     const domain =
       mode === 'development'
         ? 'http://localhost:8080'
@@ -126,7 +123,7 @@ export class AuthService {
       subject: 'SnapPoll 계정 비밀번호 초기화 안내',
       text: '확인해주세요.',
       html: `<div>
-        <img src="${clientDomain}/logo/original.png" alt="snappoll-logo" width="50" height="50" />
+        <img src="https://snappoll.kro.kr/logo/original.png" alt="snappoll-logo" width="50" height="50" />
         <h2>SnapPoll 계정 비밀번호 초기화</h2>
         <p>계정 비밀번호 초기화 후 로그인하여 프로필 > 비밀번호 변경으로 이동하여 자신의 비밀번호로 변경해주시기 바랍니다. 본인에 의한 확인 메일이 아닌 경우, 아래 메일로 문의해주세요.</p>
 
@@ -191,9 +188,13 @@ export class AuthService {
       },
     });
 
-    if (!user) return null;
+    if (!user) {
+      const errorCode = await this.prisma.getErrorCode('user', 'NotFound');
+      throw new NotFoundException(errorCode);
+    }
     if (user.deletedAt !== null) {
-      throw new BadRequestException('탈퇴된 계정입니다.');
+      const errorCode = await this.prisma.getErrorCode('user', 'RemovedUser');
+      throw new BadRequestException(errorCode);
     }
 
     const encryptedPassword = this.prisma.encryptPassword(userPassword);
@@ -220,10 +221,6 @@ export class AuthService {
     const address = this.configService.get('email.ADDRESS');
     const mode = this.configService.get('common.MODE');
 
-    const clientDomain =
-      mode === 'development'
-        ? 'http://localhost:5000'
-        : 'https://snappoll.kro.kr';
     const domain =
       mode === 'development'
         ? 'http://localhost:8080'
@@ -239,7 +236,7 @@ export class AuthService {
       subject: 'SnapPoll 이메일 확인 요청',
       text: '확인해주세요.',
       html: `<div>
-        <img src="${clientDomain}/logo/original.png" alt="snappoll-logo" width="50" height="50" />
+        <img src="https://snappoll.kro.kr/logo/original.png" alt="snappoll-logo" width="50" height="50" />
         <h2>이메일 본인인증</h2>
         <p>본인인증을 위한 메일입니다. 본인에 의한 확인 메일이 아닌 경우, 아래 메일로 문의해주세요.</p>
 
@@ -262,20 +259,13 @@ export class AuthService {
     return token;
   }
 
-  getToken(userData: { id: string; email: string; username: string }) {
+  getToken(userData: UserTokenData) {
     const secretKey = this.configService.get<string>('common.SECRET_KEY');
-    const token = jwt.sign(
-      {
-        ...userData,
-        loginAt: Date.now(),
-      },
-      secretKey,
-      {
-        expiresIn: '30m',
-        issuer: 'snapPoll',
-        algorithm: 'HS256',
-      },
-    );
+    const token = jwt.sign(userData, secretKey, {
+      expiresIn: '30m',
+      issuer: 'snapPoll',
+      algorithm: 'HS256',
+    });
     const refreshToken = jwt.sign(
       {
         ...userData,
@@ -296,13 +286,19 @@ export class AuthService {
     return this.prisma.user.findUnique({
       where: { email },
       include: {
-        // poll: true,
-        localUser: true,
-        socialUser: true,
         userProfile: true,
       },
     });
   }
+
+  // getMeSocial(email: string) {
+  //   return this.prisma.user.findUnique({
+  //     where: { email },
+  //     include: {
+  //       userProfile: true,
+  //     },
+  //   });
+  // }
 
   async requestLoginKakao() {
     const { data } = await firstValueFrom(

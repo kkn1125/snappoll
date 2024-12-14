@@ -51,13 +51,18 @@ const useToken = () => {
         navigate('/');
       }
     },
-    onError(error: AxiosError, variables, context) {
+    onError(error: AxiosError<AxsiosException>, variables, context) {
       if (error.code === 'ECONNABORTED') {
         openModal(Message.Info.ServerEConnection);
         return;
       }
-      if (error.response?.status === 401) {
-        openModal(Message.Expired.Token);
+      const response = error.response;
+      if (response && response.data && response.status === 401) {
+        if ([108, 109, 110].includes(response.data.errorCode.errorStatus))
+          openModal({
+            title: '안내',
+            content: response.data.errorCode.message,
+          });
       }
       logoutToken();
     },

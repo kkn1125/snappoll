@@ -53,7 +53,7 @@ const CreateVotePage: React.FC<CreateVotePageProps> = ({ edit = false }) => {
       setSnapVote(new SnapVote());
       navigate('/service/vote');
     },
-    onError(error: AxiosError, variables, context) {
+    onError(error: AxiosError<AxsiosException>, variables, context) {
       if (error.response?.status === 401) {
         setSnapVote(new SnapVote());
         logoutToken();
@@ -69,7 +69,7 @@ const CreateVotePage: React.FC<CreateVotePageProps> = ({ edit = false }) => {
       setSnapVote(new SnapVote());
       navigate('/service/vote');
     },
-    onError(error: AxiosError, variables, context) {
+    onError(error: AxiosError<AxsiosException>, variables, context) {
       if (error.response?.status === 401) {
         setSnapVote(new SnapVote());
         logoutToken();

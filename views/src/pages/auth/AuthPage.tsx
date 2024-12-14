@@ -1,15 +1,14 @@
 import { requestKakaoLogin } from '@/apis/requestKakaoLogin';
-import { Kakao } from '@common/variables';
-import useToken from '@hooks/useToken';
 import { Button, Container, Divider, Stack, Typography } from '@mui/material';
 import { useMutation } from '@tanstack/react-query';
+import { Logger } from '@utils/Logger';
 import { useEffect } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 
+const logger = new Logger('AuthPage');
+
 interface AuthPageProps {}
 const AuthPage: React.FC<AuthPageProps> = () => {
-  // const locate = useLocation();
-  const { loginToken } = useToken();
   const [param] = useSearchParams();
   const kakaoLoginMutation = useMutation({
     mutationKey: ['kakaoLogin'],
@@ -25,9 +24,8 @@ const AuthPage: React.FC<AuthPageProps> = () => {
     const refreshToken = param.get('refresh_token');
     const idToken = param.get('id_token');
     if (accessToken && refreshToken && idToken) {
-      loginToken();
+      logger.debug('소셜 로그인');
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [param]);
 
   return (

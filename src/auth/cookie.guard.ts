@@ -3,15 +3,16 @@ import {
   CanActivate,
   ExecutionContext,
   Injectable,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Request, Response } from 'express';
 import jwt, { JwtPayload } from 'jsonwebtoken';
-import { Observable } from 'rxjs';
 import { AuthService } from './auth.service';
 import { Reflector } from '@nestjs/core';
 import Logger from '@utils/Logger';
+import { PrismaService } from '@database/prisma.service';
 
 @Injectable()
 export class CookieGuard implements CanActivate {
@@ -20,6 +21,7 @@ export class CookieGuard implements CanActivate {
   constructor(
     private readonly reflector: Reflector,
     private readonly configService: ConfigService,
+    private readonly prisma: PrismaService,
     private readonly authService: AuthService,
   ) {}
 
@@ -41,132 +43,131 @@ export class CookieGuard implements CanActivate {
 
     if (!req.cookies.token) {
       this.logger.debug('쿠키 토큰 없음');
-      throw new UnauthorizedException('잘못된 요청입니다.');
-    }
 
-    let decodedToken: JwtPayload;
+      this.clearCookies(res);
+      const errorCode = await this.prisma.getErrorCode('auth', 'NoExistsToken');
 
-    try {
-      decodedToken = jwt.decode(req.cookies.token) as JwtPayload;
-      this.logger.debug('쿠키 토큰 디코딩 됨', decodedToken);
-    } catch (error) {
-      const { message, ...status } = await this.authService.prisma.getErrorCode(
-        'auth',
-        'BadRequest',
-      );
-      throw new BadRequestException(message, { cause: status });
+      throw new UnauthorizedException(errorCode);
     }
 
     try {
-      const isSocial = decodedToken.iss === 'https://kauth.kakao.com';
-      this.logger.debug('소셜계정 여부:', isSocial);
-
-      if (isSocial) {
-        req.verify = decodedToken;
-        req.token = req.cookies.token;
-        const customData = {
-          id: decodedToken.aud[0],
-          // createdAt: Date,
-          email: decodedToken.email,
-          username: decodedToken.nickname,
-          userProfile: {
-            image: decodedToken.picture,
-          },
-        };
-        req.user = customData as any;
-        return !!decodedToken;
-      }
-
-      const result = jwt.verify(req.cookies.token, secretKey, {
+      const verifiedToken = jwt.verify(req.cookies.token, secretKey, {
         algorithms: ['HS256'],
       }) as JwtPayload;
 
-      const user = await this.authService.getMe(result.email);
-      if (result) {
-        req.verify = result;
+      this.logger.debug(verifiedToken);
+
+      const email = verifiedToken.email;
+      const user = await this.authService.getMe(email);
+
+      if (!user) {
+        this.logger.debug('사용자 없음');
+
+        this.clearCookies(res);
+        const errorCode = await this.prisma.getErrorCode('auth', 'NotFound');
+        throw new NotFoundException(errorCode);
       }
-      if (user) {
-        const { localUser, socialUser, ...users } = user;
-        req.user = users;
-      }
-      // return !!result;
-    } catch (error: any) {
-      console.log(error);
+
+      this.logger.debug('email:', verifiedToken.email);
+      this.logger.debug('user:', user);
+
+      req.verify = verifiedToken;
+      req.user = user;
+    } catch (error) {
       if (error.name === 'JsonWebTokenError') {
-        if (error.message === 'jwt must be provided') {
-          throw new UnauthorizedException('잘못된 요청입니다.');
-        }
+        /* 잘못된 토큰 형식 */
+        const errorCode = await this.authService.prisma.getErrorCode(
+          'auth',
+          'WrongToken',
+        );
+        this.clearCookies(res);
+        throw new UnauthorizedException(errorCode);
       } else if (error.name === 'TokenExpiredError') {
-        // console.log(error.message);
-        try {
-          /* refresh check */
-          const result = jwt.verify(req.cookies.refresh, secretKey, {
-            algorithms: ['HS256'],
-          }) as JwtPayload;
-          if (result) {
-            console.log('토큰 재발급 완료');
-          }
-          const decoded = jwt.decode(req.cookies.token) as JwtPayload;
-          const { token, refreshToken } = this.authService.getToken({
-            id: decoded.id,
-            email: decoded.email,
-            username: decoded.username,
-          });
-
-          const user = await this.authService.getMe(result.email);
-          if (result) {
-            req.verify = result;
-          }
-          if (user) {
-            const { localUser, socialUser, ...users } = user;
-            req.user = users;
-          }
-
-          res.cookie('token', token, {
-            httpOnly: true,
-            secure: true,
-            sameSite: 'lax',
-            path: '/',
-          });
-          res.cookie('refresh', refreshToken, {
-            httpOnly: true,
-            secure: true,
-            sameSite: 'lax',
-            path: '/',
-          });
-        } catch (error: any) {
-          console.log(error.name, error.message);
-          console.log('invalid refresh token!');
-          //
-          res.clearCookie('token', {
-            httpOnly: true,
-            secure: true,
-            sameSite: 'lax',
-            path: '/',
-          });
-          res.clearCookie('refresh', {
-            httpOnly: true,
-            secure: true,
-            sameSite: 'lax',
-            path: '/',
-          });
-        }
+        /* 토큰 만료 */
+        await this.handleRefreshTokenProvide(req, res, secretKey);
       } else {
-        //
-        res.clearCookie('token', {
-          httpOnly: true,
-          secure: true,
-          sameSite: 'lax',
-          path: '/',
-        });
-        res.clearCookie('refresh', {
-          httpOnly: true,
-          secure: true,
-          sameSite: 'lax',
-          path: '/',
-        });
+        /* 그 외 에러 */
+        this.clearCookies(res);
+        const errorCode = await this.authService.prisma.getErrorCode(
+          'auth',
+          'BadRequest',
+        );
+        throw new BadRequestException(errorCode);
       }
     }
+
     return true;
+  }
+
+  async handleRefreshTokenProvide(
+    req: Request,
+    res: Response,
+    secretKey: string,
+  ) {
+    try {
+      const verifiedRefreshToken = jwt.verify(req.cookies.refresh, secretKey, {
+        algorithms: ['HS256'],
+      }) as JwtPayload;
+
+      const user = await this.authService.getMe(verifiedRefreshToken.email);
+
+      if (!user) {
+        const errorCode = await this.prisma.getErrorCode('auth', 'NotFound');
+        throw new NotFoundException(errorCode);
+      }
+
+      const { id, email, username, authProvider, loginAt } =
+        verifiedRefreshToken;
+      const { token, refreshToken } = this.authService.getToken({
+        id,
+        email,
+        username,
+        authProvider,
+        loginAt,
+        refreshAt: Date.now(),
+      });
+
+      req.verify = verifiedRefreshToken;
+      req.user = user;
+
+      res.cookie('token', token, {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'lax',
+        path: '/',
+      });
+      res.cookie('refresh', refreshToken, {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'lax',
+        path: '/',
+      });
+      this.logger.debug('토큰 재발급 완료');
+    } catch (error) {
+      this.logger.debug(error.name, error.message);
+      this.logger.debug('invalid refresh token!');
+      this.clearCookies(res);
+
+      const errorCode = await this.authService.prisma.getErrorCode(
+        'auth',
+        'ExpiredRefreshToken',
+      );
+      throw new UnauthorizedException(errorCode);
+    }
+  }
+
+  private clearCookies(res: Response) {
+    res.clearCookie('token', {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'lax',
+      path: '/',
+    });
+    res.clearCookie('refresh', {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'lax',
+      path: '/',
+    });
   }
 }

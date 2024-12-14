@@ -66,6 +66,7 @@ export class AuthController {
       res.send(`
         ${this.authService.style}
         <div class="wrap">
+          <img src="https://snappoll.kro.kr/logo/original.png" alt="snappoll-logo" width="50" height="50" />
           <h3>초기화 확인 시간이 만료되었습니다. 다시 시도해주세요. -100</h3>
           <button onclick="window.close()">닫기</button>
         </div>
@@ -89,6 +90,7 @@ export class AuthController {
       res.send(`
           ${this.authService.style}
           <div class="wrap">
+            <img src="https://snappoll.kro.kr/logo/original.png" alt="snappoll-logo" width="50" height="50" />
             <h3>초기화 확인 시간이 만료되었습니다. 다시 시도해주세요. -101</h3>
             <button onclick="window.close()">닫기</button>
           </div>
@@ -105,6 +107,7 @@ export class AuthController {
       res.send(`
           ${this.authService.style}
           <div class="wrap">
+            <img src="https://snappoll.kro.kr/logo/original.png" alt="snappoll-logo" width="50" height="50" />
             <h3>${email}님의 계정이 확인되었습니다.</h3>
             <h5>페이지로 돌아가 남은 과정을 진행해주세요.</h5>
             <h5>발급된 비밀번호는 <strong>${hashedPassword}</strong> 입니다.</h5>
@@ -116,6 +119,7 @@ export class AuthController {
       res.send(`
           ${this.authService.style}
           <div class="wrap">
+            <img src="https://snappoll.kro.kr/logo/original.png" alt="snappoll-logo" width="50" height="50" />
             <h3>초기화 확인 시간이 만료되었습니다. 다시 시도해주세요. -102</h3>
             <button onclick="window.close()">닫기</button>
           </div>
@@ -155,6 +159,7 @@ export class AuthController {
       res.send(`
         ${this.authService.style}
         <div class="wrap">
+          <img src="https://snappoll.kro.kr/logo/original.png" alt="snappoll-logo" width="50" height="50" />
           <h3>존재하지 않는 토큰입니다.</h3>
           <button onclick="window.close()">닫기</button>
         </div>
@@ -178,6 +183,7 @@ export class AuthController {
       res.send(`
           ${this.authService.style}
           <div class="wrap">
+            <img src="https://snappoll.kro.kr/logo/original.png" alt="snappoll-logo" width="50" height="50" />
             <h3>토큰 유효기간이 만료되었습니다.</h3>
             <button onclick="window.close()">닫기</button>
           </div>
@@ -190,6 +196,7 @@ export class AuthController {
       res.send(`
           ${this.authService.style}
           <div class="wrap">
+            <img src="https://snappoll.kro.kr/logo/original.png" alt="snappoll-logo" width="50" height="50" />
             <h3>${email}님의 계정이 확인되었습니다.</h3>
             <h5>페이지로 돌아가 남은 과정을 진행해주세요.</h5>
             <button onclick="window.close()">닫기</button>
@@ -200,6 +207,7 @@ export class AuthController {
       res.send(`
           ${this.authService.style}
           <div class="wrap">
+            <img src="https://snappoll.kro.kr/logo/original.png" alt="snappoll-logo" width="50" height="50" />
             <h3>잘못된 토큰 형식입니다.</h3>
             <button onclick="window.close()">닫기</button>
           </div>
@@ -216,6 +224,8 @@ export class AuthController {
       id: user.id,
       username: user.username,
       email: user.email,
+      authProvider: user.authProvider,
+      loginAt: Date.now(),
     });
 
     res.cookie('token', token, {

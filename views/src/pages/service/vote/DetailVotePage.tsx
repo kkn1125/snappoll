@@ -60,7 +60,7 @@ const DetailVotePage: React.FC<DetailVotePageProps> = ({
         navigate(-1);
       }
     },
-    onError(error: AxiosError, variables, context) {
+    onError(error: AxiosError<AxsiosException>, variables, context) {
       if (error.response?.status === 401) {
         setResponse(new SnapVoteResponse());
         logoutToken();

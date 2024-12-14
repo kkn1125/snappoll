@@ -11,6 +11,15 @@ export declare global {
     }
   }
 
+  export declare interface UserTokenData {
+    id: string;
+    email: string;
+    username: string;
+    authProvider: 'Local' | 'Kakao' | 'Google';
+    loginAt: number;
+    refreshAt?: number;
+  }
+
   export declare interface CustomErrorFormat {
     status: number;
     domain: string;
@@ -24,8 +33,9 @@ declare module 'jsonwebtoken' {
     id: string;
     email: string;
     username: string;
-    loginAt?: number;
-    role?: Role;
+    authProvider: 'Local' | 'Kakao' | 'Google';
+    loginAt: number;
+    refreshAt?: number;
   }
   export declare interface JwtPayload extends CustomPayload {}
   // declare interface CustomPayload extends jwt.JwtPayload {

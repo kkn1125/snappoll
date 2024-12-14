@@ -138,6 +138,7 @@ export declare global {
     authProvider: 'Kakao' | 'Google' | 'Local';
     role: 'Admin' | 'User';
     grade: 'Free' | 'Hobby' | 'Pro';
+    password?: string;
     createdAt: Date;
     updatedAt: Date;
     deletedAt: Date | null;
@@ -159,12 +160,27 @@ export declare global {
     image: string;
     createdAt: Date;
   }
-  interface SignupUser extends Omit<User, 'id' | 'createdAt' | 'updatedAt'> {
+  interface SignupUser {
+    email: string;
+    username: string;
+    password: string;
     checkPassword: string;
   }
   // interface LoginUser
   //   extends Omit<User, 'id' | 'username' | 'createdAt' | 'updatedAt'> {}
   type ErrorMessage<T = object> = Partial<{ [k in keyof T]: string }>;
+  interface ErrorCode {
+    status: number;
+    errorStatus: number;
+    domain: string;
+    message: string;
+  }
+  interface AxsiosException {
+    httpCode: number;
+    path: string;
+    timestamp: string;
+    errorCode: ErrorCode;
+  }
   interface UserToken {
     // token?: string;
     user?: User;

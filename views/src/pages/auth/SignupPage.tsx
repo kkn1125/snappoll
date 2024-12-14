@@ -65,16 +65,18 @@ const SignupPage: React.FC<SignupPageProps> = () => {
     onSuccess(data, variables, context) {
       setPendingValidate(false);
       setEmailValidated(true);
-      console.log('done!!!');
+      openModal(Message.Info.SuccessCheckMail);
     },
-    onError(error: AxiosError, variables, context) {
+    onError(error: AxiosError<AxsiosException>, variables, context) {
       const { response } = error;
-      const { data } = response as { data: any };
+      const data = response?.data;
+      if (!data) return;
+
       setPendingValidate(false);
       setEmailValidated(false);
       console.log(response);
       if (response?.status === 409) {
-        openModal(Message.WrongRequest(data?.message));
+        openModal(Message.WrongRequest(data.errorCode.message));
       }
     },
   });
@@ -85,10 +87,12 @@ const SignupPage: React.FC<SignupPageProps> = () => {
     onSuccess(data, variables, context) {
       navigate('/');
     },
-    onError(error: AxiosError, variables, context) {
+    onError(error: AxiosError<AxsiosException>, variables, context) {
       const { response } = error;
-      const { data } = response as { data: any };
-      openModal(Message.WrongRequest(data.message));
+      const data = response?.data;
+      if (!data) return;
+
+      openModal(Message.WrongRequest(data.errorCode.message));
     },
   });
 
@@ -170,7 +174,7 @@ const SignupPage: React.FC<SignupPageProps> = () => {
       <Stack direction="row" gap={2} flexWrap="wrap">
         <CustomInput
           autoFocus
-          disabled={emailValidated}
+          disabled={pendingValidate || emailValidated}
           label="Email"
           name="email"
           type="email"

@@ -16,7 +16,7 @@ module.exports = function (options, webpack) {
       new webpack.WatchIgnorePlugin({
         paths: [
           /\.js$/,
-          /\.d\.ts$/,
+          // /\.d\.ts$/,
           /prisma\//,
           /script/,
           /temp/,

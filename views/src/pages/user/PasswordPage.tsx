@@ -47,7 +47,6 @@ const PasswordPage: React.FC<PasswordPageProps> = () => {
     mutationKey: ['changePass'],
     mutationFn: changePass,
     onSuccess(data, variables, context) {
-      // console.log(data)
       openInteractiveModal(
         Message.Info.SuccessChangePassword.content,
         () => {
@@ -58,17 +57,11 @@ const PasswordPage: React.FC<PasswordPageProps> = () => {
         },
       );
     },
-    onError(error: AxiosError, variables, context) {
-      // console.log(error)
-      if (
-        error.response &&
-        error.response.data &&
-        error.response.data instanceof Object &&
-        'message' in error.response.data
-      ) {
+    onError(error: AxiosError<AxsiosException>, variables, context) {
+      if (error.response && error.response.data) {
         openModal({
           title: '안내',
-          content: [error.response.data.message as string],
+          content: error.response.data.errorCode.message,
         });
       }
     },

@@ -1,6 +1,6 @@
 {
   "name": "realtime-poll",
-  "version": "0.0.21",
+  "version": "0.0.22",
   "description": "SnapPoll은 사용자들이 설문을 쉽게 만들고 참여할 수 있는 플랫폼입니다.",
   "author": {
     "name": "devkimson",
@@ -12,7 +12,7 @@
   "license": "UNLICENSED",
   "scripts": {
     "seed": "npx prisma db seed",
-    "dev": "concurrently --kill-others-on-fail \"npm run start:hmr\" \"cd views/ && npm run dev\"",
+    "dev": "concurrently --kill-others-on-fail \"npm run start:dev\" \"cd views/ && npm run dev\"",
     "prebuild": "npx prisma generate",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",

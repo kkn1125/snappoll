@@ -3,9 +3,13 @@
 실시간 설문조사 프론트엔드
 
 - 2024-12-14
+  - add
+    - 메일 확인 메세지 추가
   - fix
     - 토큰 검증 방식 변경
       - 최초 렌더 verify, get me
+    - useToken hook verify 로직 개선
+    - AxiosException 커스텀 타입 제작 및 적용
   - todo
     - 프론트에서 토큰 시간 계산 후 refresh 하도록
     - 미사용 리소스 제거
