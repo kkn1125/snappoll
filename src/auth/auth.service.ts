@@ -123,7 +123,7 @@ export class AuthService {
       subject: 'SnapPoll 계정 비밀번호 초기화 안내',
       text: '확인해주세요.',
       html: `<div>
-        <img src="https://snappoll.kro.kr/logo/original.png" alt="snappoll-logo" width="50" height="50" />
+        <img src="https://snappoll.kro.kr/images/original.png" alt="snappoll-logo" width="50" height="50" />
         <h2>SnapPoll 계정 비밀번호 초기화</h2>
         <p>계정 비밀번호 초기화 후 로그인하여 프로필 > 비밀번호 변경으로 이동하여 자신의 비밀번호로 변경해주시기 바랍니다. 본인에 의한 확인 메일이 아닌 경우, 아래 메일로 문의해주세요.</p>
 
@@ -189,17 +189,22 @@ export class AuthService {
     });
 
     if (!user) {
+      this.logger.debug('없는 사용자');
       const errorCode = await this.prisma.getErrorCode('user', 'NotFound');
       throw new NotFoundException(errorCode);
     }
     if (user.deletedAt !== null) {
+      this.logger.debug('탈퇴 회원');
       const errorCode = await this.prisma.getErrorCode('user', 'RemovedUser');
       throw new BadRequestException(errorCode);
     }
 
     const encryptedPassword = this.prisma.encryptPassword(userPassword);
 
-    if (user.localUser.password !== encryptedPassword) return null;
+    if (user.localUser.password !== encryptedPassword) {
+      const errorCode = await this.prisma.getErrorCode('auth', 'CheckUserData');
+      throw new BadRequestException(errorCode);
+    }
 
     const { socialUser, localUser, ...users } = user;
     return users;
@@ -236,7 +241,7 @@ export class AuthService {
       subject: 'SnapPoll 이메일 확인 요청',
       text: '확인해주세요.',
       html: `<div>
-        <img src="https://snappoll.kro.kr/logo/original.png" alt="snappoll-logo" width="50" height="50" />
+        <img src="https://snappoll.kro.kr/images/original.png" alt="snappoll-logo" width="50" height="50" />
         <h2>이메일 본인인증</h2>
         <p>본인인증을 위한 메일입니다. 본인에 의한 확인 메일이 아닌 경우, 아래 메일로 문의해주세요.</p>
 

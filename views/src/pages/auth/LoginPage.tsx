@@ -1,7 +1,9 @@
 import { login } from '@/apis/login';
+import { tokenAtom } from '@/recoils/token.atom';
 import { Message } from '@common/messages';
 import CustomInput from '@components/atoms/CustomInput';
 import useModal from '@hooks/useModal';
+import useToken from '@hooks/useToken';
 import useValidate from '@hooks/useValidate';
 import {
   Button,
@@ -22,9 +24,11 @@ import {
   useState,
 } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useSetRecoilState } from 'recoil';
 
 interface LoginPageProps {}
 const LoginPage: React.FC<LoginPageProps> = () => {
+  const setToken = useSetRecoilState(tokenAtom);
   const { openModal } = useModal();
   const locate = useLocation();
   const navigate = useNavigate();
@@ -33,18 +37,20 @@ const LoginPage: React.FC<LoginPageProps> = () => {
     password: '',
   });
   const { errors, validate, validated, setValidated } = useValidate(loginInfo);
-  const mutation = useMutation({
+  const mutation = useMutation<
+    SnapResponseType<User>,
+    AxiosError<AxsiosException>,
+    LoginDto
+  >({
     mutationKey: ['login'],
     mutationFn: login,
-    onSuccess(data, _variables, _context) {
-      if (data.ok) {
-        localStorage.setItem('logged_in', 'true');
+    onSuccess({ ok, data }, _variables, _context) {
+      if (ok) {
         navigate('/');
+        setToken({ user: data });
       }
     },
     onError(error: AxiosError<AxsiosException>, _variables, _context) {
-      localStorage.setItem('logged_in', 'false');
-
       setLoginInfo((loginInfo) => ({
         email: loginInfo.email,
         password: '',

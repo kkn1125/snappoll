@@ -81,13 +81,11 @@ const ProfilePage: React.FC<ProfilePageProps> = () => {
   const logoutMutate = useMutation({
     mutationKey: ['logout'],
     mutationFn: logout,
-    onMutate(variables) {
+    onSuccess(data, variables, context) {
       logoutToken();
     },
-    onSuccess(data, variables, context) {
-      if (data.ok) {
-        //
-      }
+    onError(error, variables, context) {
+      logoutToken();
     },
   });
 

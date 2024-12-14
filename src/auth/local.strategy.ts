@@ -17,6 +17,7 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(email: string, password: string): Promise<any> {
+    this.logger.debug('payload 확인:', email, password);
     if (!email || !password) {
       const errorCode = this.prisma.getErrorCode('auth', 'BadRequest');
       throw new UnauthorizedException(errorCode);
