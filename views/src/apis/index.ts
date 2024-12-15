@@ -7,7 +7,7 @@ const logger = new Logger('SnapApi');
 export const snapApi = axios.create({
   baseURL: BASE_URL,
   withCredentials: true,
-  timeout: 5000,
+  timeout: 20 * 1000,
 });
 
 snapApi.interceptors.response.use(

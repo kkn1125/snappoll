@@ -4,11 +4,15 @@ import { tokenAtom } from '@/recoils/token.atom';
 import { Message } from '@common/messages';
 import { guestDisallowPaths, userDisallowPaths } from '@common/variables';
 import { useMutation } from '@tanstack/react-query';
+import { Logger } from '@utils/Logger';
 import { AxiosError } from 'axios';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 import useModal from './useModal';
+import { refreshToken } from '@/apis/refreshToken';
+
+const logger = new Logger('useToken');
 
 const useToken = () => {
   const navigate = useNavigate();
@@ -32,9 +36,7 @@ const useToken = () => {
     mutationFn: getMe,
     onSuccess({ ok, data }, variables, context) {
       if (ok) {
-        setToken({
-          user: data,
-        });
+        setToken((token) => ({ ...token, user: data }));
       }
     },
     onError(error, variables, context) {
@@ -42,14 +44,28 @@ const useToken = () => {
     },
   });
 
+  const refreshTokenMutate = useMutation({
+    mutationKey: ['refreshToken'],
+    mutationFn: refreshToken,
+    onSuccess(data, variables, context) {
+      const leftTime = data.data?.leftTime;
+      logger.info('리프레시 완료', leftTime);
+    },
+  });
+
   const verifyMutate = useMutation({
     mutationKey: ['verify'],
     mutationFn: verifyLogin,
     onSuccess(data, variables, context) {
+      const leftTime = data.data?.leftTime;
+      logger.info('로그인 완료', data.data?.leftTime);
       getMeMutate.mutate();
       if (location.pathname.match(userDisallowPaths)) {
         navigate('/');
       }
+      setTimeout(() => {
+        refreshTokenMutate.mutate();
+      }, leftTime * 1000);
     },
     onError(error: AxiosError<AxsiosException>, variables, context) {
       if (error.code === 'ECONNABORTED') {

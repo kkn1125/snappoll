@@ -1,4 +1,8 @@
-import { CLIENT_DOMAIN, CURRENT_DOMAIN } from '@common/variables';
+import {
+  CLIENT_DOMAIN,
+  CURRENT_DOMAIN,
+  EXPIRED_TOKEN_TIME,
+} from '@common/variables';
 import {
   Body,
   Controller,
@@ -242,7 +246,12 @@ export class AuthController {
       path: '/',
     });
 
-    return req.user;
+    const expiredTime = Math.floor(EXPIRED_TOKEN_TIME / 1000);
+    this.logger.info('만료기간?', expiredTime);
+    return {
+      user: req.user,
+      expiredTime,
+    };
   }
 
   @IgnoreCookie()
@@ -292,12 +301,54 @@ export class AuthController {
     res.json();
   }
 
-  @HttpCode(HttpStatus.NO_CONTENT)
+  // @HttpCode(HttpStatus.NO_CONTENT)
   @Post('verify')
-  async verify(@Req() req: Request, @Res() res: Response) {
+  async verify(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
     if (!req.verify) {
       throw new UnauthorizedException('토큰이 만료되었습니다.');
     }
-    res.json();
+    const leftTime = this.authService.getExpiredLeftTime(req.verify.exp);
+
+    this.logger.info('토큰 만료 기간:', leftTime);
+    return {
+      leftTime,
+    };
+  }
+
+  @Post('refresh')
+  async refreshToken(
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const { id, email, username, authProvider, loginAt } = req.verify;
+
+    const { token, refreshToken } = this.authService.getToken({
+      id,
+      email,
+      username,
+      authProvider,
+      loginAt,
+      refreshAt: Date.now(),
+    });
+
+    res.cookie('token', token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'lax',
+      path: '/',
+    });
+    res.cookie('refresh', refreshToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'lax',
+      path: '/',
+    });
+
+    const expiredTime = Math.floor(EXPIRED_TOKEN_TIME / 1000);
+    this.logger.info('리프레시 만료 기간:', expiredTime);
+
+    return {
+      leftTime: expiredTime,
+    };
   }
 }

@@ -27,6 +27,7 @@ export default tseslint.config(
       '@typescript-eslint/no-empty-object-type': 'off',
       '@typescript-eslint/no-explicit-any': 'off',
       'no-empty-pattern': 'off',
+      'no-extra-boolean-cast': 'off',
     },
   },
 );

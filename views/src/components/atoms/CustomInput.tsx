@@ -16,7 +16,7 @@ interface CustomInputProps {
   autoFocus?: boolean;
   autoComplete?: string;
   onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
-  errors?: Record<string, string>;
+  errors?: Partial<Record<string, string>>;
   rows?: number;
   required?: boolean;
   multiline?: boolean;

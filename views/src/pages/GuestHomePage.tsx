@@ -194,7 +194,7 @@ const GuestHomePage: React.FC<GuestHomePageProps> = () => {
               component={Link}
               variant="contained"
               size="large"
-              to="/user/login"
+              to="/auth/login"
               state={{ type: 'required' }}
             >
               설문조사 만들기

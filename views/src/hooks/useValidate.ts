@@ -14,7 +14,6 @@ function useValidate<T extends { [k in string]: any }>(data: T) {
       if (type === 'onlyEmail') {
         const value = data['email'] as string;
         if (value === '') {
-          // console.log('email???', data, key, value);
           Object.assign(validateErrors, { email: '필수입니다.' });
         } else if (
           value.match(
@@ -23,6 +22,23 @@ function useValidate<T extends { [k in string]: any }>(data: T) {
         ) {
           Object.assign(validateErrors, {
             email: Message.Wrong.EmailFormat,
+          });
+        }
+        setErrors(validateErrors);
+        return Object.keys(validateErrors).length === 0;
+      }
+
+      if (type === 'onlyPassword') {
+        const value = data['password'] as string;
+        if (value === '') {
+          Object.assign(validateErrors, { password: '필수입니다.' });
+        } else if (
+          value.match(
+            /^((?=.*[A-Za-z])(?=.*[0-9A-Za-z]?)[A-Za-z0-9]{2,10}@{1}(?=.*[A-Za-z0-9-])[A-Za-z0-9-]{1,}(\.(?=.*[a-z])[a-z]{1,}){1,})$/g,
+          ) === null
+        ) {
+          Object.assign(validateErrors, {
+            password: Message.Wrong.EmailFormat,
           });
         }
         setErrors(validateErrors);

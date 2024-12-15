@@ -15,10 +15,12 @@ export class LoggerMiddleware implements NestMiddleware {
       queryStartIndex === -1 ? '' : new URLSearchParams(queryUrl.slice(1));
     const body = req.body;
     // const header = req.headers;
-    this.logger.log(`Request ${method} ${url} --->`);
+    this.logger.debug(`Request ${method} ${url} --->`);
     // this.logger.log(`Request Header:`, header);
-    this.logger.log(`Request Query: ${decodeURIComponent(queries.toString())}`);
-    this.logger.log(`Request Body:`, body);
+    this.logger.debug(
+      `Request Query: ${decodeURIComponent(queries.toString())}`,
+    );
+    this.logger.debug(`Request Body:`, body);
     next();
   }
 }

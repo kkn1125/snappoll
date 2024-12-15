@@ -184,6 +184,7 @@ export declare global {
   interface UserToken {
     // token?: string;
     user?: User;
+    // leftTime?: number;
     // signed: boolean;
     // expired: boolean;
   }
@@ -307,4 +308,16 @@ export declare global {
     }[keyof T],
     string
   >;
+
+  type TrackForm<T extends Format> = Record<T['name'], string>;
+
+  interface Format {
+    name: string;
+    type: string;
+    autoComplete?: string;
+    placeholder?: string;
+    required?: boolean;
+    fullWidth?: boolean;
+    value: string;
+  }
 }

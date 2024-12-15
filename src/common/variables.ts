@@ -29,3 +29,6 @@ export const EMAIL_ADDRESS = process.env.EMAIL_ADDRESS as string;
 export const EMAIL_PASSWORD = process.env.EMAIL_PASSWORD as string;
 
 export const KAKAO_KEY = process.env.KAKAO_KEY as string;
+
+export const EXPIRED_TOKEN_TIME = 30 * 60 * 1000;
+export const BUFFER_TIME = 5;

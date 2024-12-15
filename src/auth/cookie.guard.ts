@@ -55,7 +55,7 @@ export class CookieGuard implements CanActivate {
         algorithms: ['HS256'],
       }) as JwtPayload;
 
-      this.logger.debug(verifiedToken);
+      // this.logger.debug(verifiedToken);
 
       const email = verifiedToken.email;
       const user = await this.authService.getMe(email);
@@ -68,12 +68,14 @@ export class CookieGuard implements CanActivate {
         throw new NotFoundException(errorCode);
       }
 
-      this.logger.debug('email:', verifiedToken.email);
-      this.logger.debug('user:', user);
+      // this.logger.debug('email:', verifiedToken.email);
+      // this.logger.debug('user:', user);
 
       req.verify = verifiedToken;
       req.user = user;
     } catch (error) {
+      req.verify = jwt.decode(req.cookies.token) as JwtPayload;
+
       if (error.name === 'JsonWebTokenError') {
         /* 잘못된 토큰 형식 */
         const errorCode = await this.authService.prisma.getErrorCode(
@@ -83,6 +85,7 @@ export class CookieGuard implements CanActivate {
         this.clearCookies(res);
         throw new UnauthorizedException(errorCode);
       } else if (error.name === 'TokenExpiredError') {
+        this.logger.error('token expired error:', error);
         /* 토큰 만료 */
         await this.handleRefreshTokenProvide(req, res, secretKey);
       } else {
@@ -127,7 +130,7 @@ export class CookieGuard implements CanActivate {
         refreshAt: Date.now(),
       });
 
-      req.verify = verifiedRefreshToken;
+      // req.verify = verifiedRefreshToken;
       req.user = user;
 
       res.cookie('token', token, {

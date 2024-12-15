@@ -1,5 +1,9 @@
 import { MailerService } from '@/mailer/mailer.service';
-import { CURRENT_DOMAIN } from '@common/variables';
+import {
+  BUFFER_TIME,
+  CURRENT_DOMAIN,
+  EXPIRED_TOKEN_TIME,
+} from '@common/variables';
 import { PrismaService } from '@database/prisma.service';
 import { HttpService } from '@nestjs/axios';
 import {
@@ -13,6 +17,7 @@ import Logger from '@utils/Logger';
 import * as jwt from 'jsonwebtoken';
 import Mail from 'nodemailer/lib/mailer';
 import { firstValueFrom } from 'rxjs';
+import ms from 'ms';
 
 @Injectable()
 export class AuthService {
@@ -193,6 +198,7 @@ export class AuthService {
       const errorCode = await this.prisma.getErrorCode('user', 'NotFound');
       throw new NotFoundException(errorCode);
     }
+
     if (user.deletedAt !== null) {
       this.logger.debug('탈퇴 회원');
       const errorCode = await this.prisma.getErrorCode('user', 'RemovedUser');
@@ -264,10 +270,20 @@ export class AuthService {
     return token;
   }
 
+  getExpiredLeftTime(expiredTime: number = 0) {
+    if (!expiredTime) return 0;
+    const now = Math.floor(Date.now() / 1000);
+    const leftExpiredTime = expiredTime - now;
+    return leftExpiredTime;
+  }
+
   getToken(userData: UserTokenData) {
     const secretKey = this.configService.get<string>('common.SECRET_KEY');
+    const TOKEN_EXPIRED_AT = ms(EXPIRED_TOKEN_TIME);
+    const REFRESH_TOKEN_EXPIRED_AT = ms(EXPIRED_TOKEN_TIME * 2);
+    this.logger.info('만료시간 체크:', TOKEN_EXPIRED_AT);
     const token = jwt.sign(userData, secretKey, {
-      expiresIn: '30m',
+      expiresIn: TOKEN_EXPIRED_AT,
       issuer: 'snapPoll',
       algorithm: 'HS256',
     });
@@ -279,7 +295,7 @@ export class AuthService {
       secretKey,
       {
         subject: 'refresh',
-        expiresIn: '1h',
+        expiresIn: REFRESH_TOKEN_EXPIRED_AT,
         issuer: 'snapPoll',
         algorithm: 'HS256',
       },
