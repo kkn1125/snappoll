@@ -27,7 +27,7 @@ import {
   useMemo,
   useState,
 } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
 const headerBgChangePoint = 100;
@@ -36,8 +36,6 @@ const menuList = [
   { name: 'SnapPoll이란?', to: '/about', allow: ['guest', 'user'] },
   { name: '게시판', to: '/board', allow: ['guest', 'user'] },
   { name: '서비스', to: '/service', allow: ['user'] },
-  // { name: '설문조사', to: '/polls', allow: ['user'] },
-  // { name: '투표', to: '/votes', allow: ['user'] },
   {
     name: (username?: string) => username,
     to: '/user',
@@ -60,13 +58,13 @@ const menuList = [
       ),
   },
   { name: '회원가입/로그인', to: '/auth', allow: ['guest'] },
-  // { name: 'Login', to: '/user/login', allow: ['guest'] },
 ];
 
 interface HeaderProps {
   isCrew: boolean;
 }
 const Header: React.FC<HeaderProps> = ({ isCrew }) => {
+  const locate = useLocation();
   const navigate = useNavigate();
   const [profileImage, setProfileImage] = useState('');
   const { current } = useScroll();
@@ -83,6 +81,7 @@ const Header: React.FC<HeaderProps> = ({ isCrew }) => {
     setAnchorEl(null);
   };
   const sidebarOpened = isMdDown ? !sidebarState.opened : sidebarState.opened;
+  const boardPath = locate.pathname.startsWith('/board');
 
   function handleToggleSidebar(e: ReactMouseEvent<HTMLElement>) {
     e.stopPropagation();
@@ -150,7 +149,7 @@ const Header: React.FC<HeaderProps> = ({ isCrew }) => {
       <Toolbar>
         <Stack direction="row" flex={1} justifyContent="space-between" px={2}>
           <Stack direction="row" gap={2}>
-            {isCrew && (
+            {(boardPath || isCrew) && (
               <IconButton
                 id="toggle-sidebar"
                 onClick={handleToggleSidebar}

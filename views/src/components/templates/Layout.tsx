@@ -1,3 +1,4 @@
+import { messageAtom } from '@/recoils/message.atom';
 import { sidebarAtom } from '@/recoils/sidebar.atom';
 import { BRAND_NAME, scrollSize } from '@common/variables';
 import SnapBreadCrumbs from '@components/atoms/SnapBreadCrumbs';
@@ -5,11 +6,18 @@ import SeoMetaTag from '@components/moleculars/SeoMetaTag';
 import Footer from '@components/organisms/Footer';
 import Header from '@components/organisms/Header';
 import Sidebar from '@components/organisms/Sidebar';
+import HistoryEduIcon from '@mui/icons-material/HistoryEdu';
+import HowToVoteIcon from '@mui/icons-material/HowToVote';
+import NotificationsIcon from '@mui/icons-material/Notifications';
+import StackedLineChartIcon from '@mui/icons-material/StackedLineChart';
 import { Box, Stack, Toolbar, useMediaQuery, useTheme } from '@mui/material';
 import { useMemo } from 'react';
-import Helmet from 'react-helmet';
 import { Outlet, useLocation } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
+import DashboardIcon from '@mui/icons-material/Dashboard';
+import ForumIcon from '@mui/icons-material/Forum';
+import EventIcon from '@mui/icons-material/Event';
+import LiveHelpIcon from '@mui/icons-material/LiveHelp';
 
 const sidebarWidth = {
   min: 56,
@@ -20,23 +28,52 @@ interface LayoutProps {
   isCrew?: boolean;
 }
 const Layout: React.FC<LayoutProps> = ({ isCrew = true }) => {
+  const message = useRecoilValue(messageAtom);
   const sidebarState = useRecoilValue(sidebarAtom);
   const theme = useTheme();
   const isMdDown = useMediaQuery(theme.breakpoints.down('md'));
   const sidebarOpened = isMdDown ? !sidebarState.opened : sidebarState.opened;
   const locate = useLocation();
-
-  const canonical = useMemo(() => {
-    return location.origin + location.pathname;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [location.pathname]);
-
   const isMain = !isCrew && locate.pathname === '/';
+  const boardPath = locate.pathname.startsWith('/board');
+  const canonical = useMemo(() => {
+    return location.origin + locate.pathname;
+  }, [locate.pathname]);
+
+  const guestMenu = [
+    { name: '커뮤니티', path: '/board/community', icon: <ForumIcon /> },
+    { name: '공지사항', path: '/board/notice', icon: <DashboardIcon /> },
+    {
+      name: '이벤트',
+      path: '/board/event',
+      icon: <EventIcon />,
+    },
+    {
+      name: 'FAQ',
+      path: '/board/faq',
+      icon: <LiveHelpIcon />,
+    },
+  ];
+  const userMenu = [
+    { name: '나의 설문지', path: '/service/poll/me', icon: <HistoryEduIcon /> },
+    { name: '나의 투표지', path: '/service/vote/me', icon: <HowToVoteIcon /> },
+    {
+      name: '그래프 보기',
+      path: '/service/graph',
+      icon: <StackedLineChartIcon />,
+    },
+    {
+      name: '알림',
+      path: '/notice',
+      icon: <NotificationsIcon />,
+      badge: message.notReadMessages.length,
+    },
+  ];
 
   return (
     <Stack height="inherit">
       <SeoMetaTag
-        canonical="https://snappoll.kro.kr"
+        canonical={canonical}
         title={BRAND_NAME}
         author={BRAND_NAME}
         description="SnapPoll은 사용자들이 설문을 쉽게 만들고 참여할 수 있는 플랫폼입니다."
@@ -60,7 +97,7 @@ const Layout: React.FC<LayoutProps> = ({ isCrew = true }) => {
       <Toolbar />
       <Stack direction="row" flex={1} position="relative" overflow="hidden">
         {/* Sidebar */}
-        {isCrew && (
+        {boardPath ? (
           <Stack
             id="sidebar"
             overflow="hidden"
@@ -83,8 +120,35 @@ const Layout: React.FC<LayoutProps> = ({ isCrew = true }) => {
               }),
             }}
           >
-            <Sidebar />
+            <Sidebar menuList={guestMenu} />
           </Stack>
+        ) : (
+          isCrew && (
+            <Stack
+              id="sidebar"
+              overflow="hidden"
+              sx={{
+                width: '100%',
+                maxWidth: sidebarOpened
+                  ? sidebarWidth.max
+                  : isMdDown
+                    ? 0
+                    : sidebarWidth.min,
+                transition: '150ms ease-in-out',
+                borderRight: '1px solid #eee',
+                backgroundColor: '#fff',
+                ...(isMdDown && {
+                  position: 'absolute',
+                  zIndex: 5,
+                  top: 0,
+                  left: 0,
+                  bottom: 0,
+                }),
+              }}
+            >
+              <Sidebar menuList={userMenu} />
+            </Stack>
+          )
         )}
 
         {/* main */}

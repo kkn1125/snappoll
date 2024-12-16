@@ -10,6 +10,10 @@ export const snapApi = axios.create({
   timeout: 20 * 1000,
 });
 
+snapApi.interceptors.request.use((value) => {
+  logger.debug(`[${value.method}] ${value.url} --->`);
+  return value;
+});
 snapApi.interceptors.response.use(
   (response) => {
     return response;

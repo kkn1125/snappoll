@@ -15,6 +15,9 @@ export class BasicService {
     const votes = await this.prisma.vote.findMany({
       include: { voteResponse: true },
     });
+    const boards = await this.prisma.board.findMany({
+      where: { isPrivate: false, isOnlyCrew: false },
+    });
 
     const base = new PathDomain('').addPath('notice', 'about');
     const graph = new PathDomain('graph').addPath(
@@ -23,7 +26,19 @@ export class BasicService {
       ...polls.map((p) => 'polls/' + p.id),
       ...votes.map((p) => 'votes/' + p.id),
     );
-    const user = new PathDomain('user').addPath('login', 'signup', 'profile');
+    const auth = new PathDomain('auth').addPath('login', 'signup');
+    const user = new PathDomain('user').addPath(
+      'password',
+      'profile',
+      'response',
+    );
+    const board = new PathDomain('board').addPath(
+      'community',
+      'notice',
+      'event',
+      'faq',
+      ...boards.map((board) => board.category + '/' + board.id),
+    );
     const poll = new PathDomain('polls').include.addPath(
       'me',
       'me/response',
@@ -46,8 +61,10 @@ export class BasicService {
     );
 
     const pages = [
-      DOMAIN,
-      ...[base, user, graph, poll, vote].flatMap((domain) => domain.output()),
+      DOMAIN + '/',
+      ...[base, auth, user, board, graph, poll, vote].flatMap((domain) =>
+        domain.output(),
+      ),
     ];
     const SitemapGeneratedDate = new Date().toISOString().slice(0, 10);
 
@@ -55,6 +72,7 @@ export class BasicService {
       <url>
         <loc>${page}</loc>
         <lastmod>${SitemapGeneratedDate}</lastmod>
+        <changefreq>weekly</changefreq>
         <priority>${page === DOMAIN + '/' ? 1 : 0.8}</priority>
       </url>
     `;
