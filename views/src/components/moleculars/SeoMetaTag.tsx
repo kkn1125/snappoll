@@ -32,7 +32,15 @@ const SeoMetaTag: React.FC<SeoMetaTagProps> = ({
     let subTitle = '';
     const hasId = !!(param.id || param.responseId);
 
-    if (locate.pathname.startsWith('/service/poll/me/response')) {
+    if (locate.pathname.startsWith('/board/notice')) {
+      subTitle = '공지사항';
+    } else if (locate.pathname.startsWith('/board/event')) {
+      subTitle = '이벤트';
+    } else if (locate.pathname.startsWith('/board/faq')) {
+      subTitle = '문의사항';
+    } else if (locate.pathname.startsWith('/board')) {
+      subTitle = '게시판';
+    } else if (locate.pathname.startsWith('/service/poll/me/response')) {
       subTitle = '나의 설문응답';
     } else if (locate.pathname.startsWith('/service/poll/me')) {
       subTitle = '나의 설문지';

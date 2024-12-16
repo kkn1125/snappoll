@@ -105,7 +105,8 @@ export class AuthService {
     const user = await this.prisma.user.findUnique({ where: { email } });
 
     if (!user) {
-      throw new BadRequestException('계정을 찾을 수 없습니다.');
+      const errorCode = await this.prisma.getErrorCode('user', 'NotFound');
+      throw new NotFoundException('계정을 찾을 수 없습니다.');
     }
 
     this.logger.debug('to:', email);
@@ -179,7 +180,8 @@ export class AuthService {
       return data;
     } catch (error) {
       this.logger.debug(error);
-      throw new BadRequestException('잘못된 요청입니다.');
+      const errorCode = await this.prisma.getErrorCode('user', 'BadRequest');
+      throw new BadRequestException(errorCode);
     }
   }
 

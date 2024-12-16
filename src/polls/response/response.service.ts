@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateResponseDto } from './dto/create-response.dto';
 import { UpdateResponseDto } from './dto/update-response.dto';
 import { PrismaService } from '@database/prisma.service';
@@ -14,10 +18,12 @@ export class ResponseService {
     });
 
     if (!poll) {
-      throw new BadRequestException('잘못된 요청입니다.');
+      const errorCode = await this.prisma.getErrorCode('poll', 'NotFound');
+      throw new NotFoundException(errorCode);
     }
     if (poll.expiresAt !== null && poll.expiresAt < new Date()) {
-      throw new BadRequestException('이미 진행 마감된 설문지입니다.');
+      const errorCode = await this.prisma.getErrorCode('poll', 'AlreadyClosed');
+      throw new BadRequestException(errorCode);
     }
 
     const userId = createResponseDto.userId;
@@ -61,7 +67,7 @@ export class ResponseService {
   }
 
   async findOne(id: string) {
-    return this.prisma.response.findUnique({
+    const response = await this.prisma.response.findUnique({
       where: { id },
       include: {
         poll: {
@@ -80,6 +86,14 @@ export class ResponseService {
         },
       },
     });
+
+    if (!response) {
+      const errorCode = await this.prisma.getErrorCode(
+        'pollResponse',
+        'NotFound',
+      );
+      throw new NotFoundException(errorCode);
+    }
   }
 
   update(id: string, updateResponseDto: UpdateResponseDto) {

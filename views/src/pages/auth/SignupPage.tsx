@@ -109,7 +109,7 @@ const SignupPage: React.FC<SignupPageProps> = () => {
 
   useEffect(() => {
     if (validated) {
-      validate();
+      validate('signup');
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [validated, signupInfo]);
@@ -118,7 +118,7 @@ const SignupPage: React.FC<SignupPageProps> = () => {
     e.preventDefault();
     setValidated(true);
 
-    if (!validate()) return;
+    if (!validate('signup')) return;
 
     mutation.mutate(signupInfo);
 

@@ -106,7 +106,7 @@ const LoginPage: React.FC<LoginPageProps> = () => {
       e.preventDefault();
       setValidated(true);
 
-      if (!validate()) return;
+      if (!validate('login')) return;
 
       mutation.mutate(loginInfo);
 

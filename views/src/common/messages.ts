@@ -85,6 +85,7 @@ export const Single = {
 export type Single = (typeof Single)[keyof typeof Single];
 
 export const Wrong = {
+  // Invalid: '필수입니다.',
   Required: '필수입니다.',
   Username: '유저 닉네임은 최소 4자이상, 15자이하입니다.',
   EmailFormat: '이메일 형식이 잘못되었습니다.',

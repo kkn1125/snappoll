@@ -155,35 +155,35 @@ export class UsersService {
     currentPassword: string,
     updateUserDto: UpdateUserPasswordDto,
   ) {
+    if (!currentPassword || currentPassword === updateUserDto.password) {
+      const errorCode = await this.prisma.getErrorCode('user', 'BadRequest');
+      throw new BadRequestException(errorCode);
+    }
+
     const user = await this.prisma.user.findUnique({
       where: { id },
       include: { localUser: true, socialUser: true },
     });
 
     if (user.authProvider !== $Enums.AuthProvider.Local) {
-      const { message, ...status } = await this.prisma.getErrorCode(
-        'server',
-        'BadRequest',
-      );
-
-      throw new BadRequestException(message, { cause: status });
+      const errorCode = await this.prisma.getErrorCode('user', 'BadRequest');
+      throw new BadRequestException(errorCode);
     }
 
     const encryptedCurrentPassword =
       this.prisma.encryptPassword(currentPassword);
 
-    console.log('currentPassword:', currentPassword);
+    // console.log('currentPassword:', currentPassword);
 
     if (user.localUser.password !== encryptedCurrentPassword) {
-      throw new BadRequestException(
-        '잘못된 정보입니다. 비밀번호를 확인해주세요.',
-      );
+      const errorCode = await this.prisma.getErrorCode('user', 'CheckUserData');
+      throw new BadRequestException(errorCode);
     }
 
     const encryptedPassword = this.prisma.encryptPassword(
       updateUserDto.password,
     );
-    console.log(id, encryptedPassword);
+    // console.log(id, encryptedPassword);
     return this.prisma.user.update({
       where: { id, deletedAt: null },
       data: {

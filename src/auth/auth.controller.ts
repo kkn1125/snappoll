@@ -281,7 +281,7 @@ export class AuthController {
 
   @HttpCode(HttpStatus.NO_CONTENT)
   @Post('logout')
-  logout(@Req() req: Request, @Res() res: Response) {
+  async logout(@Req() req: Request, @Res() res: Response) {
     if (req.user) {
       res.clearCookie('token', {
         httpOnly: true,
@@ -296,7 +296,11 @@ export class AuthController {
         path: '/',
       });
     } else {
-      throw new UnauthorizedException('잘못된 접근입니다.');
+      const errorCode = await this.authService.prisma.getErrorCode(
+        'auth',
+        'BadRequest',
+      );
+      throw new UnauthorizedException(errorCode);
     }
     res.json();
   }
@@ -305,7 +309,11 @@ export class AuthController {
   @Post('verify')
   async verify(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
     if (!req.verify) {
-      throw new UnauthorizedException('토큰이 만료되었습니다.');
+      const errorCode = await this.authService.prisma.getErrorCode(
+        'auth',
+        'ExpiredToken',
+      );
+      throw new UnauthorizedException(errorCode);
     }
     const leftTime = this.authService.getExpiredLeftTime(req.verify.exp);
 

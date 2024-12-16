@@ -34,6 +34,7 @@ const headerBgChangePoint = 100;
 
 const menuList = [
   { name: 'SnapPoll이란?', to: '/about', allow: ['guest', 'user'] },
+  { name: '게시판', to: '/board', allow: ['guest', 'user'] },
   { name: '서비스', to: '/service', allow: ['user'] },
   // { name: '설문조사', to: '/polls', allow: ['user'] },
   // { name: '투표', to: '/votes', allow: ['user'] },

@@ -178,7 +178,7 @@ function ListDataItem<T extends SnapPoll | SnapVote>({
               >
                 <ListItemText
                   primary={data.title}
-                  secondary={`작성자: ${data.user?.username} | 생성일: ${new Date(data.createdAt).toLocaleDateString()}`}
+                  secondary={`작성자: ${data.user?.username} | 생성일: ${formattedDate(data.createdAt)}`}
                 />
               </ListItemButton>
             </ListItem>

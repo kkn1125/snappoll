@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateVoteResponseDto } from './dto/create-vote-response.dto';
 import { UpdateVoteResponseDto } from './dto/update-vote-response.dto';
 import { PrismaService } from '@database/prisma.service';
@@ -7,22 +11,21 @@ import { PrismaService } from '@database/prisma.service';
 export class VoteResponsesService {
   constructor(private readonly prisma: PrismaService) {}
 
-  // create(createVoteResponseDto: CreateVoteResponseDto) {
-  //   const userId = createVoteResponseDto.userId;
-  //   const voteId = createVoteResponseDto.voteId;
-  //   const voteOptionId = createVoteResponseDto.voteOptionId;
-  //   const value = createVoteResponseDto.value;
-  //   const data = {
-  //     userId,
-  //     voteId,
-  //     voteOptionId,
-  //     value,
-  //   };
-  //   return this.prisma.voteResponse.create({
-  //     data,
-  //   });
-  // }
-  create(createVoteResponseDto: CreateVoteResponseDto) {
+  async create(createVoteResponseDto: CreateVoteResponseDto) {
+    /* validate poll expires */
+    const vote = await this.prisma.vote.findUnique({
+      where: { id: createVoteResponseDto.voteId },
+    });
+
+    if (!vote) {
+      const errorCode = await this.prisma.getErrorCode('vote', 'NotFound');
+      throw new NotFoundException(errorCode);
+    }
+    if (vote.expiresAt !== null && vote.expiresAt < new Date()) {
+      const errorCode = await this.prisma.getErrorCode('vote', 'AlreadyClosed');
+      throw new BadRequestException(errorCode);
+    }
+
     const userId = createVoteResponseDto.userId;
     const voteId = createVoteResponseDto.voteId;
     const voteAnswer = {
@@ -59,8 +62,8 @@ export class VoteResponsesService {
     });
   }
 
-  findOne(id: string) {
-    return this.prisma.voteResponse.findUnique({
+  async findOne(id: string) {
+    const response = await this.prisma.voteResponse.findUnique({
       where: { id },
       include: {
         vote: {
@@ -78,6 +81,13 @@ export class VoteResponsesService {
         },
       },
     });
+    if (!response) {
+      const errorCode = await this.prisma.getErrorCode(
+        'voteResponse',
+        'NotFound',
+      );
+      throw new NotFoundException(errorCode);
+    }
   }
 
   findVoteResponses(id: string) {

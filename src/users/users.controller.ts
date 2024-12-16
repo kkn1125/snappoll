@@ -93,9 +93,6 @@ export class UsersController {
     @Body('currentPassword') currentPassword: string,
     @Body() updateUserDto: UpdateUserPasswordDto,
   ) {
-    if (!currentPassword || currentPassword === updateUserDto.password) {
-      throw new BadRequestException('잘못된 요청입니다.');
-    }
     return this.usersService.updatePassword(id, currentPassword, updateUserDto);
   }
 

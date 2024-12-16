@@ -14,7 +14,7 @@ model ErrorMessage {
   status     Int
   message    String @db.VarChar(250)
 
-  code Code @relation(fields: [codeDomain], references: [domain])
+  code Code @relation(fields: [codeDomain], references: [domain], onDelete: Cascade)
 
   @@map("error_message")
 }
@@ -304,9 +304,9 @@ model Board {
   category   String    @db.VarChar(50)
   title      String    @db.VarChar(100)
   content    String
-  viewCount  Int       @default(0)
-  isPrivate  Boolean   @default(false)
-  isOnlyCrew Boolean   @default(false)
+  viewCount  Int       @default(0) @map("view_count")
+  isPrivate  Boolean   @default(false) @map("is_private")
+  isOnlyCrew Boolean   @default(false) @map("is_only_crew")
   createdAt  DateTime  @default(now()) @map("created_at")
   updatedAt  DateTime  @updatedAt @map("updated_at")
   deletedAt  DateTime? @map("deleted_at")

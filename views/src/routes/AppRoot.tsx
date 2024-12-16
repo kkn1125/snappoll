@@ -10,6 +10,9 @@ import AccountPage from '@pages/auth/AccountPage';
 import AuthPage from '@pages/auth/AuthPage';
 import LoginPage from '@pages/auth/LoginPage';
 import SignupPage from '@pages/auth/SignupPage';
+import BoardListPage from '@pages/board/BoardListPage';
+import CategoryBoardPage from '@pages/board/category/CategoryBoardPage';
+import DetailBoardPage from '@pages/board/category/DetailBoardPage';
 import GuestHomePage from '@pages/GuestHomePage';
 import HomePage from '@pages/HomePage';
 import NotfoundPage from '@pages/NotfoundPage';
@@ -91,6 +94,13 @@ const AppRoot: React.FC<AppRootProps> = () => {
           <Route path="login" element={<LoginPage />} />
           <Route path="signup" element={<SignupPage />} />
           <Route path="account" element={<AccountPage />} />
+        </Route>
+
+        {/* Board */}
+        <Route path="board">
+          <Route index element={<BoardListPage />} />
+          <Route path=":category" element={<CategoryBoardPage />} />
+          <Route path=":category/:id" element={<DetailBoardPage />} />
         </Route>
 
         {/* User */}

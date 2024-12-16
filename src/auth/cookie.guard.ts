@@ -26,10 +26,17 @@ export class CookieGuard implements CanActivate {
   ) {}
 
   async canActivate(context: ExecutionContext) {
-    const isPublic = this.reflector.get<boolean>(
-      'isPublic',
-      context.getHandler(),
-    );
+    const isPublic =
+      this.reflector.get<boolean>(
+        'isPublic',
+        context.getHandler(), // 메서드에서 메타데이터를 가져옴
+      ) ||
+      this.reflector.get<boolean>(
+        'isPublic',
+        context.getClass(), // 클래스에서 메타데이터를 가져옴
+      );
+
+    // this.logger.info(isPublic);
 
     if (isPublic) {
       this.logger.debug('쿠키 통과');
