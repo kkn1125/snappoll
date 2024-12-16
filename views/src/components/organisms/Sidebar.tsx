@@ -24,7 +24,7 @@ const Sidebar: React.FC<SidebarProps> = () => {
     //   path: '/votes/me/response',
     //   icon: <HowToVoteIcon />,
     // },
-    { name: '통계보기', path: '/service/graph', icon: <StackedLineChartIcon /> },
+    { name: '그래프 보기', path: '/service/graph', icon: <StackedLineChartIcon /> },
     {
       name: '알림',
       path: '/notice',

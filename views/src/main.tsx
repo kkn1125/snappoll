@@ -1,6 +1,6 @@
-import { PROJECT_BASEPATH } from '@common/variables.js';
-import Modal from '@components/moleculars/Modal.js';
-import SocketLayout from '@components/templates/SocketLayout.js';
+import { PROJECT_BASEPATH } from '@common/variables';
+import Modal from '@components/moleculars/Modal';
+import SocketLayout from '@components/templates/SocketLayout';
 import CssBaseline from '@mui/material/CssBaseline';
 import {
   ThemeProvider,
@@ -10,14 +10,15 @@ import {
 } from '@mui/material/styles';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import LoadingScreenProvider from '@providers/LoadingScreenProvider.js';
-import ModalProvider from '@providers/ModalProvider.js';
-import AppRoot from '@routes/AppRoot.js';
+import LoadingScreenProvider from '@providers/LoadingScreenProvider';
+import ModalProvider from '@providers/ModalProvider';
+import AppRoot from '@routes/AppRoot';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import 'dayjs/locale/ko';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import { RecoilRoot } from 'recoil';
+import { HelmetProvider } from 'react-helmet-async';
 
 const skyColor = '#98cfff';
 const skyColorMain = alpha(skyColor, 0.7);
@@ -63,6 +64,8 @@ declare module 'react' {
   }
 }
 
+const helmetContext = {};
+
 createRoot(document.getElementById('root')!).render(
   <ThemeProvider theme={darkTheme}>
     <RecoilRoot>
@@ -76,9 +79,12 @@ createRoot(document.getElementById('root')!).render(
             <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="ko">
               <LoadingScreenProvider>
                 <ModalProvider>
-                  <CssBaseline />
-                  <AppRoot />
-                  <Modal />
+                  {/* @ts-ignore */}
+                  <HelmetProvider context={helmetContext}>
+                    <CssBaseline />
+                    <AppRoot />
+                    <Modal />
+                  </HelmetProvider>
                 </ModalProvider>
               </LoadingScreenProvider>
             </LocalizationProvider>

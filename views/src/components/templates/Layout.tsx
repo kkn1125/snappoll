@@ -1,6 +1,7 @@
 import { sidebarAtom } from '@/recoils/sidebar.atom';
-import { scrollSize } from '@common/variables';
+import { BRAND_NAME, scrollSize } from '@common/variables';
 import SnapBreadCrumbs from '@components/atoms/SnapBreadCrumbs';
+import SeoMetaTag from '@components/moleculars/SeoMetaTag';
 import Footer from '@components/organisms/Footer';
 import Header from '@components/organisms/Header';
 import Sidebar from '@components/organisms/Sidebar';
@@ -34,9 +35,26 @@ const Layout: React.FC<LayoutProps> = ({ isCrew = true }) => {
 
   return (
     <Stack height="inherit">
-      <Helmet>
-        <link rel="canonical" href={canonical} />
-      </Helmet>
+      <SeoMetaTag
+        canonical="https://snappoll.kro.kr"
+        title={BRAND_NAME}
+        author={BRAND_NAME}
+        description="SnapPoll은 사용자들이 설문을 쉽게 만들고 참여할 수 있는 플랫폼입니다."
+        url="https://snappoll.kro.kr"
+        site_name="SnapPoll"
+        keywords={[
+          '설문',
+          '투표',
+          'SnapPoll',
+          '온라인 설문',
+          '간편한 설문',
+          '설문 통계',
+          '투표 통계',
+          '무료 설문',
+        ]}
+        type="article"
+        image="/favicon/apple-touch-icon.png"
+      />
       {/* header */}
       <Header isCrew={isCrew} />
       <Toolbar />

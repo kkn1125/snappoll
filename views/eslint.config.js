@@ -28,6 +28,7 @@ export default tseslint.config(
       '@typescript-eslint/no-explicit-any': 'off',
       'no-empty-pattern': 'off',
       'no-extra-boolean-cast': 'off',
+      '@typescript-eslint/ban-ts-comment': 'off',
     },
   },
 );
