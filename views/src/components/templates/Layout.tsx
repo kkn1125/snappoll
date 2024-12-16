@@ -52,7 +52,7 @@ const Layout: React.FC<LayoutProps> = ({ isCrew = true }) => {
           '투표 통계',
           '무료 설문',
         ]}
-        type="article"
+        type="website"
         image="/favicon/apple-touch-icon.png"
       />
       {/* header */}
