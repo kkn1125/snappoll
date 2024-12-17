@@ -3,8 +3,6 @@ import { Message } from '@common/messages';
 import useModal from '@hooks/useModal';
 import { SnapVote } from '@models/SnapVote';
 import { SnapVoteOption } from '@models/SnapVoteOption';
-import DeleteIcon from '@mui/icons-material/Delete';
-import { IconButton, Stack, TextField } from '@mui/material';
 import { ChangeEvent, useCallback } from 'react';
 import { useSetRecoilState } from 'recoil';
 import InputItem from './InputItem';

@@ -3,7 +3,6 @@ import { getVoteResponseMe } from '@/apis/vote/response/getVoteResponseMe';
 import { removeVoteResponse } from '@/apis/vote/response/removeVoteResponse';
 import { tokenAtom } from '@/recoils/token.atom';
 import { Message } from '@common/messages';
-import { UnknownName } from '@common/variables';
 import CommonPagination from '@components/atoms/CommonPagination';
 import SkeletonResponseList from '@components/moleculars/SkeletonResponseList';
 import useModal from '@hooks/useModal';
@@ -21,7 +20,6 @@ import {
   ListItem,
   ListItemButton,
   ListItemText,
-  Pagination,
   Stack,
   Toolbar,
   Typography,
@@ -80,8 +78,11 @@ const ResponseVotePage: React.FC<ResponseVotePageProps> = ({ me }) => {
   );
 
   const handleRemove = useCallback((responseId: string) => {
-    openInteractiveModal(Message.Single.Remove, () => {
-      removeMutation.mutate(responseId);
+    openInteractiveModal({
+      content: Message.Single.Remove,
+      callback: () => {
+        removeMutation.mutate(responseId);
+      },
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

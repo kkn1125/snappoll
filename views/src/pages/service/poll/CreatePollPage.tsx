@@ -114,12 +114,15 @@ const CreatePollPage: React.FC<CreatePollPageProps> = ({ edit = false }) => {
         copyPoll.createdBy = user.id;
       }
 
-      openInteractiveModal(Message.Single.Save, () => {
-        if (edit) {
-          updateMutate.mutate(copyPoll);
-        } else {
-          createMutate.mutate(copyPoll);
-        }
+      openInteractiveModal({
+        content: Message.Single.Save,
+        callback: () => {
+          if (edit) {
+            updateMutate.mutate(copyPoll);
+          } else {
+            createMutate.mutate(copyPoll);
+          }
+        },
       });
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps

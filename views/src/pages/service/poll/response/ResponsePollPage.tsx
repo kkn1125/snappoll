@@ -3,7 +3,6 @@ import { getPollResponseMe } from '@/apis/poll/response/getPollResponseMe';
 import { removeResponse } from '@/apis/poll/response/removeResponse';
 import { tokenAtom } from '@/recoils/token.atom';
 import { Message } from '@common/messages';
-import { UnknownName } from '@common/variables';
 import CommonPagination from '@components/atoms/CommonPagination';
 import SkeletonResponseList from '@components/moleculars/SkeletonResponseList';
 import useModal from '@hooks/useModal';
@@ -21,7 +20,6 @@ import {
   ListItem,
   ListItemButton,
   ListItemText,
-  Pagination,
   Stack,
   Toolbar,
   Typography,
@@ -31,7 +29,7 @@ import { formattedDate } from '@utils/formattedDate';
 import { getUsernameOr } from '@utils/getUsernameOr';
 import { Logger } from '@utils/Logger';
 import { validateExpired } from '@utils/validateExpired';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 
@@ -84,8 +82,11 @@ const ResponsePollPage: React.FC<ResponsePollPageProps> = ({ me }) => {
   );
 
   const handleRemove = useCallback((responseId: string) => {
-    openInteractiveModal(Message.Single.Remove, () => {
-      removeMutation.mutate(responseId);
+    openInteractiveModal({
+      content: Message.Single.Remove,
+      callback: () => {
+        removeMutation.mutate(responseId);
+      },
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

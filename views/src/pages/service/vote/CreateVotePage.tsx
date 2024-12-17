@@ -114,16 +114,19 @@ const CreateVotePage: React.FC<CreateVotePageProps> = ({ edit = false }) => {
   const handleSubmit = useCallback(
     (e: FormEvent) => {
       e.preventDefault();
-      openInteractiveModal(Message.Single.Save, () => {
-        const copyVote = SnapVote.copy(snapVote);
-        if (user) {
-          copyVote.userId = user.id;
-          if (edit) {
-            updateMutate.mutate(copyVote);
-          } else {
-            createMutate.mutate(copyVote);
+      openInteractiveModal({
+        content: Message.Single.Save,
+        callback: () => {
+          const copyVote = SnapVote.copy(snapVote);
+          if (user) {
+            copyVote.userId = user.id;
+            if (edit) {
+              updateMutate.mutate(copyVote);
+            } else {
+              createMutate.mutate(copyVote);
+            }
           }
-        }
+        },
       });
       return false;
     },

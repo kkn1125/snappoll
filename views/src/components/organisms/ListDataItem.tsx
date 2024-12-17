@@ -2,6 +2,7 @@ import { removePoll } from '@/apis/removePoll';
 import { removeVote } from '@/apis/removeVote';
 import { tokenAtom } from '@/recoils/token.atom';
 import { Message } from '@common/messages';
+import CommonPagination from '@components/atoms/CommonPagination';
 import useModal from '@hooks/useModal';
 import { SnapPoll } from '@models/SnapPoll';
 import { SnapVote } from '@models/SnapVote';
@@ -14,22 +15,17 @@ import {
   ListItem,
   ListItemButton,
   ListItemText,
-  Pagination,
   Stack,
-  Toolbar,
   Tooltip,
-  Typography,
 } from '@mui/material';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { formattedDate } from '@utils/formattedDate';
+import { getUsernameOr } from '@utils/getUsernameOr';
 import { isNil } from '@utils/isNil';
 import { useCallback, useMemo } from 'react';
-import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import ListItemIcons from '../atoms/ListItemIcons';
-import CommonPagination from '@components/atoms/CommonPagination';
-import { UnknownName } from '@common/variables';
-import { getUsernameOr } from '@utils/getUsernameOr';
 
 interface ListDataItemProps<T extends SnapPoll | SnapVote> {
   name: 'poll' | 'vote';

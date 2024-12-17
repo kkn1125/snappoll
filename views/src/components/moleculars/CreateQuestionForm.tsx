@@ -1,8 +1,12 @@
 import { snapPollAtom } from '@/recoils/snapPoll.atom';
+import { Message } from '@common/messages';
 import CustomInput from '@components/atoms/CustomInput';
+import useModal from '@hooks/useModal';
 import { SnapPoll } from '@models/SnapPoll';
 import { SnapPollOption } from '@models/SnapPollOption';
 import { SnapPollQuestion } from '@models/SnapPollQuestion';
+import DeleteIcon from '@mui/icons-material/Delete';
+import ListIcon from '@mui/icons-material/List';
 import {
   Button,
   FormControlLabel,
@@ -18,19 +22,13 @@ import {
 } from '@mui/material';
 import {
   ChangeEvent,
-  Dispatch,
   Fragment,
   memo,
-  SetStateAction,
   SyntheticEvent,
   useCallback,
 } from 'react';
 import { useSetRecoilState } from 'recoil';
 import CreateOptionForm from './CreateOptionForm';
-import DeleteIcon from '@mui/icons-material/Delete';
-import { Message } from '@common/messages';
-import useModal from '@hooks/useModal';
-import ListIcon from '@mui/icons-material/List';
 
 interface CreateQuestionFormProps {
   index: number;

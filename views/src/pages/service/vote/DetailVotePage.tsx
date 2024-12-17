@@ -45,16 +45,16 @@ const DetailVotePage: React.FC<DetailVotePageProps> = ({
     onSuccess(data, variables, context) {
       if (voteId !== undefined) {
         /* 비회원 */
-        openInteractiveModal(
-          Message.Info.SuccessResponse,
-          () => {
+        openInteractiveModal({
+          content: Message.Info.SuccessResponse,
+          callback: () => {
             setResponse(new SnapVoteResponse());
             navigate('/');
           },
-          () => {
+          closeCallback: () => {
             setResponse(new SnapVoteResponse());
           },
-        );
+        });
       } else {
         /* 회원 */
         setResponse(new SnapVoteResponse());
@@ -84,11 +84,14 @@ const DetailVotePage: React.FC<DetailVotePageProps> = ({
 
       if (!responseData?.id) return;
 
-      openInteractiveModal('작성을 완료하시겠습니까?', () => {
-        const copyResponse = SnapVoteResponse.copy(response);
-        copyResponse.userId = user?.id;
-        copyResponse.voteId = responseData?.id;
-        saveResponseMutate.mutate(copyResponse);
+      openInteractiveModal({
+        content: '작성을 완료하시겠습니까?',
+        callback: () => {
+          const copyResponse = SnapVoteResponse.copy(response);
+          copyResponse.userId = user?.id;
+          copyResponse.voteId = responseData?.id;
+          saveResponseMutate.mutate(copyResponse);
+        },
       });
 
       return false;
