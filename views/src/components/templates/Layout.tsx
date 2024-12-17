@@ -76,7 +76,7 @@ const Layout: React.FC<LayoutProps> = ({ isCrew = true }) => {
         canonical={canonical}
         title={BRAND_NAME}
         author={BRAND_NAME}
-        description="SnapPoll은 사용자들이 설문을 쉽게 만들고 참여할 수 있는 플랫폼입니다."
+        description="Snappoll은 쉽고 간편한 무료 설문 및 투표 플랫폼입니다. 커뮤니티를 위한 다양한 설문과 실시간 통계 그래프를 제공해 누구나 손쉽게 투표와 설문을 만들고 분석할 수 있습니다. 지금 무료로 시작하세요!"
         url="https://snappoll.kro.kr"
         site_name="SnapPoll"
         keywords={[
@@ -88,6 +88,8 @@ const Layout: React.FC<LayoutProps> = ({ isCrew = true }) => {
           '설문 통계',
           '투표 통계',
           '무료 설문',
+          '무료 투표',
+          '무료 통계 그래프',
         ]}
         type="website"
         image="/favicon/apple-touch-icon.png"

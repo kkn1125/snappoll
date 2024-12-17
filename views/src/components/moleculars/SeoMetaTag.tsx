@@ -34,6 +34,12 @@ const SeoMetaTag: React.FC<SeoMetaTagProps> = ({
 
     if (locate.pathname.startsWith('/board/notice')) {
       subTitle = '공지사항';
+    } else if (locate.pathname.startsWith('/board/community/write')) {
+      subTitle = '글 쓰기';
+    } else if (locate.pathname.startsWith('/board/community/edit')) {
+      subTitle = '글 수정';
+    } else if (locate.pathname.startsWith('/board/community')) {
+      subTitle = '커뮤니티';
     } else if (locate.pathname.startsWith('/board/event')) {
       subTitle = '이벤트';
     } else if (locate.pathname.startsWith('/board/faq')) {
@@ -113,6 +119,7 @@ const SeoMetaTag: React.FC<SeoMetaTagProps> = ({
       <meta name="author" content={author} />
       <meta property="og:title" content={memoSubTitle} />
       <meta property="og:description" content={description} />
+      <meta name="og:site_name" content={site_name} />
       <meta property="og:image" content={image} />
       <meta property="og:url" content={memoLocation} />
       <meta property="og:type" content={type} />

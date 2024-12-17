@@ -6,6 +6,8 @@
   - add
     - 게시글 도메인 글쓰기 페이지 추가
     - 회원, 비회원 게시글 쓰기, 수정, 삭제 기능 추가
+    - SEO description 문구 수정
+    - SEO og:site_name 추가
   - fix
     - 프로필 UI 수정
     - Unknown -> "익명" 전역 변수로 교체
