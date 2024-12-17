@@ -2,9 +2,13 @@ import { Board } from '@prisma/client';
 
 export class CreateBoardDto
   implements
-    Omit<Board, 'id' | 'viewCount' | 'createdAt' | 'updatedAt' | 'deletedAt'>
+    Omit<
+      Board,
+      'id' | 'userId' | 'viewCount' | 'createdAt' | 'updatedAt' | 'deletedAt'
+    >
 {
-  userId: string;
+  password: string;
+  userId?: string;
   order: number;
   category: string;
   title: string;

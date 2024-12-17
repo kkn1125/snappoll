@@ -36,3 +36,5 @@ export const guestDisallowPaths = /\/(user|service|notice)\/?(.*)/;
 export const userDisallowPaths = /\/(auth)\/?(.*)/;
 
 export const scrollSize = 5;
+
+export const UnknownName = '익명';

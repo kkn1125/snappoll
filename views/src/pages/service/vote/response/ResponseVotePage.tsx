@@ -3,6 +3,7 @@ import { getVoteResponseMe } from '@/apis/vote/response/getVoteResponseMe';
 import { removeVoteResponse } from '@/apis/vote/response/removeVoteResponse';
 import { tokenAtom } from '@/recoils/token.atom';
 import { Message } from '@common/messages';
+import { UnknownName } from '@common/variables';
 import CommonPagination from '@components/atoms/CommonPagination';
 import SkeletonResponseList from '@components/moleculars/SkeletonResponseList';
 import useModal from '@hooks/useModal';
@@ -27,6 +28,7 @@ import {
 } from '@mui/material';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { formattedDate } from '@utils/formattedDate';
+import { getUsernameOr } from '@utils/getUsernameOr';
 import { validateExpired } from '@utils/validateExpired';
 import { useCallback, useMemo } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
@@ -71,11 +73,8 @@ const ResponseVotePage: React.FC<ResponseVotePageProps> = ({ me }) => {
 
   const getUser = useCallback(
     (response?: SnapVoteResponse) => {
-      return response?.user
-        ? response.user.username === user?.username
-          ? '나'
-          : response.user.username
-        : 'Unknown';
+      const username = getUsernameOr(response?.user?.username);
+      return username === user?.username ? '나' : username;
     },
     [user?.username],
   );

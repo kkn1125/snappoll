@@ -195,7 +195,7 @@ const GuestHomePage: React.FC<GuestHomePageProps> = () => {
               variant="contained"
               size="large"
               to="/auth/login"
-              state={{ type: 'required' }}
+              // state={{ type: 'required' }}
             >
               설문조사 만들기
             </Button>

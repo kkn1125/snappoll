@@ -41,8 +41,8 @@ const Layout: React.FC<LayoutProps> = ({ isCrew = true }) => {
   }, [locate.pathname]);
 
   const guestMenu = [
-    { name: '커뮤니티', path: '/board/community', icon: <ForumIcon /> },
     { name: '공지사항', path: '/board/notice', icon: <DashboardIcon /> },
+    { name: '커뮤니티', path: '/board/community', icon: <ForumIcon /> },
     {
       name: '이벤트',
       path: '/board/event',

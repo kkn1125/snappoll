@@ -48,14 +48,16 @@ const ProfilePage: React.FC<ProfilePageProps> = () => {
     mutationKey: ['updateProfile'],
     mutationFn: updateProfile,
     onSuccess(data, variables, context) {
-      openModal(Message.Info.SuccessChangeProfile);
+      openModal({ info: Message.Info.SuccessChangeProfile });
       refetchGetMe();
     },
-    onError(error: AxiosError<AxsiosException>, variables, context) {
+    onError(error: AxiosError<AxiosException>, variables, context) {
       if (error.response && error.response.data)
         openModal({
-          title: '안내',
-          content: error.response.data.errorCode.message,
+          info: {
+            title: '안내',
+            content: error.response.data.errorCode.message,
+          },
         });
     },
   });
@@ -64,14 +66,16 @@ const ProfilePage: React.FC<ProfilePageProps> = () => {
     mutationKey: ['uploadProfile'],
     mutationFn: uploadProfileImage,
     onSuccess(data, variables, context) {
-      openModal({ title: '안내', content: '프로필 변경되었습니다.' });
+      openModal({ info: { title: '안내', content: '프로필 변경되었습니다.' } });
       refetchGetMe();
     },
-    onError(error: AxiosError<AxsiosException>, variables, context) {
+    onError(error: AxiosError<AxiosException>, variables, context) {
       if (error.response && error.response.data) {
         openModal({
-          title: '안내',
-          content: error.response.data.errorCode.message,
+          info: {
+            title: '안내',
+            content: error.response.data.errorCode.message,
+          },
         });
         return;
       }
@@ -136,11 +140,14 @@ const ProfilePage: React.FC<ProfilePageProps> = () => {
       const id = user?.id;
       const username = current.username;
       if (!id || !username) return;
-      openInteractiveModal(Message.Single.Save, () => {
-        updateProfileMutation.mutate({
-          id: id,
-          username,
-        });
+      openInteractiveModal({
+        content: Message.Single.Save,
+        callback: () => {
+          updateProfileMutation.mutate({
+            id: id,
+            username,
+          });
+        },
       });
       return false;
     },
@@ -173,7 +180,9 @@ const ProfilePage: React.FC<ProfilePageProps> = () => {
         profileUploadMutate.mutate(uploadFile);
         // uploadProfileImage(uploadFile);
       } else {
-        openModal({ title: '안내', content: '변경 사항이 없습니다.' });
+        openModal({
+          info: { title: '안내', content: '변경 사항이 없습니다.' },
+        });
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -274,7 +283,7 @@ const ProfilePage: React.FC<ProfilePageProps> = () => {
                   <Typography>Email</Typography>
                   <CustomInput
                     fullWidth
-                    size="small"
+                    size="large"
                     name="email"
                     type="email"
                     autoComplete="new-username"
@@ -287,7 +296,7 @@ const ProfilePage: React.FC<ProfilePageProps> = () => {
                   <Typography>Username</Typography>
                   <CustomInput
                     fullWidth
-                    size="small"
+                    size="large"
                     name="username"
                     type="text"
                     autoComplete="new-username"
@@ -326,8 +335,11 @@ const ProfilePage: React.FC<ProfilePageProps> = () => {
                   variant="outlined"
                   size="large"
                   onClick={() => {
-                    openInteractiveModal(Message.Single.LeaveAlert, () => {
-                      handleRemoveAccount(user?.id);
+                    openInteractiveModal({
+                      content: Message.Single.LeaveAlert,
+                      callback: () => {
+                        handleRemoveAccount(user?.id);
+                      },
                     });
                   }}
                 >

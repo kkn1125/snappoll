@@ -1,7 +1,7 @@
 {
   "name": "realtime-poll-view",
   "private": true,
-  "version": "0.0.27",
+  "version": "0.0.29",
   "type": "module",
   "author": {
     "name": "devkimson",
@@ -35,6 +35,8 @@
     "react-scan": "^0.0.35",
     "recoil": "^0.7.7",
     "socket.io-client": "^4.8.1",
+    "suneditor": "^2.47.0",
+    "suneditor-react": "^3.6.1",
     "uuid": "^11.0.3"
   },
   "devDependencies": {

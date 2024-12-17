@@ -35,12 +35,15 @@ const CreateOptionForm: React.FC<CreateOptionFormProps> = ({
   }, []);
 
   const handleRemove = useCallback(() => {
-    openInteractiveModal(Message.Single.Remove, () => {
-      setSnapPoll((snapPoll) => {
-        const copyPoll = SnapPoll.copy(snapPoll);
-        copyPoll.deleteOption(questionId, option.id);
-        return copyPoll;
-      });
+    openInteractiveModal({
+      content: Message.Single.Remove,
+      callback: () => {
+        setSnapPoll((snapPoll) => {
+          const copyPoll = SnapPoll.copy(snapPoll);
+          copyPoll.deleteOption(questionId, option.id);
+          return copyPoll;
+        });
+      },
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

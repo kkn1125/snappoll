@@ -2,6 +2,18 @@ export const CustomMessage = {
   Login: { title: '안내', content: '로그인이 필요합니다.' },
   Logout: { title: '안내', content: '로그아웃 되었습니다.' },
   Token: { title: '안내', content: '토큰이 만료되었습니다.' },
+  SuccessWrite: {
+    title: '안내',
+    content: ['게시글 작성이 완료되었습니다.'],
+  },
+  SuccessUpdate: {
+    title: '안내',
+    content: ['게시글 수정이 완료되었습니다.'],
+  },
+  SuccessDelete: {
+    title: '안내',
+    content: ['게시글 삭제가 완료되었습니다.'],
+  },
   SuccessCheckMail: {
     title: '안내',
     content: ['본인 확인이 완료되었습니다.', '나머지 항목을 입력해주세요.'],
@@ -60,6 +72,9 @@ export type Require = (typeof Require)[keyof typeof Require];
 
 export const Info = {
   CheckYourEmail: CustomMessage.CheckYourEmail,
+  SuccessUpdate: CustomMessage.SuccessUpdate,
+  SuccessWrite: CustomMessage.SuccessWrite,
+  SuccessDelete: CustomMessage.SuccessDelete,
   SuccessCheckMail: CustomMessage.SuccessCheckMail,
   SuccessChangeProfile: CustomMessage.SuccessChangeProfile,
   SuccessChangePassword: CustomMessage.SuccessChangePassword,

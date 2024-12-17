@@ -8,8 +8,6 @@ import {
   Stack,
   Toolbar,
   Typography,
-  useMediaQuery,
-  useTheme,
 } from '@mui/material';
 import { BarChart, BarSeriesType } from '@mui/x-charts';
 import { MakeOptional } from '@mui/x-date-pickers/internals';
@@ -19,16 +17,24 @@ interface CorrelationChartProps {
   data: SnapPoll;
 }
 const CorrelationChart: React.FC<CorrelationChartProps> = ({ data }) => {
-  const theme = useTheme();
+  // const theme = useTheme();
   const [baseQuestion, setBaseQuestion] = useState<SnapPollQuestion | null>(
     null,
   );
   const [questions, setQuestions] = useState<SnapPollQuestion[]>([]);
-  const isMdDown = useMediaQuery(theme.breakpoints.down('md'));
+  // const isMdDown = useMediaQuery(theme.breakpoints.down('md'));
 
   function handleSetBaseQuestion(question: SnapPollQuestion) {
-    setBaseQuestion((q) => (q !== question ? question : null));
-    setQuestions((questions) => questions.filter((q) => q.id !== question.id));
+    console.log();
+    if (baseQuestion) {
+      setBaseQuestion(null);
+      setQuestions([]);
+    } else {
+      setBaseQuestion(question);
+      setQuestions((questions) =>
+        questions.filter((q) => q.id !== question.id),
+      );
+    }
   }
 
   function handleStackQuestion(question: SnapPollQuestion) {
@@ -152,7 +158,9 @@ const CorrelationChart: React.FC<CorrelationChartProps> = ({ data }) => {
                 width="100%"
                 minHeight="30vh"
                 height="100vh"
-                maxHeight={400}
+                maxWidth="80%"
+                mx="auto"
+                maxHeight="70vh"
               >
                 <BarChart
                   axisHighlight={{ y: 'line' }}

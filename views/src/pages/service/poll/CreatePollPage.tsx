@@ -46,7 +46,7 @@ const CreatePollPage: React.FC<CreatePollPageProps> = ({ edit = false }) => {
       setSnapPoll(new SnapPoll());
       navigate('/service/poll');
     },
-    onError(error: AxiosError<AxsiosException>, variables, context) {
+    onError(error: AxiosError<AxiosException>, variables, context) {
       if (error.response?.status === 401) {
         setSnapPoll(new SnapPoll());
         logoutToken();
@@ -61,7 +61,7 @@ const CreatePollPage: React.FC<CreatePollPageProps> = ({ edit = false }) => {
       setSnapPoll(new SnapPoll());
       navigate('/service/poll');
     },
-    onError(error: AxiosError<AxsiosException>, variables, context) {
+    onError(error: AxiosError<AxiosException>, variables, context) {
       if (error.response?.status === 401) {
         setSnapPoll(new SnapPoll());
         logoutToken();

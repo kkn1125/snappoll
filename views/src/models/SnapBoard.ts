@@ -3,6 +3,7 @@ export class SnapBoard {
   userId!: string;
   order!: number;
   category!: string;
+  password!: string;
   title!: string;
   content!: string;
   viewCount!: number;

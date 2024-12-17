@@ -1,0 +1,45 @@
+<form method='post' action='{{action}}'>
+  <table>
+    <thead>
+      <tr>
+        <th>
+          <div>
+            <img
+              src={{image}}
+              alt='snappoll-logo'
+              width='35'
+              height='35'
+            />{{title}}
+          </div>
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>
+          <div>
+            <h2>
+              SnapPoll 안내
+            </h2>
+            <input type='hidden' name='token' value='{{token}}' />
+
+            <input type='hidden' name='domain' value='snappollhelper' />
+            <div class='alert'>
+              {{content}}
+            </div>
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td><button type='submit'>확인</button></td>
+      </tr>
+    </tbody>
+    <tfoot>
+      <tr>
+        <td>
+          <a href='mailto:{{email}}'>{{email}}</a>
+        </td>
+      </tr>
+    </tfoot>
+  </table>
+</form>

@@ -12,6 +12,8 @@ import {
   Stack,
 } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
+import { formattedDate } from '@utils/formattedDate';
+import { getUsernameOr } from '@utils/getUsernameOr';
 import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -62,7 +64,7 @@ const PollGraphListPage: React.FC<PollGraphListPageProps> = () => {
               </Stack>
               <ListItemText
                 primary={poll.title}
-                secondary={`작성자: ${poll.user?.username} | 생성일: ${new Date(poll.createdAt).toLocaleDateString()}`}
+                secondary={`작성자: ${getUsernameOr(poll.user?.username)} | 생성일: ${formattedDate(poll.createdAt)}`}
               />
             </ListItemButton>
           </ListItem>

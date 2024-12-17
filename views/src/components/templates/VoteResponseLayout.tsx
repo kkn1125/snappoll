@@ -12,6 +12,7 @@ import {
   Typography,
 } from '@mui/material';
 import { grey } from '@mui/material/colors';
+import { getUsernameOr } from '@utils/getUsernameOr';
 import { printDateOrNot } from '@utils/printDateOrNot';
 import { useCallback } from 'react';
 
@@ -61,7 +62,7 @@ const VoteResponseLayout: React.FC<VoteResponseLayoutProps> = ({
         </Typography>
         <Stack alignItems="flex-end" mb={1} flex={1} gap={1}>
           <Typography className="font-maru" fontSize={16} fontWeight={100}>
-            {vote.user?.username}
+            {getUsernameOr(vote.user?.username)}
           </Typography>
 
           <Typography className="font-maru" fontSize={16}>

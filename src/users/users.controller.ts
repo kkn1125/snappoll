@@ -87,6 +87,7 @@ export class UsersController {
     return this.usersService.update(id, updateUserDto);
   }
 
+  // @IgnoreCookie()
   @Put(':id/password')
   updatePassword(
     @Param('id') id: string,

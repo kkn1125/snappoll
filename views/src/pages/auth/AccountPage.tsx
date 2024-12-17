@@ -50,7 +50,7 @@ const AccountPage: React.FC<AccountPageProps> = () => {
 
     sendInitPass.mutate(data);
 
-    openModal(Message.Info.CheckYourEmail);
+    openModal({ info: Message.Info.CheckYourEmail });
 
     return false;
   }
@@ -106,7 +106,7 @@ const AccountPage: React.FC<AccountPageProps> = () => {
               component={Link}
               variant="outlined"
               size="large"
-              to="/user/login"
+              to="/auth/login"
             >
               로그인하기
             </Button>

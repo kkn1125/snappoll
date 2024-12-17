@@ -3,6 +3,7 @@ import AnswerItem from '@components/atoms/AnswerItem';
 import { SnapPoll } from '@models/SnapPoll';
 import { Stack, Toolbar, Typography } from '@mui/material';
 import { grey } from '@mui/material/colors';
+import { getUsernameOr } from '@utils/getUsernameOr';
 import { printDateOrNot } from '@utils/printDateOrNot';
 import { useParams } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
@@ -31,7 +32,7 @@ const PollResponseLayout: React.FC<PollResponseLayoutProps> = ({
         </Typography>
         <Stack alignItems="flex-end" mb={1} flex={1} gap={1}>
           <Typography className="font-maru" fontSize={16} fontWeight={100}>
-            {poll.user?.username}
+            {getUsernameOr(poll.user?.username)}
           </Typography>
 
           <Typography className="font-maru" fontSize={16}>

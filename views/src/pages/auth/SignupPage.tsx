@@ -65,9 +65,9 @@ const SignupPage: React.FC<SignupPageProps> = () => {
     onSuccess(data, variables, context) {
       setPendingValidate(false);
       setEmailValidated(true);
-      openModal(Message.Info.SuccessCheckMail);
+      openModal({ info: Message.Info.SuccessCheckMail });
     },
-    onError(error: AxiosError<AxsiosException>, variables, context) {
+    onError(error: AxiosError<AxiosException>, variables, context) {
       const { response } = error;
       const data = response?.data;
       if (!data) return;
@@ -76,7 +76,7 @@ const SignupPage: React.FC<SignupPageProps> = () => {
       setEmailValidated(false);
       console.log(response);
       if (response?.status === 409) {
-        openModal(Message.WrongRequest(data.errorCode.message));
+        openModal({ info: Message.WrongRequest(data.errorCode.message) });
       }
     },
   });
@@ -87,12 +87,12 @@ const SignupPage: React.FC<SignupPageProps> = () => {
     onSuccess(data, variables, context) {
       navigate('/');
     },
-    onError(error: AxiosError<AxsiosException>, variables, context) {
+    onError(error: AxiosError<AxiosException>, variables, context) {
       const { response } = error;
       const data = response?.data;
       if (!data) return;
 
-      openModal(Message.WrongRequest(data.errorCode.message));
+      openModal({ info: Message.WrongRequest(data.errorCode.message) });
     },
   });
 
@@ -150,18 +150,22 @@ const SignupPage: React.FC<SignupPageProps> = () => {
 
   const handleCheckEmail = useCallback(() => {
     if (!validate('onlyEmail')) {
-      openModal({ title: '안내', content: '이메일 형식을 확인해주세요.' });
+      openModal({
+        info: { title: '안내', content: '이메일 형식을 확인해주세요.' },
+      });
       return;
     }
 
     if (!signupInfo.email) {
-      openModal({ title: '안내', content: '이메일을 입력해주세요.' });
+      openModal({ info: { title: '안내', content: '이메일을 입력해주세요.' } });
       return;
     }
     checkEmailMutation.mutate(signupInfo.email);
     openModal({
-      title: '안내',
-      content: '입력한 이메일의 메세지함을 확인해주세요.',
+      info: {
+        title: '안내',
+        content: '입력한 이메일의 메세지함을 확인해주세요.',
+      },
     });
 
     setPendingValidate(true);
@@ -325,7 +329,7 @@ const SignupPage: React.FC<SignupPageProps> = () => {
         </Button>
         <Button
           component={Link}
-          variant="contained"
+          variant="outlined"
           size="large"
           to="/auth/login"
           reloadDocument
@@ -335,7 +339,7 @@ const SignupPage: React.FC<SignupPageProps> = () => {
         </Button>
         <Button
           component={Link}
-          variant="contained"
+          variant="outlined"
           size="large"
           to="/"
           reloadDocument

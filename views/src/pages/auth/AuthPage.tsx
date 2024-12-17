@@ -92,7 +92,7 @@ const AuthPage: React.FC<AuthPageProps> = () => {
           <Stack direction="row" justifyContent="center" gap={1}>
             <Typography
               component={Link}
-              to="/user/validate"
+              to="/auth/account"
               color="textSecondary"
               sx={{ textDecoration: 'none' }}
             >

@@ -45,23 +45,23 @@ const DetailPollPage: React.FC<DetailPollPageProps> = ({
     onSuccess(data, variables, context) {
       if (pollId !== undefined) {
         /* 비회원 */
-        openInteractiveModal(
-          Message.Info.SuccessResponse,
-          () => {
+        openInteractiveModal({
+          content: Message.Info.SuccessResponse,
+          callback: () => {
             setResponse(new SnapResponse());
             navigate('/');
           },
-          () => {
+          closeCallback: () => {
             setResponse(new SnapResponse());
           },
-        );
+        });
       } else {
         /* 회원 */
         setResponse(new SnapResponse());
         navigate(-1);
       }
     },
-    onError(error: AxiosError<AxsiosException>, variables, context) {
+    onError(error: AxiosError<AxiosException>, variables, context) {
       if (error.response?.status === 401) {
         setResponse(new SnapResponse());
         logoutToken();
@@ -83,28 +83,31 @@ const DetailPollPage: React.FC<DetailPollPageProps> = ({
       e.preventDefault();
       if (!responseData?.id) return;
 
-      openInteractiveModal('작성을 완료하시겠습니까?', () => {
-        const answerLength = response.answer.length;
-        if (answerLength === 0) {
-          openModal(Message.Require.LeastResponse);
-          return false;
-        }
+      openInteractiveModal({
+        content: '작성을 완료하시겠습니까?',
+        callback: () => {
+          const answerLength = response.answer.length;
+          if (answerLength === 0) {
+            openModal({ info: Message.Require.LeastResponse });
+            return false;
+          }
 
-        const answered = responseData?.question.every((question) => {
-          if (!question.isRequired) return true;
-          const answer = response.answer.find(
-            (answer) => answer.questionId === question.id,
-          );
-          return !!answer;
-        });
-        if (!answered) {
-          openModal(Message.Require.MustFill);
-          return false;
-        }
-        const copyResponse = SnapResponse.copy(response);
-        copyResponse.userId = user?.id;
-        copyResponse.pollId = responseData?.id;
-        saveResponseMutate.mutate(copyResponse);
+          const answered = responseData?.question.every((question) => {
+            if (!question.isRequired) return true;
+            const answer = response.answer.find(
+              (answer) => answer.questionId === question.id,
+            );
+            return !!answer;
+          });
+          if (!answered) {
+            openModal({ info: Message.Require.MustFill });
+            return false;
+          }
+          const copyResponse = SnapResponse.copy(response);
+          copyResponse.userId = user?.id;
+          copyResponse.pollId = responseData?.id;
+          saveResponseMutate.mutate(copyResponse);
+        },
       });
 
       return false;

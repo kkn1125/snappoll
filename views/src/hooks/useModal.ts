@@ -4,14 +4,22 @@ import {
   ModalDispatchContext,
 } from '@providers/contexts/ModalContext';
 import { ModalActionType } from '@providers/contexts/modalTypes';
-import { useCallback, useContext, useMemo } from 'react';
+import React, { useCallback, useContext, useMemo } from 'react';
 
 const useModal = () => {
   const modalState = useContext(ModalContext);
   const modalDispatch = useContext(ModalDispatchContext);
 
   const openModal = useCallback(
-    (info: MessageTemplate) => {
+    function <T>({
+      info,
+      slot,
+      closeCallback,
+    }: {
+      info: MessageTemplate;
+      slot?: React.ReactNode;
+      closeCallback?: () => T | Promise<T>;
+    }) {
       const concatContent = [];
       if (info.content instanceof Array) {
         concatContent.push(...info.content);
@@ -22,17 +30,25 @@ const useModal = () => {
         type: ModalActionType.Open,
         title: info.title,
         content: concatContent,
+        slot,
+        closeCallback,
       });
     },
     [modalDispatch],
   );
 
   const openInteractiveModal = useCallback(
-    function <Q extends string, T = void>(
-      content: { title: string; content: Q | readonly Q[] } | Q | readonly Q[],
-      callback: () => T | Promise<T>,
-      closeCallback?: () => T | Promise<T>,
-    ) {
+    function <Q extends string, T = void>({
+      slot,
+      content,
+      callback,
+      closeCallback,
+    }: {
+      slot?: React.ReactNode;
+      content: { title: string; content: Q | readonly Q[] } | Q | readonly Q[];
+      callback?: () => T | Promise<T>;
+      closeCallback?: () => T | Promise<T>;
+    }) {
       const concatContent = [];
       let title = '';
       if (
@@ -56,6 +72,7 @@ const useModal = () => {
         type: ModalActionType.OpenInteractive,
         title: title || '안내',
         content: concatContent,
+        slot,
         callback,
         closeCallback,
       });

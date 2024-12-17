@@ -4,12 +4,11 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
-import { UpdateUserPasswordDto } from './dto/update-user-password.dto';
 import { $Enums } from '@prisma/client';
-import { ErrorCodeType } from '@utils/codes';
 import Logger from '@utils/Logger';
+import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserPasswordDto } from './dto/update-user-password.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -183,7 +182,7 @@ export class UsersService {
     const encryptedPassword = this.prisma.encryptPassword(
       updateUserDto.password,
     );
-    // console.log(id, encryptedPassword);
+    // console.log(id, user.localUser.password, encryptedPassword);
     return this.prisma.user.update({
       where: { id, deletedAt: null },
       data: {

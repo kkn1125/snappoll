@@ -18,7 +18,7 @@ const useSocket = () => {
   const sendMessage = useCallback(
     (message: any) => {
       if (!user) {
-        openModal(Message.Require.Login);
+        openModal({ info: Message.Require.Login });
         return;
       }
       socket.emit('message', message);
@@ -30,7 +30,7 @@ const useSocket = () => {
   const messageRead = useCallback(
     (messageId: string) => {
       if (!user) {
-        openModal(Message.Require.Login);
+        openModal({ info: Message.Require.Login });
         return;
       }
       socket
@@ -53,7 +53,7 @@ const useSocket = () => {
   const messageAllRead = useCallback(
     (messageIds: string[]) => {
       if (!user) {
-        openModal(Message.Require.Login);
+        openModal({ info: Message.Require.Login });
         return;
       }
       socket

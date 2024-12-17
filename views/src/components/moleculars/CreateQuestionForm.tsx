@@ -50,14 +50,17 @@ const CreateQuestionForm: React.FC<CreateQuestionFormProps> = ({
   // ]);
 
   const handleRemove = useCallback((questionId: string) => {
-    openInteractiveModal(Message.Single.Remove, () => {
-      setSnapPoll((snapPoll) => {
-        const copySnapPoll = SnapPoll.copy(snapPoll);
-        copySnapPoll.question = copySnapPoll.question.filter(
-          (question) => question.id !== questionId,
-        );
-        return copySnapPoll;
-      });
+    openInteractiveModal({
+      content: Message.Single.Remove,
+      callback: () => {
+        setSnapPoll((snapPoll) => {
+          const copySnapPoll = SnapPoll.copy(snapPoll);
+          copySnapPoll.question = copySnapPoll.question.filter(
+            (question) => question.id !== questionId,
+          );
+          return copySnapPoll;
+        });
+      },
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

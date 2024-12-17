@@ -175,7 +175,7 @@ export declare global {
     domain: string;
     message: string;
   }
-  interface AxsiosException {
+  interface AxiosException {
     httpCode: number;
     path: string;
     timestamp: string;

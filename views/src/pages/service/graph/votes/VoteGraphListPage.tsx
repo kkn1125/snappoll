@@ -12,6 +12,8 @@ import {
   Stack,
 } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
+import { formattedDate } from '@utils/formattedDate';
+import { getUsernameOr } from '@utils/getUsernameOr';
 import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -62,7 +64,7 @@ const VoteGraphListPage: React.FC<VoteGraphListPageProps> = () => {
               </Stack>
               <ListItemText
                 primary={vote.title}
-                secondary={`작성자: ${vote.user?.username} | 생성일: ${new Date(vote.createdAt).toLocaleDateString()}`}
+                secondary={`작성자: ${getUsernameOr(vote.user?.username)} | 생성일: ${formattedDate(vote.createdAt)}`}
               />
             </ListItemButton>
           </ListItem>

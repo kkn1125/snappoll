@@ -95,6 +95,7 @@ const Modal: React.FC<ModalProps> = () => {
                   {ctt}
                 </Typography>
               ))}
+              {modalState.slot}
             </Stack>
             <Stack direction="row" justifyContent="space-between" gap={2}>
               {modalState.interactive && (

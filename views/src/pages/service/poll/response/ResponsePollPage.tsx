@@ -3,6 +3,7 @@ import { getPollResponseMe } from '@/apis/poll/response/getPollResponseMe';
 import { removeResponse } from '@/apis/poll/response/removeResponse';
 import { tokenAtom } from '@/recoils/token.atom';
 import { Message } from '@common/messages';
+import { UnknownName } from '@common/variables';
 import CommonPagination from '@components/atoms/CommonPagination';
 import SkeletonResponseList from '@components/moleculars/SkeletonResponseList';
 import useModal from '@hooks/useModal';
@@ -27,6 +28,7 @@ import {
 } from '@mui/material';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { formattedDate } from '@utils/formattedDate';
+import { getUsernameOr } from '@utils/getUsernameOr';
 import { Logger } from '@utils/Logger';
 import { validateExpired } from '@utils/validateExpired';
 import { useCallback, useMemo, useState } from 'react';
@@ -75,11 +77,8 @@ const ResponsePollPage: React.FC<ResponsePollPageProps> = ({ me }) => {
 
   const getUser = useCallback(
     (response: SnapResponse) => {
-      return response.user
-        ? response.user.username === user?.username
-          ? '나'
-          : response.user.username
-        : 'Unknown';
+      const username = getUsernameOr(response?.user?.username);
+      return username === user?.username ? '나' : username;
     },
     [user?.username],
   );

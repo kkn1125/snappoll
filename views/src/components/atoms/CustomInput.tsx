@@ -1,5 +1,5 @@
 import { SxProps, TextField, TextFieldPropsSizeOverrides } from '@mui/material';
-import { ChangeEvent, memo } from 'react';
+import { ChangeEvent, ComponentProps, memo, Ref } from 'react';
 
 interface CustomInputProps {
   name: string;
@@ -24,6 +24,7 @@ interface CustomInputProps {
   endAdornment?: React.ReactNode;
   defaultValue?: string;
   disabled?: boolean;
+  refValue?: React.RefObject<HTMLInputElement>;
 }
 function CustomInput({
   name,
@@ -45,9 +46,11 @@ function CustomInput({
   endAdornment,
   defaultValue,
   disabled = false,
+  refValue,
 }: CustomInputProps) {
   return (
     <TextField
+      inputRef={refValue}
       autoFocus={autoFocus}
       variant={variant}
       placeholder={placeholder && placeholder + (required ? '*' : '')}

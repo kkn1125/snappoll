@@ -1,5 +1,7 @@
 import commonConf from '@common/common.conf';
 import whiteList from '@common/whiteList';
+import { HttpExceptionFilter } from '@middleware/http-exception.filter';
+import { ResponseInterceptor } from '@middleware/response.interceptor';
 import { RequestMethod } from '@nestjs/common';
 import { ConfigService, ConfigType } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
@@ -7,9 +9,6 @@ import { allowOrigins } from '@utils/allowOrigins';
 import compression from 'compression';
 import cookieParser from 'cookie-parser';
 import { AppModule } from './app.module';
-import { ResponseInterceptor } from '@middleware/response.interceptor';
-import { HttpExceptionFilter } from '@middleware/http-exception.filter';
-import { CookieGuard } from '@auth/cookie.guard';
 
 declare const module: any;
 
@@ -33,14 +32,28 @@ async function bootstrap() {
     credentials: true,
   });
   app.setGlobalPrefix('api', {
-    exclude: [{ path: 'sitemap.xml', method: RequestMethod.GET }],
+    exclude: [
+      { path: 'sitemap.xml', method: RequestMethod.GET },
+      {
+        path: 'version',
+        method: RequestMethod.GET,
+      },
+      {
+        path: 'preview(.*)',
+        method: RequestMethod.GET,
+      },
+      {
+        path: 'style(.*)',
+        method: RequestMethod.GET,
+      },
+    ],
   });
   app.use(cookieParser());
   app.use(compression());
   app.useGlobalInterceptors(new ResponseInterceptor());
   app.useGlobalFilters(new HttpExceptionFilter());
 
-  await app.listen(common.PORT, common.HOST, async () => {
+  await app.listen(common.port, common.host, async () => {
     if (module.hot) {
       module.hot.accept();
       module.hot.dispose(() => app.close());

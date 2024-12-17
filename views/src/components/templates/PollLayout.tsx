@@ -6,6 +6,7 @@ import { AccessTime } from '@mui/icons-material';
 import { Alert, AlertTitle, Stack, Typography } from '@mui/material';
 import { grey } from '@mui/material/colors';
 import { formattedDate } from '@utils/formattedDate';
+import { getUsernameOr } from '@utils/getUsernameOr';
 import { printDateOrNot } from '@utils/printDateOrNot';
 import { useLocation } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
@@ -49,7 +50,7 @@ const PollLayout: React.FC<PollLayoutProps> = ({
             fontWeight={600}
             color="#333"
           >
-            {poll.user?.username} 작성
+            {getUsernameOr(poll.user?.username)} 작성
           </Typography>
 
           <Stack direction="row" alignItems="center" gap={1}>

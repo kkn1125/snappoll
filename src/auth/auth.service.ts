@@ -1,9 +1,5 @@
 import { MailerService } from '@/mailer/mailer.service';
-import {
-  BUFFER_TIME,
-  CURRENT_DOMAIN,
-  EXPIRED_TOKEN_TIME,
-} from '@common/variables';
+import { CURRENT_DOMAIN, EXPIRED_TOKEN_TIME } from '@common/variables';
 import { PrismaService } from '@database/prisma.service';
 import { HttpService } from '@nestjs/axios';
 import {
@@ -15,51 +11,13 @@ import {
 import { ConfigService } from '@nestjs/config';
 import Logger from '@utils/Logger';
 import * as jwt from 'jsonwebtoken';
-import Mail from 'nodemailer/lib/mailer';
-import { firstValueFrom } from 'rxjs';
 import ms from 'ms';
+import * as path from 'path';
+import { firstValueFrom } from 'rxjs';
 
 @Injectable()
 export class AuthService {
   logger = new Logger(this);
-  style = `
-    <style>
-      html, body {
-        margin: 0;
-        height: 100%;
-        overflow: hidden;
-      }
-      .header {
-        font-size: 1.5rem;
-        margin-bottom: 1em;
-      }
-      button {
-        border-radius: 0.3rem;
-        border-width: 1px;
-        border-color: #5193cf;
-        border-style: solid;
-        transition: all 150ms ease-in-out;
-        box-sizing: border-box;
-        background: transparent;
-        padding: 0.3rem 0.8rem;
-        font-weight: 700;
-        font-size: 1rem;
-        &:hover {
-          cursor: pointer;
-          border-color: #ffffff00;
-          background: #5193cf;
-          color: white;
-        }
-      }
-      .wrap {
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-        justify-content: center;
-        align-items: center;
-        height: 100%;
-      }
-    </style>`;
 
   constructor(
     private readonly mailer: MailerService,
@@ -106,47 +64,37 @@ export class AuthService {
 
     if (!user) {
       const errorCode = await this.prisma.getErrorCode('user', 'NotFound');
-      throw new NotFoundException('계정을 찾을 수 없습니다.');
+      throw new NotFoundException(errorCode);
     }
 
-    this.logger.debug('to:', email);
-
-    const address = this.configService.get('email.ADDRESS');
-    const mode = this.configService.get('common.MODE');
-
-    const domain =
-      mode === 'development'
-        ? 'http://localhost:8080'
-        : 'https://snappoll.kro.kr';
-
-    this.logger.debug('admin email', address);
-
     const token = this.prisma.encryptPassword(email);
-
+    const defaultEmail = this.configService.get('email.defaultEmail');
+    const domain = this.configService.get('common.currentDomain');
     const message = {
-      from: `SnapPollHelper <${address}>`,
       to: `${email}`,
       subject: 'SnapPoll 계정 비밀번호 초기화 안내',
-      text: '확인해주세요.',
-      html: `<div>
-        <img src="https://snappoll.kro.kr/images/original.png" alt="snappoll-logo" width="50" height="50" />
-        <h2>SnapPoll 계정 비밀번호 초기화</h2>
-        <p>계정 비밀번호 초기화 후 로그인하여 프로필 > 비밀번호 변경으로 이동하여 자신의 비밀번호로 변경해주시기 바랍니다. 본인에 의한 확인 메일이 아닌 경우, 아래 메일로 문의해주세요.</p>
-
-        <form method="post" action="${domain}/api/auth/init/confirm">
-          <input type="hidden" name="token" value="${token}" />
-          <input type="hidden" name="domain" value="snappollhelper" />
-          <button type="submit">확인</button>
-        </form>
-        
-        <a href="mailto:devkimsonhelper@gmail.com">devkimsonhelper@gmail.com</a>
-      </div>`,
-    } as Mail.Options;
+      text: 'SnapPoll에서 발송한 메세지 입니다.',
+      context: {
+        title: 'SnapPoll 계정 비밀번호 초기화',
+        content:
+          '계정 비밀번호 초기화 후 발급된 비밀번호로 로그인하여 프로필 > 비밀번호 변경으로 이동하여 새로운 비밀번호로 변경하시기 바랍니다. 본인에 의한 확인 메일이 아니라면 아래 메일로 문의해주세요.',
+        action: domain + '/api/auth/init/confirm',
+        token,
+        email: defaultEmail,
+        image: 'https://snappoll.kro.kr/images/original.png',
+      },
+      templatePath: path.join(
+        path.resolve(),
+        'src',
+        'mailer',
+        'template',
+        'confirmPage.hbs',
+      ),
+    };
 
     const result = await this.mailer.sendConfirmMail(message);
 
     this.logger.debug(result);
-
     this.logger.debug(`send email to ${email}`);
 
     return token;
@@ -154,7 +102,7 @@ export class AuthService {
 
   async getKakaoLoginToken(code: string) {
     try {
-      const kakaoKey = this.configService.get('common.KAKAO_KEY');
+      const kakaoKey = this.configService.get('common.kakaoKey');
       const config = {
         grant_type: 'authorization_code',
         client_id: kakaoKey,
@@ -231,38 +179,31 @@ export class AuthService {
 
     this.logger.debug('to:', email);
 
-    const address = this.configService.get('email.ADDRESS');
-    const mode = this.configService.get('common.MODE');
-
-    const domain =
-      mode === 'development'
-        ? 'http://localhost:8080'
-        : 'https://snappoll.kro.kr';
-
-    this.logger.debug('admin email', address);
-
     const token = this.prisma.encryptPassword(email);
-
+    const defaultEmail = this.configService.get('email.defaultEmail');
+    const domain = this.configService.get('common.currentDomain');
     const message = {
-      from: `SnapPollHelper <${address}>`,
       to: `${email}`,
       subject: 'SnapPoll 이메일 확인 요청',
       text: '확인해주세요.',
-      html: `<div>
-        <img src="https://snappoll.kro.kr/images/original.png" alt="snappoll-logo" width="50" height="50" />
-        <h2>이메일 본인인증</h2>
-        <p>본인인증을 위한 메일입니다. 본인에 의한 확인 메일이 아닌 경우, 아래 메일로 문의해주세요.</p>
+      context: {
+        title: '이메일 본인인증',
+        content:
+          '본인인증을 위한 메일입니다. 본인에 의한 확인 메일이 아닌 경우, 아래 메일로 문의해주세요.',
+        action: domain + '/api/auth/validate',
+        token,
+        email: defaultEmail,
+        image: 'https://snappoll.kro.kr/images/original.png',
+      },
+      templatePath: path.join(
+        path.resolve(),
+        'src',
+        'mailer',
+        'template',
+        'confirmPage.hbs',
+      ),
+    };
 
-        <form method="post" action="${domain}/api/auth/validate">
-          <input type="hidden" name="token" value="${token}" />
-          <input type="hidden" name="domain" value="snappollhelper" />
-          <button type="submit">확인</button>
-        </form>
-        
-        <a href="mailto:devkimsonhelper@gmail.com">devkimsonhelper@gmail.com</a>
-      </div>`,
-    } as Mail.Options;
-    this.logger.debug(this.mailer);
     const result = await this.mailer.sendConfirmMail(message);
 
     this.logger.debug(result);
@@ -280,7 +221,7 @@ export class AuthService {
   }
 
   getToken(userData: UserTokenData) {
-    const secretKey = this.configService.get<string>('common.SECRET_KEY');
+    const secretKey = this.configService.get<string>('common.secretKey');
     const TOKEN_EXPIRED_AT = ms(EXPIRED_TOKEN_TIME);
     const REFRESH_TOKEN_EXPIRED_AT = ms(EXPIRED_TOKEN_TIME * 2);
     this.logger.info('만료시간 체크:', TOKEN_EXPIRED_AT);
@@ -313,15 +254,6 @@ export class AuthService {
       },
     });
   }
-
-  // getMeSocial(email: string) {
-  //   return this.prisma.user.findUnique({
-  //     where: { email },
-  //     include: {
-  //       userProfile: true,
-  //     },
-  //   });
-  // }
 
   async requestLoginKakao() {
     const { data } = await firstValueFrom(

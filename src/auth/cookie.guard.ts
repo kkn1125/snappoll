@@ -40,13 +40,30 @@ export class CookieGuard implements CanActivate {
 
     if (isPublic) {
       this.logger.debug('쿠키 통과');
+      try {
+        const http = context.switchToHttp();
+        const req = http.getRequest() as Request;
+        if (req.cookies.token) {
+          const decoded = jwt.decode(req.cookies.token) as JwtPayload;
+          if (decoded) {
+            const user = await this.authService.getMe(decoded.email);
+            if (user) {
+              req.user = user;
+            }
+          }
+        }
+      } catch (error) {
+        this.logger.debug(
+          '쿠키 무시 중 회원이 통과 될 때 오류 발생 (확인 필요)',
+        );
+      }
       return true;
     }
 
     const http = context.switchToHttp();
     const req = http.getRequest() as Request;
     const res = http.getResponse() as Response;
-    const secretKey = this.configService.get('common.SECRET_KEY');
+    const secretKey = this.configService.get('common.secretKey');
 
     if (!req.cookies.token) {
       this.logger.debug('쿠키 토큰 없음');

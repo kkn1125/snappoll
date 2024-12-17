@@ -1,6 +1,7 @@
 export type ModalInitialValue<T = any> = {
   title: string;
   content: string[];
+  slot?: React.ReactNode;
   open: boolean;
   interactive: boolean;
   callback: () => T | Promise<T>;
@@ -9,6 +10,7 @@ export type ModalInitialValue<T = any> = {
 export const initialValue = {
   title: '',
   content: [],
+  slot: undefined,
   open: false,
   interactive: false,
   callback: () => {},
@@ -25,6 +27,7 @@ export type ModalReducerAction<T = any> = {
   type: ModalActionType;
   title?: string;
   content?: string[];
+  slot?: React.ReactNode;
   callback?: () => T | Promise<T>;
   closeCallback?: () => T | Promise<T>;
 };

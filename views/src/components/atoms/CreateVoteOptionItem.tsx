@@ -40,12 +40,15 @@ const CreateVoteOptionItem: React.FC<CreateVoteOptionItemProps> = ({
   }, []);
 
   const handleRemove = useCallback(() => {
-    openInteractiveModal(Message.Single.Remove, () => {
-      setSnapVote((snapVote) => {
-        const copySnapVote = SnapVote.copy(snapVote);
-        copySnapVote.deleteOption(option.id);
-        return copySnapVote;
-      });
+    openInteractiveModal({
+      content: Message.Single.Remove,
+      callback: () => {
+        setSnapVote((snapVote) => {
+          const copySnapVote = SnapVote.copy(snapVote);
+          copySnapVote.deleteOption(option.id);
+          return copySnapVote;
+        });
+      },
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

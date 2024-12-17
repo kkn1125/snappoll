@@ -1,5 +1,6 @@
 import { registerAs } from '@nestjs/config';
 import {
+  CURRENT_DOMAIN,
   DATABASE_URL,
   DIRECT_URL,
   HOST,
@@ -11,12 +12,13 @@ import {
 } from './variables';
 
 export default registerAs('common', () => ({
-  MODE,
-  HOST,
-  PORT,
-  DATABASE_URL,
-  DIRECT_URL,
-  SECRET_KEY,
-  VERSION,
-  KAKAO_KEY,
+  mode: MODE,
+  host: HOST,
+  port: PORT,
+  databaseUrl: DATABASE_URL,
+  directUrl: DIRECT_URL,
+  secretKey: SECRET_KEY,
+  version: VERSION,
+  kakaoKey: KAKAO_KEY,
+  currentDomain: CURRENT_DOMAIN,
 }));

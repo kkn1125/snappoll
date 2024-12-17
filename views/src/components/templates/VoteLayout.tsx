@@ -3,7 +3,6 @@ import { tokenAtom } from '@/recoils/token.atom';
 import CheckedComponent from '@components/atoms/CheckedComponent';
 import ShareControlButton from '@components/atoms/ShareControlButton';
 import VoteOptionItem from '@components/atoms/VoteOptionItem';
-import useModal from '@hooks/useModal';
 import { SnapVote } from '@models/SnapVote';
 import { SnapVoteAnswer } from '@models/SnapVoteAnswer';
 import { SnapVoteResponse } from '@models/SnapVoteResponse';
@@ -20,6 +19,7 @@ import {
 } from '@mui/material';
 import { grey } from '@mui/material/colors';
 import { formattedDate } from '@utils/formattedDate';
+import { getUsernameOr } from '@utils/getUsernameOr';
 import { printDateOrNot } from '@utils/printDateOrNot';
 import { ChangeEvent, SyntheticEvent, useCallback, useState } from 'react';
 import { useLocation } from 'react-router-dom';
@@ -38,7 +38,6 @@ const VoteLayout: React.FC<VoteLayoutProps> = ({
   const { user } = useRecoilValue(tokenAtom);
   const [useEtc, setUseEtc] = useState(false);
   const setSnapVoteResponse = useSetRecoilState(snapVoteResponseAtom);
-  const { openModal } = useModal();
   const locate = useLocation();
   const isShare = locate.pathname.startsWith('/service/poll/share');
 
@@ -128,7 +127,7 @@ const VoteLayout: React.FC<VoteLayoutProps> = ({
             fontWeight={600}
             color="#333"
           >
-            {vote.user?.username} 작성
+            {getUsernameOr(vote.user?.username)} 작성
           </Typography>
 
           <Stack direction="row" alignItems="center" gap={1}>

@@ -67,17 +67,19 @@ const useToken = () => {
         refreshTokenMutate.mutate();
       }, leftTime * 1000);
     },
-    onError(error: AxiosError<AxsiosException>, variables, context) {
+    onError(error: AxiosError<AxiosException>, variables, context) {
       if (error.code === 'ECONNABORTED') {
-        openModal(Message.Info.ServerEConnection);
+        openModal({ info: Message.Info.ServerEConnection });
         return;
       }
       const response = error.response;
       if (response && response.data && response.status === 401) {
         if ([108, 109, 110].includes(response.data.errorCode.errorStatus))
           openModal({
-            title: '안내',
-            content: response.data.errorCode.message,
+            info: {
+              title: '안내',
+              content: response.data.errorCode.message,
+            },
           });
       }
       logoutToken();

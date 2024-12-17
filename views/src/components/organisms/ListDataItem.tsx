@@ -28,6 +28,8 @@ import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import ListItemIcons from '../atoms/ListItemIcons';
 import CommonPagination from '@components/atoms/CommonPagination';
+import { UnknownName } from '@common/variables';
+import { getUsernameOr } from '@utils/getUsernameOr';
 
 interface ListDataItemProps<T extends SnapPoll | SnapVote> {
   name: 'poll' | 'vote';
@@ -65,8 +67,11 @@ function ListDataItem<T extends SnapPoll | SnapVote>({
   });
 
   function handleRemove(id: string) {
-    openInteractiveModal(Message.Single.Remove, () => {
-      removeMutate.mutate(id);
+    openInteractiveModal({
+      content: Message.Single.Remove,
+      callback: () => {
+        removeMutate.mutate(id);
+      },
     });
   }
 
@@ -178,7 +183,7 @@ function ListDataItem<T extends SnapPoll | SnapVote>({
               >
                 <ListItemText
                   primary={data.title}
-                  secondary={`작성자: ${data.user?.username} | 생성일: ${formattedDate(data.createdAt)}`}
+                  secondary={`작성자: ${getUsernameOr(data.user?.username)} | 생성일: ${formattedDate(data.createdAt)}`}
                 />
               </ListItemButton>
             </ListItem>

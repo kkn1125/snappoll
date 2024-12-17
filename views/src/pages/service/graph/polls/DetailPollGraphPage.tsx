@@ -23,7 +23,8 @@ import {
 import { BarChart, PieChart, PieValueType } from '@mui/x-charts';
 import { MakeOptional } from '@mui/x-date-pickers/internals';
 import { useQuery } from '@tanstack/react-query';
-import { useCallback } from 'react';
+import dayjs from 'dayjs';
+import { useCallback, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
 interface DetailPollGraphPageProps {}
@@ -50,6 +51,33 @@ const DetailPollGraphPage: React.FC<DetailPollGraphPageProps> = () => {
     return counted;
   }, []);
   const isMdDown = useMediaQuery(theme.breakpoints.down('md'));
+
+  const getPollDates = useMemo(() => {
+    const form = 'YYYY-MM-DD';
+    const currentDate = new Date();
+    const createdAt = dayjs(responseData?.createdAt);
+    const now = dayjs(currentDate);
+    const temp: string[] = [createdAt.format(form)];
+    const dateAmount = now.diff(createdAt, 'day');
+    let index = 0;
+    while (dateAmount >= index) {
+      index += 1;
+      const date = createdAt.add(index, 'day');
+      temp.push(date.format(form));
+    }
+    return temp;
+  }, [responseData?.createdAt]);
+
+  const responseAmountPerDay = useMemo(() => {
+    const response = responseData?.response;
+    if (!response) return [];
+    return getPollDates.map((date) =>
+      response.reduce((acc, response) => {
+        const formatted = dayjs(response.createdAt).format('YYYY-MM-DD');
+        return date === formatted ? acc + 1 : acc;
+      }, 0),
+    );
+  }, [getPollDates, responseData?.response]);
 
   if (!responseData) return <></>;
 
@@ -111,6 +139,43 @@ const DetailPollGraphPage: React.FC<DetailPollGraphPageProps> = () => {
         </Table>
 
         <Typography variant="h5" fontWeight={700}>
+          일별 질문 참여도
+        </Typography>
+        <Stack
+          direction="row"
+          width="100%"
+          maxWidth="80%"
+          mx="auto"
+          minHeight="30vh"
+          height="100vh"
+          maxHeight="70vh"
+        >
+          <BarChart
+            axisHighlight={{ y: 'line' }}
+            borderRadius={10}
+            xAxis={[
+              {
+                scaleType: 'band',
+                data: getPollDates,
+                ...(isMdDown && {
+                  tickLabelStyle: {
+                    angle: -20,
+                    textAnchor: 'end',
+                    fontSize: 10,
+                  },
+                }),
+              },
+            ]}
+            series={[
+              {
+                data: responseAmountPerDay,
+                highlightScope: { highlight: 'item', fade: 'global' },
+              },
+            ]}
+          />
+        </Stack>
+
+        <Typography variant="h5" fontWeight={700}>
           질문 타입 비율
         </Typography>
         <Stack direction="row" width="100%">
@@ -160,9 +225,11 @@ const DetailPollGraphPage: React.FC<DetailPollGraphPageProps> = () => {
               <Stack
                 direction="row"
                 width="100%"
+                maxWidth="80%"
+                mx="auto"
                 minHeight="30vh"
                 height="100vh"
-                maxHeight={400}
+                maxHeight="70vh"
               >
                 <BarChart
                   axisHighlight={{ y: 'line' }}

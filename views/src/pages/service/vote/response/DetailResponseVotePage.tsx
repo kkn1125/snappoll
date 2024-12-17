@@ -1,9 +1,11 @@
 import { getResponse } from '@/apis/vote/response/getResponse';
 import { tokenAtom } from '@/recoils/token.atom';
+import { UnknownName } from '@common/variables';
 import VoteResponseLayout from '@components/templates/VoteResponseLayout';
 import { SnapVoteResponse } from '@models/SnapVoteResponse';
 import { Button, Container, Divider, Stack, Toolbar } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
+import { getUsernameOr } from '@utils/getUsernameOr';
 import { useParams } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 
@@ -16,6 +18,7 @@ const DetailResponseVotePage: React.FC<DetailResponseVotePageProps> = () => {
     queryFn: () => getResponse(id),
   });
   const responseData = data?.data;
+  const username = getUsernameOr(responseData?.user?.username);
 
   return (
     <Container maxWidth="md">
@@ -25,13 +28,7 @@ const DetailResponseVotePage: React.FC<DetailResponseVotePageProps> = () => {
           <VoteResponseLayout
             vote={responseData.vote}
             answer={responseData.voteAnswer}
-            contributor={
-              responseData.user
-                ? responseData.user.username === user?.username
-                  ? '나'
-                  : responseData.user.username
-                : 'Unknown'
-            }
+            contributor={username === user?.username ? '나' : username}
           />
         )}
         <Divider />

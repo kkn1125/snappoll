@@ -13,6 +13,7 @@ import SignupPage from '@pages/auth/SignupPage';
 import BoardListPage from '@pages/board/BoardListPage';
 import CategoryBoardPage from '@pages/board/category/CategoryBoardPage';
 import DetailBoardPage from '@pages/board/category/DetailBoardPage';
+import WriteBoardPage from '@pages/board/WriteBoardPage';
 import GuestHomePage from '@pages/GuestHomePage';
 import HomePage from '@pages/HomePage';
 import NotfoundPage from '@pages/NotfoundPage';
@@ -100,6 +101,8 @@ const AppRoot: React.FC<AppRootProps> = () => {
         <Route path="board">
           <Route index element={<BoardListPage />} />
           <Route path=":category" element={<CategoryBoardPage />} />
+          <Route path=":category/write" element={<WriteBoardPage />} />
+          <Route path=":category/edit" element={<WriteBoardPage />} />
           <Route path=":category/:id" element={<DetailBoardPage />} />
         </Route>
 

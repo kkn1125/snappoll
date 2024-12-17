@@ -25,6 +25,7 @@ import { Request, Response } from 'express';
 import { AuthService } from './auth.service';
 import { BatchService } from './batch.service';
 import { IgnoreCookie } from './ignore-cookie.decorator';
+import { MailerService } from '@/mailer/mailer.service';
 
 @Controller('auth')
 export class AuthController {
@@ -34,8 +35,10 @@ export class AuthController {
     private readonly authService: AuthService,
     private readonly batchService: BatchService,
     private readonly configService: ConfigService,
+    private readonly mailerService: MailerService,
   ) {}
 
+  @IgnoreCookie()
   @Post('init')
   async initializeUserPasswordFromEmail(
     @Body() data: { email: string },
@@ -65,41 +68,36 @@ export class AuthController {
     @Body() data: any,
     @Res() res: Response,
   ) {
+    const image = 'https://snappoll.kro.kr/images/original.png';
+    const defaultEmail = this.configService.get('email.defaultEmail');
     const mapper = this.batchService.mapper.get(data.token);
 
     if (!mapper) {
-      res.send(`
-        ${this.authService.style}
-        <div class="wrap">
-          <img src="https://snappoll.kro.kr/images/original.png" alt="snappoll-logo" width="50" height="50" />
-          <h3>초기화 확인 시간이 만료되었습니다. 다시 시도해주세요. -100</h3>
-          <button onclick="window.close()">닫기</button>
-        </div>
-      `);
+      await this.mailerService.renderTemplatePage(res, 'alertPage', {
+        image,
+        title: '잘못된 요청',
+        email: defaultEmail,
+        content: '권한이 없는 요청입니다.',
+      });
       return;
     }
 
     const { resolve, email, start, expired } = mapper;
-
     const gap = Date.now() - start;
     const expiresAt = gap > this.batchService.cacheTime;
-
     const compareToken = this.authService.prisma.encryptPassword(email);
-    // console.log(compareToken, data.token, email);
     const matched = compareToken === data.token;
     const has = !!resolve;
 
     if (expired || expiresAt) {
       this.batchService.mapper.delete(data.token);
 
-      res.send(`
-          ${this.authService.style}
-          <div class="wrap">
-            <img src="https://snappoll.kro.kr/images/original.png" alt="snappoll-logo" width="50" height="50" />
-            <h3>초기화 확인 시간이 만료되었습니다. 다시 시도해주세요. -101</h3>
-            <button onclick="window.close()">닫기</button>
-          </div>
-        `);
+      await this.mailerService.renderTemplatePage(res, 'alertPage', {
+        image,
+        title: '초기화 확인 시간 만료',
+        email: defaultEmail,
+        content: '초기화 확인 시간이 만료되었습니다. 다시 시도해주세요.',
+      });
       return;
     }
 
@@ -108,27 +106,23 @@ export class AuthController {
 
       const hashedPassword =
         await this.authService.initializeUserPassword(email);
-
-      res.send(`
-          ${this.authService.style}
-          <div class="wrap">
-            <img src="https://snappoll.kro.kr/images/original.png" alt="snappoll-logo" width="50" height="50" />
-            <h3>${email}님의 계정이 확인되었습니다.</h3>
-            <h5>페이지로 돌아가 남은 과정을 진행해주세요.</h5>
-            <h5>발급된 비밀번호는 <strong>${hashedPassword}</strong> 입니다.</h5>
-            <button onclick="window.close()">닫기</button>
-          </div>
-        `);
+      await this.mailerService.renderTemplatePage(res, 'alertPage', {
+        image,
+        title: '본인 확인 완료',
+        email: defaultEmail,
+        content: `${email}님의 계정이 확인되었습니다. 페이지로 돌아가 남은 과정을
+        진행해주세요. 발급된 비밀번호는
+        <strong style="font-weight: 700;">${hashedPassword}</strong>
+        입니다.<br/>발급된 비밀번호는 다시 확인 하실 수 없기 때문에 별도로 메모해두시기 바랍니다.`,
+      });
     } else {
       resolve(false);
-      res.send(`
-          ${this.authService.style}
-          <div class="wrap">
-            <img src="https://snappoll.kro.kr/images/original.png" alt="snappoll-logo" width="50" height="50" />
-            <h3>초기화 확인 시간이 만료되었습니다. 다시 시도해주세요. -102</h3>
-            <button onclick="window.close()">닫기</button>
-          </div>
-        `);
+      await this.mailerService.renderTemplatePage(res, 'alertPage', {
+        image,
+        title: '잘못된 요청',
+        email: defaultEmail,
+        content: '권한이 없는 요청입니다.',
+      });
     }
   }
 
@@ -157,18 +151,18 @@ export class AuthController {
 
   @IgnoreCookie()
   @Post('validate')
-  validateEmail(@Body() data: any, @Res() res: Response) {
+  async validateEmail(@Body() data: any, @Res() res: Response) {
     const mapper = this.batchService.mapper.get(data.token);
+    const image = 'https://snappoll.kro.kr/images/original.png';
+    const defaultEmail = this.configService.get('email.defaultEmail');
 
     if (!mapper) {
-      res.send(`
-        ${this.authService.style}
-        <div class="wrap">
-          <img src="https://snappoll.kro.kr/images/original.png" alt="snappoll-logo" width="50" height="50" />
-          <h3>존재하지 않는 토큰입니다.</h3>
-          <button onclick="window.close()">닫기</button>
-        </div>
-      `);
+      await this.mailerService.renderTemplatePage(res, 'alertPage', {
+        image,
+        title: '토큰 에러',
+        content: '존재하지 않는 토큰입니다.',
+        email: defaultEmail,
+      });
       return;
     }
 
@@ -185,38 +179,31 @@ export class AuthController {
     if (expired || expiresAt) {
       this.batchService.mapper.delete(data.token);
 
-      res.send(`
-          ${this.authService.style}
-          <div class="wrap">
-            <img src="https://snappoll.kro.kr/images/original.png" alt="snappoll-logo" width="50" height="50" />
-            <h3>토큰 유효기간이 만료되었습니다.</h3>
-            <button onclick="window.close()">닫기</button>
-          </div>
-        `);
+      await this.mailerService.renderTemplatePage(res, 'alertPage', {
+        image,
+        title: '토큰 에러',
+        content: '토큰 유효기간이 만료되었습니다.',
+        email: defaultEmail,
+      });
       return;
     }
 
     if (has && matched) {
       resolve(data);
-      res.send(`
-          ${this.authService.style}
-          <div class="wrap">
-            <img src="https://snappoll.kro.kr/images/original.png" alt="snappoll-logo" width="50" height="50" />
-            <h3>${email}님의 계정이 확인되었습니다.</h3>
-            <h5>페이지로 돌아가 남은 과정을 진행해주세요.</h5>
-            <button onclick="window.close()">닫기</button>
-          </div>
-        `);
+      await this.mailerService.renderTemplatePage(res, 'alertPage', {
+        image,
+        title: '본인 확인 완료',
+        content: `${email}님의 계정이 확인되었습니다. 페이지로 돌아가 남은 과정을 진행해주세요.`,
+        email: defaultEmail,
+      });
     } else {
       resolve(false);
-      res.send(`
-          ${this.authService.style}
-          <div class="wrap">
-            <img src="https://snappoll.kro.kr/images/original.png" alt="snappoll-logo" width="50" height="50" />
-            <h3>잘못된 토큰 형식입니다.</h3>
-            <button onclick="window.close()">닫기</button>
-          </div>
-        `);
+      await this.mailerService.renderTemplatePage(res, 'alertPage', {
+        image,
+        title: '토큰 에러',
+        content: '잘못된 토큰 형식입니다.',
+        email: defaultEmail,
+      });
     }
   }
 
@@ -259,7 +246,7 @@ export class AuthController {
   @Header('Content-Type', 'text/html')
   async requestAsKakao(@Res() res: Response) {
     // const data = await this.authService.requestLoginKakao();
-    const kakaoKey = this.configService.get('common.KAKAO_KEY');
+    const kakaoKey = this.configService.get('common.kakaoKey');
     res.redirect(
       `https://kauth.kakao.com/oauth/authorize?client_id=${kakaoKey}&redirect_uri=${encodeURIComponent(`${CURRENT_DOMAIN}/api/auth/login/kakao`)}&response_type=code`,
     );

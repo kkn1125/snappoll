@@ -14,6 +14,9 @@ const reducer = (state: ModalInitialValue, action: ModalReducerAction) => {
       newState['open'] = true;
       if (action.title) newState['title'] = action.title;
       if (action.content) newState['content'] = action.content;
+      if (action.slot) newState['slot'] = action.slot;
+      if (action.closeCallback)
+        newState['closeCallback'] = action.closeCallback;
       return newState;
     }
     case ModalActionType.OpenInteractive: {
@@ -22,6 +25,7 @@ const reducer = (state: ModalInitialValue, action: ModalReducerAction) => {
       newState['open'] = true;
       if (action.title) newState['title'] = action.title;
       if (action.content) newState['content'] = action.content;
+      if (action.slot) newState['slot'] = action.slot;
       if (action.callback) newState['callback'] = action.callback;
       if (action.closeCallback)
         newState['closeCallback'] = action.closeCallback;
@@ -32,6 +36,7 @@ const reducer = (state: ModalInitialValue, action: ModalReducerAction) => {
       newState['open'] = false;
       newState['title'] = '';
       newState['content'] = [];
+      newState['slot'] = undefined;
       newState['callback'] = () => {};
       newState['closeCallback'] = () => {};
       newState['interactive'] = false;

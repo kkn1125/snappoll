@@ -58,7 +58,7 @@ const ShareControlButton: React.FC<ShareControlButtonProps> = ({
     onSuccess(data, variables, context) {
       // console.log(data);
       if (data) {
-        openModal(Message.Info.CreateShareUrl);
+        openModal({ info: Message.Info.CreateShareUrl });
         refetch();
         setTimeout(() => {
           setCreatePublicUrl(false);
@@ -73,7 +73,7 @@ const ShareControlButton: React.FC<ShareControlButtonProps> = ({
     onSuccess(data, variables, context) {
       // console.log(data);
       if (data) {
-        openModal(Message.Info.ResumeShareUrl);
+        openModal({ info: Message.Info.ResumeShareUrl });
         refetch();
         setTimeout(() => {
           setCreatePublicUrl(false);
@@ -88,7 +88,7 @@ const ShareControlButton: React.FC<ShareControlButtonProps> = ({
     onSuccess(data, variables, context) {
       // console.log(data);
       if (data) {
-        openModal(Message.Info.RevokeShareUrl);
+        openModal({ info: Message.Info.RevokeShareUrl });
         refetch();
         setTimeout(() => {
           setCreatePublicUrl(false);

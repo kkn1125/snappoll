@@ -59,7 +59,7 @@ const LoginPage: React.FC<LoginPageProps> = () => {
   const { errors, validate, validated, setValidated } = useValidate(loginInfo);
   const mutation = useMutation<
     SnapResponseType<{ user: User; expiredTime: number }>,
-    AxiosError<AxsiosException>,
+    AxiosError<AxiosException>,
     LoginDto
   >({
     mutationKey: ['login'],
@@ -70,7 +70,7 @@ const LoginPage: React.FC<LoginPageProps> = () => {
         setToken({ user: data.user });
       }
     },
-    onError(error: AxiosError<AxsiosException>, _variables, _context) {
+    onError(error: AxiosError<AxiosException>, _variables, _context) {
       setLoginInfo((loginInfo) => ({
         email: loginInfo.email,
         password: '',
@@ -79,7 +79,7 @@ const LoginPage: React.FC<LoginPageProps> = () => {
       if (error.response) {
         const { data } = error.response;
 
-        openModal(Message.WrongRequest(data.errorCode.message));
+        openModal({ info: Message.WrongRequest(data.errorCode.message) });
       }
     },
   });
@@ -88,8 +88,10 @@ const LoginPage: React.FC<LoginPageProps> = () => {
     window.history.replaceState({}, '');
     if (locate?.state?.type) {
       openModal({
-        title: '권한 필요',
-        content: '로그인이 필요한 기능입니다.',
+        info: {
+          title: '권한 필요',
+          content: '로그인이 필요한 기능입니다.',
+        },
       });
     }
   }, [locate?.state?.type, openModal]);
@@ -163,16 +165,16 @@ const LoginPage: React.FC<LoginPageProps> = () => {
         </Button>
         <Button
           component={Link}
-          variant="contained"
+          variant="outlined"
           size="large"
           to="/auth/signup"
-          color="sky"
+          color="warning"
         >
           계정이 없어요
         </Button>
         <Button
           component={Link}
-          variant="contained"
+          variant="outlined"
           size="large"
           to="/"
           color="inherit"

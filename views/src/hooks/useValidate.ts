@@ -108,6 +108,70 @@ function useValidate<T extends { [k in string]: any }>(data: T) {
     }
   }, []);
 
+  const validateBoardPassword = useCallback(function <Q extends T, E>(
+    data: Q,
+    validateErrors: ErrorMessage<E>,
+  ) {
+    const password = data['password'] as string;
+
+    if (password === undefined || password === '') {
+      Object.assign(validateErrors, {
+        password: Message.Wrong.Required,
+      });
+    } else if (password.length < 3 || password.length > 10) {
+      Object.assign(validateErrors, {
+        password: '비밀번호는 3 ~ 10자 이내입니다.',
+      });
+    }
+  }, []);
+
+  const validateWriteBoard = useCallback(function <Q extends T, E>(
+    data: Q,
+    validateErrors: ErrorMessage<E>,
+  ) {
+    const title = data['title'] as string;
+    const content = data['content'] as string;
+    const password = data['password'] as string;
+    if (title === '') {
+      Object.assign(validateErrors, {
+        title: Message.Wrong.Required,
+      });
+    }
+    if (content === '') {
+      Object.assign(validateErrors, {
+        content: Message.Wrong.Required,
+      });
+    }
+    if (password === undefined || password === '') {
+      Object.assign(validateErrors, {
+        password: Message.Wrong.Required,
+      });
+    } else if (password.length < 3 || password.length > 10) {
+      Object.assign(validateErrors, {
+        password:
+          '게시글 수정에 필요한 비밀번호입니다. 비밀번호는 3 ~ 10자 이내로 설정할 수 있습니다.',
+      });
+    }
+  }, []);
+
+  const validateWriteBoardForUser = useCallback(function <Q extends T, E>(
+    data: Q,
+    validateErrors: ErrorMessage<E>,
+  ) {
+    const title = data['title'] as string;
+    const content = data['content'] as string;
+    if (title === '') {
+      Object.assign(validateErrors, {
+        title: Message.Wrong.Required,
+      });
+    }
+    if (content === '') {
+      Object.assign(validateErrors, {
+        content: Message.Wrong.Required,
+      });
+    }
+  }, []);
+
   const validate = useCallback(
     (type?: string) => {
       const validateErrors = {} as ErrorMessage<T>;
@@ -146,34 +210,26 @@ function useValidate<T extends { [k in string]: any }>(data: T) {
           }
           break;
         }
+        case 'boardPassword': {
+          validateBoardPassword(data, validateErrors);
+          break;
+        }
+        case 'writeBoard': {
+          validateWriteBoard(data, validateErrors);
+          break;
+        }
+        case 'writeBoardForUser': {
+          validateWriteBoardForUser(data, validateErrors);
+          break;
+        }
         case 'login': {
           validateOnlyEmail(data, validateErrors);
           validateOnlyPassword(data, validateErrors);
           break;
         }
         case 'signup':
-          for (const key of validateKeys) {
-            // const value = data[key] as string;
-            if ('email' === key) {
-              validateOnlyEmail(data, validateErrors);
-            }
-            if ('username' === key) {
-              validateUsername(data, validateErrors);
-            }
-            if ('currentPassword' === key) {
-              validatePassword(data, validateErrors, 'currentPassword');
-            }
-            if ('password' === key) {
-              validatePassword(data, validateErrors, 'password');
-            }
-            if ('checkPassword' === key) {
-              validateCheckPassword(data, validateErrors);
-            }
-          }
-          break;
         default:
           for (const key of validateKeys) {
-            // const value = data[key] as string;
             if ('email' === key) {
               validateOnlyEmail(data, validateErrors);
             }
@@ -231,11 +287,15 @@ function useValidate<T extends { [k in string]: any }>(data: T) {
     [data],
   );
 
+  const clearValidate = useCallback(() => {
+    setErrors({});
+  }, []);
+
   // const isPass = useMemo(() => {
   //   return Object.keys(errors).length === 0;
   // }, [errors]);
 
-  return { errors, validate, validated, setValidated };
+  return { errors, validate, validated, setValidated, clearValidate };
 }
 
 export default useValidate;
