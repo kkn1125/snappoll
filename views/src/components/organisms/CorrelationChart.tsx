@@ -25,7 +25,6 @@ const CorrelationChart: React.FC<CorrelationChartProps> = ({ data }) => {
   // const isMdDown = useMediaQuery(theme.breakpoints.down('md'));
 
   function handleSetBaseQuestion(question: SnapPollQuestion) {
-    console.log();
     if (baseQuestion) {
       setBaseQuestion(null);
       setQuestions([]);

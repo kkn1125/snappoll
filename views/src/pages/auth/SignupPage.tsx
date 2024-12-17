@@ -23,6 +23,7 @@ import {
 } from '@mui/material';
 import { useMutation } from '@tanstack/react-query';
 import { getRandomUsername } from '@utils/getRandomUsername';
+import { Logger } from '@utils/Logger';
 import { AxiosError } from 'axios';
 import {
   ChangeEvent,
@@ -34,6 +35,8 @@ import {
   useState,
 } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+
+const logger = new Logger('SignupPage');
 
 interface SignupPageProps {}
 const SignupPage: React.FC<SignupPageProps> = () => {
@@ -74,7 +77,7 @@ const SignupPage: React.FC<SignupPageProps> = () => {
 
       setPendingValidate(false);
       setEmailValidated(false);
-      console.log(response);
+      logger.error(response);
       if (response?.status === 409) {
         openModal({ info: Message.WrongRequest(data.errorCode.message) });
       }

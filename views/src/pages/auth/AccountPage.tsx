@@ -26,7 +26,7 @@ const AccountPage: React.FC<AccountPageProps> = () => {
     mutationKey: ['initPass'],
     mutationFn: initPass,
     onSuccess(data, variables, context) {
-      console.log(data);
+      openModal({ info: Message.Info.SuccessInitPassword });
     },
   });
 

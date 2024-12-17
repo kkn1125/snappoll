@@ -7,6 +7,7 @@ import useToken from '@hooks/useToken';
 import useValidate from '@hooks/useValidate';
 import { Box, Button, Divider, FormHelperText, Stack } from '@mui/material';
 import { useMutation } from '@tanstack/react-query';
+import { Logger } from '@utils/Logger';
 import { AxiosError } from 'axios';
 import {
   ChangeEvent,
@@ -20,6 +21,8 @@ import SunEditor from 'suneditor-react';
 import 'suneditor/dist/css/suneditor.min.css'; // Import Sun Editor's CSS File
 import { ko } from 'suneditor/src/lang';
 
+const logger = new Logger('WriteBoardPage');
+
 interface WriteBoardProps {
   title: string;
   content: string;
@@ -27,7 +30,6 @@ interface WriteBoardProps {
   category: string;
   password?: string;
 }
-
 interface WriteBoardPageProps {}
 const WriteBoardPage: React.FC<WriteBoardPageProps> = () => {
   const navigate = useNavigate();
@@ -79,7 +81,7 @@ const WriteBoardPage: React.FC<WriteBoardPageProps> = () => {
       });
     },
     onError(error: AxiosError<AxiosException>, variables, context) {
-      console.log(error);
+      logger.error(error);
       openModal({
         info: {
           title: '안내',
@@ -93,7 +95,6 @@ const WriteBoardPage: React.FC<WriteBoardPageProps> = () => {
 
   useLayoutEffect(() => {
     setData({ ...board });
-    console.log(board);
   }, [board]);
 
   useEffect(() => {
@@ -119,7 +120,7 @@ const WriteBoardPage: React.FC<WriteBoardPageProps> = () => {
       boardData.userId = user.id;
       delete boardData['password'];
     }
-    console.log('게시글 옵션 확인 :', boardData);
+    logger.info('게시글 옵션 확인 :', boardData);
     if (board) {
       if (isGuestBoard) {
         delete board.userId;
@@ -142,6 +143,7 @@ const WriteBoardPage: React.FC<WriteBoardPageProps> = () => {
         fullWidth
         required
         autoFocus
+        autoComplete="username"
         onChange={handleChange}
         value={data['title']}
         errors={errors}

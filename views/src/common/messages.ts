@@ -33,6 +33,10 @@ export const CustomMessage = {
     title: '안내',
     content: ['비밀번호를 변경하였습니다.'],
   },
+  SuccessInitPassword: {
+    title: '안내',
+    content: ['비밀번호를 초기화하였습니다.'],
+  },
   CheckYourEmail: {
     title: '안내',
     content: '메일을 전송하였습니다. 입력하신 이메일의 수신함을 확인해주세요.',
@@ -77,6 +81,7 @@ export const Info = {
   SuccessDelete: CustomMessage.SuccessDelete,
   SuccessCheckMail: CustomMessage.SuccessCheckMail,
   SuccessChangeProfile: CustomMessage.SuccessChangeProfile,
+  SuccessInitPassword: CustomMessage.SuccessInitPassword,
   SuccessChangePassword: CustomMessage.SuccessChangePassword,
   SuccessResponse: CustomMessage.SuccessResponse,
   CreateShareUrl: CustomMessage.CreateShareUrl,

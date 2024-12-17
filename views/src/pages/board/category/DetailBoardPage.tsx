@@ -199,6 +199,8 @@ const DetailBoardPage: React.FC<DetailBoardPageProps> = () => {
                 value={info['password']}
                 size="small"
                 variant="standard"
+                autoFocus
+                autoComplete="new-password"
                 fullWidth
                 onChange={handleChangePassword}
                 errors={errors}
