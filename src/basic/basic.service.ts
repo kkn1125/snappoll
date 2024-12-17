@@ -66,7 +66,7 @@ export class BasicService {
         domain.output(),
       ),
     ];
-    const SitemapGeneratedDate = new Date().toISOString().slice(0, 10);
+    const SitemapGeneratedDate = new Date().toISOString(); /* .slice(0, 10) */
 
     const pageSitemap = (page) => `
       <url>
