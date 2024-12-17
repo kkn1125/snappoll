@@ -34,7 +34,7 @@ const WriteBoardPage: React.FC<WriteBoardPageProps> = () => {
 
   const { state } = useLocation();
   const board = state?.board;
-  const isGuestBoard = !board.userId;
+  const isGuestBoard = !board?.userId;
 
   const [data, setData] = useState<WriteBoardProps>({
     title: '',
