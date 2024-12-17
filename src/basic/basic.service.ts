@@ -16,7 +16,7 @@ export class BasicService {
       include: { voteResponse: true },
     });
     const boards = await this.prisma.board.findMany({
-      where: { isPrivate: false, isOnlyCrew: false },
+      where: { deletedAt: null, isPrivate: false, isOnlyCrew: false },
     });
 
     const base = new PathDomain('').addPath('notice', 'about');

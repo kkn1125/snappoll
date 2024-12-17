@@ -11,7 +11,6 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Response } from 'express';
-import fs from 'fs/promises';
 import * as path from 'path';
 import { BasicService } from './basic.service';
 
