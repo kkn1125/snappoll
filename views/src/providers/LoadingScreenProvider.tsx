@@ -10,6 +10,9 @@ import {
   InitialValue,
   LoadingReducerAction,
 } from './contexts/loadingTypes';
+import LoadingAnimation from '@components/atoms/LoadingAnimationVote';
+import LoadingAnimationVote from '@components/atoms/LoadingAnimationVote';
+import LoadingAnimationPoll from '@components/atoms/LoadingAnimationPoll';
 
 interface LoadingScreenProviderProps {
   children: React.ReactNode;
@@ -88,9 +91,13 @@ const LoadingScreenProvider: React.FC<LoadingScreenProviderProps> = ({
                 transition: `opacity ${state.close ? 0.5 : state.timeout}s ease-in-out`,
               }}
             >
-              <Typography fontSize={32} fontWeight={700}>
+              {state.content === 'poll' && <LoadingAnimationPoll />}
+              {state.content === 'vote' && <LoadingAnimationVote />}
+              <Typography sx={{ mt: 1 }}>Loading...</Typography>
+              {/* {state.content === 'vote' && <LoadingAnimationVote />} */}
+              {/* <Typography fontSize={32} fontWeight={700}>
                 {state.content}
-              </Typography>
+              </Typography> */}
             </Stack>
           )}
         </Portal>

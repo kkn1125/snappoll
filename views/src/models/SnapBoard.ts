@@ -2,7 +2,7 @@ export class SnapBoard {
   id!: string;
   userId!: string;
   order!: number;
-  category!: string;
+  category!: 'notice' | 'community' | 'event' | 'faq';
   password!: string;
   title!: string;
   content!: string;

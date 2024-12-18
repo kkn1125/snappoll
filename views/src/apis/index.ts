@@ -11,9 +11,18 @@ export const snapApi = axios.create({
 });
 
 snapApi.interceptors.request.use((value) => {
-  logger.debug(`[${value.method}] ${value.url} --->`);
+  const params = value.params
+    ? Object.entries(value.params)
+        .map(([key, value]) => key + '=' + value)
+        .join('&')
+    : '';
+
+  logger.debug(
+    `[${value.method}] ${value.url}${params ? '?' + params : ''} --->`,
+  );
   return value;
 });
+
 snapApi.interceptors.response.use(
   (response) => {
     return response;

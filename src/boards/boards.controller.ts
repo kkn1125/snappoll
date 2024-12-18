@@ -5,15 +5,18 @@ import {
   Delete,
   Get,
   Param,
+  ParseIntPipe,
   Patch,
   Post,
   Put,
+  Query,
   Req,
 } from '@nestjs/common';
 import { BoardsService } from './boards.service';
 import { CreateBoardDto } from './dto/create-board.dto';
 import { UpdateBoardDto } from './dto/update-board.dto';
 import { Request } from 'express';
+import { Throttle } from '@nestjs/throttler';
 
 @Controller('boards')
 export class BoardsController {
@@ -43,12 +46,24 @@ export class BoardsController {
     return this.boardsService.findAll();
   }
 
+  @Throttle({ short: { limit: 5, ttl: 1000 } })
   @IgnoreCookie()
-  @Get('category/:category')
-  findCategory(@Param('category') category: string) {
-    return this.boardsService.findCategory(category);
+  @Get('categories')
+  findAllCategories(@Query('eachAmount') eachAmount: number = 5) {
+    return this.boardsService.findAllCategories(+eachAmount);
   }
 
+  @Throttle({ short: { limit: 5, ttl: 1000 } })
+  @IgnoreCookie()
+  @Get('category/:category')
+  findCategory(
+    @Query('page') page: number,
+    @Param('category') category: string,
+  ) {
+    return this.boardsService.findCategory(category, page);
+  }
+
+  @Throttle({ short: { limit: 5, ttl: 1000 } })
   @IgnoreCookie()
   @Get('category/:category/:id')
   findOneOfCategory(

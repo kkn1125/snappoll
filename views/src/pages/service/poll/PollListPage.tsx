@@ -10,7 +10,7 @@ const logger = new Logger('PollListPage');
 
 interface PollListPageProps {}
 const PollListPage: React.FC<PollListPageProps> = () => {
-  const [params, setParams] = useSearchParams({ page: '1' });
+  const [params] = useSearchParams({ page: '1' });
   const page = +(params.get('page') || 1);
   const { data, isLoading } = useQuery<
     SnapResponseType<{ polls: SnapPoll[]; count: number }>

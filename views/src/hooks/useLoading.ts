@@ -2,14 +2,14 @@ import {
   LoadingContext,
   LoadingDispatchContext,
 } from '@providers/contexts/LoadingContext';
-import { ActionType, InitialValue } from '@providers/contexts/loadingTypes';
-import { useCallback, useContext, useState } from 'react';
+import { ActionType } from '@providers/contexts/loadingTypes';
+import { useCallback, useContext } from 'react';
 
 const useLoading = () => {
   const loadingState = useContext(LoadingContext);
   const loadingDispatch = useContext(LoadingDispatchContext);
   const openLoading = useCallback(
-    (content: string, timeout: number = 0.2) => {
+    (content: string, timeout: number = 2) => {
       loadingDispatch({ type: ActionType.Open, content, timeout });
     },
     [loadingDispatch],

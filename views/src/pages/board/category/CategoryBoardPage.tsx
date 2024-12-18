@@ -1,5 +1,6 @@
 import { getBoardCategory } from '@/apis/board/getBoardCategory';
 import BoardItem from '@components/atoms/BoardItem';
+import CommonPagination from '@components/atoms/CommonPagination';
 import { SnapBoard } from '@models/SnapBoard';
 import {
   Button,
@@ -8,9 +9,11 @@ import {
   ListItemButton,
   ListItemText,
   Stack,
+  Typography,
 } from '@mui/material';
 import NotfoundPage from '@pages/NotfoundPage';
 import { useQuery } from '@tanstack/react-query';
+import { translate } from '@utils/translate';
 import { useMemo } from 'react';
 import {
   Link,
@@ -30,21 +33,17 @@ const CategoryBoardPage: React.FC<CategoryBoardPageProps> = ({
   const locate = useLocation();
   const params = useParams();
   const [searchParam] = useSearchParams({ page: '1' });
-  const page = searchParam.get('page') || '1';
+  const page = +(searchParam.get('page') || 1);
   const currentCategory = category || params.category;
   const { data, isLoading } = useQuery<
-    SnapResponseType<{ board: SnapBoard[] }>
+    SnapResponseType<{ board: SnapBoard[]; count: number }>
   >({
-    queryKey: [
-      'CategoryBoardPage',
-      category,
-      params.category,
-      page,
-      locate.pathname,
-    ],
-    queryFn: () => getBoardCategory(page, currentCategory),
+    queryKey: ['CategoryBoardPage', currentCategory, page, locate.pathname],
+    queryFn: () => getBoardCategory(currentCategory),
   });
   const board = data?.data?.board;
+  const count = data?.data?.count || 0;
+  const total = Math.ceil(count / 10);
   const boardName = useMemo(() => {
     switch (currentCategory) {
       case 'notice':
@@ -67,7 +66,8 @@ const CategoryBoardPage: React.FC<CategoryBoardPageProps> = ({
 
   return (
     <Stack>
-      <Stack direction="row">
+      <Stack direction="row" justifyContent="space-between" alignItems="center">
+        <Typography fontSize={24}>{translate(currentCategory!)}</Typography>
         {currentCategory === 'community' && (
           <Button
             component={Link}
@@ -80,11 +80,12 @@ const CategoryBoardPage: React.FC<CategoryBoardPageProps> = ({
           </Button>
         )}
       </Stack>
+
       <List>
         {(limit ? data?.data?.board?.slice(0, limit) : data?.data?.board)?.map(
           (board) => <BoardItem key={board.id} board={board} />,
         )}
-        {(!board || board.length === 0) && (
+        {(!board || count === 0) && (
           <ListItem>
             <ListItemButton>
               <ListItemText primary={`등록된 ${boardName} 없습니다.`} />
@@ -92,6 +93,7 @@ const CategoryBoardPage: React.FC<CategoryBoardPageProps> = ({
           </ListItem>
         )}
       </List>
+      <CommonPagination total={total} />
     </Stack>
   );
 };

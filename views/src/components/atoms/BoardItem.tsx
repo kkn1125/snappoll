@@ -9,15 +9,17 @@ interface BoardItemProps {
 }
 const BoardItem: React.FC<BoardItemProps> = ({ board }) => {
   return (
-    <ListItem>
+    <ListItem dense>
       <ListItemButton
+        disableGutters
         component={Link}
         to={`/board/${board.category}/${board.id}`}
       >
         <ListItemText
           primary={board.title}
           secondary={`작성자: ${getUsernameOrGuest(board.author?.username)} | 생성일: ${formattedDate(board.createdAt)}`}
-          primaryTypographyProps={{ fontSize: 24 }}
+          primaryTypographyProps={{ fontSize: 18 }}
+          secondaryTypographyProps={{ fontSize: 12 }}
         />
       </ListItemButton>
     </ListItem>

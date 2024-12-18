@@ -84,7 +84,7 @@ export const ErrorMessage = {
     [
       109,
       ErrorName.ExpiredRefreshToken,
-      '리프리세 토큰 유효기간이 만료되었습니다.',
+      '리프레시 토큰 유효기간이 만료되었습니다.',
     ],
     [
       110,

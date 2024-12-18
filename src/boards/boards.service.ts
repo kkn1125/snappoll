@@ -7,7 +7,7 @@ import {
 import { CreateBoardDto } from './dto/create-board.dto';
 import { UpdateBoardDto } from './dto/update-board.dto';
 import { PrismaService } from '@database/prisma.service';
-import { Prisma } from '@prisma/client';
+import { Board, Prisma } from '@prisma/client';
 
 @Injectable()
 export class BoardsService {
@@ -34,31 +34,25 @@ export class BoardsService {
 
   constructor(private readonly prisma: PrismaService) {}
 
-  async validatePassword(id: string, password: string, isUser: boolean) {
-    if (isUser) {
-      const errorCode = await this.prisma.getErrorCode('board', 'Forbidden');
-      throw new ForbiddenException(errorCode);
-    }
-    const board = await this.prisma.board.findUnique({ where: { id } });
-    if (!board) {
-      const errorCode = await this.prisma.getErrorCode('board', 'NotFound');
-      throw new NotFoundException(errorCode);
-    }
-    const encryptedPassword = this.prisma.encryptPassword(password);
-
-    return board.password === encryptedPassword;
-  }
-
-  create(createBoardDto: CreateBoardDto, isUser: boolean) {
-    if (!isUser && createBoardDto.password) {
-      createBoardDto.password = this.prisma.encryptPassword(
-        createBoardDto.password,
-      );
-    }
-    if (isUser) {
-      delete createBoardDto['password'];
-    }
-    return this.prisma.board.create({ data: createBoardDto });
+  async findAllCategories(eachAmount: number) {
+    const categories = ['notice', 'community', 'event', 'faq'];
+    const results = await Promise.all(
+      categories.map((category) =>
+        this.prisma.board.findMany({
+          where: { category, deletedAt: null },
+          orderBy: { createdAt: 'desc' },
+          take: eachAmount,
+          skip: 0,
+        }),
+      ),
+    );
+    const groupingData = categories.reduce<
+      Partial<Record<keyof typeof categories, Board[]>>
+    >((acc, cur, index) => {
+      acc[cur] = results[index];
+      return acc;
+    }, {});
+    return groupingData;
   }
 
   async findAll(page: number = 1) {
@@ -111,6 +105,33 @@ export class BoardsService {
       data: { viewCount: { increment: 1 } },
       select: this.boardSelect,
     });
+  }
+
+  async validatePassword(id: string, password: string, isUser: boolean) {
+    if (isUser) {
+      const errorCode = await this.prisma.getErrorCode('board', 'Forbidden');
+      throw new ForbiddenException(errorCode);
+    }
+    const board = await this.prisma.board.findUnique({ where: { id } });
+    if (!board) {
+      const errorCode = await this.prisma.getErrorCode('board', 'NotFound');
+      throw new NotFoundException(errorCode);
+    }
+    const encryptedPassword = this.prisma.encryptPassword(password);
+
+    return board.password === encryptedPassword;
+  }
+
+  create(createBoardDto: CreateBoardDto, isUser: boolean) {
+    if (!isUser && createBoardDto.password) {
+      createBoardDto.password = this.prisma.encryptPassword(
+        createBoardDto.password,
+      );
+    }
+    if (isUser) {
+      delete createBoardDto['password'];
+    }
+    return this.prisma.board.create({ data: createBoardDto });
   }
 
   async update(id: string, updateBoardDto: UpdateBoardDto, isUser: boolean) {

@@ -242,11 +242,15 @@ const DetailBoardPage: React.FC<DetailBoardPageProps> = () => {
             </Button>
           </Stack>
         )}
-      <Stack gap={2}>
-        <Typography variant="h4">{board?.title}</Typography>
-        <Typography align="right" color="textDisabled">
-          작성자: {getUsernameOrGuest(board?.author?.username)}
-        </Typography>
+      <Stack gap={3}>
+        <Stack>
+          <Typography fontSize={24} fontWeight={700}>
+            {board?.title}
+          </Typography>
+          <Typography fontSize={14} color="textDisabled">
+            작성자: {getUsernameOrGuest(board?.author?.username)}
+          </Typography>
+        </Stack>
         <Divider flexItem />
         <Box>
           <Typography

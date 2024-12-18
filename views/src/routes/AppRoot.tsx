@@ -59,8 +59,10 @@ const AppRoot: React.FC<AppRootProps> = () => {
 
   /* when change page */
   useLayoutEffect(() => {
+    const randomIndex = Math.floor(Math.random() * 2);
+    const type = ['poll', 'vote'][randomIndex];
     log('render init');
-    openLoading('Loading...');
+    openLoading(type);
     /* version save */
     localStorage.setItem('version', VERSION);
 
