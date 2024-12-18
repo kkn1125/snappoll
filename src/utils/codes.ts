@@ -39,6 +39,7 @@ export const ErrorCode = [
   [300, 'basic'],
   // user
   [400, 'user'],
+  [401, 'userProfile'],
   // poll
   [500, 'poll'],
   [501, 'pollResponse'],
@@ -109,25 +110,31 @@ export const ErrorMessage = {
     [106, ErrorName.CheckUserData, '회원정보를 다시 확인해주세요.'],
     [
       107,
-      ErrorName.UploadFileSize,
-      '업로드 파일 크기는 10Kb이하만 가능합니다.',
-    ],
-    [
-      108,
-      ErrorName.UploadFileType,
-      '업로드 파일 타입은 jpg, png만 가능합니다.',
-    ],
-    [
-      109,
       ErrorName.SleepUser,
       '휴면상태입니다. 이메일 인증을 통해 계정을 활성화해주세요.',
     ],
     [
-      110,
+      108,
       ErrorName.RemovedUser,
       '탈퇴한 계정입니다. 철회하시려면 관리자 메일로 문의해주세요.',
     ],
-    [111, ErrorName.OnlyLocalUser, '사이트 회원만 가능합니다.'],
+    [109, ErrorName.OnlyLocalUser, '사이트 회원만 가능합니다.'],
+  ],
+  userProfile: [
+    [100, ErrorName.BadRequest, '잘못된 요청입니다.'],
+    [101, ErrorName.BlockSave, '저장할 수 없습니다.'],
+    [102, ErrorName.Forbidden, '접근 권한이 없습니다.'],
+    [
+      103,
+      ErrorName.UploadFileType,
+      '업로드 파일 타입은 jpg, png만 가능합니다.',
+    ],
+    [
+      104,
+      ErrorName.UploadFileSize,
+      '업로드 파일 크기는 10Kb이하만 가능합니다.',
+    ],
+    [105, ErrorName.NotFound, '이미지를 찾을 수 없습니다.'],
   ],
   /* poll */
   poll: [

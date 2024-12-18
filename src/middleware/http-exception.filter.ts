@@ -5,12 +5,14 @@ import {
   HttpException,
 } from '@nestjs/common';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
-import Logger from '@utils/Logger';
+import SnapLogger from '@utils/SnapLogger';
 import { Request, Response } from 'express';
 
 @Catch()
 export class HttpExceptionFilter implements ExceptionFilter {
-  logger = new Logger(this);
+  logger = new SnapLogger(this);
+
+  constructor() {}
 
   catch(exception: unknown, host: ArgumentsHost) {
     const ctx = host.switchToHttp();

@@ -24,19 +24,19 @@ const NoticePage: React.FC<NoticePageProps> = () => {
   const { receiver } = useRecoilValue(messageAtom);
   const [page, setPage] = useState(1);
 
-  const { getMessages, messageRead, messageAllRead } = useSocket();
+  // const { getMessages, messageRead, messageAllRead } = useSocket();
 
   useEffect(() => {
-    getMessages();
+    // getMessages();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page, user]);
 
   const handleReaded = (messageId: string) => {
-    messageRead(messageId);
+    // messageRead(messageId);
   };
 
   const handleAllReaded = (messageIds: string[]) => {
-    messageAllRead(messageIds);
+    // messageAllRead(messageIds);
   };
 
   const handleChangePage = useCallback(

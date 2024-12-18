@@ -5,8 +5,7 @@ import { BoardsModule } from '@boards/boards.module';
 import commonConf from '@common/common.conf';
 import emailConf from '@common/email.conf';
 import { DatabaseModule } from '@database/database.module';
-import { PrismaService } from '@database/prisma.service';
-import { LoggerMiddleware } from '@middleware/logger.middleware';
+import { SnapLoggerMiddleware } from '@middleware/snap-logger.middleware';
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
@@ -25,7 +24,7 @@ import { MailerModule } from './mailer/mailer.module';
 @Module({
   imports: [
     MulterModule.register({
-      dest: './upload',
+      // dest: './upload',
     }),
     ThrottlerModule.forRoot([
       {
@@ -66,12 +65,11 @@ import { MailerModule } from './mailer/mailer.module';
     },
     { provide: APP_GUARD, useClass: CustomThrottlerGuard },
     ConfigService,
-    PrismaService,
     WebsocketGateway,
   ],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(LoggerMiddleware).forRoutes('*');
+    consumer.apply(SnapLoggerMiddleware).forRoutes('*');
   }
 }

@@ -9,6 +9,7 @@ import { allowOrigins } from '@utils/allowOrigins';
 import compression from 'compression';
 import cookieParser from 'cookie-parser';
 import { AppModule } from './app.module';
+import SnapLogger from '@utils/SnapLogger';
 
 declare const module: any;
 
@@ -19,7 +20,10 @@ declare const module: any;
 // );
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    bufferLogs: true,
+  });
+  // app.useLogger(new SnapLogger());
   const { hosts, ports } = whiteList;
   const configService = app.get(ConfigService);
   const common = configService.get<ConfigType<typeof commonConf>>('common');

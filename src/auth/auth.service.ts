@@ -9,7 +9,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import Logger from '@utils/Logger';
+import SnapLogger from '@utils/SnapLogger';
 import * as jwt from 'jsonwebtoken';
 import ms from 'ms';
 import * as path from 'path';
@@ -17,7 +17,7 @@ import { firstValueFrom } from 'rxjs';
 
 @Injectable()
 export class AuthService {
-  logger = new Logger(this);
+  logger = new SnapLogger(this);
 
   constructor(
     private readonly mailer: MailerService,
@@ -250,7 +250,11 @@ export class AuthService {
     return this.prisma.user.findUnique({
       where: { email },
       include: {
-        userProfile: true,
+        userProfile: {
+          select: {
+            id: true,
+          },
+        },
       },
     });
   }

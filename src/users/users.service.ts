@@ -5,16 +5,33 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { $Enums } from '@prisma/client';
-import Logger from '@utils/Logger';
+import SnapLogger from '@utils/SnapLogger';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserPasswordDto } from './dto/update-user-password.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UsersService {
-  logger = new Logger(this);
+  logger = new SnapLogger(this);
 
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    // private readonly logger: SnapLogger,
+    private readonly prisma: PrismaService,
+  ) {}
+
+  async getProfileImage(profileId: string) {
+    const image = await this.prisma.userProfile.findUnique({
+      where: { id: profileId },
+    });
+    if (!image) {
+      const errorCode = await this.prisma.getErrorCode(
+        'userProfile',
+        'NotFound',
+      );
+      throw new NotFoundException(errorCode);
+    }
+    return image;
+  }
 
   async getNextUserNumber(username: string) {
     const first = await this.prisma.user.findFirst({
@@ -114,7 +131,7 @@ export class UsersService {
     return user;
   }
 
-  async uploadProfile(id: string, imagePath: string) {
+  async uploadProfile(id: string, file: Express.Multer.File) {
     const profile = await this.prisma.userProfile.findUnique({
       where: { userId: id },
     });
@@ -122,14 +139,18 @@ export class UsersService {
       return this.prisma.userProfile.update({
         where: { userId: id },
         data: {
-          image: imagePath,
+          filename: file.originalname,
+          image: file.buffer,
+          mimetype: file.mimetype,
         },
       });
     } else {
       return this.prisma.userProfile.create({
         data: {
           userId: id,
-          image: imagePath,
+          filename: file.originalname,
+          image: file.buffer,
+          mimetype: file.mimetype,
         },
       });
     }

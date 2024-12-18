@@ -1,7 +1,6 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PrismaClient } from '@prisma/client';
-import Logger from '@utils/Logger';
 import {
   ErrorCode,
   ErrorCodeType,
@@ -13,8 +12,6 @@ import * as CryptoJS from 'crypto-js';
 
 @Injectable()
 export class PrismaService extends PrismaClient implements OnModuleInit {
-  logger = new Logger(this);
-
   constructor(private readonly configService: ConfigService) {
     super({
       /* log: ['query', 'info', 'error'] */

@@ -1,3 +1,4 @@
+import { PrismaService } from '@database/prisma.service';
 import {
   BadRequestException,
   CanActivate,
@@ -7,16 +8,15 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { Reflector } from '@nestjs/core';
+import SnapLogger from '@utils/SnapLogger';
 import { Request, Response } from 'express';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import { AuthService } from './auth.service';
-import { Reflector } from '@nestjs/core';
-import Logger from '@utils/Logger';
-import { PrismaService } from '@database/prisma.service';
 
 @Injectable()
 export class CookieGuard implements CanActivate {
-  logger = new Logger(this);
+  logger = new SnapLogger(this);
 
   constructor(
     private readonly reflector: Reflector,

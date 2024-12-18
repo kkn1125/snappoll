@@ -122,7 +122,7 @@ const Header: React.FC<HeaderProps> = ({ isCrew }) => {
   useEffect(() => {
     if (!(user && user?.userProfile)) return;
     if (profileImage) return;
-    setProfileImage(user.userProfile.image);
+    setProfileImage(user.userProfile.id);
   }, [user, profileImage]);
 
   function redirectTo(to: string) {

@@ -1,12 +1,12 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
+import SnapLogger from '@utils/SnapLogger';
 import { Request } from 'express';
 import { Roles } from './roles.decorator';
-import Logger from '@utils/Logger';
 
 @Injectable()
 export class RoleGuard implements CanActivate {
-  logger = new Logger(this);
+  logger = new SnapLogger(this);
 
   constructor(private reflector: Reflector) {}
 

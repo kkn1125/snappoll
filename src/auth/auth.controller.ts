@@ -1,3 +1,4 @@
+import { MailerService } from '@/mailer/mailer.service';
 import {
   CLIENT_DOMAIN,
   CURRENT_DOMAIN,
@@ -20,16 +21,15 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { AuthGuard } from '@nestjs/passport';
-import Logger from '@utils/Logger';
+import SnapLogger from '@utils/SnapLogger';
 import { Request, Response } from 'express';
 import { AuthService } from './auth.service';
 import { BatchService } from './batch.service';
 import { IgnoreCookie } from './ignore-cookie.decorator';
-import { MailerService } from '@/mailer/mailer.service';
 
 @Controller('auth')
 export class AuthController {
-  logger = new Logger(this);
+  logger = new SnapLogger(this);
 
   constructor(
     private readonly authService: AuthService,

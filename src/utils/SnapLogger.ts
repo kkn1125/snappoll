@@ -1,4 +1,7 @@
-export default class Logger<T = string> {
+import { Injectable, LoggerService } from '@nestjs/common';
+
+@Injectable()
+export default class SnapLogger<T = string> implements LoggerService {
   private context!: string;
   private levels = ['log', 'info', 'debug', 'wran', 'error'] as const;
 

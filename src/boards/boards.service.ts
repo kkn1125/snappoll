@@ -1,13 +1,12 @@
+import { PrismaService } from '@database/prisma.service';
 import {
-  BadRequestException,
   ForbiddenException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import { Board, Prisma } from '@prisma/client';
 import { CreateBoardDto } from './dto/create-board.dto';
 import { UpdateBoardDto } from './dto/update-board.dto';
-import { PrismaService } from '@database/prisma.service';
-import { Board, Prisma } from '@prisma/client';
 
 @Injectable()
 export class BoardsService {

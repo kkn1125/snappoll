@@ -111,15 +111,7 @@ const ProfilePage: React.FC<ProfilePageProps> = () => {
     });
 
     if (user.userProfile) {
-      setImage(user.userProfile.image);
-      // if (isSocial) {
-      // } else {
-      //   // const { url, revokeUrl } = makeBlobToImageUrl(user.userProfile);
-      //   setImage(user.userProfile.image);
-      //   return () => {
-      //     revokeUrl();
-      //   };
-      // }
+      setImage(user.userProfile.id);
     }
   }, [isSocial, user]);
 
@@ -233,7 +225,11 @@ const ProfilePage: React.FC<ProfilePageProps> = () => {
                     component="img"
                     width={300}
                     height={300}
-                    src={getServerProfileImage(image)}
+                    src={
+                      image.startsWith('blob:')
+                        ? image
+                        : getServerProfileImage(image)
+                    }
                     alt="profileImage"
                     sx={{
                       objectFit: 'cover',

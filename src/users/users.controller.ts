@@ -1,6 +1,5 @@
-import { RoleGuard } from '@/auth/role.guard';
+import { IgnoreCookie } from '@auth/ignore-cookie.decorator';
 import {
-  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -11,22 +10,24 @@ import {
   Post,
   Put,
   Req,
+  Res,
   UploadedFile,
-  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { Request } from 'express';
+import SnapLogger from '@utils/SnapLogger';
+import { Request, Response } from 'express';
+import { memoryStorage } from 'multer';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserPasswordDto } from './dto/update-user-password.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersService } from './users.service';
-import { CookieGuard } from '@auth/cookie.guard';
-import { diskStorage } from 'multer';
-import { IgnoreCookie } from '@auth/ignore-cookie.decorator';
+import { Blob } from 'buffer';
 
 @Controller('users')
 export class UsersController {
+  logger = new SnapLogger(this);
+
   constructor(private readonly usersService: UsersService) {}
 
   @IgnoreCookie()
@@ -50,16 +51,32 @@ export class UsersController {
     return this.usersService.findOne(id);
   }
 
+  @IgnoreCookie()
+  @Get('profile/:id')
+  async getProfileImage(@Res() res: Response, @Param('id') profileId: string) {
+    const image = await this.usersService.getProfileImage(profileId);
+    console.log(image.image instanceof Buffer);
+    this.logger.debug('image.mimetype', image.mimetype);
+    // 이미지 응답
+    res.setHeader('Content-Type', image.mimetype);
+    res.setHeader(
+      'Content-Disposition',
+      `inline; filename="${image.filename}"`,
+    );
+    res.send(Buffer.from(image.image));
+  }
+
   @UseInterceptors(
     FileInterceptor('file', {
-      storage: diskStorage({
-        destination: './upload',
+      storage:
+        memoryStorage(/* {
+        // destination: './upload',
         filename(req, file, callback) {
           const uniqueSuffix =
             Date.now() + '-' + Math.round(Math.random() * 1e9);
           callback(null, `${uniqueSuffix}-${file.originalname}`);
         },
-      }),
+      } */),
     }),
   )
   @Put('profile')
@@ -76,10 +93,14 @@ export class UsersController {
     )
     file: Express.Multer.File,
   ) {
-    console.log(file, req.user);
     const id = req.user.id;
-    const savedPath = file.path;
-    return await this.usersService.uploadProfile(id, savedPath);
+    this.logger.debug(file);
+    const { image, ...fileData } = await this.usersService.uploadProfile(
+      id,
+      file,
+    );
+
+    return fileData;
   }
 
   @Put(':id')

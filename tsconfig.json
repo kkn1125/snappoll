@@ -25,6 +25,7 @@
     "resolveJsonModule": true,
     "paths": {
       "@database/*": ["src/database/*"],
+      "@logger/*": ["src/logger/*"],
       "@middleware/*": ["src/middleware/*"],
       "@auth/*": ["src/auth/*"],
       "@boards/*": ["src/boards/*"],
