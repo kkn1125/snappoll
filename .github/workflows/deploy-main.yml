@@ -45,6 +45,8 @@ jobs:
                   secret: EMAIL_PASSWORD
                 - name: KAKAO_KEY
                   secret: KAKAO_KEY
+                - name: MASTER_PASS
+                  secret: MASTER_PASS
               buildenv: []
               strategy: rolling
             context:

@@ -5,6 +5,7 @@ export const ErrorName = {
   TooManyRequest: 'TooManyRequest',
   BlockSave: 'BlockSave',
   SendMailIssue: 'SendMailIssue',
+  Deactivated: 'Deactivated',
   Private: 'Private',
   PrivateUrl: 'PrivateUrl',
   NotProvidedUrl: 'NotProvidedUrl',
@@ -119,6 +120,7 @@ export const ErrorMessage = {
       '탈퇴한 계정입니다. 철회하시려면 관리자 메일로 문의해주세요.',
     ],
     [109, ErrorName.OnlyLocalUser, '사이트 회원만 가능합니다.'],
+    [110, ErrorName.Deactivated, '활동 정지된 회원입니다.'],
   ],
   userProfile: [
     [100, ErrorName.BadRequest, '잘못된 요청입니다.'],

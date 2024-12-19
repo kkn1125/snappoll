@@ -9,7 +9,7 @@ import SnapLogger from '@utils/SnapLogger';
 import { Request, Response } from 'express';
 
 @Catch()
-export class HttpExceptionFilter implements ExceptionFilter {
+export class ErrorPageFilter implements ExceptionFilter {
   logger = new SnapLogger(this);
 
   constructor() {}
@@ -23,25 +23,26 @@ export class HttpExceptionFilter implements ExceptionFilter {
 
     this.logger.error('에러 확인 필요', exception);
 
-    if (exception instanceof PrismaClientKnownRequestError) {
-      response.status(400).json({
-        statusCode: exception.name,
-        message: exception.code,
-        path: requestUrl,
-        timestamp,
-      });
-      return;
-    }
+    // if (exception instanceof PrismaClientKnownRequestError) {
+    //   response.status(400).json({
+    //     statusCode: exception.name,
+    //     message: exception.code,
+    //     path: requestUrl,
+    //     timestamp,
+    //   });
+    //   return;
+    // }
 
     const httpException = exception as HttpException;
-    const status = httpException?.getStatus?.() || 500;
-    const exceptionResponse = httpException?.getResponse?.();
+    // const status = httpException.getStatus();
+    // const exceptionResponse = httpException.getResponse();
 
-    response.status(status).json({
-      httpCode: status,
-      errorCode: exceptionResponse ?? -999,
-      path: requestUrl,
-      timestamp,
-    });
+    // response.status(status).json({
+    //   httpCode: status,
+    //   errorCode: exceptionResponse,
+    //   path: requestUrl,
+    //   timestamp,
+    // });
+    response.render('notfound');
   }
 }

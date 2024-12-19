@@ -1,0 +1,73 @@
+<div class='d-flex mx-auto w-25 flex-column justify-content-center gap-2'>
+  <h4 class='fw-bold'>관리자 페이지</h4>
+  <form
+    class='d-flex flex-column gap-3 needs-validation'
+    novalidate
+  >
+    <div>
+      <div class="d-flex flex-column gap-1">
+        <label for='email' class='form-label'>Email</label>
+        <input
+          class='form-control'
+          name='email'
+          type='email'
+          autocomplete='username'
+          autofocus
+          required
+          id='pass'
+          value="{{email}}"
+        />
+      </div>
+      <div class="d-flex flex-column gap-1">
+        <label for='pass' class='form-label'>Password</label>
+        <input
+          class='form-control'
+          name='password'
+          type='password'
+          autocomplete='current-password'
+          autofocus
+          value="{{password}}"
+          required
+          id='pass'
+        />
+        <div class='invalid-feedback'>
+          잘못된 비밀번호입니다.
+        </div>
+      </div>
+    </div>
+    <div class='py-2'>
+      <button type='submit' class='btn btn-primary w-100'>Login</button>
+    </div>
+    
+  </form>
+</div>
+<script>
+  (() => {
+    'use strict'
+
+    
+    // Fetch all the forms we want to apply custom Bootstrap validation styles to
+    const forms = document.querySelectorAll('.needs-validation')
+
+    if("{{fail}}"==='true') {
+      alert("잘못된 문자입니다.");
+    }
+    
+    // Loop over them and prevent submission
+    Array.from(forms).forEach(form => {
+      form.addEventListener('submit', event => {
+        if (!form.checkValidity()) {
+          event.preventDefault()
+          event.stopPropagation()
+        }
+    
+        form.classList.add('was-validated')
+        if(form.password.value !== ''){
+          form.method = 'POST';
+          form.action='{{managePath "/login"}}';
+          form.submit();
+        }
+      }, false)
+    })
+  })()
+</script>

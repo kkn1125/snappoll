@@ -80,11 +80,11 @@ export class BasicController {
     await this.mailerService.renderTemplatePage(res, filename, context);
   }
 
-  @Header('Content-Type', 'text/css')
-  @HttpCode(HttpStatus.OK)
-  @IgnoreCookie()
-  @Get('style/:filename')
-  async getStyle(@Res() res: Response, @Param('filename') filename: string) {
-    res.sendFile(path.join(path.resolve(), 'src', 'mailer', 'style', filename));
-  }
+  // @Header('Content-Type', 'text/css')
+  // @HttpCode(HttpStatus.OK)
+  // @IgnoreCookie()
+  // @Get('style/:filename')
+  // async getStyle(@Res() res: Response, @Param('filename') filename: string) {
+  //   res.sendFile(path.join(path.resolve(), 'src', 'mailer', 'style', filename));
+  // }
 }

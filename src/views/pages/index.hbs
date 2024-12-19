@@ -1,0 +1,133 @@
+<div class='w-100 mx-auto'>
+  <h3>Dash Board</h3>
+  <table class='table layout-fixed table-striped table-hover'>
+    <thead>
+      <tr>
+        {{#each columns}}
+          <th>{{translate this}}</th>
+        {{/each}}
+        <th>
+          삭제
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each users}}
+        <tr>
+          <td>{{findIndex ../users id}}</td>
+          <td>{{email}}</td>
+          <td>{{username}}</td>
+          <td>
+            <select name="isActive" class="form-select" onchange="handleChangeActivate(event, '{{id}}')">
+            <option {{#if (eq isActive true)}}selected{{/if}} value="true">활성화</option>
+            <option {{#if (eq isActive false)}}selected{{/if}} value="false">비활성화</option>
+            </select>
+          </td>
+          <td>{{dateFormat lastLogin}}</td>
+          <td>{{authProvider}}</td>
+          <td>
+            <select name="grade" class="form-select" onchange="handleChangeGrade(event, '{{id}}')">
+              <option {{#if (eq grade 'Free')}}selected{{/if}} value="Free">Free</option>
+              <option {{#if (eq grade 'Hobby')}}selected{{/if}} value="Hobby">Hobby</option>
+              <option {{#if (eq grade 'Pro')}}selected{{/if}} value="Pro">Pro</option>
+            </select>
+          </td>
+          <td>
+            <select name="role" class="form-select" onchange="handleChangeRole(event, '{{id}}')">
+              <option {{#if (eq role 'User')}}selected{{/if}} value="User">User</option>
+              <option {{#if (eq role 'Admin')}}selected{{/if}} value="Admin">Admin</option>
+            </select>
+          </td>
+          <td>{{dateFormat createdAt}}</td>
+          <td>{{dateFormat updatedAt}}</td>
+          <td>{{dateFormat deletedAt}}</td>
+          <td>
+            <button type="button" class="btn btn-close" data-bs-toggle="modal" data-bs-target="#{{id}}" ></button>
+            <!-- Modal -->
+            <div class="modal fade" id="{{id}}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="staticBackdropLabel">안내</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    삭제하시겠습니까?
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                    <button type="button" class="btn btn-primary" onclick="handleDelete(event, '{{id}}')">확인</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </td>
+        </tr>
+      {{/each}}
+    </tbody>
+  </table>
+</div>
+
+
+<script>
+  function handleDelete(e, id){
+    const form = createForm(`/manage/user/${id}`, 'DELETE');
+    document.body.append(form);
+    form.submit();
+  }
+
+  function handleChangeActivate(e, id){
+    const value = e.target.value;
+    if(value === 'true'){
+      const form = createForm(`/manage/user/${id}/activate`,'PUT');
+      document.body.append(form);
+      form.submit();
+    }else{
+      const form = createForm(`/manage/user/${id}/deactivate`,'PUT');
+      document.body.append(form);
+      form.submit();
+    }
+  }
+
+  function handleChangeGrade(e, id){
+    const value = e.target.value;
+    const form = createForm(`/manage/user/${id}/grade`,'PUT');
+    const input = document.createElement('input');
+    input.name = "grade";
+    input.value = value;
+    form.append(input);
+    document.body.append(form);
+    form.submit();
+  }
+
+  function handleChangeRole(e, id){
+    const value = e.target.value;
+    const form = createForm(`/manage/user/${id}/role`,'PUT');
+    const input = document.createElement('input');
+    input.name = "role";
+    input.value = value;
+    form.append(input);
+    document.body.append(form);
+    form.submit();
+  }
+
+  function createForm(action, method) {
+    const form = document.createElement('form');
+    form.action = action;
+    form.method = 'POST';
+    form.hidden = true;
+    if(validateMethod(method)){
+      const input = document.createElement('input');
+      input.type = 'hidden';
+      input.name = '_method';
+      input.value = method;
+      form.appendChild(input);
+    }
+    return form;
+  }
+
+  function validateMethod(method){
+    const lowerCaseMethod = method.toLowerCase();
+    return !['get','post'].includes(lowerCaseMethod);
+  }
+</script>

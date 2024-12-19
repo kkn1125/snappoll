@@ -1,5 +1,5 @@
 import { MailerService } from '@/mailer/mailer.service';
-import { CURRENT_DOMAIN, EXPIRED_TOKEN_TIME } from '@common/variables';
+import { CURRENT_DOMAIN } from '@common/variables';
 import { PrismaService } from '@database/prisma.service';
 import { HttpService } from '@nestjs/axios';
 import {
@@ -11,7 +11,6 @@ import {
 import { ConfigService } from '@nestjs/config';
 import SnapLogger from '@utils/SnapLogger';
 import * as jwt from 'jsonwebtoken';
-import ms from 'ms';
 import * as path from 'path';
 import { firstValueFrom } from 'rxjs';
 
@@ -53,14 +52,16 @@ export class AuthService {
     const hashedPassword = hex.slice(0, 10) + alphabet + randomSpecial;
     const password = this.prisma.encryptPassword(hashedPassword);
     await this.prisma.user.update({
-      where: { email },
+      where: { email, deletedAt: null },
       data: { localUser: { update: { password } } },
     });
     return hashedPassword;
   }
 
   async sendInitializeConfirmMail(email: string) {
-    const user = await this.prisma.user.findUnique({ where: { email } });
+    const user = await this.prisma.user.findUnique({
+      where: { email, deletedAt: null },
+    });
 
     if (!user) {
       const errorCode = await this.prisma.getErrorCode('user', 'NotFound');
@@ -149,6 +150,12 @@ export class AuthService {
       throw new NotFoundException(errorCode);
     }
 
+    if (user.isActive === false) {
+      this.logger.info('활동정지된 회원');
+      const errorCode = await this.prisma.getErrorCode('user', 'Deactivated');
+      throw new BadRequestException(errorCode);
+    }
+
     if (user.deletedAt !== null) {
       this.logger.debug('탈퇴 회원');
       const errorCode = await this.prisma.getErrorCode('user', 'RemovedUser');
@@ -221,34 +228,13 @@ export class AuthService {
   }
 
   getToken(userData: UserTokenData) {
-    const secretKey = this.configService.get<string>('common.secretKey');
-    const TOKEN_EXPIRED_AT = ms(EXPIRED_TOKEN_TIME);
-    const REFRESH_TOKEN_EXPIRED_AT = ms(EXPIRED_TOKEN_TIME * 2);
-    this.logger.info('만료시간 체크:', TOKEN_EXPIRED_AT);
-    const token = jwt.sign(userData, secretKey, {
-      expiresIn: TOKEN_EXPIRED_AT,
-      issuer: 'snapPoll',
-      algorithm: 'HS256',
-    });
-    const refreshToken = jwt.sign(
-      {
-        ...userData,
-        loginAt: Date.now(),
-      },
-      secretKey,
-      {
-        subject: 'refresh',
-        expiresIn: REFRESH_TOKEN_EXPIRED_AT,
-        issuer: 'snapPoll',
-        algorithm: 'HS256',
-      },
-    );
+    const { token, refreshToken } = this.prisma.getToken(userData);
     return { token, refreshToken };
   }
 
   getMe(email: string) {
     return this.prisma.user.findUnique({
-      where: { email },
+      where: { email, deletedAt: null },
       include: {
         userProfile: {
           select: {

@@ -3,6 +3,7 @@ import { Reflector } from '@nestjs/core';
 import SnapLogger from '@utils/SnapLogger';
 import { Request } from 'express';
 import { Roles } from './roles.decorator';
+import { $Enums } from '@prisma/client';
 
 @Injectable()
 export class RoleGuard implements CanActivate {
@@ -20,7 +21,7 @@ export class RoleGuard implements CanActivate {
 
     const http = context.switchToHttp();
     const req = http.getRequest() as Request;
-    const role = req.user?.role;
+    const role = req.user?.role as $Enums.Role;
     this.logger.debug('역할:', role);
     this.logger.debug('역할 검증 끝');
     return roles.includes(role);

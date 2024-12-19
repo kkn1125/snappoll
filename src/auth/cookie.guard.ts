@@ -74,29 +74,11 @@ export class CookieGuard implements CanActivate {
       throw new UnauthorizedException(errorCode);
     }
 
+    let verifiedToken: JwtPayload;
     try {
-      const verifiedToken = jwt.verify(req.cookies.token, secretKey, {
+      verifiedToken = jwt.verify(req.cookies.token, secretKey, {
         algorithms: ['HS256'],
       }) as JwtPayload;
-
-      // this.logger.debug(verifiedToken);
-
-      const email = verifiedToken.email;
-      const user = await this.authService.getMe(email);
-
-      if (!user) {
-        this.logger.debug('사용자 없음');
-
-        this.clearCookies(res);
-        const errorCode = await this.prisma.getErrorCode('auth', 'NotFound');
-        throw new NotFoundException(errorCode);
-      }
-
-      // this.logger.debug('email:', verifiedToken.email);
-      // this.logger.debug('user:', user);
-
-      req.verify = verifiedToken;
-      req.user = user;
     } catch (error) {
       req.verify = jwt.decode(req.cookies.token) as JwtPayload;
 
@@ -122,6 +104,30 @@ export class CookieGuard implements CanActivate {
         throw new BadRequestException(errorCode);
       }
     }
+    // this.logger.debug(verifiedToken);
+
+    const email = verifiedToken.email;
+    const user = await this.authService.getMe(email);
+
+    if (!user) {
+      this.logger.debug('사용자 없음');
+
+      this.clearCookies(res);
+      const errorCode = await this.prisma.getErrorCode('auth', 'NotFound');
+      throw new NotFoundException(errorCode);
+    }
+
+    if (user.isActive === false) {
+      this.logger.info('활동정지된 회원');
+      const errorCode = await this.prisma.getErrorCode('user', 'Deactivated');
+      throw new BadRequestException(errorCode);
+    }
+
+    // this.logger.debug('email:', verifiedToken.email);
+    // this.logger.debug('user:', user);
+
+    req.verify = verifiedToken;
+    req.user = user;
 
     return true;
   }
