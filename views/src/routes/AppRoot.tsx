@@ -1,6 +1,5 @@
 import { VERSION } from '@common/variables';
 import Layout from '@components/templates/Layout';
-import PanelLayout from '@components/templates/PanelLayout';
 import ShareLayout from '@components/templates/ShareLayout';
 import useLoading from '@hooks/useLoading';
 import useLogger from '@hooks/useLogger';
