@@ -6,7 +6,7 @@ import { useMutation } from '@tanstack/react-query';
 
 interface PanelHeaderProps {}
 const PanelHeader: React.FC<PanelHeaderProps> = () => {
-  const {user} = useToken('admin')
+  const { user } = useToken();
   const { openModal } = useModal();
 
   const sendConfirmMailMutation = useMutation({
