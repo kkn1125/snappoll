@@ -1,4 +1,44 @@
 <div class='w-100 mx-auto'>
+  <div>
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addUser">유저 생성</button>
+    <!-- Modal -->
+    <div class="modal fade" id="addUser" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <form class="modal-content" onsubmit="handleAddUser(event)">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="staticBackdropLabel">안내</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="d-flex gap-1 flex-column modal-body">
+            <label class='form-label'>
+              이메일
+              <input class="form-control" name="email" type="text" placeholder="이메일">
+            </label>
+            <label class="form-label">
+              유저명
+              <input class="form-control" name="username" type="text" placeholder="유저명">
+            </label>
+            <label class="form-label">
+              프로바이더
+              <select name="authProvider" class="form-select">
+                <option value="Local">로컬</option>
+                <option value="Kakao">카카오</option>
+                <option value="Google">구글</option>
+              </select>
+            </label>
+            <label class="form-label">
+              비밀번호
+              <input class="form-control" name="password" type="password">
+            </label>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+            <button type="submit" class="btn btn-primary"">확인</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
   <h3>Dash Board</h3>
   <table class='table layout-fixed table-striped table-hover'>
     <thead>
@@ -92,9 +132,7 @@
   function handleChangeGrade(e, id){
     const value = e.target.value;
     const form = createForm(`/manage/user/${id}/grade`,'PUT');
-    const input = document.createElement('input');
-    input.name = "grade";
-    input.value = value;
+    const input = createInput('grade', value);
     form.append(input);
     document.body.append(form);
     form.submit();
@@ -103,9 +141,7 @@
   function handleChangeRole(e, id){
     const value = e.target.value;
     const form = createForm(`/manage/user/${id}/role`,'PUT');
-    const input = document.createElement('input');
-    input.name = "role";
-    input.value = value;
+    const input = createInput('role', value);
     form.append(input);
     document.body.append(form);
     form.submit();
@@ -129,5 +165,36 @@
   function validateMethod(method){
     const lowerCaseMethod = method.toLowerCase();
     return !['get','post'].includes(lowerCaseMethod);
+  }
+
+  function handleAddUser(e){
+    e.preventDefault();
+    const username = e.target.username.value;
+    const password = e.target.password.value;
+    const email = e.target.email.value;
+    const authProvider = e.target.authProvider.value;
+    const form = createForm('/manage/user', "POST");
+    console.log(username, email, password, authProvider);
+    const inputs = createData({
+      username,
+      password,
+      email,
+      authProvider,
+    });
+    form.append(...inputs);
+    document.body.append(form);
+    form.submit();
+  }
+
+  function createData(data){
+    return Object.entries(data).map(([name, value])=> createInput(name, value));
+  }
+
+  function createInput(name, value, type){
+    const input = document.createElement('input');
+    input.name = name;
+    input.value = value;
+    if(type) input.type = type;
+    return input;
   }
 </script>

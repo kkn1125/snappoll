@@ -28,6 +28,10 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
     await this.$connect();
   }
 
+  parseToken(token: any) {
+    return jwt.decode(token);
+  }
+
   async getErrorCode<
     Domain extends ErrorCodeType[number],
     Name extends Domain[1],

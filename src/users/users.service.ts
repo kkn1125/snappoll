@@ -111,10 +111,22 @@ export class UsersService {
     }
   }
 
-  findAll() {
-    return this.prisma.user.findMany({
-      where: { deletedAt: null },
+  async findAll(page: number) {
+    const columnList = (await this.prisma.$queryRaw`SELECT
+          COLUMN_NAME column
+        FROM
+          INFORMATION_SCHEMA.COLUMNS
+        WHERE
+          TABLE_NAME = 'user'
+        ORDER BY
+          ORDINAL_POSITION;`) as { column: string }[];
+    const columns = columnList.map(({ column }) => column);
+    const users = await this.prisma.user.findMany({
+      skip: (page - 1) * 10,
+      take: 10,
     });
+    const count = await this.prisma.user.count();
+    return { columns, users, count };
   }
 
   async findOne(id: string) {

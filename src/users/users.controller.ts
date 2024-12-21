@@ -9,6 +9,7 @@ import {
   ParseFilePipeBuilder,
   Post,
   Put,
+  Query,
   Req,
   Res,
   UploadedFile,
@@ -37,8 +38,8 @@ export class UsersController {
   }
 
   @Get()
-  findAll() {
-    return this.usersService.findAll();
+  findAll(@Query('page') page: number = 1) {
+    return this.usersService.findAll(page);
   }
 
   @Get('me')

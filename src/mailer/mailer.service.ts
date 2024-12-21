@@ -1,5 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { BatchService } from '@auth/batch.service';
+import { PrismaService } from '@database/prisma.service';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { $Enums } from '@prisma/client';
 import { Response } from 'express';
 import fs from 'fs/promises';
 import Handlebars from 'handlebars';
@@ -17,7 +20,11 @@ export class MailerService {
     SMTPTransport.Options
   >;
 
-  constructor(private readonly configService: ConfigService) {
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly configService: ConfigService,
+    private readonly batchService: BatchService,
+  ) {
     const emailAddress = this.configService.get('email.address');
     const emailPassword = this.configService.get('email.password');
     this.transporter = nodemailer.createTransport({
@@ -34,6 +41,65 @@ export class MailerService {
     });
   }
 
+  async createHtml(token: string, filename: string, context: any) {
+    const layout = await fs.readFile(
+      path.join(path.resolve(), 'src', 'mailer', 'template', 'layout.hbs'),
+      { encoding: 'utf-8' },
+    );
+    const headerTemplate = await fs.readFile(
+      path.join(path.resolve(), 'src', 'mailer', 'template', 'header.hbs'),
+      { encoding: 'utf-8' },
+    );
+    const footerTemplate = await fs.readFile(
+      path.join(path.resolve(), 'src', 'mailer', 'template', 'header.hbs'),
+      { encoding: 'utf-8' },
+    );
+    const template = await fs.readFile(
+      path.join(path.resolve(), 'src', 'mailer', 'template', filename + '.hbs'),
+      { encoding: 'utf-8' },
+    );
+    const header = Handlebars.compile(headerTemplate, { strict: true })(
+      context,
+    );
+    const footer = Handlebars.compile(footerTemplate, { strict: true })(
+      context,
+    );
+    const html = Handlebars.compile(template, { strict: true })(context);
+
+    const layoutTemplate = Handlebars.compile(layout, { strict: true })({
+      title: context.title,
+      header,
+      replace: html,
+      footer,
+    });
+
+    const data = this.batchService.mapper.get(token);
+    if (data) {
+      data.resolve({ token });
+    }
+
+    return layoutTemplate;
+  }
+
+  async getAdminToken(defaultEmail: string) {
+    const admin = await this.prisma.user.findUnique({
+      where: { email: defaultEmail, role: $Enums.Role.Admin },
+    });
+    if (!admin) {
+      const errorCode = await this.prisma.getErrorCode('mailer', 'NotFound');
+      throw new NotFoundException(errorCode);
+    }
+
+    const { token } = this.prisma.getToken({
+      id: admin.id,
+      email: admin.email,
+      username: admin.username,
+      authProvider: admin.authProvider,
+      loginAt: Date.now(),
+    });
+    return token;
+  }
+
   async sendConfirmMail({
     templatePath,
     context,
@@ -48,6 +114,24 @@ export class MailerService {
       path.join(path.resolve(), 'src', 'mailer', 'template', 'layout.hbs'),
       { encoding: 'utf-8' },
     );
+    const headerTemplate = await fs.readFile(
+      path.join(path.resolve(), 'src', 'mailer', 'template', 'header.hbs'),
+      {
+        encoding: 'utf-8',
+      },
+    );
+    const footerTemplate = await fs.readFile(
+      path.join(path.resolve(), 'src', 'mailer', 'template', 'footer.hbs'),
+      {
+        encoding: 'utf-8',
+      },
+    );
+    const header = Handlebars.compile(headerTemplate, { strict: true })(
+      context,
+    );
+    const footer = Handlebars.compile(footerTemplate, { strict: true })(
+      context,
+    );
 
     if (templatePath) {
       const template = await fs.readFile(templatePath, { encoding: 'utf-8' });
@@ -56,6 +140,8 @@ export class MailerService {
     html = mailOptions.html ? mailOptions.html : html;
     const layoutTemplate = Handlebars.compile(layout, { strict: true })({
       title: context.title,
+      header,
+      footer,
       replace: html,
     });
 
@@ -77,12 +163,31 @@ export class MailerService {
     filename: string,
     context: Record<string, unknown>,
   ) {
-    const template = await fs.readFile(
-      path.join(path.resolve(), 'src', 'mailer', 'template', filename + '.hbs'),
-      { encoding: 'utf-8' },
-    );
     const layout = await fs.readFile(
       path.join(path.resolve(), 'src', 'mailer', 'template', 'layout.hbs'),
+      { encoding: 'utf-8' },
+    );
+    const headerTemplate = await fs.readFile(
+      path.join(path.resolve(), 'src', 'mailer', 'template', 'header.hbs'),
+      {
+        encoding: 'utf-8',
+      },
+    );
+    const footerTemplate = await fs.readFile(
+      path.join(path.resolve(), 'src', 'mailer', 'template', 'footer.hbs'),
+      {
+        encoding: 'utf-8',
+      },
+    );
+    const header = Handlebars.compile(headerTemplate, { strict: true })(
+      context,
+    );
+    const footer = Handlebars.compile(footerTemplate, { strict: true })(
+      context,
+    );
+
+    const template = await fs.readFile(
+      path.join(path.resolve(), 'src', 'mailer', 'template', filename + '.hbs'),
       { encoding: 'utf-8' },
     );
     const content = Handlebars.compile(template, {
@@ -93,7 +198,49 @@ export class MailerService {
     res.send(
       Handlebars.compile(layout, {
         strict: true,
-      })({ title: context.title, replace: content }),
+      })({ title: context.title, header, footer, replace: content }),
     );
+  }
+
+  async sendAdminConfirmationEmail() {
+    const domain = this.configService.get('common.currentDomain');
+    const defaultEmail = this.configService.get('email.defaultEmail');
+    const domainToken = 'snappollhelper';
+    const token = this.prisma.encryptPassword(defaultEmail + '|' + domainToken);
+    const message = {
+      to: defaultEmail,
+      subject: '⚠️ SnapPoll 관리자 이메일 확인 요청',
+      text: '보안 등급이 높습니다. 관리자 페이지 접근 요청입니다. 꼭 확인해주세요.',
+      context: {
+        title: '관리자 인증 요청',
+        content: '관리자 본인이 요청한 메일이 아니라면 조치 바랍니다.',
+        action: domain + '/api/mailer/validate',
+        token,
+        domain: domainToken,
+        email: defaultEmail,
+        image: 'https://snappoll.kro.kr/images/original.png',
+      },
+      templatePath: path.join(
+        path.resolve(),
+        'src',
+        'mailer',
+        'template',
+        'confirmPage.hbs',
+      ),
+    };
+
+    await this.sendConfirmMail(message);
+
+    const data = await new Promise<{ token: string } | boolean>((resolve) =>
+      this.batchService.mapper.set(token, {
+        resolve,
+        start: Date.now(),
+        email: defaultEmail,
+      }),
+    );
+
+    this.batchService.clearTokenIfExists(data);
+
+    return data;
   }
 }

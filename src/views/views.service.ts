@@ -6,6 +6,10 @@ import { $Enums } from '@prisma/client';
 export class ViewsService {
   constructor(private readonly prisma: PrismaService) {}
 
+  parseToken(token: any) {
+    return this.prisma.parseToken(token);
+  }
+
   findUsers() {
     return this.prisma.user.findMany({
       orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
@@ -15,6 +19,9 @@ export class ViewsService {
   findBoards() {
     return this.prisma.board.findMany({
       orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
+      include: {
+        author: true,
+      },
     });
   }
 
@@ -102,6 +109,56 @@ export class ViewsService {
     return this.prisma.board.update({
       where: { id },
       data: { deletedAt: new Date() },
+    });
+  }
+
+  createUser({
+    username,
+    email,
+    password,
+    authProvider,
+  }: {
+    username: string;
+    email: string;
+    password: string;
+    authProvider: $Enums.AuthProvider;
+  }) {
+    const encryptedPassword = this.prisma.encryptPassword(password);
+    return this.prisma.user.create({
+      data: {
+        username,
+        email,
+        authProvider,
+        localUser: {
+          create: {
+            password: encryptedPassword,
+          },
+        },
+      },
+      include: {
+        localUser: true,
+      },
+    });
+  }
+
+  createBoard({
+    title,
+    content,
+    category,
+    userId,
+  }: {
+    title: string;
+    content: string;
+    category: string;
+    userId: string;
+  }) {
+    return this.prisma.board.create({
+      data: {
+        title,
+        content,
+        category,
+        userId,
+      },
     });
   }
 }

@@ -54,6 +54,7 @@ export class ViewsController {
   @Get('board')
   async board(@Req() req: Request, @Res() res: Response) {
     const token = req.cookies['admin-token'];
+    const user = this.viewsService.parseToken(token);
     if (!!token) {
       const boards = await this.viewsService.findBoards();
       this.logger.debug(boards);
@@ -63,6 +64,7 @@ export class ViewsController {
         columns: [
           'id',
           'title',
+          'author',
           'category',
           'viewCount',
           'isPrivate',
@@ -72,6 +74,7 @@ export class ViewsController {
           'deletedAt',
         ],
         boards,
+        user,
       });
     } else {
       res.render('login', {
@@ -180,6 +183,38 @@ export class ViewsController {
   async deleteUserFromId(@Res() res: Response, @Param('id') id: string) {
     await this.viewsService.deleteUserFromId(id);
     res.redirect('/manage');
+  }
+
+  @Post('user')
+  async createUser(
+    @Res() res: Response,
+    @Body()
+    createUserDto: {
+      username: string;
+      email: string;
+      password: string;
+      authProvider: $Enums.AuthProvider;
+    },
+  ) {
+    this.logger.info('createUserDto:', createUserDto);
+    await this.viewsService.createUser(createUserDto);
+    res.redirect('/manage');
+  }
+
+  @Post('board')
+  async createBoard(
+    @Res() res: Response,
+    @Body()
+    createBoardDto: {
+      title: string;
+      content: string;
+      category: string;
+      userId: string;
+    },
+  ) {
+    this.logger.info('createBoardDto:', createBoardDto);
+    await this.viewsService.createBoard(createBoardDto);
+    res.redirect('/manage/board');
   }
 
   @Delete('board/:id')

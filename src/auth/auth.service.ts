@@ -19,10 +19,10 @@ export class AuthService {
   logger = new SnapLogger(this);
 
   constructor(
-    private readonly mailer: MailerService,
     public readonly prisma: PrismaService,
     private readonly configService: ConfigService,
     private readonly httpService: HttpService,
+    private readonly mailer: MailerService,
   ) {}
 
   async initializeUserPassword(email: string) {

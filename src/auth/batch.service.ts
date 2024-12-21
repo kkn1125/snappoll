@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
-import { AuthService } from './auth.service';
 
 @Injectable()
 export class BatchService {
@@ -14,8 +13,6 @@ export class BatchService {
       expired?: boolean;
     }
   > = new Map();
-
-  constructor(private readonly authService: AuthService) {}
 
   @Cron('*/30 * * * * *', {
     name: 'expiresToken',
@@ -44,5 +41,11 @@ export class BatchService {
       }
     });
     // console.log(`tokens remove: ${temp.length} /`, temp);
+  }
+
+  clearTokenIfExists(data: { token: string } | boolean) {
+    if (data && data instanceof Object && 'token' in data) {
+      this.mapper.delete(data.token);
+    }
   }
 }

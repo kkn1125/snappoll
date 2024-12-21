@@ -1,27 +1,21 @@
+import { getBoardList } from '@/apis/board/getBoardList';
+import { SnapBoard } from '@models/SnapBoard';
 import {
-  Divider,
+  Chip,
   List,
   ListItem,
   ListItemButton,
   ListItemText,
   Paper,
   Stack,
-  Table,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
   Typography,
 } from '@mui/material';
-import CategoryBoard from './category/CategoryBoardPage';
 import { useQuery } from '@tanstack/react-query';
-import { getBoardList } from '@/apis/board/getBoardList';
-import { useLocation } from 'react-router-dom';
-import { SnapBoard } from '@models/SnapBoard';
-import { useCallback } from 'react';
-import { translate } from '@utils/translate';
 import { formattedDate } from '@utils/formattedDate';
 import { getUsernameOr } from '@utils/getUsernameOr';
+import { translate } from '@utils/translate';
+import { useCallback } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 
 interface BoardListPageProps {}
 const BoardListPage: React.FC<BoardListPageProps> = () => {
@@ -50,8 +44,17 @@ const BoardListPage: React.FC<BoardListPageProps> = () => {
     <Stack gap={2}>
       {boardKeys.map((key) => (
         <Stack key={key} component={Paper} p={3}>
-          <Typography fontSize={20} fontWeight={700}>
-            {translate(key)}
+          <Typography
+            fontSize={20}
+            fontWeight={700}
+            sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
+          >
+            {translate(key)}{' '}
+            <Chip
+              size="small"
+              color={boardObject?.[key].length ? 'info' : 'default'}
+              label={boardObject?.[key].length || 0}
+            />
           </Typography>
           <List>
             {(!boardObject?.[key] || boardObject?.[key].length === 0) && (
@@ -65,7 +68,10 @@ const BoardListPage: React.FC<BoardListPageProps> = () => {
             )}
             {boardObject?.[key]?.map((category) => (
               <ListItem key={category.id}>
-                <ListItemButton>
+                <ListItemButton
+                  component={Link}
+                  to={`/board/${category.category}/${category.id}`}
+                >
                   <ListItemText
                     primary={category.title}
                     secondary={`작성자: ${getUsernameOr(category.author?.username)} | 생성일: ${formattedDate(category.createdAt)}`}

@@ -1,4 +1,49 @@
+<link href="https://cdn.jsdelivr.net/npm/suneditor@latest/dist/css/suneditor.min.css" rel="stylesheet">
+<!-- <link href="https://cdn.jsdelivr.net/npm/suneditor@latest/assets/css/suneditor.css" rel="stylesheet"> -->
+<!-- <link href="https://cdn.jsdelivr.net/npm/suneditor@latest/assets/css/suneditor-contents.css" rel="stylesheet"> -->
+<script src="https://cdn.jsdelivr.net/npm/suneditor@latest/dist/suneditor.min.js"></script>
+<!-- languages (Basic Language: English/en) -->
+<script src="https://cdn.jsdelivr.net/npm/suneditor@latest/src/lang/ko.js"></script>
+
 <div class='w-100 mx-auto'>
+  <div>
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addBoard">게시글 생성</button>
+    <!-- Modal -->
+    <div class="modal fade modal-lg" id="addBoard" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <form class="modal-content" onsubmit="handleAddBoard(event)">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="staticBackdropLabel">안내</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="d-flex gap-1 flex-column modal-body">
+            <label class='form-label'>
+              제목
+              <input class="form-control" name="title" type="text" placeholder="제목">
+            </label>
+            <label class="form-label">
+              유형
+              <select name="category" class="form-select">
+                <option value="notice">공지사항</option>
+                <option value="community">커뮤니티</option>
+                <option value="event">이벤트</option>
+                <option value="faq">FAQ</option>
+              </select>
+            </label>
+            <input type="hidden" name="userId" value="{{user.id}}">
+            <label class="form-label">
+              내용
+              <textarea id="content" name="content" placeholder="내용을 적으세요."></textarea>
+            </label>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+            <button type="submit" class="btn btn-primary"">확인</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
   <h3>Dash Board</h3>
   <table class='table layout-fixed table-striped table-hover'>
     <thead>
@@ -6,6 +51,9 @@
         {{#each columns}}
           <th>{{translate this 'board'}}</th>
         {{/each}}
+        <th>
+          수정
+        </th>
         <th>
           삭제
         </th>
@@ -16,6 +64,11 @@
         <tr>
           <td>{{findIndex ../boards id}}</td>
           <td>{{title}}</td>
+          {{#if author.username}}
+            <td>{{author.username}}</td>
+          {{else}}
+            <td>Guest</td>
+          {{/if}}
           <td>
             <select name="category" class="form-select" onchange="handleChangeCategory(event, '{{id}}')">
               <option {{#if (eq category 'notice')}}selected{{/if}} value="notice">공지사항</option>
@@ -61,6 +114,27 @@
               </div>
             </div>
           </td>
+          <td>
+            <button type="button" class="btn btn-close" data-bs-toggle="modal" data-bs-target="#{{id}}" ></button>
+            <!-- Modal -->
+            <div class="modal fade" id="{{id}}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="staticBackdropLabel">안내</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    삭제하시겠습니까?
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                    <button type="button" class="btn btn-primary" onclick="handleDelete(event, '{{id}}')">확인</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </td>
         </tr>
       {{/each}}
     </tbody>
@@ -69,6 +143,19 @@
 
 
 <script>
+  /**
+  * ID : 'suneditor_sample'
+  * ClassName : 'sun-eidtor'
+  */
+  // ID or DOM object
+  const editor = SUNEDITOR.create((document.getElementById('content') || 'content'),{
+    // All of the plugins are loaded in the "window.SUNEDITOR" object in dist/suneditor.min.js file
+    // Insert options
+    // Language global object (default: en)
+    lang: SUNEDITOR_LANG['ko'],
+    height: '300px'
+  });
+
   function handleDelete(e, id){
     const form = createForm(`/manage/board/${id}`, 'DELETE');
     document.body.append(form);
@@ -78,9 +165,7 @@
   function handleChangeCategory(e, id){
     const category = e.target.value;
     const form = createForm(`/manage/board/${id}/category`, "PUT");
-    const input = document.createElement('input');
-    input.name = 'category';
-    input.value = category;
+    const input = createInput('category', category);
     form.append(input);
     document.body.append(form);
     form.submit();
@@ -128,5 +213,36 @@
   function validateMethod(method){
     const lowerCaseMethod = method.toLowerCase();
     return !['get','post'].includes(lowerCaseMethod);
+  }
+
+  function createData(data){
+    return Object.entries(data).map(([name, value])=> createInput(name, value));
+  }
+
+  function createInput(name, value, type){
+    const input = document.createElement('input');
+    input.name = name;
+    input.value = value;
+    if(type) input.type = type;
+    return input;
+  }
+
+  function handleAddBoard(e){
+    e.preventDefault();
+    const title = e.target.title.value;
+    const content = e.target.content.value;
+    const category = e.target.category.value;
+    const userId = e.target.userId.value;
+    const form = createForm('/manage/board', "POST");
+    console.log(title, category, content, userId);
+    const inputs = createData({
+      title,
+      content,
+      category,
+      userId
+    });
+    form.append(...inputs);
+    document.body.append(form);
+    form.submit();
   }
 </script>

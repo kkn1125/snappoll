@@ -1,5 +1,6 @@
 import { VERSION } from '@common/variables';
 import Layout from '@components/templates/Layout';
+import PanelLayout from '@components/templates/PanelLayout';
 import ShareLayout from '@components/templates/ShareLayout';
 import useLoading from '@hooks/useLoading';
 import useLogger from '@hooks/useLogger';
@@ -18,6 +19,7 @@ import GuestHomePage from '@pages/GuestHomePage';
 import HomePage from '@pages/HomePage';
 import NotfoundPage from '@pages/NotfoundPage';
 import NoticePage from '@pages/notice/NoticePage';
+import Panel from '@pages/panel/Panel';
 import DetailPollGraphPage from '@pages/service/graph/polls/DetailPollGraphPage';
 import PollGraphListPage from '@pages/service/graph/polls/PollGraphListPage';
 import SelectGraphPage from '@pages/service/graph/SelectGraphPage';
@@ -189,6 +191,12 @@ const AppRoot: React.FC<AppRootProps> = () => {
           <Route element={<ShareLayout />}>
             <Route path="share" element={<SharePage />} />
           </Route>
+        </Route>
+      </Route>
+
+      <Route element={<Layout isCrew={isCrew} />}>
+        <Route path="panel">
+          <Route index element={<Panel />}></Route>
         </Route>
       </Route>
 

@@ -276,6 +276,12 @@ export class AuthController {
         sameSite: 'lax',
         path: '/',
       });
+      res.clearCookie('admin-token', {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'lax',
+        path: '/',
+      });
       res.clearCookie('refresh', {
         httpOnly: true,
         secure: true,
@@ -294,7 +300,11 @@ export class AuthController {
 
   // @HttpCode(HttpStatus.NO_CONTENT)
   @Post('verify')
-  async verify(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
+  async verify(
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
+    @Body('admin') admin: boolean,
+  ) {
     if (!req.verify) {
       const errorCode = await this.authService.prisma.getErrorCode(
         'auth',
