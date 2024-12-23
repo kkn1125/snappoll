@@ -26,7 +26,7 @@ import {
   useState,
 } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import SunEditor from 'suneditor-react';
+import SunEditor, { buttonList } from 'suneditor-react';
 import 'suneditor/dist/css/suneditor.min.css'; // Import Sun Editor's CSS File
 import { ko } from 'suneditor/src/lang';
 
@@ -39,40 +39,33 @@ interface WriteBoardProps {
   category: string;
   password?: string;
 }
-interface WriteBoardPageProps {
-  control?: boolean;
-}
-const WriteBoardPage: React.FC<WriteBoardPageProps> = ({ control = false }) => {
+interface WriteBoardPageProps {}
+const WriteBoardPage: React.FC<WriteBoardPageProps> = () => {
   const navigate = useNavigate();
-
   const { state } = useLocation();
   const board = state?.board;
   const isGuestBoard = !board?.userId;
-  console.log(board);
   const [data, setData] = useState<WriteBoardProps>({
     title: '',
     content: '',
     category: 'community',
     password: undefined,
   });
-
-  const { user } = useToken();
+  const { isMaster, user } = useToken();
   const validateType = user ? 'writeBoardForUser' : 'writeBoard';
   const { openModal } = useModal();
   const { errors, validate, validated, setValidated } = useValidate(data);
   const writeMutation = useMutation({
     mutationKey: ['writeBoard'],
     mutationFn: writeBoard,
-    onSuccess(data, variables, context) {
+    onSuccess(/* data, variables, context */) {
       const modalOption: OpenModalProps = {
         info: Message.Info.SuccessWrite,
         slot: null,
       };
-      if (!control) {
-        modalOption.closeCallback = () => {
-          navigate(`/board/${data.category}`);
-        };
-      }
+      modalOption.closeCallback = () => {
+        navigate(`/board/${data.category}`);
+      };
       openModal(modalOption);
     },
     onError(error: AxiosError<AxiosException>, variables, context) {
@@ -87,16 +80,14 @@ const WriteBoardPage: React.FC<WriteBoardPageProps> = ({ control = false }) => {
   const updateMutation = useMutation({
     mutationKey: ['updateBoard'],
     mutationFn: updateBoard,
-    onSuccess(data, variables, context) {
+    onSuccess(/* data, variables, context */) {
       const modalOption: OpenModalProps = {
         info: Message.Info.SuccessUpdate,
         slot: null,
       };
-      if (!control) {
-        modalOption.closeCallback = () => {
-          navigate(`/board/${board.category}/${board.id}`);
-        };
-      }
+      modalOption.closeCallback = () => {
+        navigate(`/board/${board.category}/${board.id}`);
+      };
 
       openModal(modalOption);
     },
@@ -173,7 +164,7 @@ const WriteBoardPage: React.FC<WriteBoardPageProps> = ({ control = false }) => {
         errors={errors}
         sx={{ ['.MuiInputBase-input']: { fontSize: 26 } }}
       />
-      {control && (
+      {isMaster && (
         <Select
           name="category"
           value={data['category'] || 'community'}
@@ -200,6 +191,7 @@ const WriteBoardPage: React.FC<WriteBoardPageProps> = ({ control = false }) => {
           defaultValue={board?.content}
           width="100%"
           height="calc(100vh - 300px)"
+          setOptions={{ buttonList: buttonList.complex.slice(0, -1) }}
           placeholder="내용을 입력해주세요."
           setDefaultStyle={`min-height: 300px;`}
           onChange={(content) => setData((data) => ({ ...data, content }))}
@@ -231,7 +223,7 @@ const WriteBoardPage: React.FC<WriteBoardPageProps> = ({ control = false }) => {
           type="button"
           variant="outlined"
           color="inherit"
-          to="/board/community"
+          to={`/board/${data.category}`}
         >
           취소
         </Button>

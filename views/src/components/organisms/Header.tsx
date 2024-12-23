@@ -1,10 +1,7 @@
 import { sidebarAtom } from '@/recoils/sidebar.atom';
 import { tokenAtom } from '@/recoils/token.atom';
-import {
-  BRAND_NAME,
-  DefaultProfile,
-  logoImage
-} from '@common/variables';
+import { BRAND_NAME, DefaultProfile, logoImage } from '@common/variables';
+import ProfileAvatar from '@components/atoms/ProfileAvatar';
 import useScroll from '@hooks/useScroll';
 import MenuOpenRoundedIcon from '@mui/icons-material/MenuOpenRounded';
 import MenuRoundedIcon from '@mui/icons-material/MenuRounded';
@@ -43,22 +40,9 @@ const menuList = [
     name: (username?: string) => username,
     to: '/user',
     allow: ['user'],
-    icon: (username?: string, profileImage?: string) =>
-      username && profileImage ? (
-        <Tooltip placement="bottom" title="사용자 정보">
-          <Avatar
-            src={getServerProfileImage(profileImage)}
-            alt={username}
-            sx={{
-              width: 40,
-              height: 40,
-              boxShadow: '2px 2px 5px 0 #00000056',
-            }}
-          />
-        </Tooltip>
-      ) : (
-        <DefaultProfile width={32} height={32} style={{ marginRight: 8 }} />
-      ),
+    icon: (username?: string, profileImage?: string) => (
+      <ProfileAvatar username={username} profileImage={profileImage} />
+    ),
   },
   { name: '회원가입/로그인', to: '/auth', allow: ['guest'] },
 ];

@@ -1,4 +1,3 @@
-import { deleteBoard } from '@/apis/board/deleteBoard';
 import { deleteBoardForce } from '@/apis/board/deleteBoardForce';
 import { getBoardAllList } from '@/apis/board/getBoardAllList';
 import { updateBoard } from '@/apis/board/updateBoard';
@@ -11,10 +10,9 @@ import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import { Button, IconButton, Paper, Stack, Tooltip } from '@mui/material';
 import { GridColDef } from '@mui/x-data-grid';
-import WriteBoardPage from '@pages/board/WriteBoardPage';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useMemo } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 
 interface PanelBoardProps {}
 const PanelBoard: React.FC<PanelBoardProps> = () => {
@@ -66,20 +64,6 @@ const PanelBoard: React.FC<PanelBoardProps> = () => {
     },
   });
 
-  function handleOpenCreateBoardModal() {
-    openModal({
-      info: { title: '안내', content: '새 글 작성' },
-      slot: (
-        <Stack>
-          <WriteBoardPage control />
-        </Stack>
-      ),
-      closeCallback: () => {
-        reloadBoards();
-      },
-    });
-  }
-
   function handlePrivate(id: string) {
     const currentVisible = !!boards?.find((board) => board.id)?.isPrivate;
     openInteractiveModal({
@@ -115,7 +99,13 @@ const PanelBoard: React.FC<PanelBoardProps> = () => {
 
   return (
     <Stack component={Paper} elevation={5} p={3} gap={2}>
-      <Button onClick={handleOpenCreateBoardModal}>새 글 작성</Button>
+      {/* Button Navigations */}
+      <Stack direction="row" gap={1}>
+        <Button component={Link} to={`/board/new`} state={{ mode: 'admin' }}>
+          글 작성
+        </Button>
+      </Stack>
+      {/* <WriteBoardModal /> */}
       <DataListTable
         columns={columns}
         rows={boards || []}

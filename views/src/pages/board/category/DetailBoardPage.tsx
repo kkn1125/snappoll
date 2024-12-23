@@ -1,8 +1,10 @@
 import { deleteBoard } from '@/apis/board/deleteBoard';
+import { deleteBoardForce } from '@/apis/board/deleteBoardForce';
 import { getBoardCategoryOne } from '@/apis/board/getBoardCategoryOne';
 import { validateBoardPassword } from '@/apis/board/validateBoardPassword';
 import { Message } from '@common/messages';
 import CustomInput from '@components/atoms/CustomInput';
+import SunEditorContent from '@components/atoms/SunEditorContent';
 import useModal from '@hooks/useModal';
 import useToken from '@hooks/useToken';
 import useValidate from '@hooks/useValidate';
@@ -32,7 +34,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 
 interface DetailBoardPageProps {}
 const DetailBoardPage: React.FC<DetailBoardPageProps> = () => {
-  const { user } = useToken();
+  const { isMaster, user } = useToken();
   const navigate = useNavigate();
   const { openModal, openInteractiveModal } = useModal();
   const { category, id } = useParams();
@@ -107,6 +109,31 @@ const DetailBoardPage: React.FC<DetailBoardPageProps> = () => {
     },
   });
 
+  const deleteForceMutation = useMutation({
+    mutationKey: ['deleteBoardForce'],
+    mutationFn: deleteBoardForce,
+    onSuccess(/* data, variables, context */) {
+      openInteractiveModal({
+        content: Message.Info.SuccessDelete,
+        callback: () => {
+          navigate(`/board/${board?.category}`);
+        },
+        closeCallback: () => {
+          navigate(`/board/${board?.category}`);
+        },
+      });
+    },
+    onError(error: AxiosError<AxiosException>, variables, context) {
+      openModal({
+        info: {
+          title: '안내',
+          content:
+            error.response?.data?.errorCode.message || '삭제에 실패했습니다.',
+        },
+      });
+    },
+  });
+
   const handleClearModal = useCallback(function () {
     setInfo({ password: '' });
     setShowModal('');
@@ -162,11 +189,15 @@ const DetailBoardPage: React.FC<DetailBoardPageProps> = () => {
   }
   function handleOpenRemoveModal(e: React.MouseEvent) {
     e.stopPropagation();
-    if (user && user.id === board?.userId) {
+    if (isMaster || (user && user.id === board?.userId)) {
       openInteractiveModal({
         content: Message.Single.Remove,
         callback: () => {
-          deleteMutation.mutate({ id, password: info.password });
+          if (isMaster) {
+            deleteForceMutation.mutate(id);
+          } else {
+            deleteMutation.mutate({ id, password: info.password });
+          }
         },
       });
     } else {
@@ -223,25 +254,26 @@ const DetailBoardPage: React.FC<DetailBoardPageProps> = () => {
           </Stack>
         </Paper>
       )}
-      {category === 'community' &&
-        (isGuestBoard || board?.userId === user?.id) && (
-          <Stack direction="row" gap={1}>
-            <Button
-              variant="outlined"
-              color="primary"
-              onClick={handleOpenEditModal}
-            >
-              수정
-            </Button>
-            <Button
-              variant="outlined"
-              color="error"
-              onClick={handleOpenRemoveModal}
-            >
-              삭제
-            </Button>
-          </Stack>
-        )}
+      {(isMaster ||
+        (category === 'community' &&
+          (isGuestBoard || board?.userId === user?.id))) && (
+        <Stack direction="row" gap={1} mb={1}>
+          <Button
+            variant="outlined"
+            color="primary"
+            onClick={handleOpenEditModal}
+          >
+            수정
+          </Button>
+          <Button
+            variant="outlined"
+            color="error"
+            onClick={handleOpenRemoveModal}
+          >
+            삭제
+          </Button>
+        </Stack>
+      )}
       <Stack gap={3}>
         <Stack>
           <Typography fontSize={24} fontWeight={700}>
@@ -252,12 +284,7 @@ const DetailBoardPage: React.FC<DetailBoardPageProps> = () => {
           </Typography>
         </Stack>
         <Divider flexItem />
-        <Box>
-          <Typography
-            fontWeight={500}
-            dangerouslySetInnerHTML={{ __html: board?.content || '' }}
-          ></Typography>
-        </Box>
+        <SunEditorContent content={board?.content} />
         <Divider flexItem />
         <Stack direction="row" gap={2} justifyContent="space-between">
           <Button

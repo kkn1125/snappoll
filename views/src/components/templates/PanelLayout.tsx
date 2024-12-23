@@ -28,8 +28,6 @@ const PanelLayout: React.FC<PanelLayoutProps> = ({ isCrew }) => {
 
   const isAdmin = user?.role === 'Admin';
 
-  if (!isAdmin) return <NotfoundPage />;
-
   return (
     <Stack height="inherit">
       {/* header */}

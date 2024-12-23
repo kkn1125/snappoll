@@ -106,6 +106,7 @@ const useToken = () => {
   }, [state.user]);
 
   return {
+    isMaster: state.user?.role === 'Admin',
     isCrew,
     user: state.user,
     verify: verifyMutate.mutate,

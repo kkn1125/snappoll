@@ -46,6 +46,7 @@ export class BoardsService {
           orderBy: { createdAt: 'desc' },
           take: eachAmount,
           skip: 0,
+          select: this.boardSelect,
         }),
       ),
     );
@@ -97,7 +98,7 @@ export class BoardsService {
       select: this.boardSelect,
     });
     const count = await this.prisma.board.count({
-      where: { category, isPrivate: false },
+      where: { category, deletedAt: null, isPrivate: false },
     });
     return { board: boards, count };
   }

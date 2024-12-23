@@ -1,6 +1,7 @@
 import { getBoardCategory } from '@/apis/board/getBoardCategory';
 import BoardItem from '@components/atoms/BoardItem';
 import CommonPagination from '@components/atoms/CommonPagination';
+import useToken from '@hooks/useToken';
 import { SnapBoard } from '@models/SnapBoard';
 import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
 import {
@@ -42,6 +43,7 @@ const CategoryBoardPage: React.FC<CategoryBoardPageProps> = ({
     queryKey: ['CategoryBoardPage', currentCategory, page, locate.pathname],
     queryFn: () => getBoardCategory(currentCategory),
   });
+  const { isMaster } = useToken();
   const board = data?.data?.board;
   const count = data?.data?.count || 0;
   const total = Math.ceil(count / 10);
@@ -67,7 +69,7 @@ const CategoryBoardPage: React.FC<CategoryBoardPageProps> = ({
 
   return (
     <Stack>
-      <Stack direction="row">
+      <Stack direction="row" mb={1}>
         <Button
           component={Link}
           to="/board"
@@ -78,7 +80,7 @@ const CategoryBoardPage: React.FC<CategoryBoardPageProps> = ({
       </Stack>
       <Stack direction="row" justifyContent="space-between" alignItems="center">
         <Typography fontSize={24}>{translate(currentCategory!)}</Typography>
-        {currentCategory === 'community' && (
+        {(isMaster || currentCategory === 'community') && (
           <Button
             component={Link}
             variant="outlined"
