@@ -1,6 +1,10 @@
 import { sidebarAtom } from '@/recoils/sidebar.atom';
 import { tokenAtom } from '@/recoils/token.atom';
-import { BRAND_NAME, DefaultProfile, logoImage } from '@common/variables';
+import {
+  BRAND_NAME,
+  DefaultProfile,
+  logoImage
+} from '@common/variables';
 import useScroll from '@hooks/useScroll';
 import MenuOpenRoundedIcon from '@mui/icons-material/MenuOpenRounded';
 import MenuRoundedIcon from '@mui/icons-material/MenuRounded';
@@ -22,6 +26,7 @@ import {
 } from '@mui/material';
 import { getServerProfileImage } from '@utils/getServerProfileImage';
 import {
+  memo,
   MouseEvent as ReactMouseEvent,
   useEffect,
   useMemo,
@@ -29,8 +34,6 @@ import {
 } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useRecoilState, useRecoilValue } from 'recoil';
-
-const headerBgChangePoint = 100;
 
 const menuList = [
   { name: 'SnapPoll이란?', to: '/about', allow: ['guest', 'user'] },
@@ -67,7 +70,7 @@ const Header: React.FC<HeaderProps> = ({ isCrew }) => {
   const locate = useLocation();
   const navigate = useNavigate();
   const [profileImage, setProfileImage] = useState('');
-  const { current } = useScroll();
+  const { isStart } = useScroll();
   const [sidebarState, setSidebarState] = useRecoilState(sidebarAtom);
   const { user } = useRecoilValue(tokenAtom);
   const theme = useTheme();
@@ -92,8 +95,8 @@ const Header: React.FC<HeaderProps> = ({ isCrew }) => {
   }
 
   const headerShadowActivate = useMemo(() => {
-    return current >= headerBgChangePoint;
-  }, [current]);
+    return !isStart;
+  }, [isStart]);
 
   useEffect(() => {
     function handleSidebarClose(e: MouseEvent) {
@@ -243,4 +246,4 @@ const Header: React.FC<HeaderProps> = ({ isCrew }) => {
   );
 };
 
-export default Header;
+export default memo(Header);

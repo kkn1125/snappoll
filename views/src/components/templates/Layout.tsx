@@ -1,6 +1,6 @@
 import { messageAtom } from '@/recoils/message.atom';
 import { sidebarAtom } from '@/recoils/sidebar.atom';
-import { BRAND_NAME, scrollSize } from '@common/variables';
+import { BRAND_NAME, scrollSize, SIDEBAR_WIDTH } from '@common/variables';
 import SnapBreadCrumbs from '@components/atoms/SnapBreadCrumbs';
 import SeoMetaTag from '@components/moleculars/SeoMetaTag';
 import Footer from '@components/organisms/Footer';
@@ -18,11 +18,6 @@ import DashboardIcon from '@mui/icons-material/Dashboard';
 import ForumIcon from '@mui/icons-material/Forum';
 import EventIcon from '@mui/icons-material/Event';
 import LiveHelpIcon from '@mui/icons-material/LiveHelp';
-
-const sidebarWidth = {
-  min: 56,
-  max: 250,
-};
 
 interface LayoutProps {
   isCrew?: boolean;
@@ -106,10 +101,10 @@ const Layout: React.FC<LayoutProps> = ({ isCrew = true }) => {
             sx={{
               width: '100%',
               maxWidth: sidebarOpened
-                ? sidebarWidth.max
+                ? SIDEBAR_WIDTH.MAX
                 : isMdDown
                   ? 0
-                  : sidebarWidth.min,
+                  : SIDEBAR_WIDTH.MIN,
               transition: '150ms ease-in-out',
               borderRight: '1px solid #eee',
               backgroundColor: '#fff',
@@ -132,10 +127,10 @@ const Layout: React.FC<LayoutProps> = ({ isCrew = true }) => {
               sx={{
                 width: '100%',
                 maxWidth: sidebarOpened
-                  ? sidebarWidth.max
+                  ? SIDEBAR_WIDTH.MAX
                   : isMdDown
                     ? 0
-                    : sidebarWidth.min,
+                    : SIDEBAR_WIDTH.MIN,
                 transition: '150ms ease-in-out',
                 borderRight: '1px solid #eee',
                 backgroundColor: '#fff',

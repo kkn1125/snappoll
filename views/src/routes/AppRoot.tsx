@@ -1,5 +1,6 @@
 import { VERSION } from '@common/variables';
 import Layout from '@components/templates/Layout';
+import PanelLayout from '@components/templates/PanelLayout';
 import ShareLayout from '@components/templates/ShareLayout';
 import useLoading from '@hooks/useLoading';
 import useLogger from '@hooks/useLogger';
@@ -193,7 +194,7 @@ const AppRoot: React.FC<AppRootProps> = () => {
         </Route>
       </Route>
 
-      <Route element={<Layout isCrew={isCrew} />}>
+      <Route element={<PanelLayout isCrew={isCrew} />}>
         <Route path="panel">
           <Route index element={<Panel />}></Route>
         </Route>

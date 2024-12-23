@@ -1,8 +1,9 @@
+// import { HEADER_CHANGE_POINT } from '@common/variables';
 import { useEffect, useState } from 'react';
 
 const useScroll = () => {
-  const [current, setCurrent] = useState(0);
-  const [isEnd, setIsEnd] = useState(false);
+  // const [current, setCurrent] = useState(0);
+  // const [isEnd, setIsEnd] = useState(false);
   const [isStart, setIsStart] = useState(true);
 
   useEffect(() => {
@@ -10,10 +11,12 @@ const useScroll = () => {
     function handleScroll(e: Event) {
       const target = e.target as HTMLElement;
       const max = target.scrollHeight - target.clientHeight;
-      const current = Math.ceil(target.scrollTop);
-      setIsStart(current === 0);
-      setIsEnd(current === max);
-      setCurrent(current);
+      const valueCurrent = Math.ceil(target.scrollTop);
+      const valueTop = valueCurrent === 0;
+      const valueBottom = valueCurrent === max;
+      setIsStart((isStart) => (isStart !== valueTop ? valueTop : isStart));
+      // setIsEnd((isEnd) => (isEnd !== valueBottom ? valueBottom : isEnd));
+      // setCurrent(valueCurrent);
     }
     main!.addEventListener('scroll', handleScroll);
     return () => {
@@ -21,7 +24,7 @@ const useScroll = () => {
     };
   }, []);
 
-  return { current, isEnd, isStart };
+  return { /* current, isEnd, */ isStart };
 };
 
 export default useScroll;

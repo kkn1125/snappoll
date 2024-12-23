@@ -6,20 +6,25 @@ import {
 import { ModalActionType } from '@providers/contexts/modalTypes';
 import React, { useCallback, useContext, useMemo } from 'react';
 
+export type OpenModalProps<T = void> = {
+  info: MessageTemplate;
+  slot?: React.ReactNode | null;
+  closeCallback?: () => T | Promise<T>;
+};
+
+export type OpenInteractiveModalProps<Q extends string, T = void> = {
+  slot?: React.ReactNode;
+  content: { title: string; content: Q | readonly Q[] } | Q | readonly Q[];
+  callback?: () => T | Promise<T>;
+  closeCallback?: () => T | Promise<T>;
+};
+
 const useModal = () => {
   const modalState = useContext(ModalContext);
   const modalDispatch = useContext(ModalDispatchContext);
 
   const openModal = useCallback(
-    function <T>({
-      info,
-      slot,
-      closeCallback,
-    }: {
-      info: MessageTemplate;
-      slot?: React.ReactNode;
-      closeCallback?: () => T | Promise<T>;
-    }) {
+    function <T = void>({ info, slot, closeCallback }: OpenModalProps<T>) {
       const concatContent = [];
       if (info.content instanceof Array) {
         concatContent.push(...info.content);
@@ -43,12 +48,7 @@ const useModal = () => {
       content,
       callback,
       closeCallback,
-    }: {
-      slot?: React.ReactNode;
-      content: { title: string; content: Q | readonly Q[] } | Q | readonly Q[];
-      callback?: () => T | Promise<T>;
-      closeCallback?: () => T | Promise<T>;
-    }) {
+    }: OpenInteractiveModalProps<Q, T>) {
       const concatContent = [];
       let title = '';
       if (

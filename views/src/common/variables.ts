@@ -38,3 +38,9 @@ export const userDisallowPaths = /\/(auth)\/?(.*)/;
 export const scrollSize = 5;
 
 export const UnknownName = '익명';
+
+export const HEADER_CHANGE_POINT = 50;
+export const SIDEBAR_WIDTH = {
+  MIN: 56,
+  MAX: 250,
+};

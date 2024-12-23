@@ -14,7 +14,7 @@ const reducer = (state: ModalInitialValue, action: ModalReducerAction) => {
       newState['open'] = true;
       if (action.title) newState['title'] = action.title;
       if (action.content) newState['content'] = action.content;
-      if (action.slot) newState['slot'] = action.slot;
+      if (action.slot !== undefined) newState['slot'] = action.slot;
       if (action.closeCallback)
         newState['closeCallback'] = action.closeCallback;
       return newState;
@@ -25,7 +25,7 @@ const reducer = (state: ModalInitialValue, action: ModalReducerAction) => {
       newState['open'] = true;
       if (action.title) newState['title'] = action.title;
       if (action.content) newState['content'] = action.content;
-      if (action.slot) newState['slot'] = action.slot;
+      if (action.slot !== undefined) newState['slot'] = action.slot;
       if (action.callback) newState['callback'] = action.callback;
       if (action.closeCallback)
         newState['closeCallback'] = action.closeCallback;

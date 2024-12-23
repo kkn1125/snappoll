@@ -2,10 +2,19 @@ import { updateBoard } from '@/apis/board/updateBoard';
 import { writeBoard } from '@/apis/board/writeBoard';
 import { Message } from '@common/messages';
 import CustomInput from '@components/atoms/CustomInput';
-import useModal from '@hooks/useModal';
+import useModal, { OpenModalProps } from '@hooks/useModal';
 import useToken from '@hooks/useToken';
 import useValidate from '@hooks/useValidate';
-import { Box, Button, Divider, FormHelperText, Stack } from '@mui/material';
+import {
+  Box,
+  Button,
+  Divider,
+  FormHelperText,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
+  Stack,
+} from '@mui/material';
 import { useMutation } from '@tanstack/react-query';
 import { Logger } from '@utils/Logger';
 import { AxiosError } from 'axios';
@@ -30,14 +39,16 @@ interface WriteBoardProps {
   category: string;
   password?: string;
 }
-interface WriteBoardPageProps {}
-const WriteBoardPage: React.FC<WriteBoardPageProps> = () => {
+interface WriteBoardPageProps {
+  control?: boolean;
+}
+const WriteBoardPage: React.FC<WriteBoardPageProps> = ({ control = false }) => {
   const navigate = useNavigate();
 
   const { state } = useLocation();
   const board = state?.board;
   const isGuestBoard = !board?.userId;
-
+  console.log(board);
   const [data, setData] = useState<WriteBoardProps>({
     title: '',
     content: '',
@@ -53,12 +64,16 @@ const WriteBoardPage: React.FC<WriteBoardPageProps> = () => {
     mutationKey: ['writeBoard'],
     mutationFn: writeBoard,
     onSuccess(data, variables, context) {
-      openModal({
+      const modalOption: OpenModalProps = {
         info: Message.Info.SuccessWrite,
-        closeCallback: () => {
-          navigate('/board/community');
-        },
-      });
+        slot: null,
+      };
+      if (!control) {
+        modalOption.closeCallback = () => {
+          navigate(`/board/${data.category}`);
+        };
+      }
+      openModal(modalOption);
     },
     onError(error: AxiosError<AxiosException>, variables, context) {
       openModal({
@@ -73,12 +88,17 @@ const WriteBoardPage: React.FC<WriteBoardPageProps> = () => {
     mutationKey: ['updateBoard'],
     mutationFn: updateBoard,
     onSuccess(data, variables, context) {
-      openModal({
+      const modalOption: OpenModalProps = {
         info: Message.Info.SuccessUpdate,
-        closeCallback: () => {
-          navigate(`/board/community/${board.id}`);
-        },
-      });
+        slot: null,
+      };
+      if (!control) {
+        modalOption.closeCallback = () => {
+          navigate(`/board/${board.category}/${board.id}`);
+        };
+      }
+
+      openModal(modalOption);
     },
     onError(error: AxiosError<AxiosException>, variables, context) {
       logger.error(error);
@@ -108,6 +128,10 @@ const WriteBoardPage: React.FC<WriteBoardPageProps> = () => {
     const name = e.target.name;
     const value = e.target.value;
     setData((data) => ({ ...data, [name]: value }));
+  }
+
+  function handleSelectChange(e: SelectChangeEvent) {
+    setData((data) => ({ ...data, [e.target.name]: e.target.value }));
   }
 
   function handleSubmit(e: FormEvent) {
@@ -145,10 +169,23 @@ const WriteBoardPage: React.FC<WriteBoardPageProps> = () => {
         autoFocus
         autoComplete="username"
         onChange={handleChange}
-        value={data['title']}
+        value={data['title'] || ''}
         errors={errors}
         sx={{ ['.MuiInputBase-input']: { fontSize: 26 } }}
       />
+      {control && (
+        <Select
+          name="category"
+          value={data['category'] || 'community'}
+          size="small"
+          onChange={handleSelectChange}
+        >
+          <MenuItem value="notice">공지사항</MenuItem>
+          <MenuItem value="community">커뮤니티</MenuItem>
+          <MenuItem value="event">이벤트</MenuItem>
+          <MenuItem value="faq">FAQ</MenuItem>
+        </Select>
+      )}
       <Box sx={{ py: 1 }} />
       <Stack
         sx={{

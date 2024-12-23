@@ -10,7 +10,7 @@ import { ReactElement } from 'react';
 interface DataListTableProps<T, Q> {
   rows: T[];
   columns: Q[];
-  getActions: (
+  getActions?: (
     params: GridRowParams<any>,
   ) => readonly ReactElement<GridActionsCellItemProps>[];
 }
@@ -18,19 +18,24 @@ const DataListTable = function <
   T extends GridValidRowModel,
   Q extends GridColDef,
 >({ rows, columns, getActions }: DataListTableProps<T, Q>) {
+  const withActionColumns = (
+    getActions
+      ? [
+          ...columns,
+          {
+            field: 'actions',
+            type: 'actions',
+            headerName: 'Actions',
+            width: 150,
+            getActions,
+          },
+        ]
+      : columns
+  ) as Q[];
   return (
     <DataGrid
       rows={rows}
-      columns={[
-        ...columns,
-        {
-          field: 'actions',
-          type: 'actions',
-          headerName: 'Actions',
-          width: 100,
-          getActions,
-        },
-      ]}
+      columns={withActionColumns}
       initialState={{
         pagination: {
           paginationModel: {

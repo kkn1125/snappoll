@@ -9,6 +9,7 @@ import SnapLogger from '@utils/SnapLogger';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserPasswordDto } from './dto/update-user-password.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { snakeToCamel } from '@utils/snakeToCamel';
 
 @Injectable()
 export class UsersService {
@@ -120,7 +121,7 @@ export class UsersService {
           TABLE_NAME = 'user'
         ORDER BY
           ORDINAL_POSITION;`) as { column: string }[];
-    const columns = columnList.map(({ column }) => column);
+    const columns = columnList.map(({ column }) => snakeToCamel(column));
     const users = await this.prisma.user.findMany({
       skip: (page - 1) * 10,
       take: 10,

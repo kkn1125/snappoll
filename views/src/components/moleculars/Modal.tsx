@@ -75,17 +75,19 @@ const Modal: React.FC<ModalProps> = () => {
             component={Stack}
             p={3}
             minWidth={{ xs: '80vw', md: '20vw' }}
-            maxWidth={{ xs: '90vw', md: '30vw' }}
+            maxWidth={{ xs: '90vw', md: '40vw' }}
+            maxHeight={{ xs: '90vh', md: '80vh' }}
             gap={3}
             sx={{
               position: 'absolute',
-              top: '20vh',
+              top: '10vh',
               left: '50%',
               transform: 'translate(-50%, 0%)',
               zIndex: 1150,
               ...(highlight && {
                 animation: `${shake} 200ms ease-in`,
               }),
+              overflow: 'auto',
             }}
           >
             <Stack gap={1}>

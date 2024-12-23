@@ -17,6 +17,7 @@ import { CreateBoardDto } from './dto/create-board.dto';
 import { UpdateBoardDto } from './dto/update-board.dto';
 import { Request } from 'express';
 import { Throttle } from '@nestjs/throttler';
+import { Roles } from '@auth/roles.decorator';
 
 @Controller('boards')
 export class BoardsController {
@@ -40,7 +41,6 @@ export class BoardsController {
     return this.boardsService.create(createBoardDto, isUser);
   }
 
-  @IgnoreCookie()
   @Get()
   findAll() {
     return this.boardsService.findAll();
@@ -93,5 +93,11 @@ export class BoardsController {
   ) {
     const isUser = !!req.user;
     return this.boardsService.remove(id, password, isUser);
+  }
+
+  @Roles(['Admin'])
+  @Put(':id')
+  removeForce(@Req() req: Request, @Param('id') id: string) {
+    return this.boardsService.removeForce(id);
   }
 }

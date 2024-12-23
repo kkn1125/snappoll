@@ -7,9 +7,12 @@ import {
 import { Board, Prisma } from '@prisma/client';
 import { CreateBoardDto } from './dto/create-board.dto';
 import { UpdateBoardDto } from './dto/update-board.dto';
+import SnapLogger from '@utils/SnapLogger';
+import { snakeToCamel } from '@utils/snakeToCamel';
 
 @Injectable()
 export class BoardsService {
+  logger = new SnapLogger(this);
   boardSelect: Prisma.BoardSelect = {
     id: true,
     userId: true,
@@ -22,6 +25,7 @@ export class BoardsService {
     isPrivate: true,
     createdAt: true,
     updatedAt: true,
+    deletedAt: true,
     author: {
       select: {
         id: true,
@@ -55,17 +59,21 @@ export class BoardsService {
   }
 
   async findAll(page: number = 1) {
+    const columnList = (await this.prisma.$queryRaw`
+      SELECT COLUMN_NAME column FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'board' ORDER BY ORDINAL_POSITION;
+    `) as { column: string }[];
+    const columns = columnList
+      .filter(({ column }) => column !== 'password')
+      .map(({ column }) => snakeToCamel(column));
+    this.logger.info('column names:', columns);
     const boards = await this.prisma.board.findMany({
-      where: { deletedAt: null },
       take: 10,
       skip: (page - 1) * 10,
       orderBy: { createdAt: 'desc' },
       select: this.boardSelect,
     });
-    const count = await this.prisma.board.count({
-      where: { deletedAt: null, isPrivate: false },
-    });
-    return { board: boards, count };
+    const count = await this.prisma.board.count();
+    return { columns, boards, count };
   }
 
   async findCategoryOne(category: string, id: string) {
@@ -181,6 +189,19 @@ export class BoardsService {
         const errorCode = await this.prisma.getErrorCode('board', 'Forbidden');
         throw new ForbiddenException(errorCode);
       }
+    }
+
+    return this.prisma.board.update({
+      where: { id },
+      data: { deletedAt: new Date() },
+    });
+  }
+
+  async removeForce(id: string) {
+    const board = await this.prisma.board.findUnique({ where: { id } });
+    if (!board) {
+      const errorCode = await this.prisma.getErrorCode('board', 'NotFound');
+      throw new NotFoundException(errorCode);
     }
 
     return this.prisma.board.update({

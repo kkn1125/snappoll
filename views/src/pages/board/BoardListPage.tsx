@@ -1,6 +1,7 @@
 import { getBoardList } from '@/apis/board/getBoardList';
 import { SnapBoard } from '@models/SnapBoard';
 import {
+  Button,
   Chip,
   List,
   ListItem,
@@ -16,6 +17,7 @@ import { getUsernameOr } from '@utils/getUsernameOr';
 import { translate } from '@utils/translate';
 import { useCallback } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
 
 interface BoardListPageProps {}
 const BoardListPage: React.FC<BoardListPageProps> = () => {
@@ -44,18 +46,22 @@ const BoardListPage: React.FC<BoardListPageProps> = () => {
     <Stack gap={2}>
       {boardKeys.map((key) => (
         <Stack key={key} component={Paper} p={3}>
-          <Typography
-            fontSize={20}
-            fontWeight={700}
-            sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
+          <Stack
+            direction="row"
+            justifyContent="space-between"
+            alignItems="center"
           >
-            {translate(key)}{' '}
-            <Chip
-              size="small"
-              color={boardObject?.[key].length ? 'info' : 'default'}
-              label={boardObject?.[key].length || 0}
-            />
-          </Typography>
+            <Typography fontSize={20} fontWeight={700}>
+              {translate(key)}
+            </Typography>
+            <Button
+              component={Link}
+              to={`/board/${key}`}
+              endIcon={<KeyboardBackspaceIcon sx={{ rotate: '180deg' }} />}
+            >
+              더 보기
+            </Button>
+          </Stack>
           <List>
             {(!boardObject?.[key] || boardObject?.[key].length === 0) && (
               <ListItem>

@@ -2,6 +2,7 @@ import { getBoardCategory } from '@/apis/board/getBoardCategory';
 import BoardItem from '@components/atoms/BoardItem';
 import CommonPagination from '@components/atoms/CommonPagination';
 import { SnapBoard } from '@models/SnapBoard';
+import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
 import {
   Button,
   List,
@@ -66,6 +67,15 @@ const CategoryBoardPage: React.FC<CategoryBoardPageProps> = ({
 
   return (
     <Stack>
+      <Stack direction="row">
+        <Button
+          component={Link}
+          to="/board"
+          startIcon={<KeyboardBackspaceIcon />}
+        >
+          목록으로
+        </Button>
+      </Stack>
       <Stack direction="row" justifyContent="space-between" alignItems="center">
         <Typography fontSize={24}>{translate(currentCategory!)}</Typography>
         {currentCategory === 'community' && (
