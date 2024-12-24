@@ -3,6 +3,7 @@ import {
   default as ProtectedRoute,
   default as ProtectedRouted,
 } from '@components/organisms/ProtectedRoute';
+import AuthSignLayout from '@components/templates/AuthSignLayout';
 import Layout from '@components/templates/Layout';
 import PanelLayout from '@components/templates/PanelLayout';
 import ShareLayout from '@components/templates/ShareLayout';
@@ -93,7 +94,7 @@ const AppRoot: React.FC<AppRootProps> = () => {
 
   return (
     <Routes>
-      <Route element={<Layout isCrew={isCrew} />}>
+      <Route element={<Layout />}>
         <Route index element={isCrew ? <HomePage /> : <GuestHomePage />} />
         <Route path="price" element={<Subscribe />} />
         <Route path="notice" element={<NoticePage />} />
@@ -103,8 +104,10 @@ const AppRoot: React.FC<AppRootProps> = () => {
 
         <Route path="auth" element={<ProtectedRouted roles={['Guest']} />}>
           <Route index element={<AuthPage />} />
-          <Route path="login" element={<LoginPage />} />
-          <Route path="signup" element={<SignupPage />} />
+          <Route element={<AuthSignLayout />}>
+            <Route path="login" element={<LoginPage />} />
+            <Route path="signup" element={<SignupPage />} />
+          </Route>
           <Route path="account" element={<AccountPage />} />
         </Route>
 

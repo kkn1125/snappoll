@@ -42,6 +42,7 @@ const GuestHomePage: React.FC<GuestHomePageProps> = () => {
             fontSize={32}
             fontWeight={700}
             gutterBottom
+            color="black"
           >
             간편한 모두의 설문조사
           </Typography>
@@ -51,6 +52,7 @@ const GuestHomePage: React.FC<GuestHomePageProps> = () => {
             maxWidth={500}
             align="center"
             fontWeight={500}
+            color="black"
             sx={{ whiteSpace: 'balance' }}
           >
             쉽고 간편하게 만들어 공유하는 설문조사.
@@ -60,6 +62,7 @@ const GuestHomePage: React.FC<GuestHomePageProps> = () => {
             maxWidth={500}
             align="center"
             fontWeight={500}
+            color="black"
             sx={{ whiteSpace: 'balance' }}
           >
             설문 결과도 그래프로 간편하게 보세요!

@@ -18,18 +18,19 @@ import DashboardIcon from '@mui/icons-material/Dashboard';
 import ForumIcon from '@mui/icons-material/Forum';
 import EventIcon from '@mui/icons-material/Event';
 import LiveHelpIcon from '@mui/icons-material/LiveHelp';
+import useToken from '@hooks/useToken';
 
-interface LayoutProps {
-  isCrew?: boolean;
-}
-const Layout: React.FC<LayoutProps> = ({ isCrew = true }) => {
+interface LayoutProps {}
+const Layout: React.FC<LayoutProps> = () => {
   const message = useRecoilValue(messageAtom);
   const sidebarState = useRecoilValue(sidebarAtom);
   const theme = useTheme();
   const isMdDown = useMediaQuery(theme.breakpoints.down('md'));
   const sidebarOpened = isMdDown ? !sidebarState.opened : sidebarState.opened;
   const locate = useLocation();
+  const { isCrew } = useToken();
   const isMain = !isCrew && locate.pathname === '/';
+  const isAuth = !isCrew && locate.pathname.startsWith('/auth');
   const boardPath = locate.pathname.startsWith('/board');
   const canonical = useMemo(() => {
     return location.origin + locate.pathname;
@@ -90,8 +91,12 @@ const Layout: React.FC<LayoutProps> = ({ isCrew = true }) => {
         image="/favicon/apple-touch-icon.png"
       />
       {/* header */}
-      <Header />
-      <Toolbar />
+      {!isAuth && (
+        <>
+          <Header />
+          <Toolbar />
+        </>
+      )}
       <Stack direction="row" flex={1} position="relative" overflow="hidden">
         {/* Sidebar */}
         {boardPath ? (
@@ -107,7 +112,7 @@ const Layout: React.FC<LayoutProps> = ({ isCrew = true }) => {
                   : SIDEBAR_WIDTH.MIN,
               transition: '150ms ease-in-out',
               borderRight: '1px solid #eee',
-              backgroundColor: '#fff',
+              backgroundColor: (theme) => theme.palette.background.paper,
               ...(isMdDown && {
                 position: 'absolute',
                 zIndex: 5,
@@ -133,7 +138,7 @@ const Layout: React.FC<LayoutProps> = ({ isCrew = true }) => {
                     : SIDEBAR_WIDTH.MIN,
                 transition: '150ms ease-in-out',
                 borderRight: '1px solid #eee',
-                backgroundColor: '#fff',
+                backgroundColor: (theme) => theme.palette.background.paper,
                 ...(isMdDown && {
                   position: 'absolute',
                   zIndex: 5,
@@ -153,7 +158,7 @@ const Layout: React.FC<LayoutProps> = ({ isCrew = true }) => {
           id="main"
           flex={1}
           overflow="auto"
-          p={isMain ? 0 : 2}
+          p={isMain || isAuth ? 0 : 2}
           sx={{
             ['&::-webkit-scrollbar']: {
               width: scrollSize,
@@ -170,13 +175,11 @@ const Layout: React.FC<LayoutProps> = ({ isCrew = true }) => {
           }}
         >
           {isCrew && <SnapBreadCrumbs />}
-          {!isMain && <Box minHeight={20} maxHeight={20} />}
           <Outlet />
-          <Toolbar />
         </Stack>
       </Stack>
       {/* footer */}
-      <Footer />
+      {!isAuth && <Footer />}
     </Stack>
   );
 };

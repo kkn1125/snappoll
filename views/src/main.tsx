@@ -19,6 +19,7 @@ import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import { RecoilRoot } from 'recoil';
 import { HelmetProvider } from 'react-helmet-async';
+import ThemeModeProvider from '@providers/ThemeModeProvider';
 
 const skyColor = '#98cfff';
 const skyColorMain = alpha(skyColor, 0.7);
@@ -27,33 +28,33 @@ const skyColorDark = alpha(skyColor, 0.9);
 const skyColorContrastText =
   getContrastRatio(skyColorMain, '#fff') > 4.5 ? '#fff' : '#111';
 
-const darkTheme = createTheme({
-  components: {
-    MuiTypography: {
-      defaultProps: {
-        component: 'div',
-        fontWeight: 700,
-      },
-    },
-    MuiButton: {
-      defaultProps: {
-        sx: { fontWeight: 700 },
-      },
-    },
-  },
-  palette: {
-    mode: 'light',
-    sky: {
-      main: skyColorMain,
-      dark: skyColorDark,
-      light: skyColorLight,
-      contrastText: skyColorContrastText,
-    },
-  },
-  typography: {
-    fontFamily: "'Noto Sans KR', 'Nanum', 'Montserrat', 'moneyg', 'Maruburi'",
-  },
-});
+// const darkTheme = createTheme({
+//   components: {
+//     MuiTypography: {
+//       defaultProps: {
+//         component: 'div',
+//         fontWeight: 700,
+//       },
+//     },
+//     MuiButton: {
+//       defaultProps: {
+//         sx: { fontWeight: 700 },
+//       },
+//     },
+//   },
+//   palette: {
+//     mode: 'light',
+//     sky: {
+//       main: skyColorMain,
+//       dark: skyColorDark,
+//       light: skyColorLight,
+//       contrastText: skyColorContrastText,
+//     },
+//   },
+//   typography: {
+//     fontFamily: "'Noto Sans KR', 'Nanum', 'Montserrat', 'moneyg', 'Maruburi'",
+//   },
+// });
 
 const queryClient = new QueryClient();
 
@@ -67,7 +68,7 @@ declare module 'react' {
 const helmetContext = {};
 
 createRoot(document.getElementById('root')!).render(
-  <ThemeProvider theme={darkTheme}>
+  <ThemeModeProvider>
     <RecoilRoot>
       {/* <AuthProvider> */}
       <SocketLayout>
@@ -93,5 +94,5 @@ createRoot(document.getElementById('root')!).render(
       </SocketLayout>
       {/* </AuthProvider> */}
     </RecoilRoot>
-  </ThemeProvider>,
+  </ThemeModeProvider>,
 );

@@ -2,6 +2,7 @@ import { sidebarAtom } from '@/recoils/sidebar.atom';
 import { BRAND_NAME, logoImage } from '@common/variables';
 import ProfileAvatar from '@components/atoms/ProfileAvatar';
 import useScroll from '@hooks/useScroll';
+import useThemeMode from '@hooks/useThemeMode';
 import useToken from '@hooks/useToken';
 import MenuOpenRoundedIcon from '@mui/icons-material/MenuOpenRounded';
 import MenuRoundedIcon from '@mui/icons-material/MenuRounded';
@@ -31,7 +32,7 @@ import { useRecoilState } from 'recoil';
 
 const menuList = [
   { name: 'SnapPoll이란?', to: '/about', allow: ['Guest', 'User', 'Admin'] },
-  { name: '가격', to: '/price', allow: ['Guest', 'User', 'Admin'] },
+  { name: '요금제', to: '/price', allow: ['Guest', 'User', 'Admin'] },
   { name: '게시판', to: '/board', allow: ['Guest', 'User', 'Admin'] },
   { name: '서비스', to: '/service', allow: ['User', 'Admin'] },
   {

@@ -1,17 +1,11 @@
-import { login } from '@apis/login';
 import { tokenAtom } from '@/recoils/token.atom';
+import { login } from '@apis/login';
 import { Message } from '@common/messages';
 import CustomInput from '@components/atoms/CustomInput';
 import useModal from '@hooks/useModal';
 import useValidate from '@hooks/useValidate';
-import {
-  Button,
-  Container,
-  Divider,
-  Stack,
-  Toolbar,
-  Typography,
-} from '@mui/material';
+import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
+import { Button, Divider, IconButton, Stack, Typography } from '@mui/material';
 import { useMutation } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import {
@@ -24,7 +18,6 @@ import {
 } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
-
 
 interface LoginPageProps {}
 const LoginPage: React.FC<LoginPageProps> = () => {
@@ -107,19 +100,25 @@ const LoginPage: React.FC<LoginPageProps> = () => {
   const memoErrors = useMemo(() => errors, [errors]);
 
   return (
-    <Container component={Stack} maxWidth="sm" gap={2}>
-      <Toolbar />
+    <Stack gap={2} flex={1} alignItems="center" justifyContent="center">
       <Stack
         component="form"
         gap={2}
         onSubmit={handleSubmit}
         noValidate
+        width="50%"
         // onChange={onFormChange}
       >
-        <Typography fontSize={32} fontWeight={700} align="center">
-          로그인
-        </Typography>
+        <Stack direction="row">
+          <IconButton size="large" color="inherit" onClick={() => navigate(-1)}>
+            <ArrowBackIosIcon />
+          </IconButton>
+          <Typography fontSize={32} fontWeight={700} align="center">
+            로그인
+          </Typography>
+        </Stack>
         <CustomInput
+          size="small"
           autoFocus
           label="Email"
           name="email"
@@ -130,6 +129,7 @@ const LoginPage: React.FC<LoginPageProps> = () => {
           onChange={onChange}
         />
         <CustomInput
+          size="small"
           label="Password"
           name="password"
           type="password"
@@ -139,19 +139,22 @@ const LoginPage: React.FC<LoginPageProps> = () => {
           onChange={onChange}
         />
 
-        <Divider />
         <Button variant="contained" size="large" type="submit">
           로그인
         </Button>
-        <Button
-          component={Link}
-          variant="outlined"
-          size="large"
-          to="/auth/signup"
-          color="warning"
-        >
-          계정이 없어요
+        <Button component={Link} size="large" to="/auth/signup">
+          스냅폴이 처음인가요?
         </Button>
+        <Divider />
+        <Typography
+          component={Link}
+          to="/auth/account"
+          color="textSecondary"
+          sx={{ textDecoration: 'none' }}
+        >
+          비밀번호를 잊으셨나요?
+        </Typography>
+
         <Button
           component={Link}
           variant="outlined"
@@ -162,8 +165,7 @@ const LoginPage: React.FC<LoginPageProps> = () => {
           메인으로
         </Button>
       </Stack>
-      <Toolbar />
-    </Container>
+    </Stack>
   );
 };
 

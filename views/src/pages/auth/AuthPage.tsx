@@ -62,6 +62,8 @@ const AuthPage: React.FC<AuthPageProps> = () => {
                 display: 'flex',
                 alignItems: 'center',
                 color: 'rgba(0, 0, 0, 0.85)',
+                fontSize: 18,
+                fontWeight: 700,
               }}
               onClick={handleRedirectKakaoLogin}
             >
@@ -97,7 +99,7 @@ const AuthPage: React.FC<AuthPageProps> = () => {
               color="textSecondary"
               sx={{ textDecoration: 'none' }}
             >
-              계정 찾기
+              비밀번호를 잊으셨나요?
             </Typography>
             <Divider flexItem orientation="vertical" />
             <Typography

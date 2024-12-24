@@ -177,11 +177,17 @@ export class CookieGuard implements CanActivate {
       });
       this.logger.debug('토큰 재발급 완료');
     } catch (error) {
+      const decoded = jwt.decode(req.cookies.refresh) as JwtPayload;
       this.logger.debug(error.name, error.message);
       this.logger.debug('invalid refresh token!');
       this.clearCookies(res);
       /* 리프레시 만료 시 마지막 로그인 시간 기록 */
-      this.authService.lastLogin(req.user.id);
+      if (decoded) {
+        const user = await this.authService.getMe(decoded.email);
+        if (user) {
+          this.authService.lastLogin(user.id);
+        }
+      }
       const errorCode = await this.authService.prisma.getErrorCode(
         'auth',
         'ExpiredRefreshToken',

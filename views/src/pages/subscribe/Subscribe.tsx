@@ -10,7 +10,6 @@ const Subscribe: React.FC<SubscribeProps> = () => {
   >({ queryKey: ['plans'], queryFn: getPlans });
   const plans = data?.data.plans;
   const subscribers = data?.data.subscribers;
-  console.log(plans);
 
   return (
     <Container sx={{ flex: 1 }}>

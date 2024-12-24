@@ -4,6 +4,7 @@ import { Message } from '@common/messages';
 import CustomInput from '@components/atoms/CustomInput';
 import useModal from '@hooks/useModal';
 import useValidate from '@hooks/useValidate';
+import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import AutorenewIcon from '@mui/icons-material/Autorenew';
 import CasinoIcon from '@mui/icons-material/Casino';
 import ForwardToInboxIcon from '@mui/icons-material/ForwardToInbox';
@@ -12,12 +13,10 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import {
   Button,
-  Container,
   Divider,
   IconButton,
   keyframes,
   Stack,
-  Toolbar,
   Tooltip,
   Typography,
 } from '@mui/material';
@@ -179,6 +178,7 @@ const SignupPage: React.FC<SignupPageProps> = () => {
     return (
       <Stack direction="row" gap={2} flexWrap="wrap">
         <CustomInput
+          size="small"
           autoFocus
           disabled={pendingValidate || emailValidated}
           label="Email"
@@ -226,6 +226,7 @@ const SignupPage: React.FC<SignupPageProps> = () => {
     return (
       <Stack position="relative">
         <CustomInput
+          size="small"
           label="Username"
           name="username"
           type="username"
@@ -260,6 +261,7 @@ const SignupPage: React.FC<SignupPageProps> = () => {
     return (
       <Stack position="relative">
         <CustomInput
+          size="small"
           label="Password"
           name="password"
           type={!visible.password ? 'password' : 'text'}
@@ -287,6 +289,7 @@ const SignupPage: React.FC<SignupPageProps> = () => {
     return (
       <Stack position="relative">
         <CustomInput
+          size="small"
           label="Check Password"
           name="checkPassword"
           type={!visible.checkPassword ? 'password' : 'text'}
@@ -315,43 +318,81 @@ const SignupPage: React.FC<SignupPageProps> = () => {
   }, [signupInfo.checkPassword, visible.checkPassword, errors.checkPassword]);
 
   return (
-    <Container component={Stack} maxWidth="sm" gap={2}>
-      <Toolbar />
-      <Stack component="form" gap={2} onSubmit={handleSubmit} noValidate>
-        <Typography fontSize={32} fontWeight={700} align="center">
-          회원가입
-        </Typography>
+    <Stack gap={2} flex={1} alignItems="center" justifyContent="center">
+      <Stack
+        component="form"
+        gap={2}
+        onSubmit={handleSubmit}
+        noValidate
+        width="50%"
+      >
+        <Stack direction="row">
+          <IconButton size="large" color="inherit" onClick={() => navigate(-1)}>
+            <ArrowBackIosIcon />
+          </IconButton>
+          <Typography fontSize={32} fontWeight={700} align="center">
+            회원가입
+          </Typography>
+        </Stack>
         {emailComponent}
         {usernameComponent}
         {passwordComponent}
         {checkPasswordComponent}
-        <Divider />
-        <Button variant="contained" size="large" type="submit">
+        <Button
+          variant="contained"
+          size="large"
+          type="submit"
+          sx={{ fontSize: 18, fontWeight: 700 }}
+        >
           회원가입
         </Button>
-        <Button
-          component={Link}
-          variant="outlined"
-          size="large"
-          to="/auth/login"
-          reloadDocument
-          color="success"
-        >
-          이미 계정이 있어요
-        </Button>
+
+        <Typography>
+          계정을 생성하면{' '}
+          <Typography
+            component={Link}
+            to="/auth/login"
+            fontWeight={700}
+            sx={{ textDecoration: 'none' }}
+          >
+            서비스 약관
+          </Typography>{' '}
+          및{' '}
+          <Typography
+            component={Link}
+            to="/auth/login"
+            fontWeight={700}
+            sx={{ textDecoration: 'none' }}
+          >
+            개인정보 취급방침
+          </Typography>
+          에 동의하는 것으로 간주됩니다.
+        </Typography>
+
+        <Typography>
+          이미 계정이 있으신가요?{' '}
+          <Typography
+            component={Link}
+            color="info"
+            to="/auth/login"
+            fontWeight={700}
+            sx={{ textDecoration: 'none' }}
+          >
+            여기를 눌러주세요.
+          </Typography>
+        </Typography>
+        <Divider />
         <Button
           component={Link}
           variant="outlined"
           size="large"
           to="/"
-          reloadDocument
           color="inherit"
         >
           메인으로
         </Button>
       </Stack>
-      <Toolbar />
-    </Container>
+    </Stack>
   );
 };
 
