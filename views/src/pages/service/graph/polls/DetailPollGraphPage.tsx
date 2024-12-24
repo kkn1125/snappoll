@@ -1,4 +1,4 @@
-import { getPoll } from '@/apis/poll/getPoll';
+import { getPoll } from '@apis/poll/getPoll';
 import CorrelationChart from '@components/organisms/CorrelationChart';
 import { SnapPoll } from '@models/SnapPoll';
 import { SnapPollQuestion } from '@models/SnapPollQuestion';

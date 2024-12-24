@@ -1,4 +1,4 @@
-import { login } from '@/apis/login';
+import { login } from '@apis/login';
 import { tokenAtom } from '@/recoils/token.atom';
 import { Message } from '@common/messages';
 import CustomInput from '@components/atoms/CustomInput';
@@ -25,26 +25,6 @@ import {
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
 
-// const loginProcess = [
-//   {
-//     name: 'email',
-//     type: 'email',
-//     autoComplete: 'current-username',
-//     placeholder: 'Email',
-//     required: true,
-//     fullWidth: true,
-//     value: '',
-//   },
-//   {
-//     name: 'password',
-//     type: 'password',
-//     autoComplete: 'new-password',
-//     placeholder: 'Password',
-//     required: true,
-//     fullWidth: true,
-//     value: '',
-//   },
-// ] as Format[];
 
 interface LoginPageProps {}
 const LoginPage: React.FC<LoginPageProps> = () => {

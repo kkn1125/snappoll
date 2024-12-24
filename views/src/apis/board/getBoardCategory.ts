@@ -1,4 +1,4 @@
-import { snapApi } from '..';
+import { snapApi } from '@apis/index';
 
 export const getBoardCategory = async (category?: string) => {
   if (!category) return {};

@@ -20,6 +20,7 @@ import { WebsocketGateway } from '@websocket/websocket.gateway';
 import path from 'path';
 import { BasicModule } from './basic/basic.module';
 import { MailerModule } from './mailer/mailer.module';
+import { PlansModule } from './plans/plans.module';
 
 @Module({
   imports: [
@@ -56,6 +57,7 @@ import { MailerModule } from './mailer/mailer.module';
       exclude: ['/sitemap.xml'],
     }),
     BoardsModule,
+    PlansModule,
     // ViewsModule,
   ],
   controllers: [],

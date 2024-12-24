@@ -1,5 +1,5 @@
-import { createVote } from '@/apis/vote/create.vote';
-import { updateVote } from '@/apis/vote/updateVote';
+import { createVote } from '@apis/vote/create.vote';
+import { updateVote } from '@apis/vote/updateVote';
 import { Action } from '@/models/Action';
 import { snapVoteAtom } from '@/recoils/snapVote.atom';
 import { Message } from '@common/messages';

@@ -1,6 +1,6 @@
 {
   "name": "realtime-poll",
-  "version": "0.0.35",
+  "version": "0.0.36",
   "description": "SnapPoll은 사용자들이 설문을 쉽게 만들고 참여할 수 있는 플랫폼입니다.",
   "author": {
     "name": "devkimson",
@@ -45,6 +45,8 @@
     "@nestjs/websockets": "^10.4.12",
     "@prisma/client": "^6.1.0",
     "axios": "^1.7.9",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.1",
     "compression": "^1.7.5",
     "cookie-parser": "^1.4.7",
     "crypto-js": "^4.2.0",

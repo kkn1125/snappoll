@@ -1,14 +1,13 @@
 import { sidebarAtom } from '@/recoils/sidebar.atom';
-import { tokenAtom } from '@/recoils/token.atom';
-import { BRAND_NAME, DefaultProfile, logoImage } from '@common/variables';
+import { BRAND_NAME, logoImage } from '@common/variables';
 import ProfileAvatar from '@components/atoms/ProfileAvatar';
 import useScroll from '@hooks/useScroll';
+import useToken from '@hooks/useToken';
 import MenuOpenRoundedIcon from '@mui/icons-material/MenuOpenRounded';
 import MenuRoundedIcon from '@mui/icons-material/MenuRounded';
 import WidgetsIcon from '@mui/icons-material/Widgets';
 import {
   AppBar,
-  Avatar,
   Box,
   Button,
   IconButton,
@@ -16,12 +15,10 @@ import {
   MenuItem,
   Stack,
   Toolbar,
-  Tooltip,
   Typography,
   useMediaQuery,
   useTheme,
 } from '@mui/material';
-import { getServerProfileImage } from '@utils/getServerProfileImage';
 import {
   memo,
   MouseEvent as ReactMouseEvent,
@@ -30,33 +27,32 @@ import {
   useState,
 } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState } from 'recoil';
 
 const menuList = [
-  { name: 'SnapPoll이란?', to: '/about', allow: ['guest', 'user'] },
-  { name: '게시판', to: '/board', allow: ['guest', 'user'] },
-  { name: '서비스', to: '/service', allow: ['user'] },
+  { name: 'SnapPoll이란?', to: '/about', allow: ['Guest', 'User', 'Admin'] },
+  { name: '가격', to: '/price', allow: ['Guest', 'User', 'Admin'] },
+  { name: '게시판', to: '/board', allow: ['Guest', 'User', 'Admin'] },
+  { name: '서비스', to: '/service', allow: ['User', 'Admin'] },
   {
     name: (username?: string) => username,
     to: '/user',
-    allow: ['user'],
+    allow: ['User', 'Admin'],
     icon: (username?: string, profileImage?: string) => (
       <ProfileAvatar username={username} profileImage={profileImage} />
     ),
   },
-  { name: '회원가입/로그인', to: '/auth', allow: ['guest'] },
+  { name: '회원가입/로그인', to: '/auth', allow: ['Guest'] },
 ];
 
-interface HeaderProps {
-  isCrew: boolean;
-}
-const Header: React.FC<HeaderProps> = ({ isCrew }) => {
+interface HeaderProps {}
+const Header: React.FC<HeaderProps> = () => {
   const locate = useLocation();
   const navigate = useNavigate();
   const [profileImage, setProfileImage] = useState('');
   const { isStart } = useScroll();
   const [sidebarState, setSidebarState] = useRecoilState(sidebarAtom);
-  const { user } = useRecoilValue(tokenAtom);
+  const { user, isCrew } = useToken();
   const theme = useTheme();
   const isMdDown = useMediaQuery(theme.breakpoints.down('md'));
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -187,10 +183,16 @@ const Header: React.FC<HeaderProps> = ({ isCrew }) => {
                   <Stack>
                     {menuList
                       .filter(({ allow }) =>
-                        allow.includes(isCrew ? 'user' : 'guest'),
+                        user
+                          ? allow.includes(user.role)
+                          : allow.includes('Guest'),
                       )
                       .map(({ name, to, icon }) => (
-                        <MenuItem key={to} onClick={redirectTo(to)}>
+                        <MenuItem
+                          key={to}
+                          onClick={redirectTo(to)}
+                          sx={{ gap: 1 }}
+                        >
                           {icon?.(user?.username, profileImage)}
                           {typeof name === 'string'
                             ? name
@@ -203,7 +205,7 @@ const Header: React.FC<HeaderProps> = ({ isCrew }) => {
             ) : (
               menuList
                 .filter(({ allow }) =>
-                  allow.includes(isCrew ? 'user' : 'guest'),
+                  user ? allow.includes(user.role) : allow.includes('Guest'),
                 )
                 .map(({ name, to, icon }) =>
                   typeof name === 'string' ? (

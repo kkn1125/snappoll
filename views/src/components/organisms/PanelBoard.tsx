@@ -1,6 +1,6 @@
-import { deleteBoardForce } from '@/apis/board/deleteBoardForce';
-import { getBoardAllList } from '@/apis/board/getBoardAllList';
-import { updateBoard } from '@/apis/board/updateBoard';
+import { deleteBoardForce } from '@apis/board/deleteBoardForce';
+import { getBoardAllList } from '@apis/board/getBoardAllList';
+import { updateBoard } from '@apis/board/updateBoard';
 import { Message } from '@common/messages';
 import DataListTable from '@components/moleculars/DataListTable';
 import useModal from '@hooks/useModal';

@@ -1,5 +1,5 @@
-import { checkEmail } from '@/apis/checkEmail';
-import { signup } from '@/apis/signup';
+import { checkEmail } from '@apis/checkEmail';
+import { signup } from '@apis/signup';
 import { Message } from '@common/messages';
 import CustomInput from '@components/atoms/CustomInput';
 import useModal from '@hooks/useModal';
@@ -42,7 +42,6 @@ interface SignupPageProps {}
 const SignupPage: React.FC<SignupPageProps> = () => {
   const [pendingValidate, setPendingValidate] = useState(false);
   const [emailValidated, setEmailValidated] = useState(false);
-  const [validated, setValidated] = useState(false);
   const { openModal, noSaveModal } = useModal();
   const [visible, setVisible] = useState({
     password: false,
@@ -55,7 +54,7 @@ const SignupPage: React.FC<SignupPageProps> = () => {
     password: '',
     checkPassword: '',
   });
-  const { errors, validate } = useValidate(signupInfo);
+  const { errors, validate, validated, setValidated } = useValidate(signupInfo);
 
   const pendingAnimation = keyframes`
     0%   { transform: rotate(0deg) }

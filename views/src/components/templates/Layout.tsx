@@ -90,7 +90,7 @@ const Layout: React.FC<LayoutProps> = ({ isCrew = true }) => {
         image="/favicon/apple-touch-icon.png"
       />
       {/* header */}
-      <Header isCrew={isCrew} />
+      <Header />
       <Toolbar />
       <Stack direction="row" flex={1} position="relative" overflow="hidden">
         {/* Sidebar */}

@@ -1,4 +1,5 @@
-import { requestKakaoLogin } from '@/apis/requestKakaoLogin';
+import { requestKakaoLogin } from '@apis/requestKakaoLogin';
+import { Kakao } from '@common/variables';
 import { Button, Container, Divider, Stack, Typography } from '@mui/material';
 import { useMutation } from '@tanstack/react-query';
 import { Logger } from '@utils/Logger';
@@ -51,21 +52,21 @@ const AuthPage: React.FC<AuthPageProps> = () => {
             </Typography>
           </Stack>
           <Stack gap={1}>
-            {/* <Button
-          variant="contained"
-          color="inherit"
-          size="large"
-          startIcon={<Kakao />}
-          sx={{
-            backgroundColor: '#FEE500',
-            display: 'flex',
-            alignItems: 'center',
-            color: 'rgba(0, 0, 0, 0.85)',
-          }}
-          onClick={handleRedirectKakaoLogin}
-        >
-          카카오 계정으로 계속하기
-        </Button> */}
+            <Button
+              variant="contained"
+              color="inherit"
+              size="large"
+              startIcon={<Kakao />}
+              sx={{
+                backgroundColor: '#FEE500',
+                display: 'flex',
+                alignItems: 'center',
+                color: 'rgba(0, 0, 0, 0.85)',
+              }}
+              onClick={handleRedirectKakaoLogin}
+            >
+              카카오 계정으로 계속하기
+            </Button>
 
             <Button
               component={Link}

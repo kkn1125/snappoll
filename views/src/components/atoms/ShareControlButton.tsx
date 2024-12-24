@@ -1,9 +1,9 @@
-import { createSharePoll } from '@/apis/poll/share/createSharePoll';
-import { createShareVote } from '@/apis/vote/share/createShareVote';
-import { resumeShareUrl as resumeSharePollUrl } from '@/apis/poll/share/resumeShareUrl';
-import { resumeShareUrl as resumeShareVoteUrl } from '@/apis/vote/share/resumeShareUrl';
-import { revokeShareUrl as revokeSharePollUrl } from '@/apis/poll/share/revokeShareUrl';
-import { revokeShareUrl as revokeShareVoteUrl } from '@/apis/vote/share/revokeShareUrl';
+import { createSharePoll } from '@apis/poll/share/createSharePoll';
+import { createShareVote } from '@apis/vote/share/createShareVote';
+import { resumeShareUrl as resumeSharePollUrl } from '@apis/poll/share/resumeShareUrl';
+import { resumeShareUrl as resumeShareVoteUrl } from '@apis/vote/share/resumeShareUrl';
+import { revokeShareUrl as revokeSharePollUrl } from '@apis/poll/share/revokeShareUrl';
+import { revokeShareUrl as revokeShareVoteUrl } from '@apis/vote/share/revokeShareUrl';
 import { Message } from '@common/messages';
 import { BASE_CLIENT_URL } from '@common/variables';
 import useModal from '@hooks/useModal';

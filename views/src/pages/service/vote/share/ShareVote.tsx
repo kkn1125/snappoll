@@ -1,4 +1,4 @@
-import { getShareVote } from '@/apis/vote/share/getShareVote';
+import { getShareVote } from '@apis/vote/share/getShareVote';
 import { SnapShareVote } from '@models/SnapShareVote';
 import Notfound from '@pages/NotfoundPage';
 import { useQuery, useQueryClient } from '@tanstack/react-query';

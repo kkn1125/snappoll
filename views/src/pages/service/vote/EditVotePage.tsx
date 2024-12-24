@@ -1,4 +1,4 @@
-import { getVote } from '@/apis/vote/getVote';
+import { getVote } from '@apis/vote/getVote';
 import { snapVoteAtom } from '@/recoils/snapVote.atom';
 import SkeletonCreatePoll from '@components/moleculars/SkeletonCreatePoll';
 import { SnapVote } from '@models/SnapVote';

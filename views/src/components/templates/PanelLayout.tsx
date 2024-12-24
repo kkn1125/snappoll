@@ -5,17 +5,14 @@ import Footer from '@components/organisms/Footer';
 import Header from '@components/organisms/Header';
 import PanelSidebar from '@components/organisms/PanelSidebar';
 import useToken from '@hooks/useToken';
-import { Box, Stack, Toolbar, useMediaQuery, useTheme } from '@mui/material';
-import NotfoundPage from '@pages/NotfoundPage';
+import { Stack, Toolbar, useMediaQuery, useTheme } from '@mui/material';
 import { SyntheticEvent, useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 
-interface PanelLayoutProps {
-  isCrew: boolean;
-}
-const PanelLayout: React.FC<PanelLayoutProps> = ({ isCrew }) => {
-  const { user } = useToken();
+interface PanelLayoutProps {}
+const PanelLayout: React.FC<PanelLayoutProps> = () => {
+  const { isCrew } = useToken();
   const [currentTab, setCurrentTab] = useState(0);
 
   const handleTabChange = (event: SyntheticEvent, newValue: number) => {
@@ -26,12 +23,10 @@ const PanelLayout: React.FC<PanelLayoutProps> = ({ isCrew }) => {
   const sidebarState = useRecoilValue(sidebarAtom);
   const sidebarOpened = isMdDown ? !sidebarState.opened : sidebarState.opened;
 
-  const isAdmin = user?.role === 'Admin';
-
   return (
     <Stack height="inherit">
       {/* header */}
-      <Header isCrew={isAdmin} />
+      <Header />
       <Toolbar />
       <Stack direction="row" flex={1} position="relative" overflow="hidden">
         {/* Sidebar */}

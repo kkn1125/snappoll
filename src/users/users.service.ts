@@ -1,24 +1,40 @@
 import { PrismaService } from '@database/prisma.service';
+import { HttpService } from '@nestjs/axios';
 import {
   BadRequestException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
 import { $Enums } from '@prisma/client';
+import { snakeToCamel } from '@utils/snakeToCamel';
 import SnapLogger from '@utils/SnapLogger';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserPasswordDto } from './dto/update-user-password.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { snakeToCamel } from '@utils/snakeToCamel';
 
 @Injectable()
 export class UsersService {
+  async getProfileImageTest() {
+    const { data } = await this.httpService.axiosRef.get(
+      'https://k.kakaocdn.net/dn/cP0QlW/btsBgdcPoks/P7z3aErKm7e30Jsot6YTj1/img_110x110.jpg',
+      {
+        responseType: 'arraybuffer',
+      },
+    );
+
+    return data;
+  }
   logger = new SnapLogger(this);
 
   constructor(
+    private readonly httpService: HttpService,
     // private readonly logger: SnapLogger,
     private readonly prisma: PrismaService,
   ) {}
+
+  findOneByEmail(email: string) {
+    return this.prisma.user.findUnique({ where: { email } });
+  }
 
   async getProfileImage(profileId: string) {
     const image = await this.prisma.userProfile.findUnique({
@@ -54,7 +70,7 @@ export class UsersService {
     return '';
   }
 
-  async createLocalUser(createUserDto: CreateUserDto) {
+  async passwordToEncrypt(createUserDto: CreateUserDto) {
     if (
       !(createUserDto.email && createUserDto.password && createUserDto.username)
     ) {
@@ -63,18 +79,22 @@ export class UsersService {
     }
 
     const password = this.prisma.encryptPassword(createUserDto.password);
-    createUserDto.password = password;
+    // createUserDto.password = password;
+    this.logger.info('encrypted:', createUserDto.password);
+    return password;
   }
 
   async create(createUserDto: CreateUserDto) {
     if (!createUserDto.authProvider) {
       createUserDto.authProvider = $Enums.AuthProvider.Local;
     }
-    if (!createUserDto.role) {
-      createUserDto.role = $Enums.Role.User;
-    }
-    if (!createUserDto.grade) {
-      createUserDto.grade = $Enums.Grade.Free;
+
+    /* 역할 고정 */
+    // createUserDto.role = $Enums.Role.User;
+
+    if (!createUserDto.plan) {
+      createUserDto.plan = $Enums.PlanType.Free;
+      createUserDto.subscribeType = $Enums.SubscribeType.Infinite;
     }
 
     const existsUser = await this.prisma.user.findUnique({
@@ -93,21 +113,46 @@ export class UsersService {
       createUserDto.username,
     );
 
-    if (createUserDto.authProvider === $Enums.AuthProvider.Local) {
-      await this.createLocalUser(createUserDto);
-      const { password, provider, ...userCommon } = createUserDto;
-      this.logger.debug(password);
+    const { password, provider, plan, subscribeType, ...userCommon } =
+      createUserDto;
+    const orFreePlan = await this.prisma.plan.findFirst({
+      where: { planType: plan || $Enums.PlanType.Free },
+    });
 
+    if (createUserDto.authProvider === $Enums.AuthProvider.Local) {
+      const encryptedPassword = await this.passwordToEncrypt(createUserDto);
       return this.prisma.user.create({
-        data: { ...userCommon, localUser: { create: { password } } },
-        include: { localUser: true },
+        data: {
+          ...userCommon,
+          localUser: { create: { password: encryptedPassword } },
+          subscription: {
+            create: {
+              planId: orFreePlan.id,
+              type:
+                plan === $Enums.PlanType.Free
+                  ? $Enums.SubscribeType.Infinite
+                  : subscribeType || $Enums.SubscribeType.Monthly,
+            },
+          },
+        },
+        include: { localUser: true, subscription: true },
       });
     } else {
-      const { password, provider, ...userCommon } = createUserDto;
-
       return this.prisma.user.create({
-        data: { ...userCommon, socialUser: { create: { provider } } },
-        include: { socialUser: true },
+        data: {
+          ...userCommon,
+          socialUser: { create: { provider } },
+          subscription: {
+            create: {
+              planId: orFreePlan.id,
+              type:
+                plan === $Enums.PlanType.Free
+                  ? $Enums.SubscribeType.Infinite
+                  : subscribeType || $Enums.SubscribeType.Monthly,
+            },
+          },
+        },
+        include: { socialUser: true, subscription: true },
       });
     }
   }

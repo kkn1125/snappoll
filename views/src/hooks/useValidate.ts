@@ -12,11 +12,12 @@ function useValidate<T extends { [k in string]: any }>(data: T) {
     validateErrors: ErrorMessage<E>,
   ) {
     const value = data['email'] as string;
+
     if (value === '') {
       Object.assign(validateErrors, { email: '필수입니다.' });
     } else if (
       value.match(
-        /^((?=.*[A-Za-z])(?=.*[0-9A-Za-z]?)[A-Za-z0-9]{2,10}@{1}(?=.*[A-Za-z0-9-])[A-Za-z0-9-]{1,}(\.(?=.*[a-z])[a-z]{1,}){1,})$/g,
+        /^((?=.*[A-Za-z])(?=.*[0-9A-Za-z]?)[A-Za-z0-9]{3,}@{1}(?=.*[A-Za-z0-9-])[A-Za-z0-9-]{1,}(\.(?=.*[a-z])[a-z]{1,}){1,})$/g,
       ) === null
     ) {
       Object.assign(validateErrors, {
@@ -227,6 +228,9 @@ function useValidate<T extends { [k in string]: any }>(data: T) {
           validateOnlyPassword(data, validateErrors);
           break;
         }
+        case 'onlyEmail':
+          validateOnlyEmail(data, validateErrors);
+          break;
         case 'signup':
         default:
           for (const key of validateKeys) {

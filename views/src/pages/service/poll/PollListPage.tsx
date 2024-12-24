@@ -1,4 +1,4 @@
-import { getPolls } from '@/apis/poll/getPolls';
+import { getPolls } from '@apis/poll/getPolls';
 import SkeletonMeList from '@components/moleculars/SkeletonMeList';
 import ListDataItem from '@components/organisms/ListDataItem';
 import { SnapPoll } from '@models/SnapPoll';

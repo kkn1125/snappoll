@@ -8,7 +8,7 @@ export class User implements PrismaUser {
   lastLogin: Date;
   authProvider: $Enums.AuthProvider;
   role: $Enums.Role;
-  grade: $Enums.Grade;
+  // grade: $Enums.Grade;
   createdAt: Date;
   updatedAt: Date;
   deletedAt: Date | null;

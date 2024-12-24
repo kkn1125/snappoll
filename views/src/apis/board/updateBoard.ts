@@ -1,4 +1,4 @@
-import { snapApi } from '..';
+import { snapApi } from '@apis/index';
 
 interface UpdateBoardProps {
   id: string;

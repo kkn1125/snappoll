@@ -1,4 +1,4 @@
-import { getBoardList } from '@/apis/board/getBoardList';
+import { getBoardList } from '@apis/board/getBoardList';
 import { SnapBoard } from '@models/SnapBoard';
 import {
   Button,

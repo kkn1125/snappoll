@@ -9,6 +9,8 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { $Enums, User } from '@prisma/client';
+import { UsersService } from '@users/users.service';
 import SnapLogger from '@utils/SnapLogger';
 import * as jwt from 'jsonwebtoken';
 import * as path from 'path';
@@ -22,8 +24,47 @@ export class AuthService {
     public readonly prisma: PrismaService,
     private readonly configService: ConfigService,
     private readonly httpService: HttpService,
+    private readonly usersService: UsersService,
     private readonly mailer: MailerService,
   ) {}
+
+  async createOrIgnore(data: any, userData: jwt.JwtPayload) {
+    let user: User = await this.usersService.findOneByEmail(userData.email);
+    if (!user) {
+      const { data: bufferData } = await this.httpService.axiosRef.get(
+        userData.picture,
+        {
+          responseType: 'arraybuffer',
+        },
+      );
+      user = await this.prisma.user.create({
+        data: {
+          email: userData.email,
+          username: userData.nickname,
+          authProvider: $Enums.AuthProvider.Kakao,
+          userProfile: {
+            create: {
+              filename: 'KakaoProfile-' + userData.nickname,
+              image: bufferData,
+              mimetype: 'image/jpg',
+            },
+          },
+          socialUser: {
+            create: {
+              provider: data.id_token,
+            },
+          },
+        },
+        include: {
+          userProfile: true,
+          socialUser: true,
+        },
+      });
+    } else {
+      this.logger.info('이미 카카오 회원가입 완료');
+    }
+    return user;
+  }
 
   async initializeUserPassword(email: string) {
     const special = [
@@ -56,6 +97,45 @@ export class AuthService {
       data: { localUser: { update: { password } } },
     });
     return hashedPassword;
+  }
+
+  async signUpSocial(decodedToken: jwt.JwtPayload) {
+    const { headers, data } = await this.httpService.axiosRef.get(
+      decodedToken.picture,
+      { responseType: 'arraybuffer' },
+    );
+    const mimetype = (headers['Content-Type'] || 'image/jpg') as string;
+    this.logger.info(data);
+    await this.prisma.user.create({
+      data: {
+        email: decodedToken.email,
+        username: decodedToken.nickname,
+        authProvider: $Enums.AuthProvider.Kakao,
+        socialUser: {
+          create: {
+            provider: decodedToken.aud as string,
+          },
+        },
+        userProfile: {
+          create: {
+            filename: decodedToken.nickname + '-' + 'profileImage',
+            image: Buffer.from(data),
+            mimetype,
+          },
+        },
+      },
+      include: {
+        socialUser: true,
+        userProfile: true,
+      },
+    });
+  }
+
+  async lastLogin(id: string) {
+    return this.prisma.user.update({
+      where: { id },
+      data: { lastLogin: new Date() },
+    });
   }
 
   async sendInitializeConfirmMail(email: string) {
@@ -123,10 +203,10 @@ export class AuthService {
           },
         ),
       );
-      this.logger.debug(data);
-      const userData = jwt.decode(data.id_token);
-      this.logger.debug('user:', userData);
-      return data;
+      // this.logger.debug(data);
+      const userData = jwt.decode(data.id_token) as jwt.JwtPayload;
+      // this.logger.debug('user:', userData);
+      return { data, userData };
     } catch (error) {
       this.logger.debug(error);
       const errorCode = await this.prisma.getErrorCode('user', 'BadRequest');
@@ -162,11 +242,15 @@ export class AuthService {
       throw new BadRequestException(errorCode);
     }
 
-    const encryptedPassword = this.prisma.encryptPassword(userPassword);
-
-    if (user.localUser.password !== encryptedPassword) {
-      const errorCode = await this.prisma.getErrorCode('auth', 'CheckUserData');
-      throw new BadRequestException(errorCode);
+    if (user.localUser) {
+      const encryptedPassword = this.prisma.encryptPassword(userPassword);
+      if (user.localUser.password !== encryptedPassword) {
+        const errorCode = await this.prisma.getErrorCode(
+          'auth',
+          'CheckUserData',
+        );
+        throw new BadRequestException(errorCode);
+      }
     }
 
     const { socialUser, localUser, ...users } = user;
@@ -241,6 +325,11 @@ export class AuthService {
             id: true,
           },
         },
+        subscription: {
+          include: {
+            plan: true,
+          },
+        },
       },
     });
   }
@@ -251,7 +340,7 @@ export class AuthService {
         `https://kauth.kakao.com/oauth/authorize?client_id=7043de6fabb4db468e0530f5cdd0e209&redirect_uri=${encodeURIComponent('http://localhost:8080/api/auth/login/kakao')}`,
       ),
     );
-    this.logger.debug(data);
+    // this.logger.debug(data);
     return data;
   }
 }

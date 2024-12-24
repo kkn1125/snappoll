@@ -1,4 +1,4 @@
-import { getVotes } from '@/apis/vote/getVotes';
+import { getVotes } from '@apis/vote/getVotes';
 import SkeletonMeList from '@components/moleculars/SkeletonMeList';
 import ListDataItem from '@components/organisms/ListDataItem';
 import { SnapVote } from '@models/SnapVote';

@@ -1,6 +1,6 @@
-import { removeAccount } from '@/apis/removeAccount';
-import { findAllUsers } from '@/apis/user/findAllUsers';
-import { updateUser } from '@/apis/user/updateUser';
+import { removeAccount } from '@apis/removeAccount';
+import { findAllUsers } from '@apis/user/findAllUsers';
+import { updateUser } from '@apis/user/updateUser';
 import DataListTable from '@components/moleculars/DataListTable';
 import { Stack, Paper, Tooltip, IconButton } from '@mui/material';
 import { GridColDef, GridValidRowModel } from '@mui/x-data-grid';

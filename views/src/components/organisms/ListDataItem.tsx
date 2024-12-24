@@ -1,5 +1,5 @@
-import { removePoll } from '@/apis/removePoll';
-import { removeVote } from '@/apis/removeVote';
+import { removePoll } from '@apis/removePoll';
+import { removeVote } from '@apis/removeVote';
 import { tokenAtom } from '@/recoils/token.atom';
 import { Message } from '@common/messages';
 import CommonPagination from '@components/atoms/CommonPagination';

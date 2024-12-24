@@ -8,7 +8,7 @@ export class LocalUser implements User {
   isActive: boolean;
   lastLogin: Date;
   authProvider: $Enums.AuthProvider;
-  grade: $Enums.Grade;
+  // grade: $Enums.Grade;
   role: $Enums.Role;
   createdAt: Date;
   updatedAt: Date;

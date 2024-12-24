@@ -1,4 +1,4 @@
-import { snapApi } from '@/apis';
+import { snapApi } from '@apis/index';
 
 export const getVoteResponse = async (voteId?: string, page: number = 1) => {
   if (!voteId) return {};

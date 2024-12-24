@@ -2,7 +2,19 @@
 
 서버사이드 구현
 
+- 2024-12-24
+  - add
+    - 구독 테이블 추가
+    - 구독 API 추가
+  - fix
+    - LocalUser, SocialUser onDelete 설정
+    - UserProfile Table OnDelete 옵션 추가
+    - 카카오 회원가입, 로그인 기능 복원
+  - bugfix
+    - 프로필 이미지 데이터베이스 저장 및 읽기 안되는 버그 수정
 - 2024-12-23
+  - add
+    - 구독 결제 테이블 재설계
   - fix
     - 컬럼 명 snakeToCamel 서버사이드 처리
     - 마스터 전용 강제 게시글 삭제 API 추가

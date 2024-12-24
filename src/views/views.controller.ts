@@ -110,9 +110,8 @@ export class ViewsController {
   async changeGradeFromId(
     @Res() res: Response,
     @Param('id') id: string,
-    @Body('grade') grade: $Enums.Grade,
+    @Body('grade') planType: $Enums.PlanType,
   ) {
-    await this.viewsService.changeGradeFromId(id, grade);
     res.redirect('/manage');
   }
 
@@ -122,7 +121,6 @@ export class ViewsController {
     @Param('id') id: string,
     @Body('role') role: $Enums.Role,
   ) {
-    console.log(role);
     await this.viewsService.changeRoleFromId(id, role);
     res.redirect('/manage');
   }

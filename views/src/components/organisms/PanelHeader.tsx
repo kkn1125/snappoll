@@ -1,4 +1,4 @@
-import { sendConfirmMail } from '@/apis/panel/sendConfirmMail';
+import { sendConfirmMail } from '@apis/panel/sendConfirmMail';
 import useModal from '@hooks/useModal';
 import useToken from '@hooks/useToken';
 import { Button, CircularProgress, Stack, Typography } from '@mui/material';

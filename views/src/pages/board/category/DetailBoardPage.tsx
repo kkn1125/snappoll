@@ -1,16 +1,16 @@
-import { deleteBoard } from '@/apis/board/deleteBoard';
-import { deleteBoardForce } from '@/apis/board/deleteBoardForce';
-import { getBoardCategoryOne } from '@/apis/board/getBoardCategoryOne';
-import { validateBoardPassword } from '@/apis/board/validateBoardPassword';
+import { deleteBoard } from '@apis/board/deleteBoard';
+import { deleteBoardForce } from '@apis/board/deleteBoardForce';
+import { getBoardCategoryOne } from '@apis/board/getBoardCategoryOne';
+import { validateBoardPassword } from '@apis/board/validateBoardPassword';
 import { Message } from '@common/messages';
 import CustomInput from '@components/atoms/CustomInput';
+import ProfileAvatar from '@components/atoms/ProfileAvatar';
 import SunEditorContent from '@components/atoms/SunEditorContent';
 import useModal from '@hooks/useModal';
 import useToken from '@hooks/useToken';
 import useValidate from '@hooks/useValidate';
 import { SnapBoard } from '@models/SnapBoard';
 import {
-  Box,
   Button,
   Container,
   Divider,
@@ -276,12 +276,24 @@ const DetailBoardPage: React.FC<DetailBoardPageProps> = () => {
       )}
       <Stack gap={3}>
         <Stack>
-          <Typography fontSize={24} fontWeight={700}>
+          <Typography fontSize={24} fontWeight={700} gutterBottom>
             {board?.title}
           </Typography>
-          <Typography fontSize={14} color="textDisabled">
-            작성자: {getUsernameOrGuest(board?.author?.username)}
-          </Typography>
+          <Stack direction="row" alignItems="center" gap={1}>
+            <ProfileAvatar
+              size={35}
+              username={getUsernameOrGuest(board?.author?.username)}
+              profileImage={user?.userProfile?.id}
+            />
+            <Stack>
+              <Typography fontSize={12} fontWeight={500} color="textDisabled">
+                작성자
+              </Typography>
+              <Typography fontSize={14} color="textSecondary">
+                {getUsernameOrGuest(board?.author?.username)}
+              </Typography>
+            </Stack>
+          </Stack>
         </Stack>
         <Divider flexItem />
         <SunEditorContent content={board?.content} />

@@ -1,4 +1,4 @@
-import { changePass } from '@/apis/changePass';
+import { changePass } from '@apis/changePass';
 import { Message } from '@common/messages';
 import CustomInput from '@components/atoms/CustomInput';
 import useModal from '@hooks/useModal';

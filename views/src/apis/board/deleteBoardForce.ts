@@ -1,4 +1,4 @@
-import { snapApi } from '..';
+import { snapApi } from '@apis/index';
 
 export const deleteBoardForce = async (id?: string) => {
   if (!id) return {};

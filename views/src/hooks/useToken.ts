@@ -1,16 +1,15 @@
-import { getMe } from '@/apis/getMe';
-import { verifyLogin } from '@/apis/verifyLogin';
 import { tokenAtom } from '@/recoils/token.atom';
+import { getMe } from '@apis/getMe';
+import { refreshToken } from '@apis/refreshToken';
+import { verifyLogin } from '@apis/verifyLogin';
 import { Message } from '@common/messages';
-import { guestDisallowPaths, userDisallowPaths } from '@common/variables';
 import { useMutation } from '@tanstack/react-query';
 import { Logger } from '@utils/Logger';
 import { AxiosError } from 'axios';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 import useModal from './useModal';
-import { refreshToken } from '@/apis/refreshToken';
 
 const logger = new Logger('useToken');
 
@@ -24,9 +23,6 @@ const useToken = () => {
     setToken({
       user: undefined,
     });
-    if (location.pathname.match(guestDisallowPaths)) {
-      navigate('/');
-    }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -60,9 +56,7 @@ const useToken = () => {
       const leftTime = data.data?.leftTime;
       logger.info('로그인 완료', data.data?.leftTime);
       getMeMutate.mutate();
-      if (location.pathname.match(userDisallowPaths)) {
-        navigate('/');
-      }
+
       setTimeout(() => {
         refreshTokenMutate.mutate();
       }, leftTime * 1000);
@@ -106,6 +100,7 @@ const useToken = () => {
   }, [state.user]);
 
   return {
+    role: state.user?.role,
     isMaster: state.user?.role === 'Admin',
     isCrew,
     user: state.user,

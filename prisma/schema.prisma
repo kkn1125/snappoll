@@ -37,7 +37,7 @@ model UserProfile {
   mimetype  String   @db.VarChar(50)
   createdAt DateTime @default(now()) @map("created_at")
 
-  user User @relation(fields: [userId], references: [id])
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("user_profile")
 }
@@ -47,11 +47,11 @@ enum Role {
   Admin
 }
 
-enum Grade {
-  Free
-  Hobby
-  Pro
-}
+// enum Grade {
+//   Free
+//   Hobby
+//   Pro
+// }
 
 enum AuthProvider {
   Local
@@ -67,7 +67,7 @@ model SocialUser {
   updatedAt DateTime  @updatedAt @map("updated_at")
   deletedAt DateTime? @map("deleted_at")
 
-  user User @relation(fields: [userId], references: [id])
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("social_user")
 }
@@ -78,19 +78,81 @@ model LocalUser {
   password   String   @db.VarChar(200)
   signupDate DateTime @default(now()) @map("signup_date")
 
-  user User @relation(fields: [userId], references: [id])
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("local_user")
+}
+
+enum State {
+  Active
+  Cancelled
+  Expired
+}
+
+enum SubscribeType {
+  Monthly
+  Yearly
+  Infinite
+}
+
+enum PlanType {
+  Free
+  Basic
+  Pro
+  Premium
+}
+
+model Subscription {
+  id        String        @id @default(uuid()) @db.Uuid
+  userId    String        @map("user_id") @db.Uuid
+  planId    String        @map("plan_id") @db.Uuid
+  type      SubscribeType
+  state     State         @default(Active)
+  startDate DateTime      @default(now()) @map("start_date")
+  endDate   DateTime?     @map("end_date")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  plan Plan @relation(fields: [planId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@index([userId])
+  @@index([planId])
+  @@map("subscription")
+}
+
+model Plan {
+  id          String   @id @default(uuid()) @db.Uuid
+  name        String   @db.VarChar(50)
+  description String?
+  planType    PlanType @default(Free) @map("plan_type")
+  price       Int      @db.Integer
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  subscription Subscription[]
+  feature      Feature[]
+
+  @@map("plan")
+}
+
+model Feature {
+  id        String   @id @default(uuid()) @db.Uuid
+  planId    String   @map("plan_id") @db.Uuid
+  feature   String
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  plan Plan @relation(fields: [planId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@map("feature")
 }
 
 model User {
   id           String       @id @default(uuid()) @db.Uuid
   email        String       @unique
-  username     String
+  username     String       @unique
   isActive     Boolean      @default(true) @map("is_active")
   lastLogin    DateTime?    @map("last_login")
   authProvider AuthProvider @default(Local) @map("auth_provider")
-  grade        Grade        @default(Free)
   role         Role         @default(User)
   createdAt    DateTime     @default(now()) @map("created_at")
   updatedAt    DateTime     @updatedAt @map("updated_at")
@@ -109,7 +171,10 @@ model User {
   response     Response[]
   voteResponse VoteResponse[]
   board        Board[]
+  subscription Subscription[]
 
+  @@index([username])
+  @@index([email])
   @@map("user")
 }
 

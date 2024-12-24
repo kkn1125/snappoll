@@ -1,4 +1,4 @@
-import { getSharePoll } from '@/apis/poll/share/getSharePoll';
+import { getSharePoll } from '@apis/poll/share/getSharePoll';
 import { SnapSharePoll } from '@models/SnapSharePoll';
 import Notfound from '@pages/NotfoundPage';
 import { useQuery, useQueryClient } from '@tanstack/react-query';

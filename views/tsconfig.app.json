@@ -25,6 +25,7 @@
     "baseUrl": "./",
     "paths": {
       "@assets/*": ["src/assets/*"],
+      "@apis/*": ["src/apis/*"],
       "@common/*": ["src/common/*"],
       "@models/*": ["src/models/*"],
       "@providers/*": ["src/providers/*"],

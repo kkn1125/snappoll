@@ -14,6 +14,7 @@ import {
   Res,
   UploadedFile,
   UseInterceptors,
+  ValidationPipe,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import SnapLogger from '@utils/SnapLogger';
@@ -23,7 +24,6 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserPasswordDto } from './dto/update-user-password.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersService } from './users.service';
-import { Blob } from 'buffer';
 
 @Controller('users')
 export class UsersController {
@@ -33,7 +33,9 @@ export class UsersController {
 
   @IgnoreCookie()
   @Post()
-  create(@Body() createUserDto: CreateUserDto) {
+  create(
+    @Body(new ValidationPipe({ transform: true })) createUserDto: CreateUserDto,
+  ) {
     return this.usersService.create(createUserDto);
   }
 
@@ -52,18 +54,30 @@ export class UsersController {
     return this.usersService.findOne(id);
   }
 
+  // @IgnoreCookie()
+  // @Get('profile/test')
+  // async getProfileImageTest(@Res() res: Response) {
+  //   const image = await this.usersService.getProfileImageTest();
+  //   // console.log(image.image instanceof Buffer);
+  //   // this.logger.debug('image.mimetype', image.mimetype);
+  //   // 이미지 응답
+  //   res.setHeader('Content-Type', 'image/jpg');
+  //   // res.setHeader('Content-Disposition', `inline; filename="test.jpg"`);
+  //   res.send(image);
+  // }
+
   @IgnoreCookie()
   @Get('profile/:id')
   async getProfileImage(@Res() res: Response, @Param('id') profileId: string) {
     const image = await this.usersService.getProfileImage(profileId);
-    console.log(image.image instanceof Buffer);
+    // console.log(image.image instanceof Buffer);
     this.logger.debug('image.mimetype', image.mimetype);
     // 이미지 응답
     res.setHeader('Content-Type', image.mimetype);
-    res.setHeader(
-      'Content-Disposition',
-      `inline; filename="${image.filename}"`,
-    );
+    // res.setHeader(
+    //   'Content-Disposition',
+    //   `inline; filename="${image.filename}"`,
+    // );
     res.send(Buffer.from(image.image));
   }
 

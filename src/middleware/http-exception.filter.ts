@@ -37,11 +37,31 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const status = httpException?.getStatus?.() || 500;
     const exceptionResponse = httpException?.getResponse?.();
 
-    response.status(status).json({
-      httpCode: status,
-      errorCode: exceptionResponse ?? -999,
-      path: requestUrl,
-      timestamp,
-    });
+    const isValidationException =
+      typeof exceptionResponse === 'object' &&
+      'message' in exceptionResponse &&
+      Array.isArray(exceptionResponse.message);
+
+    if (isValidationException) {
+      this.logger.error('ValidationError', exceptionResponse.message);
+      response.status(status).json({
+        httpCode: status,
+        errorCode: {
+          status: 400,
+          domain: 'user',
+          errorStatus: -999,
+          message: '잘못된 요청입니다.',
+        },
+        path: requestUrl,
+        timestamp,
+      });
+    } else {
+      response.status(status).json({
+        httpCode: status,
+        errorCode: exceptionResponse ?? -999,
+        path: requestUrl,
+        timestamp,
+      });
+    }
   }
 }

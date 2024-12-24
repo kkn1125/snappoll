@@ -1,8 +1,11 @@
+import useToken from '@hooks/useToken';
 import { Stack, Typography, Toolbar, Button } from '@mui/material';
 import { Link } from 'react-router-dom';
 
 interface ForbiddenPageProps {}
 const ForbiddenPage: React.FC<ForbiddenPageProps> = () => {
+  const { user } = useToken();
+
   return (
     <Stack alignItems="center" justifyContent="center" flex={1}>
       <Typography variant="h1" fontWeight={700}>

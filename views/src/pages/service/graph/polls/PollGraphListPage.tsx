@@ -1,4 +1,4 @@
-import { getMyPolls } from '@/apis/poll/getMyPolls';
+import { getMyPolls } from '@apis/poll/getMyPolls';
 import CommonPagination from '@components/atoms/CommonPagination';
 import SkeletonGraphList from '@components/moleculars/SkeletonGraphList';
 import { SnapPoll } from '@models/SnapPoll';

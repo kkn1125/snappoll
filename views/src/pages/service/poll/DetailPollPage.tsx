@@ -1,6 +1,6 @@
-import { getPoll } from '@/apis/poll/getPoll';
-import { savePollResult } from '@/apis/poll/savePollResult';
-import { getSharePollBy } from '@/apis/poll/share/getSharePollBy';
+import { getPoll } from '@apis/poll/getPoll';
+import { savePollResult } from '@apis/poll/savePollResult';
+import { getSharePollBy } from '@apis/poll/share/getSharePollBy';
 import { snapResponseAtom } from '@/recoils/snapResponse.atom';
 import { Message } from '@common/messages';
 import PollLayout from '@components/templates/PollLayout';

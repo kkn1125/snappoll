@@ -1,6 +1,6 @@
-import { getPollResponse } from '@/apis/poll/response/getPollResponse';
-import { getPollResponseMe } from '@/apis/poll/response/getPollResponseMe';
-import { removeResponse } from '@/apis/poll/response/removeResponse';
+import { getPollResponse } from '@apis/poll/response/getPollResponse';
+import { getPollResponseMe } from '@apis/poll/response/getPollResponseMe';
+import { removeResponse } from '@apis/poll/response/removeResponse';
 import { tokenAtom } from '@/recoils/token.atom';
 import { Message } from '@common/messages';
 import CommonPagination from '@components/atoms/CommonPagination';

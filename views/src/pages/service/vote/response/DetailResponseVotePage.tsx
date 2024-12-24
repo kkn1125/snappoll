@@ -1,4 +1,4 @@
-import { getResponse } from '@/apis/vote/response/getResponse';
+import { getResponse } from '@apis/vote/response/getResponse';
 import { tokenAtom } from '@/recoils/token.atom';
 import { UnknownName } from '@common/variables';
 import VoteResponseLayout from '@components/templates/VoteResponseLayout';

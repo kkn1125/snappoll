@@ -1,6 +1,6 @@
-import { getVote } from '@/apis/vote/getVote';
-import { saveVoteResult } from '@/apis/vote/saveVoteResult';
-import { getShareVoteBy } from '@/apis/vote/share/getShareVoteBy';
+import { getVote } from '@apis/vote/getVote';
+import { saveVoteResult } from '@apis/vote/saveVoteResult';
+import { getShareVoteBy } from '@apis/vote/share/getShareVoteBy';
 import { snapVoteResponseAtom } from '@/recoils/snapVoteResponse.atom';
 import { Message } from '@common/messages';
 import VoteLayout from '@components/templates/VoteLayout';

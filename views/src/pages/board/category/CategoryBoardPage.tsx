@@ -1,4 +1,4 @@
-import { getBoardCategory } from '@/apis/board/getBoardCategory';
+import { getBoardCategory } from '@apis/board/getBoardCategory';
 import BoardItem from '@components/atoms/BoardItem';
 import CommonPagination from '@components/atoms/CommonPagination';
 import useToken from '@hooks/useToken';

@@ -1,4 +1,4 @@
-import { snapApi } from '@/apis';
+import { snapApi } from '@apis/index';
 
 export const getSharePollBy = async (id?: string) => {
   if (!id) return {};

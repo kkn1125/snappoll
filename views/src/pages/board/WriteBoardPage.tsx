@@ -1,5 +1,5 @@
-import { updateBoard } from '@/apis/board/updateBoard';
-import { writeBoard } from '@/apis/board/writeBoard';
+import { updateBoard } from '@apis/board/updateBoard';
+import { writeBoard } from '@apis/board/writeBoard';
 import { Message } from '@common/messages';
 import CustomInput from '@components/atoms/CustomInput';
 import useModal, { OpenModalProps } from '@hooks/useModal';
@@ -25,7 +25,7 @@ import {
   useLayoutEffect,
   useState,
 } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import SunEditor, { buttonList } from 'suneditor-react';
 import 'suneditor/dist/css/suneditor.min.css'; // Import Sun Editor's CSS File
 import { ko } from 'suneditor/src/lang';
@@ -42,13 +42,15 @@ interface WriteBoardProps {
 interface WriteBoardPageProps {}
 const WriteBoardPage: React.FC<WriteBoardPageProps> = () => {
   const navigate = useNavigate();
+  const locate = useLocation();
+  const params = useParams();
   const { state } = useLocation();
   const board = state?.board;
   const isGuestBoard = !board?.userId;
   const [data, setData] = useState<WriteBoardProps>({
     title: '',
     content: '',
-    category: 'community',
+    category: board?.category || params?.category || 'community',
     password: undefined,
   });
   const { isMaster, user } = useToken();
@@ -105,8 +107,30 @@ const WriteBoardPage: React.FC<WriteBoardPageProps> = () => {
   });
 
   useLayoutEffect(() => {
-    setData({ ...board });
-  }, [board]);
+    logger.log(isMaster);
+    if (user && isMaster) {
+      // navigate(-1);
+    } else {
+      if (!locate.pathname.startsWith('/board/community/write')) {
+        logger.log('here?');
+        navigate(-1);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isMaster, locate.pathname]);
+
+  useLayoutEffect(() => {
+    if (board) {
+      setData({ ...board });
+    } else {
+      setData({
+        title: '',
+        content: '',
+        category: params?.category || 'community',
+        password: undefined,
+      });
+    }
+  }, [board, params?.category]);
 
   useEffect(() => {
     if (validated) {

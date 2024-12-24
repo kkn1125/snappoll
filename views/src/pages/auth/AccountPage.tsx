@@ -1,4 +1,4 @@
-import { initPass } from '@/apis/initPass';
+import { initPass } from '@apis/initPass';
 import { Message } from '@common/messages';
 import CustomInput from '@components/atoms/CustomInput';
 import useModal from '@hooks/useModal';

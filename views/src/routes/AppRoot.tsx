@@ -1,4 +1,8 @@
 import { VERSION } from '@common/variables';
+import {
+  default as ProtectedRoute,
+  default as ProtectedRouted,
+} from '@components/organisms/ProtectedRoute';
 import Layout from '@components/templates/Layout';
 import PanelLayout from '@components/templates/PanelLayout';
 import ShareLayout from '@components/templates/ShareLayout';
@@ -42,6 +46,7 @@ import MyVotePage from '@pages/service/vote/MyVotePage';
 import DetailResponseVotePage from '@pages/service/vote/response/DetailResponseVotePage';
 import ResponseVotePage from '@pages/service/vote/response/ResponseVotePage';
 import VoteListPage from '@pages/service/vote/VoteListPage';
+import Subscribe from '@pages/subscribe/Subscribe';
 import MyResponsePage from '@pages/user/MyResponsePage';
 import PasswordPage from '@pages/user/PasswordPage';
 import ProfilePage from '@pages/user/ProfilePage';
@@ -90,18 +95,18 @@ const AppRoot: React.FC<AppRootProps> = () => {
     <Routes>
       <Route element={<Layout isCrew={isCrew} />}>
         <Route index element={isCrew ? <HomePage /> : <GuestHomePage />} />
+        <Route path="price" element={<Subscribe />} />
         <Route path="notice" element={<NoticePage />} />
         <Route path="about" element={<AboutPage />} />
 
         {/* Authentications */}
-        {!user && (
-          <Route path="auth">
-            <Route index element={<AuthPage />} />
-            <Route path="login" element={<LoginPage />} />
-            <Route path="signup" element={<SignupPage />} />
-            <Route path="account" element={<AccountPage />} />
-          </Route>
-        )}
+
+        <Route path="auth" element={<ProtectedRouted roles={['Guest']} />}>
+          <Route index element={<AuthPage />} />
+          <Route path="login" element={<LoginPage />} />
+          <Route path="signup" element={<SignupPage />} />
+          <Route path="account" element={<AccountPage />} />
+        </Route>
 
         {/* Board */}
         <Route path="board">
@@ -114,86 +119,86 @@ const AppRoot: React.FC<AppRootProps> = () => {
         </Route>
 
         {/* User */}
-        {user ? (
-          <Route path="user">
-            <Route index element={<UserPage />} />
-            <Route path="profile" element={<ProfilePage />} />
-            <Route path="password" element={<PasswordPage />} />
-            <Route path="response" element={<MyResponsePage />} />
-          </Route>
-        ) : (
-          <Route path="user" element={<ForbiddenPage />} />
-        )}
+        <Route
+          path="user"
+          element={<ProtectedRoute roles={['User', 'Admin']} />}
+        >
+          <Route index element={<UserPage />} />
+          <Route path="profile" element={<ProfilePage />} />
+          <Route path="password" element={<PasswordPage />} />
+          <Route path="response" element={<MyResponsePage />} />
+        </Route>
 
         {/* Service */}
-        {user ? (
-          <Route path="service">
-            <Route index element={<ServicePage />} />
+        <Route
+          path="service"
+          element={<ProtectedRoute roles={['User', 'Admin']} />}
+        >
+          <Route index element={<ServicePage />} />
+
+          {/* Poll */}
+          <Route path="poll">
+            <Route index element={<PollListPage />} />
+            <Route path="new" element={<CreatePollPage />} />
+            <Route path=":id" element={<DetailPollPage />} />
+            <Route path=":id/response" element={<ResponsePollPage />} />
+            <Route path="edit/:id" element={<EditPollPage />} />
+            <Route
+              path=":id/response/:responseId"
+              element={<DetailResponsePollPage />}
+            />
+
+            {/* User's */}
+            <Route path="me">
+              <Route index element={<MyPollPage />} />
+              <Route path="response" element={<ResponsePollPage me />} />
+            </Route>
+          </Route>
+
+          {/* Vote */}
+          <Route path="vote">
+            <Route index element={<VoteListPage />} />
+            <Route path="new" element={<CreateVotePage />} />
+            <Route path=":id" element={<DetailVotePage />} />
+            <Route path=":id/response" element={<ResponseVotePage />} />
+            <Route path="edit/:id" element={<EditVotePage />} />
+            <Route
+              path=":id/response/:responseId"
+              element={<DetailResponseVotePage />}
+            />
+
+            {/* User's */}
+            <Route path="me">
+              <Route index element={<MyVotePage />} />
+              <Route path="response" element={<ResponseVotePage me />} />
+            </Route>
+          </Route>
+
+          {/* Graph */}
+          <Route path="graph">
+            {/* List */}
+            <Route index element={<SelectGraphPage />} />
 
             {/* Poll */}
             <Route path="poll">
-              <Route index element={<PollListPage />} />
-              <Route path="new" element={<CreatePollPage />} />
-              <Route path=":id" element={<DetailPollPage />} />
-              <Route path=":id/response" element={<ResponsePollPage />} />
-              <Route path="edit/:id" element={<EditPollPage />} />
-              <Route
-                path=":id/response/:responseId"
-                element={<DetailResponsePollPage />}
-              />
-
-              {/* User's */}
-              <Route path="me">
-                <Route index element={<MyPollPage />} />
-                <Route path="response" element={<ResponsePollPage me />} />
-              </Route>
+              <Route index element={<PollGraphListPage />} />
+              <Route path=":id" element={<DetailPollGraphPage />} />
             </Route>
 
             {/* Vote */}
             <Route path="vote">
-              <Route index element={<VoteListPage />} />
-              <Route path="new" element={<CreateVotePage />} />
-              <Route path=":id" element={<DetailVotePage />} />
-              <Route path=":id/response" element={<ResponseVotePage />} />
-              <Route path="edit/:id" element={<EditVotePage />} />
-              <Route
-                path=":id/response/:responseId"
-                element={<DetailResponseVotePage />}
-              />
-
-              {/* User's */}
-              <Route path="me">
-                <Route index element={<MyVotePage />} />
-                <Route path="response" element={<ResponseVotePage me />} />
-              </Route>
-            </Route>
-
-            {/* Graph */}
-            <Route path="graph">
-              {/* List */}
-              <Route index element={<SelectGraphPage />} />
-
-              {/* Poll */}
-              <Route path="poll">
-                <Route index element={<PollGraphListPage />} />
-                <Route path=":id" element={<DetailPollGraphPage />} />
-              </Route>
-
-              {/* Vote */}
-              <Route path="vote">
-                <Route index element={<VoteGraphListPage />} />
-                <Route path=":id" element={<DetailVoteGraphPage />} />
-              </Route>
+              <Route index element={<VoteGraphListPage />} />
+              <Route path=":id" element={<DetailVoteGraphPage />} />
             </Route>
           </Route>
-        ) : (
-          <Route path="service" element={<ForbiddenPage />} />
-        )}
-        {!isMaster && <Route path="panel" element={<ForbiddenPage />} />}
+        </Route>
       </Route>
 
       {/* Service use an other layout */}
-      <Route path="service">
+      <Route
+        path="service"
+        element={<ProtectedRoute roles={['User', 'Admin']} />}
+      >
         <Route path="poll">
           <Route element={<ShareLayout />}>
             <Route path="share" element={<SharePage />} />
@@ -206,14 +211,14 @@ const AppRoot: React.FC<AppRootProps> = () => {
         </Route>
       </Route>
 
-      {isMaster && (
-        <Route path="panel" element={<PanelLayout isCrew={isCrew} />}>
-          <Route index element={<Panel />}></Route>
+      <Route element={<ProtectedRoute roles={['Admin']} />}>
+        <Route path="panel" element={<PanelLayout />}>
+          <Route index element={<Panel />} />
         </Route>
-      )}
+      </Route>
 
       {/* Notfound Page */}
-      <Route element={<Layout isCrew={isCrew} />}>
+      <Route element={<Layout />}>
         <Route path="*" element={<NotfoundPage />} />
       </Route>
     </Routes>

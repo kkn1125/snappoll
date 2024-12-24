@@ -1,7 +1,7 @@
-import { logout } from '@/apis/logout';
-import { removeAccount } from '@/apis/removeAccount';
-import { updateProfile } from '@/apis/updateProfile';
-import { uploadProfileImage } from '@/apis/uploadProfileImage';
+import { logout } from '@apis/logout';
+import { removeAccount } from '@apis/removeAccount';
+import { updateProfile } from '@apis/updateProfile';
+import { uploadProfileImage } from '@apis/uploadProfileImage';
 import { Message } from '@common/messages';
 import { defaultProfile } from '@common/variables';
 import CustomInput from '@components/atoms/CustomInput';
@@ -30,10 +30,11 @@ import {
   useEffect,
   useState,
 } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 interface ProfilePageProps {}
 const ProfilePage: React.FC<ProfilePageProps> = () => {
+  const navigate = useNavigate();
   const { user, logoutToken, refetchGetMe } = useToken();
   const [uploadFile, setUploadFile] = useState<File | null>(null);
   const { openModal, openInteractiveModal } = useModal();
@@ -87,6 +88,7 @@ const ProfilePage: React.FC<ProfilePageProps> = () => {
     mutationFn: logout,
     onSuccess(data, variables, context) {
       logoutToken();
+      navigate('/');
     },
     onError(error, variables, context) {
       logoutToken();
@@ -264,8 +266,8 @@ const ProfilePage: React.FC<ProfilePageProps> = () => {
               </Button>
             )}
             {isSocial && (
-              <Typography>
-                프로필 수정은 스냅폴 회원가입해야 사용가능합니다.
+              <Typography align="center" width={300} sx={{ wordBreak: 'auto-phrase' }}>
+                접속한 계정은 소셜 로그인한 계정입니다.
               </Typography>
             )}
           </Stack>

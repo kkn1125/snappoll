@@ -1,4 +1,4 @@
-import { snapApi } from '@/apis';
+import { snapApi } from '@apis/index';
 
 export const removeVoteResponse = async (responseId: string) => {
   const { data } = await snapApi.delete(`/votes/response/${responseId}`);

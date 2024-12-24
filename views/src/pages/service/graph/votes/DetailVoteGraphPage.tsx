@@ -1,4 +1,4 @@
-import { getVote } from '@/apis/vote/getVote';
+import { getVote } from '@apis/vote/getVote';
 import { SnapVote } from '@models/SnapVote';
 import { SnapVoteOption } from '@models/SnapVoteOption';
 import { Box, Button, Stack, Typography } from '@mui/material';

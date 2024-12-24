@@ -25,12 +25,12 @@ export class ViewsService {
     });
   }
 
-  changeGradeFromId(id: string, grade: $Enums.Grade) {
-    return this.prisma.user.update({
-      where: { id },
-      data: { grade },
-    });
-  }
+  // changeGradeFromId(id: string, plan: $Enums.PlanType.Free) {
+  //   return this.prisma.user.update({
+  //     where: { id },
+  //     data: { grade },
+  //   });
+  // }
 
   changeRoleFromId(id: string, role: $Enums.Role) {
     return this.prisma.user.update({

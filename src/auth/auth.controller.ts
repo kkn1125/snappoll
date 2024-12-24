@@ -245,7 +245,7 @@ export class AuthController {
   @Get('request/kakao')
   @Header('Content-Type', 'text/html')
   async requestAsKakao(@Res() res: Response) {
-    // const data = await this.authService.requestLoginKakao();
+    const data = await this.authService.requestLoginKakao();
     const kakaoKey = this.configService.get('common.kakaoKey');
     res.redirect(
       `https://kauth.kakao.com/oauth/authorize?client_id=${kakaoKey}&redirect_uri=${encodeURIComponent(`${CURRENT_DOMAIN}/api/auth/login/kakao`)}&response_type=code`,
@@ -255,20 +255,52 @@ export class AuthController {
   @IgnoreCookie()
   @Get('login/kakao')
   async loginAsKakao(@Query('code') code: string, @Res() res: Response) {
-    const data = await this.authService.getKakaoLoginToken(code);
+    const { data, userData } = await this.authService.getKakaoLoginToken(code);
+    this.logger.info('data:', data);
+    this.logger.info('userData:', userData);
+
     const params = {
       access_token: data.access_token,
       refresh_token: data.refresh_token,
       id_token: data.id_token,
     };
 
-    res.cookie('token', data.id_token);
-    res.redirect(`${CLIENT_DOMAIN}/user/choice?${new URLSearchParams(params)}`);
+    const user = await this.authService.createOrIgnore(data, userData);
+
+    const { token, refreshToken } = this.authService.getToken({
+      id: user.id,
+      username: user.username,
+      email: user.email,
+      authProvider: user.authProvider,
+      loginAt: Date.now(),
+    });
+
+    res.cookie('token', token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'lax',
+      path: '/',
+    });
+    res.cookie('refresh', refreshToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'lax',
+      path: '/',
+    });
+
+    // this.authService.signUpSocial({
+    //   email: data.kakao_account.email,
+    //   username: data.kakao_account.profile.nickname,
+    // });
+
+    // res.cookie('token', data.id_token);
+    res.redirect(`${CLIENT_DOMAIN}/auth?${new URLSearchParams(params)}`);
   }
 
   @HttpCode(HttpStatus.NO_CONTENT)
   @Post('logout')
   async logout(@Req() req: Request, @Res() res: Response) {
+    await this.authService.lastLogin(req.user.id);
     if (req.user) {
       res.clearCookie('token', {
         httpOnly: true,
@@ -300,11 +332,7 @@ export class AuthController {
 
   // @HttpCode(HttpStatus.NO_CONTENT)
   @Post('verify')
-  async verify(
-    @Req() req: Request,
-    @Res({ passthrough: true }) res: Response,
-    @Body('admin') admin: boolean,
-  ) {
+  async verify(@Req() req: Request) {
     if (!req.verify) {
       const errorCode = await this.authService.prisma.getErrorCode(
         'auth',

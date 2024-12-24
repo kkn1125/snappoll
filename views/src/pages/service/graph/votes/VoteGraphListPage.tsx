@@ -1,4 +1,4 @@
-import { getMyVotes } from '@/apis/vote/getMyVotes';
+import { getMyVotes } from '@apis/vote/getMyVotes';
 import CommonPagination from '@components/atoms/CommonPagination';
 import SkeletonGraphList from '@components/moleculars/SkeletonGraphList';
 import { SnapVote } from '@models/SnapVote';

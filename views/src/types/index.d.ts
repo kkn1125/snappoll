@@ -54,16 +54,6 @@ export declare global {
 
   export type PollType = TextPollType | OptionPollType | CheckboxPollType;
 
-  // export type InferPollType<T> = T extends infer U
-  //   ? U extends 'text'
-  //     ? string
-  //     : U extends 'option'
-  //       ? string
-  //       : U extends 'checkbox'
-  //         ? boolean
-  //         : never
-  //   : never;
-
   export type InferPollDefault<T> = T extends infer D
     ? D extends 'text'
       ? string
@@ -74,53 +64,12 @@ export declare global {
           : never
     : never;
 
-  // export type InferPollValue<T> = T extends infer V
-  //   ? V extends 'text'
-  //     ? string
-  //     : V extends 'option'
-  //       ? string
-  //       : never
-  //   : never;
-
   interface BasePoll {
     name: string;
     desc?: string;
     label: string;
     required?: boolean;
   }
-  // interface TextPoll extends BasePoll {
-  //   type: 'text';
-  //   default?: string;
-  //   value?: string;
-  //   placeholder?: string;
-  //   items?: never[];
-  // }
-  // interface OptionPoll extends BasePoll {
-  //   type: 'option';
-  //   default: string;
-  //   value?: string;
-  //   items: { name: string; value: string }[];
-  // }
-  // interface CheckboxPoll extends BasePoll {
-  //   type: 'checkbox';
-  //   default: boolean;
-  //   items: { name: string; checked?: boolean }[];
-  // }
-  // type PollTypes<T> = T extends infer R extends 'text'
-  //   ? TextPoll
-  //   : infer R extends 'option'
-  //     ? OptionPoll
-  //     : infer R extends 'checkbox'
-  //       ? CheckboxPoll
-  //       : TextPoll;
-
-  // type APIPoll = {
-  //   id: string;
-  //   title: string;
-  //   description: string;
-  //   expiresAt: Date;
-  //   user?: User;
-  // };
   interface LoginDto {
     email: string;
     password: string;
@@ -129,6 +78,35 @@ export declare global {
     ok: boolean;
     data: T;
   }
+  interface Subscribe {
+    id: string;
+    planId: string;
+    userId: string;
+    type: 'Monthly' | 'Yearly';
+    state: 'Active' | 'Cancelled' | 'Expired';
+    startDate: Date;
+    endDate: Date;
+  }
+  interface Feature {
+    id: string;
+    planId: string;
+    feature: string;
+    createdAt: Date;
+    updatedAt: Date;
+  }
+  interface Plan {
+    id: string;
+    name: string;
+    description: string;
+    planType: 'Basic' | 'Premium' | 'Enterprise';
+    price: number;
+    createdAt: Date;
+    updatedAt: Date;
+    subscribe?: Subscribe[];
+    feature?: Feature[];
+  }
+  type Role = 'Admin' | 'User';
+  type ExpandedRole = 'Admin' | 'User' | 'Guest';
   interface User {
     id: string;
     email: string;
@@ -136,8 +114,8 @@ export declare global {
     isActive: boolean;
     lastLogin: Date;
     authProvider: 'Kakao' | 'Google' | 'Local';
-    role: 'Admin' | 'User';
-    grade: 'Free' | 'Hobby' | 'Pro';
+    role: Role;
+    // grade: 'Free' | 'Hobby' | 'Pro';
     password?: string;
     createdAt: Date;
     updatedAt: Date;
@@ -182,11 +160,7 @@ export declare global {
     errorCode: ErrorCode;
   }
   interface UserToken {
-    // token?: string;
     user?: User;
-    // leftTime?: number;
-    // signed: boolean;
-    // expired: boolean;
   }
   interface Vote {
     id: string;
@@ -200,11 +174,6 @@ export declare global {
     user?: User;
     voteResult?: VoteResult;
   }
-
-  // interface VoteOption {
-  //   type: string;
-  //   items: VoteOptionItem[];
-  // }
 
   interface VoteOptionItem {
     name: string;

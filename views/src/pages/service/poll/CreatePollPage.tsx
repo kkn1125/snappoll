@@ -1,5 +1,5 @@
-import { createPoll } from '@/apis/poll/create.poll';
-import { updatePoll } from '@/apis/poll/updatePoll';
+import { createPoll } from '@apis/poll/create.poll';
+import { updatePoll } from '@apis/poll/updatePoll';
 import { Action } from '@/models/Action';
 import { snapPollAtom } from '@/recoils/snapPoll.atom';
 import { Message } from '@common/messages';

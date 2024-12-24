@@ -180,7 +180,8 @@ export class CookieGuard implements CanActivate {
       this.logger.debug(error.name, error.message);
       this.logger.debug('invalid refresh token!');
       this.clearCookies(res);
-
+      /* 리프레시 만료 시 마지막 로그인 시간 기록 */
+      this.authService.lastLogin(req.user.id);
       const errorCode = await this.authService.prisma.getErrorCode(
         'auth',
         'ExpiredRefreshToken',

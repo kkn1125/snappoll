@@ -1,5 +1,5 @@
-import { getPolls } from '@/apis/poll/getPolls';
-import { getVotes } from '@/apis/vote/getVotes';
+import { getPolls } from '@apis/poll/getPolls';
+import { getVotes } from '@apis/vote/getVotes';
 import ListDataItem from '@components/organisms/ListDataItem';
 import { SnapPoll } from '@models/SnapPoll';
 import { SnapVote } from '@models/SnapVote';
