@@ -11,6 +11,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { $Enums, User } from '@prisma/client';
 import { UsersService } from '@users/users.service';
+import { EncryptManager } from '@utils/EncryptManager';
 import SnapLogger from '@utils/SnapLogger';
 import * as jwt from 'jsonwebtoken';
 import * as path from 'path';
@@ -26,6 +27,7 @@ export class AuthService {
     private readonly httpService: HttpService,
     private readonly usersService: UsersService,
     private readonly mailer: MailerService,
+    private readonly encryptManager: EncryptManager,
   ) {}
 
   async createOrIgnore(data: any, userData: jwt.JwtPayload) {
@@ -67,34 +69,11 @@ export class AuthService {
   }
 
   async initializeUserPassword(email: string) {
-    const special = [
-      '!',
-      '@',
-      '#',
-      '$',
-      '%',
-      '^',
-      '&',
-      '*',
-      '.',
-      '/',
-      '?',
-      '\\',
-      '-',
-      '+',
-    ];
+    const hashedPassword = this.encryptManager.getRandomHashedPassword();
 
-    const randomSpecial = special[Math.floor(Math.random() * special.length)];
-    const random = Math.floor(Math.random() * (90 - 65 + 1)) + 65;
-    const alphabet = String.fromCharCode(random);
-
-    const hex = this.prisma.randomHex();
-
-    const hashedPassword = hex.slice(0, 10) + alphabet + randomSpecial;
-    const password = this.prisma.encryptPassword(hashedPassword);
     await this.prisma.user.update({
       where: { email, deletedAt: null },
-      data: { localUser: { update: { password } } },
+      data: { localUser: { update: { password: hashedPassword } } },
     });
     return hashedPassword;
   }
@@ -148,7 +127,7 @@ export class AuthService {
       throw new NotFoundException(errorCode);
     }
 
-    const token = this.prisma.encryptPassword(email);
+    const token = this.encryptManager.encryptData(email);
     const defaultEmail = this.configService.get('email.defaultEmail');
     const domain = this.configService.get('common.currentDomain');
     const message = {
@@ -243,7 +222,7 @@ export class AuthService {
     }
 
     if (user.localUser) {
-      const encryptedPassword = this.prisma.encryptPassword(userPassword);
+      const encryptedPassword = this.encryptManager.encryptData(userPassword);
       if (user.localUser.password !== encryptedPassword) {
         const errorCode = await this.prisma.getErrorCode(
           'auth',
@@ -270,7 +249,7 @@ export class AuthService {
 
     this.logger.debug('to:', email);
 
-    const token = this.prisma.encryptPassword(email);
+    const token = this.encryptManager.encryptData(email);
     const defaultEmail = this.configService.get('email.defaultEmail');
     const domain = this.configService.get('common.currentDomain');
     const message = {
@@ -309,11 +288,6 @@ export class AuthService {
     const now = Math.floor(Date.now() / 1000);
     const leftExpiredTime = expiredTime - now;
     return leftExpiredTime;
-  }
-
-  getToken(userData: UserTokenData) {
-    const { token, refreshToken } = this.prisma.getToken(userData);
-    return { token, refreshToken };
   }
 
   getMe(email: string) {

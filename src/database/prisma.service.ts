@@ -1,4 +1,3 @@
-import { EXPIRED_TOKEN_TIME } from '@common/variables';
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PrismaClient } from '@prisma/client';
@@ -9,10 +8,6 @@ import {
   ErrorMessageType,
 } from '@utils/codes';
 import SnapLogger from '@utils/SnapLogger';
-import * as crypto from 'crypto';
-import * as CryptoJS from 'crypto-js';
-import jwt from 'jsonwebtoken';
-import ms from 'ms';
 
 @Injectable()
 export class PrismaService extends PrismaClient implements OnModuleInit {
@@ -26,10 +21,6 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
 
   async onModuleInit() {
     await this.$connect();
-  }
-
-  parseToken(token: any) {
-    return jwt.decode(token);
   }
 
   async getErrorCode<
@@ -53,50 +44,5 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
         AND error_message.status = ${errorStatus}
     `;
     return result[0];
-  }
-
-  randomHex() {
-    return crypto.randomBytes(10).toString('hex');
-  }
-
-  encryptPassword(originalPassword: string) {
-    const secretKey = this.configService.get<string>('common.secretKey');
-    const hmacKey = CryptoJS.HmacSHA256(originalPassword, secretKey);
-    return hmacKey.toString(CryptoJS.enc.Hex);
-  }
-
-  generateShareUrl(pollId: string, prefix: string) {
-    const now = Date.now();
-    const secretKey = this.configService.get<string>('common.secretKey');
-    const message = now + '|' + pollId;
-    const hmacKey = CryptoJS.HmacSHA256(message, secretKey);
-    const hashedUrl = hmacKey.toString(CryptoJS.enc.Base64url);
-    return `${prefix}-${hashedUrl}`;
-  }
-
-  getToken(userData: UserTokenData) {
-    const secretKey = this.configService.get<string>('common.secretKey');
-    const TOKEN_EXPIRED_AT = ms(EXPIRED_TOKEN_TIME);
-    const REFRESH_TOKEN_EXPIRED_AT = ms(EXPIRED_TOKEN_TIME * 2);
-    this.logger.info('만료시간 체크:', TOKEN_EXPIRED_AT);
-    const token = jwt.sign(userData, secretKey, {
-      expiresIn: TOKEN_EXPIRED_AT,
-      issuer: 'snapPoll',
-      algorithm: 'HS256',
-    });
-    const refreshToken = jwt.sign(
-      {
-        ...userData,
-        loginAt: Date.now(),
-      },
-      secretKey,
-      {
-        subject: 'refresh',
-        expiresIn: REFRESH_TOKEN_EXPIRED_AT,
-        issuer: 'snapPoll',
-        algorithm: 'HS256',
-      },
-    );
-    return { token, refreshToken };
   }
 }

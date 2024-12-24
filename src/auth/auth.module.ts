@@ -5,6 +5,7 @@ import { forwardRef, Module } from '@nestjs/common';
 import { PassportModule } from '@nestjs/passport';
 import { UsersModule } from '@users/users.module';
 import { UsersService } from '@users/users.service';
+import { EncryptManager } from '@utils/EncryptManager';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { BatchService } from './batch.service';
@@ -18,7 +19,13 @@ import { LocalStrategy } from './local.strategy';
     PassportModule,
     HttpModule,
   ],
-  providers: [AuthService, UsersService, LocalStrategy, BatchService],
+  providers: [
+    AuthService,
+    UsersService,
+    LocalStrategy,
+    BatchService,
+    EncryptManager,
+  ],
   controllers: [AuthController],
   exports: [AuthService, BatchService],
 })

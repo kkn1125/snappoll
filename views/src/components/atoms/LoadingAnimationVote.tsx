@@ -115,6 +115,7 @@ const LoadingAnimationVote: React.FC<LoadingAnimationVoteProps> = () => {
           animation: loaded
             ? `${fallingAnimation} 3s linear both infinite`
             : 'none',
+          border: '2px solid #e3e3e3',
           zIndex: 9,
         }}
       />

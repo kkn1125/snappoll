@@ -11,6 +11,7 @@ import SnapLogger from '@utils/SnapLogger';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserPasswordDto } from './dto/update-user-password.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { EncryptManager } from '@utils/EncryptManager';
 
 @Injectable()
 export class UsersService {
@@ -28,6 +29,7 @@ export class UsersService {
 
   constructor(
     private readonly httpService: HttpService,
+    private readonly encryptManager: EncryptManager,
     // private readonly logger: SnapLogger,
     private readonly prisma: PrismaService,
   ) {}
@@ -78,7 +80,7 @@ export class UsersService {
       throw new BadRequestException(errorCode);
     }
 
-    const password = this.prisma.encryptPassword(createUserDto.password);
+    const password = this.encryptManager.encryptData(createUserDto.password);
     // createUserDto.password = password;
     this.logger.info('encrypted:', createUserDto.password);
     return password;
@@ -249,7 +251,7 @@ export class UsersService {
     }
 
     const encryptedCurrentPassword =
-      this.prisma.encryptPassword(currentPassword);
+      this.encryptManager.encryptData(currentPassword);
 
     // console.log('currentPassword:', currentPassword);
 
@@ -258,7 +260,7 @@ export class UsersService {
       throw new BadRequestException(errorCode);
     }
 
-    const encryptedPassword = this.prisma.encryptPassword(
+    const encryptedPassword = this.encryptManager.encryptData(
       updateUserDto.password,
     );
     // console.log(id, user.localUser.password, encryptedPassword);

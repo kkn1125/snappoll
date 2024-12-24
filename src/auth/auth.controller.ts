@@ -26,12 +26,14 @@ import { Request, Response } from 'express';
 import { AuthService } from './auth.service';
 import { BatchService } from './batch.service';
 import { IgnoreCookie } from './ignore-cookie.decorator';
+import { EncryptManager } from '@utils/EncryptManager';
 
 @Controller('auth')
 export class AuthController {
   logger = new SnapLogger(this);
 
   constructor(
+    private readonly encryptManager: EncryptManager,
     private readonly authService: AuthService,
     private readonly batchService: BatchService,
     private readonly configService: ConfigService,
@@ -85,7 +87,7 @@ export class AuthController {
     const { resolve, email, start, expired } = mapper;
     const gap = Date.now() - start;
     const expiresAt = gap > this.batchService.cacheTime;
-    const compareToken = this.authService.prisma.encryptPassword(email);
+    const compareToken = this.encryptManager.encryptData(email);
     const matched = compareToken === data.token;
     const has = !!resolve;
 
@@ -171,7 +173,7 @@ export class AuthController {
     const gap = Date.now() - start;
     const expiresAt = gap > this.batchService.cacheTime;
 
-    const compareToken = this.authService.prisma.encryptPassword(email);
+    const compareToken = this.encryptManager.encryptData(email);
     // console.log(compareToken, data.token, email);
     const matched = compareToken === data.token;
     const has = !!resolve;
@@ -212,7 +214,7 @@ export class AuthController {
   @Post('login')
   async login(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
     const user = req.user;
-    const { token, refreshToken } = this.authService.getToken({
+    const { token, refreshToken } = this.encryptManager.getToken({
       id: user.id,
       username: user.username,
       email: user.email,
@@ -267,7 +269,7 @@ export class AuthController {
 
     const user = await this.authService.createOrIgnore(data, userData);
 
-    const { token, refreshToken } = this.authService.getToken({
+    const { token, refreshToken } = this.encryptManager.getToken({
       id: user.id,
       username: user.username,
       email: user.email,
@@ -355,7 +357,7 @@ export class AuthController {
   ) {
     const { id, email, username, authProvider, loginAt } = req.verify;
 
-    const { token, refreshToken } = this.authService.getToken({
+    const { token, refreshToken } = this.encryptManager.getToken({
       id,
       email,
       username,

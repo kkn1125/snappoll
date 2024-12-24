@@ -3,6 +3,7 @@ import { PrismaService } from '@database/prisma.service';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { $Enums } from '@prisma/client';
+import { EncryptManager } from '@utils/EncryptManager';
 import { Response } from 'express';
 import fs from 'fs/promises';
 import Handlebars from 'handlebars';
@@ -24,6 +25,7 @@ export class MailerService {
     private readonly prisma: PrismaService,
     private readonly configService: ConfigService,
     private readonly batchService: BatchService,
+    private readonly encryptManager: EncryptManager,
   ) {
     const emailAddress = this.configService.get('email.address');
     const emailPassword = this.configService.get('email.password');
@@ -90,7 +92,7 @@ export class MailerService {
       throw new NotFoundException(errorCode);
     }
 
-    const { token } = this.prisma.getToken({
+    const { token } = this.encryptManager.getToken({
       id: admin.id,
       email: admin.email,
       username: admin.username,
@@ -206,7 +208,9 @@ export class MailerService {
     const domain = this.configService.get('common.currentDomain');
     const defaultEmail = this.configService.get('email.defaultEmail');
     const domainToken = 'snappollhelper';
-    const token = this.prisma.encryptPassword(defaultEmail + '|' + domainToken);
+    const token = this.encryptManager.encryptData(
+      defaultEmail + '|' + domainToken,
+    );
     const message = {
       to: defaultEmail,
       subject: '⚠️ SnapPoll 관리자 이메일 확인 요청',

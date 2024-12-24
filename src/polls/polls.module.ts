@@ -2,6 +2,7 @@ import { AuthModule } from '@auth/auth.module';
 import { PrismaService } from '@database/prisma.service';
 import { Module } from '@nestjs/common';
 import { RouterModule } from '@nestjs/core';
+import { EncryptManager } from '@utils/EncryptManager';
 import { AnswersModule } from './answers/answers.module';
 import { PollsController } from './polls.controller';
 import { PollsService } from './polls.service';
@@ -32,6 +33,6 @@ import { ResponseModule } from './response/response.module';
     // AnswersModule,
   ],
   controllers: [PollsController],
-  providers: [PrismaService, PollsService],
+  providers: [PrismaService, PollsService, EncryptManager],
 })
 export class PollsModule {}

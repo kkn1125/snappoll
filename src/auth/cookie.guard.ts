@@ -13,6 +13,7 @@ import SnapLogger from '@utils/SnapLogger';
 import { Request, Response } from 'express';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import { AuthService } from './auth.service';
+import { EncryptManager } from '@utils/EncryptManager';
 
 @Injectable()
 export class CookieGuard implements CanActivate {
@@ -23,6 +24,7 @@ export class CookieGuard implements CanActivate {
     private readonly configService: ConfigService,
     private readonly prisma: PrismaService,
     private readonly authService: AuthService,
+    private readonly encryptManager: EncryptManager,
   ) {}
 
   async canActivate(context: ExecutionContext) {
@@ -151,7 +153,7 @@ export class CookieGuard implements CanActivate {
 
       const { id, email, username, authProvider, loginAt } =
         verifiedRefreshToken;
-      const { token, refreshToken } = this.authService.getToken({
+      const { token, refreshToken } = this.encryptManager.getToken({
         id,
         email,
         username,

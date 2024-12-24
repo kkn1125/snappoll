@@ -21,6 +21,7 @@ import path from 'path';
 import { BasicModule } from './basic/basic.module';
 import { MailerModule } from './mailer/mailer.module';
 import { PlansModule } from './plans/plans.module';
+import { EncryptManager } from '@utils/EncryptManager';
 
 @Module({
   imports: [
@@ -69,7 +70,9 @@ import { PlansModule } from './plans/plans.module';
     { provide: APP_GUARD, useClass: CustomThrottlerGuard },
     ConfigService,
     WebsocketGateway,
+    EncryptManager,
   ],
+  exports: [EncryptManager],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

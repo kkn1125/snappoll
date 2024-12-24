@@ -9,6 +9,7 @@ import { CreateBoardDto } from './dto/create-board.dto';
 import { UpdateBoardDto } from './dto/update-board.dto';
 import SnapLogger from '@utils/SnapLogger';
 import { snakeToCamel } from '@utils/snakeToCamel';
+import { EncryptManager } from '@utils/EncryptManager';
 
 @Injectable()
 export class BoardsService {
@@ -35,7 +36,10 @@ export class BoardsService {
     },
   };
 
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly encryptManager: EncryptManager,
+  ) {}
 
   async findAllCategories(eachAmount: number) {
     const categories = ['notice', 'community', 'event', 'faq'];
@@ -129,14 +133,14 @@ export class BoardsService {
       const errorCode = await this.prisma.getErrorCode('board', 'NotFound');
       throw new NotFoundException(errorCode);
     }
-    const encryptedPassword = this.prisma.encryptPassword(password);
+    const encryptedPassword = this.encryptManager.encryptData(password);
 
     return board.password === encryptedPassword;
   }
 
   create(createBoardDto: CreateBoardDto, isUser: boolean) {
     if (!isUser && createBoardDto.password) {
-      createBoardDto.password = this.prisma.encryptPassword(
+      createBoardDto.password = this.encryptManager.encryptData(
         createBoardDto.password,
       );
     }
@@ -160,7 +164,7 @@ export class BoardsService {
         const errorCode = await this.prisma.getErrorCode('board', 'Forbidden');
         throw new ForbiddenException(errorCode);
       }
-      const encryptedPassword = this.prisma.encryptPassword(password);
+      const encryptedPassword = this.encryptManager.encryptData(password);
       if (board.password !== encryptedPassword) {
         const errorCode = await this.prisma.getErrorCode('board', 'Forbidden');
         throw new ForbiddenException(errorCode);
@@ -185,7 +189,7 @@ export class BoardsService {
         const errorCode = await this.prisma.getErrorCode('board', 'Forbidden');
         throw new ForbiddenException(errorCode);
       }
-      const encryptedPassword = this.prisma.encryptPassword(password);
+      const encryptedPassword = this.encryptManager.encryptData(password);
       if (board.password !== encryptedPassword) {
         const errorCode = await this.prisma.getErrorCode('board', 'Forbidden');
         throw new ForbiddenException(errorCode);

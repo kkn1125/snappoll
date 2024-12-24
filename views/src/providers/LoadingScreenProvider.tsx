@@ -13,6 +13,7 @@ import {
 import LoadingAnimation from '@components/atoms/LoadingAnimationVote';
 import LoadingAnimationVote from '@components/atoms/LoadingAnimationVote';
 import LoadingAnimationPoll from '@components/atoms/LoadingAnimationPoll';
+import LoadingComponent from '@components/atoms/LoadingComponent';
 
 interface LoadingScreenProviderProps {
   children: React.ReactNode;
@@ -74,32 +75,7 @@ const LoadingScreenProvider: React.FC<LoadingScreenProviderProps> = ({
     <LoadingDispatchContext.Provider value={dispatch}>
       <LoadingContext.Provider value={state}>
         <Portal>
-          {state.loading && (
-            <Stack
-              position="fixed"
-              top={0}
-              left={0}
-              right={0}
-              bottom={0}
-              justifyContent="center"
-              alignItems="center"
-              sx={{
-                zIndex: 1500,
-                backgroundColor: '#ffffffff',
-                backdropFilter: 'blur(1px)',
-                opacity: state.close ? 0 : 1,
-                transition: `opacity ${state.close ? 0.5 : state.timeout}s ease-in-out`,
-              }}
-            >
-              {state.content === 'poll' && <LoadingAnimationPoll />}
-              {state.content === 'vote' && <LoadingAnimationVote />}
-              <Typography sx={{ mt: 1 }}>Loading...</Typography>
-              {/* {state.content === 'vote' && <LoadingAnimationVote />} */}
-              {/* <Typography fontSize={32} fontWeight={700}>
-                {state.content}
-              </Typography> */}
-            </Stack>
-          )}
+          <LoadingComponent state={state} />
         </Portal>
         {children}
       </LoadingContext.Provider>

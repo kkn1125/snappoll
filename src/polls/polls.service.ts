@@ -4,10 +4,14 @@ import { Option } from '@prisma/client';
 import { CreatePollDto } from './dto/create-poll.dto';
 import { UpdatePollDto } from './dto/update-poll.dto';
 import { CreateSharePollDto } from './dto/create-share-poll.dto';
+import { EncryptManager } from '@utils/EncryptManager';
 
 @Injectable()
 export class PollsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly encryptManager: EncryptManager,
+  ) {}
 
   /* share poll */
   findShareOneById(id: string) {
@@ -72,7 +76,7 @@ export class PollsService {
   }
 
   createShareUrl(createSharePollDto: CreateSharePollDto) {
-    const url = this.prisma.generateShareUrl(
+    const url = this.encryptManager.generateShareUrl(
       createSharePollDto.pollId,
       'public-poll',
     );

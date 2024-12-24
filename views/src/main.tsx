@@ -21,12 +21,12 @@ import { RecoilRoot } from 'recoil';
 import { HelmetProvider } from 'react-helmet-async';
 import ThemeModeProvider from '@providers/ThemeModeProvider';
 
-const skyColor = '#98cfff';
-const skyColorMain = alpha(skyColor, 0.7);
-const skyColorLight = alpha(skyColor, 0.5);
-const skyColorDark = alpha(skyColor, 0.9);
-const skyColorContrastText =
-  getContrastRatio(skyColorMain, '#fff') > 4.5 ? '#fff' : '#111';
+// const skyColor = '#98cfff';
+// const skyColorMain = alpha(skyColor, 0.7);
+// const skyColorLight = alpha(skyColor, 0.5);
+// const skyColorDark = alpha(skyColor, 0.9);
+// const skyColorContrastText =
+//   getContrastRatio(skyColorMain, '#fff') > 4.5 ? '#fff' : '#111';
 
 // const darkTheme = createTheme({
 //   components: {

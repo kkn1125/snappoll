@@ -3,10 +3,14 @@ import { CreateVoteDto } from './dto/create-vote.dto';
 import { UpdateVoteDto } from './dto/update-vote.dto';
 import { PrismaService } from '@database/prisma.service';
 import { CreateShareVoteDto } from './dto/create-share-vote.dto';
+import { EncryptManager } from '@utils/EncryptManager';
 
 @Injectable()
 export class VotesService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly encryptManager: EncryptManager,
+  ) {}
 
   /* share vote */
   findShareOneById(id: string) {
@@ -59,7 +63,7 @@ export class VotesService {
   }
 
   createShareUrl(createShareVoteDto: CreateShareVoteDto) {
-    const url = this.prisma.generateShareUrl(
+    const url = this.encryptManager.generateShareUrl(
       createShareVoteDto.voteId,
       'public-vote',
     );

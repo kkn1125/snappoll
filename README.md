@@ -6,10 +6,12 @@
   - add
     - 구독 테이블 추가
     - 구독 API 추가
+    - 메일러 컨트롤러 추가 (테스트용)
   - fix
     - LocalUser, SocialUser onDelete 설정
     - UserProfile Table OnDelete 옵션 추가
     - 카카오 회원가입, 로그인 기능 복원
+    - 암호화 관련 기능 EncryptManager로 분리
   - bugfix
     - 프로필 이미지 데이터베이스 저장 및 읽기 안되는 버그 수정
     - 리프레시 토큰 만료 처리 과정 버그 수정
