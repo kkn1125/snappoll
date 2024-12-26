@@ -199,7 +199,16 @@ export class AuthService {
       include: {
         localUser: true,
         socialUser: true,
-        userProfile: true,
+        userProfile: {
+          select: {
+            id: true,
+          },
+        },
+        subscription: {
+          include: {
+            plan: true,
+          },
+        },
       },
     });
 

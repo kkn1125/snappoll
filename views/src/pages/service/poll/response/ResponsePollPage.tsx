@@ -67,8 +67,6 @@ const ResponsePollPage: React.FC<ResponsePollPageProps> = ({ me }) => {
     },
   });
 
-  logger.debug('data:', data);
-
   const getTitle = useCallback((response: SnapResponse) => {
     return response.poll?.title;
   }, []);

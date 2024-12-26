@@ -243,11 +243,16 @@ const WriteBoardPage: React.FC<WriteBoardPageProps> = () => {
       <Divider flexItem sx={{ my: 3 }} />
       <Stack direction="row" gap={2}>
         <Button
-          component={Link}
           type="button"
           variant="outlined"
           color="inherit"
-          to={`/board/${data.category}`}
+          onClick={() => {
+            if (board) {
+              navigate(`/board/${board.category}/${board.id}`);
+            } else {
+              navigate(`/board/${data.category}`);
+            }
+          }}
         >
           취소
         </Button>

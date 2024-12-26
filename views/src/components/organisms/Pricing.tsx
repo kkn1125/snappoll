@@ -1,28 +1,57 @@
 import useModal from '@hooks/useModal';
+import useToken from '@hooks/useToken';
 import { Button, Stack, Typography } from '@mui/material';
-import { Link, useNavigate } from 'react-router-dom';
+import { useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 interface PricingProps {
   plan: Plan;
 }
 const Pricing: React.FC<PricingProps> = ({ plan }) => {
+  const { user } = useToken();
   const navigate = useNavigate();
-  const { openInteractiveModal } = useModal();
+  const { openModal, openInteractiveModal } = useModal();
+  const userSubscription = useMemo(() => {
+    if (user) {
+      const subscription = user.subscription;
+      const subscribe = subscription.find((sub) => sub.endDate === null);
+      return subscribe;
+    }
+    return undefined;
+  }, [user]);
   const isFree = plan.price === 0;
+  function handleRequireSignup(plan: Plan) {
+    if (userSubscription?.planId === plan.id) {
+      openModal({
+        info: {
+          title: '구독',
+          content: '이미 구독중인 플랜입니다.',
+        },
+      });
+      return;
+    }
 
-  function handleRequireSignup() {
     openInteractiveModal({
-      content: isFree
+      content: userSubscription
         ? [
-            '무료로 시작하기 위해 회원가입이 필요합니다.',
-            '회원가입 페이지로 이동하시겠습니까?',
+            `현재 ${userSubscription.plan?.name}을 구독 중입니다.`,
+            `${plan.name}으로 변경하시겠습니까?`,
           ]
-        : [
-            '구독하기 위해 회원가입이 필요합니다.',
-            '회원가입 페이지로 이동하시겠습니까?',
-          ],
+        : isFree
+          ? [
+              '무료로 시작하기 위해 회원가입이 필요합니다.',
+              '회원가입 페이지로 이동하시겠습니까?',
+            ]
+          : [
+              `${plan.name}을 구독하기 위해 회원가입이 필요합니다.`,
+              '회원가입 페이지로 이동하시겠습니까?',
+            ],
       callback: () => {
-        navigate('/auth/signup');
+        if (userSubscription) {
+          navigate('/price/change');
+        } else {
+          navigate('/auth/signup');
+        }
       },
     });
   }
@@ -78,9 +107,13 @@ const Pricing: React.FC<PricingProps> = ({ plan }) => {
       <Button
         variant={isFree ? 'contained' : 'outlined'}
         sx={{ fontSize: 16 }}
-        onClick={handleRequireSignup}
+        onClick={() => handleRequireSignup(plan)}
       >
-        {isFree ? '무료로 시작하기' : '구독하기'}
+        {userSubscription?.planId === plan.id
+          ? '구독 중'
+          : isFree
+            ? '무료로 시작하기'
+            : '구독하기'}
       </Button>
     </Stack>
   );

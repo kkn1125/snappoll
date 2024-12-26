@@ -2,7 +2,6 @@ import { sidebarAtom } from '@/recoils/sidebar.atom';
 import { BRAND_NAME, logoImage } from '@common/variables';
 import ProfileAvatar from '@components/atoms/ProfileAvatar';
 import useScroll from '@hooks/useScroll';
-import useThemeMode from '@hooks/useThemeMode';
 import useToken from '@hooks/useToken';
 import MenuOpenRoundedIcon from '@mui/icons-material/MenuOpenRounded';
 import MenuRoundedIcon from '@mui/icons-material/MenuRounded';
@@ -16,6 +15,7 @@ import {
   MenuItem,
   Stack,
   Toolbar,
+  Tooltip,
   Typography,
   useMediaQuery,
   useTheme,
@@ -29,22 +29,6 @@ import {
 } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
-
-const menuList = [
-  { name: 'SnapPoll이란?', to: '/about', allow: ['Guest', 'User', 'Admin'] },
-  { name: '요금제', to: '/price', allow: ['Guest', 'User', 'Admin'] },
-  { name: '게시판', to: '/board', allow: ['Guest', 'User', 'Admin'] },
-  { name: '서비스', to: '/service', allow: ['User', 'Admin'] },
-  {
-    name: (username?: string) => username,
-    to: '/user',
-    allow: ['User', 'Admin'],
-    icon: (username?: string, profileImage?: string) => (
-      <ProfileAvatar username={username} profileImage={profileImage} />
-    ),
-  },
-  { name: '회원가입/로그인', to: '/auth', allow: ['Guest'] },
-];
 
 interface HeaderProps {}
 const Header: React.FC<HeaderProps> = () => {
@@ -66,6 +50,29 @@ const Header: React.FC<HeaderProps> = () => {
   };
   const sidebarOpened = isMdDown ? !sidebarState.opened : sidebarState.opened;
   const boardPath = locate.pathname.startsWith('/board');
+
+  const menuList = [
+    { name: 'SnapPoll이란?', to: '/about', allow: ['Guest', 'User', 'Admin'] },
+    { name: '요금제', to: '/price', allow: ['Guest', 'User', 'Admin'] },
+    { name: '게시판', to: '/board', allow: ['Guest', 'User', 'Admin'] },
+    { name: '서비스', to: '/service', allow: ['User', 'Admin'] },
+    {
+      name: user?.username,
+      to: '/user',
+      allow: ['User', 'Admin'],
+      icon: (
+        <ProfileAvatar
+          username={user?.username}
+          profileImage={user?.userProfile?.id}
+        />
+      ),
+    },
+    { name: '회원가입/로그인', to: '/auth', allow: ['Guest'] },
+  ];
+
+  useEffect(() => {
+    handleClose();
+  }, [isMdDown]);
 
   function handleToggleSidebar(e: ReactMouseEvent<HTMLElement>) {
     e.stopPropagation();
@@ -194,10 +201,8 @@ const Header: React.FC<HeaderProps> = () => {
                           onClick={redirectTo(to)}
                           sx={{ gap: 1 }}
                         >
-                          {icon?.(user?.username, profileImage)}
-                          {typeof name === 'string'
-                            ? name
-                            : name(user?.username)}
+                          {icon}
+                          {name}
                         </MenuItem>
                       ))}
                   </Stack>
@@ -209,7 +214,17 @@ const Header: React.FC<HeaderProps> = () => {
                   user ? allow.includes(user.role) : allow.includes('Guest'),
                 )
                 .map(({ name, to, icon }) =>
-                  typeof name === 'string' ? (
+                  icon ? (
+                    <Tooltip
+                      key={to}
+                      placement="bottom"
+                      title={`${user?.username}님 정보`}
+                    >
+                      <IconButton component={Link} to={to}>
+                        {icon}
+                      </IconButton>
+                    </Tooltip>
+                  ) : (
                     <Button
                       key={to}
                       component={Link}
@@ -219,10 +234,6 @@ const Header: React.FC<HeaderProps> = () => {
                     >
                       {name}
                     </Button>
-                  ) : (
-                    <IconButton key={to} component={Link} to={to}>
-                      {icon?.(user?.username, profileImage)}
-                    </IconButton>
                   ),
                 )
             )}

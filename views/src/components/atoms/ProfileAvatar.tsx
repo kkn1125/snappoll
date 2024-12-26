@@ -14,17 +14,15 @@ const ProfileAvatar: React.FC<ProfileAvatarProps> = ({
   profileImage,
 }) => {
   return username && profileImage ? (
-    <Tooltip placement="bottom" title={`${username}님 정보`}>
-      <Avatar
-        src={getServerProfileImage(profileImage)}
-        alt={username}
-        sx={{
-          width: size,
-          height: size,
-          boxShadow: '2px 2px 5px 0 #00000056',
-        }}
-      />
-    </Tooltip>
+    <Avatar
+      src={getServerProfileImage(profileImage)}
+      alt={username}
+      sx={{
+        width: size,
+        height: size,
+        boxShadow: '2px 2px 5px 0 #00000056',
+      }}
+    />
   ) : (
     <DefaultProfile width={32} height={32} style={{ marginRight: 8 }} />
   );

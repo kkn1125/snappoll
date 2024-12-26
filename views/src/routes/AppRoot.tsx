@@ -50,7 +50,8 @@ import MyVotePage from '@pages/service/vote/MyVotePage';
 import DetailResponseVotePage from '@pages/service/vote/response/DetailResponseVotePage';
 import ResponseVotePage from '@pages/service/vote/response/ResponseVotePage';
 import VoteListPage from '@pages/service/vote/VoteListPage';
-import Subscribe from '@pages/subscribe/Subscribe';
+import ChangePricePage from '@pages/subscribe/ChangePricePage';
+import PricePage from '@pages/subscribe/PricePage';
 import MyResponsePage from '@pages/user/MyResponsePage';
 import PasswordPage from '@pages/user/PasswordPage';
 import ProfilePage from '@pages/user/ProfilePage';
@@ -101,7 +102,10 @@ const AppRoot: React.FC<AppRootProps> = () => {
         <Route index element={isCrew ? <HomePage /> : <GuestHomePage />} />
 
         <Route element={<CommonLayout />}>
-          <Route path="price" element={<Subscribe />} />
+          <Route path="price">
+            <Route index element={<PricePage />} />
+            <Route path="change" element={<ChangePricePage />} />
+          </Route>
           <Route path="notice" element={<NoticePage />} />
           <Route path="about" element={<AboutPage />} />
         </Route>
@@ -128,14 +132,16 @@ const AppRoot: React.FC<AppRootProps> = () => {
         </Route>
 
         {/* User */}
-        <Route
-          path="user"
-          element={<ProtectedRoute roles={['User', 'Admin']} />}
-        >
-          <Route index element={<UserPage />} />
-          <Route path="profile" element={<ProfilePage />} />
-          <Route path="password" element={<PasswordPage />} />
-          <Route path="response" element={<MyResponsePage />} />
+        <Route element={<CommonLayout />}>
+          <Route
+            path="user"
+            element={<ProtectedRoute roles={['User', 'Admin']} />}
+          >
+            <Route index element={<UserPage />} />
+            <Route path="profile" element={<ProfilePage />} />
+            <Route path="password" element={<PasswordPage />} />
+            <Route path="response" element={<MyResponsePage />} />
+          </Route>
         </Route>
 
         {/* Service */}

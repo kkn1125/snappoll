@@ -25,6 +25,7 @@ import { UpdateUserPasswordDto } from './dto/update-user-password.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersService } from './users.service';
 import { TermsService } from '@/terms/terms.service';
+import { PrismaService } from '@database/prisma.service';
 
 @Controller('users')
 export class UsersController {
@@ -33,6 +34,7 @@ export class UsersController {
   constructor(
     private readonly usersService: UsersService,
     private readonly termsService: TermsService,
+    private readonly prisma: PrismaService,
   ) {}
 
   @IgnoreCookie()
@@ -44,22 +46,25 @@ export class UsersController {
       serviceAgreement: boolean;
     },
   ) {
-    const { privacyPolicy, serviceAgreement, ...createUserDtoData } =
-      createUserDto;
-    const user = await this.usersService.create(
-      privacyPolicy,
-      serviceAgreement,
-      createUserDtoData,
-    );
-    this.logger.info('user data:', user);
-    const terms = await this.termsService.findLatestVersion();
-    for (const section of terms.termsSection) {
-      this.logger.debug(section.termsId);
-      await this.termsService.agreeTerm({
-        userId: user.id,
-        termsId: section.termsId,
-      });
-    }
+    const user = await this.prisma.$transaction(async (prisma) => {
+      const { privacyPolicy, serviceAgreement, ...createUserDtoData } =
+        createUserDto;
+      const user = await this.usersService.create(
+        privacyPolicy,
+        serviceAgreement,
+        createUserDtoData,
+      );
+      this.logger.info('user data:', user);
+      const terms = await this.termsService.findLatestVersion();
+      for (const section of terms.termsSection) {
+        this.logger.debug(section.termsId);
+        await this.termsService.agreeTerm({
+          userId: user.id,
+          termsId: section.termsId,
+        });
+      }
+      return user;
+    });
     return user;
   }
 

@@ -7,9 +7,14 @@ interface SunEditorContentProps {
 }
 const SunEditorContent: React.FC<SunEditorContentProps> = ({ content }) => {
   return (
-    <Box className="sun-editor-editable">
+    <Box
+      className="sun-editor-editable"
+      sx={{
+        fontSize: '1em',
+      }}
+    >
       <Box
-        className="se-container"
+        className="se-wrapper-inner se-wrapper-wysiwyg sun-editor-editable"
         fontWeight={500}
         dangerouslySetInnerHTML={{ __html: content || '' }}
       />
