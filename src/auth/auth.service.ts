@@ -261,6 +261,7 @@ export class AuthService {
         content:
           '본인인증을 위한 메일입니다. 본인에 의한 확인 메일이 아닌 경우, 아래 메일로 문의해주세요.',
         action: domain + '/api/auth/validate',
+        domain,
         token,
         email: defaultEmail,
         image: 'https://snappoll.kro.kr/images/original.png',

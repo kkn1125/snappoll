@@ -17,6 +17,7 @@ export const ErrorName = {
   CheckUserData: 'CheckUserData',
   SitemapIssue: 'SitemapIssue',
   RequiredData: 'RequiredData',
+  RequireAgreement: 'RequireAgreement',
   UploadFileSize: 'UploadFileSize',
   UploadFileType: 'UploadFileType',
   NoExistsToken: 'NoExistsToken',
@@ -34,6 +35,7 @@ export const ErrorName = {
 export const ErrorCode = [
   // common
   [100, 'common'],
+  [101, 'plan'],
   // auth
   [200, 'auth'],
   // basic
@@ -71,6 +73,17 @@ export const ErrorMessage = {
       ErrorName.TooManyRequest,
       '너무 많은 요청이 있습니다. 잠시 후 다시 시도해주세요.',
     ],
+  ],
+  plan: [
+    [100, ErrorName.BadRequest, '잘못된 요청입니다.'],
+    [101, ErrorName.NotFound, '찾을 수 없습니다.'],
+    [102, ErrorName.Forbidden, '접근 권한이 없습니다.'],
+    [
+      103,
+      ErrorName.TooManyRequest,
+      '너무 많은 요청이 있습니다. 잠시 후 다시 시도해주세요.',
+    ],
+    [104, ErrorName.NotFound, '찾을 수 없습니다.'],
   ],
   /* auth */
   auth: [
@@ -121,6 +134,11 @@ export const ErrorMessage = {
     ],
     [109, ErrorName.OnlyLocalUser, '사이트 회원만 가능합니다.'],
     [110, ErrorName.Deactivated, '활동 정지된 회원입니다.'],
+    [
+      111,
+      ErrorName.RequireAgreement,
+      '회원가입 및 서비스 이용은 이용동의가 필요합니다.',
+    ],
   ],
   userProfile: [
     [100, ErrorName.BadRequest, '잘못된 요청입니다.'],

@@ -7,7 +7,7 @@ const skyColorDark = alpha(skyColor, 0.9);
 const skyColorContrastText =
   getContrastRatio(skyColorMain, '#fff') > 4.5 ? '#fff' : '#111';
 
-export const lightTheme = createTheme({
+const lightTheme = createTheme({
   palette: {
     primary: {
       main: '#007BFF', // 메인 블루 색상
@@ -24,6 +24,7 @@ export const lightTheme = createTheme({
     background: {
       default: '#F8F9FA', // 배경 라이트 그레이
       paper: '#FFFFFF', // 카드 및 컨테이너의 배경
+      marketing: '#F0F4FF', // 마케팅 영역의 배경색
     },
     text: {
       primary: '#343A40', // 다크 그레이 텍스트
@@ -59,7 +60,7 @@ export const lightTheme = createTheme({
   },
 });
 
-export const darkTheme = createTheme({
+const darkTheme = createTheme({
   palette: {
     mode: 'dark',
     primary: {
@@ -77,6 +78,7 @@ export const darkTheme = createTheme({
     background: {
       default: '#121212', // 다크모드 배경
       paper: '#1E1E1E', // 카드 및 컨테이너의 배경
+      marketing: '#1A1A2E', // 마케팅 영역의 배경색
     },
     text: {
       primary: '#E0E0E0', // 밝은 텍스트 색상
@@ -111,3 +113,5 @@ export const darkTheme = createTheme({
     },
   },
 });
+
+export { lightTheme, darkTheme };

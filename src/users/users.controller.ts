@@ -24,19 +24,43 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserPasswordDto } from './dto/update-user-password.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersService } from './users.service';
+import { TermsService } from '@/terms/terms.service';
 
 @Controller('users')
 export class UsersController {
   logger = new SnapLogger(this);
 
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly termsService: TermsService,
+  ) {}
 
   @IgnoreCookie()
   @Post()
-  create(
-    @Body(new ValidationPipe({ transform: true })) createUserDto: CreateUserDto,
+  async create(
+    @Body(new ValidationPipe({ transform: true }))
+    createUserDto: CreateUserDto & {
+      privacyPolicy: boolean;
+      serviceAgreement: boolean;
+    },
   ) {
-    return this.usersService.create(createUserDto);
+    const { privacyPolicy, serviceAgreement, ...createUserDtoData } =
+      createUserDto;
+    const user = await this.usersService.create(
+      privacyPolicy,
+      serviceAgreement,
+      createUserDtoData,
+    );
+    this.logger.info('user data:', user);
+    const terms = await this.termsService.findLatestVersion();
+    for (const section of terms.termsSection) {
+      this.logger.debug(section.termsId);
+      await this.termsService.agreeTerm({
+        userId: user.id,
+        termsId: section.termsId,
+      });
+    }
+    return user;
   }
 
   @Get()

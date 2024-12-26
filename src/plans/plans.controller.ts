@@ -1,7 +1,10 @@
 import { IgnoreCookie } from '@auth/ignore-cookie.decorator';
-import { Body, Controller, Get, Param, Patch } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post, Req } from '@nestjs/common';
 import { UpdatePlanDto } from './dto/update-plan.dto';
 import { PlansService } from './plans.service';
+import { SubscriptionPlanDto } from './dto/subscription-plan.dto';
+import { PlanType, SubscribeType } from '@prisma/client';
+import { Request } from 'express';
 
 @Controller('plans')
 export class PlansController {
@@ -22,6 +25,16 @@ export class PlansController {
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.plansService.findOne(id);
+  }
+
+  @Post('subscribe/:planType')
+  subscribe(
+    @Req() req: Request,
+    @Param('planType') planType: PlanType,
+    @Body('type') type: SubscribeType,
+  ) {
+    const userId = req.user.id;
+    return this.plansService.subscribe(userId, planType, type);
   }
 
   @Patch(':id')

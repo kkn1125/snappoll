@@ -22,6 +22,7 @@ import { BasicModule } from './basic/basic.module';
 import { MailerModule } from './mailer/mailer.module';
 import { PlansModule } from './plans/plans.module';
 import { EncryptManager } from '@utils/EncryptManager';
+import { TermsModule } from './terms/terms.module';
 
 @Module({
   imports: [
@@ -59,6 +60,7 @@ import { EncryptManager } from '@utils/EncryptManager';
     }),
     BoardsModule,
     PlansModule,
+    TermsModule,
     // ViewsModule,
   ],
   controllers: [],

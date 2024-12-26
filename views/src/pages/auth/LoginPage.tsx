@@ -113,7 +113,12 @@ const LoginPage: React.FC<LoginPageProps> = () => {
           <IconButton size="large" color="inherit" onClick={() => navigate(-1)}>
             <ArrowBackIosIcon />
           </IconButton>
-          <Typography fontSize={32} fontWeight={700} align="center">
+          <Typography
+            fontSize={32}
+            fontWeight={700}
+            align="center"
+            color="info"
+          >
             로그인
           </Typography>
         </Stack>

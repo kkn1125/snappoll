@@ -11,6 +11,7 @@ import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import {
   Box,
   Button,
+  Chip,
   Container,
   Divider,
   Stack,
@@ -28,6 +29,7 @@ import {
   MouseEvent,
   useCallback,
   useEffect,
+  useMemo,
   useState,
 } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
@@ -183,6 +185,10 @@ const ProfilePage: React.FC<ProfilePageProps> = () => {
     [uploadFile],
   );
 
+  const currentPlan = useMemo<Subscription | undefined>(() => {
+    return user?.subscription?.find((sub) => sub.endDate === null);
+  }, [user?.subscription]);
+
   return (
     <Container>
       <Toolbar />
@@ -266,11 +272,21 @@ const ProfilePage: React.FC<ProfilePageProps> = () => {
               </Button>
             )}
             {isSocial && (
-              <Typography align="center" width={300} sx={{ wordBreak: 'auto-phrase' }}>
+              <Typography
+                align="center"
+                width={300}
+                sx={{ wordBreak: 'auto-phrase' }}
+              >
                 접속한 계정은 소셜 로그인한 계정입니다.
               </Typography>
             )}
           </Stack>
+        </Stack>
+        <Divider flexItem />
+        <Stack direction="row" alignItems="center" gap={1}>
+          <Typography>현재 Plan</Typography>
+          <Chip label={currentPlan?.plan?.name} size="small" />
+          <Chip label={currentPlan?.type} size="small" />
         </Stack>
         {!isSocial && (
           <Fragment>

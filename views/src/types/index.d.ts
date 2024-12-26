@@ -5,21 +5,29 @@ import '@mui/material/AppBar';
 export declare module '@mui/material/styles' {
   export declare interface Palette {
     sky: Palette['primary'];
+    marketing: Palette['primary'];
   }
   export declare interface PaletteOptions {
     sky?: PaletteOptions['primary'];
+    marketing?: PaletteOptions['primary'];
+  }
+
+  export declare interface TypeBackground {
+    marketing?: string;
   }
 }
 
 export declare module '@mui/material/Button' {
   export interface ButtonPropsColorOverrides {
     sky: true;
+    marketing: true;
   }
 }
 
 export declare module '@mui/material/AppBar' {
   export interface AppBarPropsColorOverrides {
     sky: true;
+    marketing: true;
   }
 }
 
@@ -121,6 +129,29 @@ export declare global {
     updatedAt: Date;
     deletedAt: Date | null;
     userProfile?: Profile;
+    subscription: Subscription[];
+  }
+  interface Subscription {
+    id: string;
+    userId: string;
+    planId: string;
+    type: 'Monthly' | 'Yearly' | 'Infinite';
+    state: 'Active' | 'Cancelled' | 'Expired';
+    startDate: Date;
+    endDate: Date;
+    user?: User;
+    plan?: Plan;
+  }
+  interface Plan {
+    id: string;
+    name: string;
+    description?: string;
+    planType: 'Free' | 'Basic' | 'Pro' | 'Premium';
+    price: number;
+    createdAt: Date;
+    updatedAt: Date;
+    subscription?: Subscription[];
+    feature?: Feature[];
   }
   interface UserPoll {
     id: string;
@@ -131,6 +162,14 @@ export declare global {
     expiresAt: Date;
     createdAt: Date;
     updatedAt: Date;
+  }
+  interface Feature {
+    id: string;
+    planId: string;
+    feature: string;
+    createdAt: Date;
+    updatedAt: Date;
+    plan?: Plan;
   }
   interface Profile {
     id: string;
@@ -143,6 +182,8 @@ export declare global {
     username: string;
     password: string;
     checkPassword: string;
+    privacyPolicy: boolean;
+    serviceAgreement: boolean;
   }
   // interface LoginUser
   //   extends Omit<User, 'id' | 'username' | 'createdAt' | 'updatedAt'> {}

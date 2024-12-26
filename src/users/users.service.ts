@@ -6,25 +6,25 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { $Enums } from '@prisma/client';
+import { EncryptManager } from '@utils/EncryptManager';
 import { snakeToCamel } from '@utils/snakeToCamel';
 import SnapLogger from '@utils/SnapLogger';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserPasswordDto } from './dto/update-user-password.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { EncryptManager } from '@utils/EncryptManager';
 
 @Injectable()
 export class UsersService {
-  async getProfileImageTest() {
-    const { data } = await this.httpService.axiosRef.get(
-      'https://k.kakaocdn.net/dn/cP0QlW/btsBgdcPoks/P7z3aErKm7e30Jsot6YTj1/img_110x110.jpg',
-      {
-        responseType: 'arraybuffer',
-      },
-    );
+  // async getProfileImageTest() {
+  //   const { data } = await this.httpService.axiosRef.get(
+  //     'https://k.kakaocdn.net/dn/cP0QlW/btsBgdcPoks/P7z3aErKm7e30Jsot6YTj1/img_110x110.jpg',
+  //     {
+  //       responseType: 'arraybuffer',
+  //     },
+  //   );
 
-    return data;
-  }
+  //   return data;
+  // }
   logger = new SnapLogger(this);
 
   constructor(
@@ -86,7 +86,19 @@ export class UsersService {
     return password;
   }
 
-  async create(createUserDto: CreateUserDto) {
+  async create(
+    privacyPolicy: boolean,
+    serviceAgreement: boolean,
+    createUserDto: CreateUserDto,
+  ) {
+    if (!privacyPolicy || !serviceAgreement) {
+      const errorCode = await this.prisma.getErrorCode(
+        'user',
+        'RequireAgreement',
+      );
+      throw new BadRequestException(errorCode);
+    }
+
     if (!createUserDto.authProvider) {
       createUserDto.authProvider = $Enums.AuthProvider.Local;
     }

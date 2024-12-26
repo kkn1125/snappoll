@@ -8,6 +8,7 @@ import {
   Alert,
   AlertTitle,
   Button,
+  Chip,
   Container,
   Stack,
   Typography,
@@ -57,6 +58,11 @@ const ShareVote: React.FC<ShareVoteProps> = ({ url }) => {
       <Stack>
         <DetailVote voteId={query.data.voteId} refetchShare={refetchShare} />
       </Stack>
+      <Chip
+        label="shared by SnapPoll"
+        size="small"
+        sx={{ position: 'fixed', bottom: 10, right: 10 }}
+      />
     </Container>
   );
 };

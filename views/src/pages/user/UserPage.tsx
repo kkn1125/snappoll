@@ -7,12 +7,12 @@ interface UserPageProps {}
 const UserPage: React.FC<UserPageProps> = () => {
   const { user } = useToken();
   return (
-    <Stack>
+    <Stack gap={5}>
       <Typography variant="h4" align="center" gutterBottom>
         사용자 서비스 선택
       </Typography>
       <Container maxWidth="sm">
-        <Stack gap={3}>
+        <Stack direction={{ xs: 'column', md: 'row' }} gap={3} height={150}>
           <Button
             component={NavLink}
             to="/user/profile"
@@ -20,6 +20,7 @@ const UserPage: React.FC<UserPageProps> = () => {
             color="inherit"
             fullWidth
             size="large"
+            sx={{ fontSize: 18 }}
           >
             프로필 보기
           </Button>
@@ -32,6 +33,7 @@ const UserPage: React.FC<UserPageProps> = () => {
                 color="inherit"
                 fullWidth
                 size="large"
+                sx={{ fontSize: 18 }}
               >
                 비밀번호 변경
               </Button>
@@ -44,6 +46,7 @@ const UserPage: React.FC<UserPageProps> = () => {
             color="inherit"
             fullWidth
             size="large"
+            sx={{ fontSize: 18 }}
           >
             나의 응답
           </Button>

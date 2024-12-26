@@ -96,6 +96,10 @@ export type Info = (typeof Info)[keyof typeof Info];
 export const Single = {
   Redirect: '변경사항이 저장되지 않을 수 있습니다',
   Save: '이대로 저장하시겠습니까?',
+  ServiceAgreement:
+    '서비스 이용동의를 위해 이용약관을 모두 읽고 하단의 확인 버튼을 눌러 동의하시기 바랍니다.',
+  ServicePolicy:
+    '개인정보처리방침 동의를 위해 이용약관을 모두 읽고 하단의 확인 버튼을 눌러 동의하시기 바랍니다.',
   Remove: '정말로 삭제하시겠습니까?',
   StopUser: '사용자를 활동 정지하시겠습니까?',
   LeaveAlert: [

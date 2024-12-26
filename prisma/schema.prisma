@@ -8,6 +8,44 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
+model AllowTerms {
+  id        String   @id @default(uuid()) @db.Uuid
+  termsId   String   @map("terms_id") @db.Uuid
+  userId    String   @map("user_id") @db.Uuid
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  terms Terms @relation(fields: [termsId], references: [id], onDelete: Cascade)
+
+  @@map("allow_terms")
+}
+
+model Terms {
+  id        String   @id @default(uuid()) @db.Uuid
+  version   String   @unique @db.VarChar(20)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  termsSection TermsSection[]
+  allowTerms   AllowTerms[]
+
+  @@map("terms")
+}
+
+model TermsSection {
+  id        String   @id @default(uuid()) @db.Uuid
+  termsId   String   @map("terms_id") @db.Uuid
+  title     String   @db.VarChar(100)
+  content   String
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  terms Terms @relation(fields: [termsId], references: [id], onDelete: Cascade)
+
+  @@map("terms_section")
+}
+
 model ErrorMessage {
   id         Int    @id @default(autoincrement())
   codeDomain String @map("code_domain") @db.VarChar(100)
@@ -121,9 +159,9 @@ model Subscription {
 
 model Plan {
   id          String   @id @default(uuid()) @db.Uuid
+  planType    PlanType @unique @default(Free) @map("plan_type")
   name        String   @db.VarChar(50)
   description String?
-  planType    PlanType @default(Free) @map("plan_type")
   price       Int      @db.Integer
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
@@ -172,6 +210,7 @@ model User {
   voteResponse VoteResponse[]
   board        Board[]
   subscription Subscription[]
+  allowTerms   AllowTerms[]
 
   @@index([username])
   @@index([email])

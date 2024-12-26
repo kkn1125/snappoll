@@ -1,9 +1,11 @@
 import { checkEmail } from '@apis/checkEmail';
 import { signup } from '@apis/signup';
+import { getTerms } from '@apis/terms/getTerms';
 import { Message } from '@common/messages';
 import CustomInput from '@components/atoms/CustomInput';
 import useModal from '@hooks/useModal';
 import useValidate from '@hooks/useValidate';
+import { SnapTerms } from '@models/SnapTerms';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import AutorenewIcon from '@mui/icons-material/Autorenew';
 import CasinoIcon from '@mui/icons-material/Casino';
@@ -13,20 +15,23 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import {
   Button,
+  Checkbox,
   Divider,
+  FormControlLabel,
   IconButton,
   keyframes,
   Stack,
   Tooltip,
   Typography,
 } from '@mui/material';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { getRandomUsername } from '@utils/getRandomUsername';
 import { Logger } from '@utils/Logger';
 import { AxiosError } from 'axios';
 import {
   ChangeEvent,
   FormEvent,
+  Fragment,
   MouseEvent,
   useCallback,
   useEffect,
@@ -41,7 +46,7 @@ interface SignupPageProps {}
 const SignupPage: React.FC<SignupPageProps> = () => {
   const [pendingValidate, setPendingValidate] = useState(false);
   const [emailValidated, setEmailValidated] = useState(false);
-  const { openModal, noSaveModal } = useModal();
+  const { openModal, openInteractiveModal } = useModal();
   const [visible, setVisible] = useState({
     password: false,
     checkPassword: false,
@@ -52,6 +57,8 @@ const SignupPage: React.FC<SignupPageProps> = () => {
     username: '',
     password: '',
     checkPassword: '',
+    privacyPolicy: false,
+    serviceAgreement: false,
   });
   const { errors, validate, validated, setValidated } = useValidate(signupInfo);
 
@@ -59,6 +66,11 @@ const SignupPage: React.FC<SignupPageProps> = () => {
     0%   { transform: rotate(0deg) }
     100% { transform: rotate(359deg) }
   `;
+
+  const { data } = useQuery<SnapResponseType<SnapTerms>>({
+    queryKey: ['checkEmail'],
+    queryFn: getTerms,
+  });
 
   const checkEmailMutation = useMutation({
     mutationKey: ['checkEmail'],
@@ -190,33 +202,37 @@ const SignupPage: React.FC<SignupPageProps> = () => {
           required
           errors={errors}
           sx={{ minWidth: 200, flex: 1 }}
+          endAdornment={
+            <Tooltip
+              title={
+                pendingValidate
+                  ? '이메일 확인 중'
+                  : emailValidated
+                    ? '본인확인 완료'
+                    : '이메일 본인인증'
+              }
+              placement="top"
+            >
+              <IconButton
+                size="small"
+                color="primary"
+                onClick={handleCheckEmail}
+              >
+                {pendingValidate ? (
+                  <AutorenewIcon
+                    sx={{
+                      animation: `${pendingAnimation} 1s linear both infinite`,
+                    }}
+                  />
+                ) : emailValidated ? (
+                  <MarkEmailReadIcon />
+                ) : (
+                  <ForwardToInboxIcon fontSize="medium" />
+                )}
+              </IconButton>
+            </Tooltip>
+          }
         />
-        <Stack direction="row" alignItems="center">
-          <Tooltip
-            title={
-              pendingValidate
-                ? '이메일 확인 중'
-                : emailValidated
-                  ? '본인확인 완료'
-                  : '이메일 본인인증'
-            }
-            placement="top"
-          >
-            <IconButton size="large" color="primary" onClick={handleCheckEmail}>
-              {pendingValidate ? (
-                <AutorenewIcon
-                  sx={{
-                    animation: `${pendingAnimation} 1s linear both infinite`,
-                  }}
-                />
-              ) : emailValidated ? (
-                <MarkEmailReadIcon />
-              ) : (
-                <ForwardToInboxIcon fontSize="medium" />
-              )}
-            </IconButton>
-          </Tooltip>
-        </Stack>
       </Stack>
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -317,6 +333,74 @@ const SignupPage: React.FC<SignupPageProps> = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [signupInfo.checkPassword, visible.checkPassword, errors.checkPassword]);
 
+  const termsSection = data?.data.termsSection;
+
+  const privacyPolicy = useMemo(() => {
+    return termsSection?.find(
+      (section) => section.title === '개인정보처리방침',
+    );
+  }, [termsSection]);
+
+  const serviceAgreement = useMemo(() => {
+    return termsSection?.find((section) => section.title === '서비스이용동의');
+  }, [termsSection]);
+
+  function handleOpenPrivacyPolicy(e: MouseEvent) {
+    e.preventDefault();
+    e.stopPropagation();
+    openInteractiveModal({
+      content: Message.Single.ServicePolicy,
+      slot: (
+        <Stack>
+          <Divider sx={{ my: 2 }} />
+          <Typography component="pre" whiteSpace="pre-wrap">
+            {privacyPolicy?.content}
+          </Typography>
+        </Stack>
+      ),
+      callback: () => {
+        setSignupInfo((signupInfo) => ({
+          ...signupInfo,
+          privacyPolicy: true,
+        }));
+      },
+      closeCallback: () => {
+        setSignupInfo((signupInfo) => ({
+          ...signupInfo,
+          privacyPolicy: false,
+        }));
+      },
+    });
+  }
+
+  function handleOpenServiceAgreement(e: MouseEvent) {
+    e.preventDefault();
+    e.stopPropagation();
+    openInteractiveModal({
+      content: Message.Single.ServiceAgreement,
+      slot: (
+        <Stack>
+          <Divider sx={{ my: 2 }} />
+          <Typography component="pre" whiteSpace="pre-wrap">
+            {serviceAgreement?.content}
+          </Typography>
+        </Stack>
+      ),
+      callback: () => {
+        setSignupInfo((signupInfo) => ({
+          ...signupInfo,
+          serviceAgreement: true,
+        }));
+      },
+      closeCallback: () => {
+        setSignupInfo((signupInfo) => ({
+          ...signupInfo,
+          serviceAgreement: false,
+        }));
+      },
+    });
+  }
+
   return (
     <Stack gap={2} flex={1} alignItems="center" justifyContent="center">
       <Stack
@@ -330,7 +414,12 @@ const SignupPage: React.FC<SignupPageProps> = () => {
           <IconButton size="large" color="inherit" onClick={() => navigate(-1)}>
             <ArrowBackIosIcon />
           </IconButton>
-          <Typography fontSize={32} fontWeight={700} align="center">
+          <Typography
+            fontSize={32}
+            fontWeight={700}
+            align="center"
+            color="info"
+          >
             회원가입
           </Typography>
         </Stack>
@@ -347,27 +436,52 @@ const SignupPage: React.FC<SignupPageProps> = () => {
           회원가입
         </Button>
 
-        <Typography>
-          계정을 생성하면{' '}
-          <Typography
-            component={Link}
-            to="/auth/login"
-            fontWeight={700}
-            sx={{ textDecoration: 'none' }}
-          >
-            서비스 약관
-          </Typography>{' '}
-          및{' '}
-          <Typography
-            component={Link}
-            to="/auth/login"
-            fontWeight={700}
-            sx={{ textDecoration: 'none' }}
-          >
-            개인정보 취급방침
-          </Typography>
-          에 동의하는 것으로 간주됩니다.
-        </Typography>
+        <Stack>
+          <FormControlLabel
+            control={<Checkbox disabled />}
+            name="privacyPolicy"
+            checked={signupInfo.privacyPolicy}
+            onChange={(e, checked) =>
+              setSignupInfo((signupInfo) => ({
+                ...signupInfo,
+                privacyPolicy: checked,
+              }))
+            }
+            label={
+              <Fragment>
+                <Typography
+                  fontWeight={700}
+                  sx={{ cursor: 'pointer' }}
+                  onClick={handleOpenPrivacyPolicy}
+                >
+                  개인정보처리방침
+                </Typography>
+              </Fragment>
+            }
+          />
+          <FormControlLabel
+            control={<Checkbox disabled />}
+            name="serviceAgreement"
+            checked={signupInfo.serviceAgreement}
+            onChange={(e, checked) =>
+              setSignupInfo((signupInfo) => ({
+                ...signupInfo,
+                serviceAgreement: checked,
+              }))
+            }
+            label={
+              <Fragment>
+                <Typography
+                  fontWeight={700}
+                  sx={{ cursor: 'pointer' }}
+                  onClick={handleOpenServiceAgreement}
+                >
+                  서비스이용동의
+                </Typography>
+              </Fragment>
+            }
+          />
+        </Stack>
 
         <Typography>
           이미 계정이 있으신가요?{' '}

@@ -5,9 +5,15 @@ import { forwardRef, Module } from '@nestjs/common';
 import { EncryptManager } from '@utils/EncryptManager';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
+import { TermsModule } from '@/terms/terms.module';
 
 @Module({
-  imports: [HttpModule, DatabaseModule, forwardRef(() => AuthModule)],
+  imports: [
+    HttpModule,
+    DatabaseModule,
+    forwardRef(() => AuthModule),
+    TermsModule,
+  ],
   controllers: [UsersController],
   providers: [UsersService, EncryptManager],
   exports: [UsersService],

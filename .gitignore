@@ -3,6 +3,8 @@
 /node_modules
 /build
 
+prisma/seed.ts
+
 # Logs
 logs
 *.log
