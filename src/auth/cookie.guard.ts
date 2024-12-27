@@ -82,7 +82,7 @@ export class CookieGuard implements CanActivate {
         algorithms: ['HS256'],
       }) as JwtPayload;
     } catch (error) {
-      req.verify = jwt.decode(req.cookies.token) as JwtPayload;
+      verifiedToken = req.verify = jwt.decode(req.cookies.token) as JwtPayload;
 
       if (error.name === 'JsonWebTokenError') {
         /* 잘못된 토큰 형식 */
@@ -108,7 +108,7 @@ export class CookieGuard implements CanActivate {
     }
     // this.logger.debug(verifiedToken);
 
-    const email = verifiedToken.email;
+    const email = verifiedToken?.email;
     const user = await this.authService.getMe(email);
 
     if (!user) {

@@ -1,12 +1,13 @@
-import { createVote } from '@apis/vote/create.vote';
-import { updateVote } from '@apis/vote/updateVote';
 import { Action } from '@/models/Action';
 import { snapVoteAtom } from '@/recoils/snapVote.atom';
+import { createVote } from '@apis/vote/create.vote';
+import { updateVote } from '@apis/vote/updateVote';
 import { Message } from '@common/messages';
 import CreateVoteOptionItem from '@components/atoms/CreateVoteOptionItem';
 import CreateVoteForm from '@components/moleculars/CreateVoteForm';
 import useModal from '@hooks/useModal';
 import useToken from '@hooks/useToken';
+import useValidate from '@hooks/useValidate';
 import { SnapVote } from '@models/SnapVote';
 import { SnapVoteOption } from '@models/SnapVoteOption';
 import AddBoxIcon from '@mui/icons-material/AddBox';
@@ -15,6 +16,7 @@ import {
   Button,
   Container,
   Divider,
+  FormHelperText,
   List,
   SpeedDial,
   SpeedDialAction,
@@ -24,14 +26,7 @@ import {
 } from '@mui/material';
 import { useMutation } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
-import {
-  FormEvent,
-  memo,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import { FormEvent, memo, useCallback, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 
@@ -39,9 +34,10 @@ interface CreateVotePageProps {
   edit?: boolean;
 }
 const CreateVotePage: React.FC<CreateVotePageProps> = ({ edit = false }) => {
-  // const previous = useRecoilValue(previousAtom);
   const [snapVote, setSnapVote] = useRecoilState(snapVoteAtom);
   const { openModal, openInteractiveModal } = useModal();
+  const { errors, validate, validated, setValidated, clearValidate } =
+    useValidate(snapVote);
   const { user, logoutToken } = useToken();
   const formRef = useRef<HTMLFormElement>(null);
   const navigate = useNavigate();
@@ -50,6 +46,7 @@ const CreateVotePage: React.FC<CreateVotePageProps> = ({ edit = false }) => {
     mutationKey: ['createVote'],
     mutationFn: createVote,
     onSuccess(data, variables, context) {
+      clearValidate();
       setSnapVote(new SnapVote());
       navigate('/service/vote');
     },
@@ -58,6 +55,30 @@ const CreateVotePage: React.FC<CreateVotePageProps> = ({ edit = false }) => {
         setSnapVote(new SnapVote());
         logoutToken();
         navigate('/');
+      } else {
+        if (error.response?.data.errorCode.errorStatus === 108) {
+          openInteractiveModal({
+            content: {
+              title: '안내',
+              content: [
+                error.response?.data.errorCode.message,
+                '플랜 업그레이드를 원하시면 확인을 눌러주세요.',
+              ],
+            },
+            callback: () => {
+              navigate('/price');
+            },
+          });
+        } else {
+          openModal({
+            info: {
+              title: '안내',
+              content:
+                error.response?.data.errorCode.message ||
+                '저장하는데 문제가 발생했습니다.',
+            },
+          });
+        }
       }
     },
   });
@@ -94,7 +115,14 @@ const CreateVotePage: React.FC<CreateVotePageProps> = ({ edit = false }) => {
     }),
   ];
 
-  const [errors, setErrors] = useState<ErrorMessage<SnapVote>>({});
+  // const [errors, setErrors] = useState<ErrorMessage<SnapVote>>({});
+
+  useEffect(() => {
+    if (validated) {
+      validate('snapVote');
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [snapVote, validated]);
 
   useEffect(() => {
     function handleBeforeUnloaded(e: BeforeUnloadEvent) {
@@ -114,6 +142,10 @@ const CreateVotePage: React.FC<CreateVotePageProps> = ({ edit = false }) => {
   const handleSubmit = useCallback(
     (e: FormEvent) => {
       e.preventDefault();
+      setValidated(true);
+
+      if (!validate('snapVote')) return;
+
       openInteractiveModal({
         content: Message.Single.Save,
         callback: () => {
@@ -137,7 +169,13 @@ const CreateVotePage: React.FC<CreateVotePageProps> = ({ edit = false }) => {
   return (
     <Container maxWidth="md">
       <Toolbar />
-      <Stack component="form" ref={formRef} onSubmit={handleSubmit} gap={2}>
+      <Stack
+        component="form"
+        ref={formRef}
+        noValidate
+        onSubmit={handleSubmit}
+        gap={2}
+      >
         <Stack direction="row">
           <Button
             component={Link}
@@ -155,6 +193,9 @@ const CreateVotePage: React.FC<CreateVotePageProps> = ({ edit = false }) => {
         <Divider />
 
         <List>
+          {typeof errors?.voteOption === 'string' && errors?.voteOption && (
+            <FormHelperText error>{errors.voteOption}</FormHelperText>
+          )}
           {snapVote.voteOption.map((option, i) => (
             <CreateVoteOptionItem
               key={option.id}

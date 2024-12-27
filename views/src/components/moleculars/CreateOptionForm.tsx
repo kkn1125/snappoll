@@ -11,11 +11,13 @@ interface CreateOptionFormProps {
   index: number;
   questionId: string;
   option: SnapPollOption;
+  errors: ErrorMessage<SnapPollOption>;
 }
 const CreateOptionForm: React.FC<CreateOptionFormProps> = ({
   index,
   questionId,
   option,
+  errors,
 }) => {
   const { openInteractiveModal } = useModal();
   const setSnapPoll = useSetRecoilState(snapPollAtom);
@@ -54,6 +56,7 @@ const CreateOptionForm: React.FC<CreateOptionFormProps> = ({
       content={option.content}
       onChange={onChange}
       handleRemove={handleRemove}
+      errors={errors}
     />
   );
 };

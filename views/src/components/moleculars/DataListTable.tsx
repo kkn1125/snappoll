@@ -13,11 +13,19 @@ interface DataListTableProps<T, Q> {
   getActions?: (
     params: GridRowParams<any>,
   ) => readonly ReactElement<GridActionsCellItemProps>[];
+  checkboxSelection?: boolean;
+  pageSize?: number;
 }
 const DataListTable = function <
   T extends GridValidRowModel,
   Q extends GridColDef,
->({ rows, columns, getActions }: DataListTableProps<T, Q>) {
+>({
+  rows,
+  columns,
+  getActions,
+  checkboxSelection = false,
+  pageSize = 5,
+}: DataListTableProps<T, Q>) {
   const withActionColumns = (
     getActions
       ? [
@@ -39,12 +47,12 @@ const DataListTable = function <
       initialState={{
         pagination: {
           paginationModel: {
-            pageSize: 5,
+            pageSize: pageSize,
           },
         },
       }}
-      pageSizeOptions={[5]}
-      checkboxSelection
+      pageSizeOptions={[pageSize]}
+      checkboxSelection={checkboxSelection}
       disableRowSelectionOnClick
     />
   );

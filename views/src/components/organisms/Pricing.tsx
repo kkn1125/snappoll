@@ -13,13 +13,11 @@ const Pricing: React.FC<PricingProps> = ({ plan }) => {
   const { openModal, openInteractiveModal } = useModal();
   const userSubscription = useMemo(() => {
     if (user) {
-      const subscription = user.subscription;
-      const subscribe = subscription.find((sub) => sub.endDate === null);
-      return subscribe;
+      return user.subscription;
     }
     return undefined;
   }, [user]);
-  const isFree = plan.price === 0;
+  const isFree = plan.planType === 'Free';
   function handleRequireSignup(plan: Plan) {
     if (userSubscription?.planId === plan.id) {
       openModal({
@@ -90,6 +88,7 @@ const Pricing: React.FC<PricingProps> = ({ plan }) => {
             style: 'currency',
             currency: 'KRW',
           })}
+          /월
         </Typography>
         <Stack gap={1}>
           {plan.feature?.map((feature) => (
@@ -111,9 +110,11 @@ const Pricing: React.FC<PricingProps> = ({ plan }) => {
       >
         {userSubscription?.planId === plan.id
           ? '구독 중'
-          : isFree
-            ? '무료로 시작하기'
-            : '구독하기'}
+          : userSubscription
+            ? '구독하기'
+            : isFree
+              ? '무료로 시작하기'
+              : '구독하기'}
       </Button>
     </Stack>
   );

@@ -9,7 +9,7 @@ export class SnapPollQuestion {
 
   id: string = v4();
   pollId?: string = '';
-  type: string = 'text';
+  type: 'text' | 'checkbox' | 'select' = 'text';
   title: string = '';
   description?: string = '';
   order?: number = -1;

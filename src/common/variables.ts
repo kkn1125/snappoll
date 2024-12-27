@@ -34,3 +34,47 @@ export const MASTER_PASS = process.env.MASTER_PASS as string;
 
 export const EXPIRED_TOKEN_TIME = 30 * 60 * 1000;
 export const BUFFER_TIME = 5;
+
+/* plan feature limits */
+export const LIMIT = {
+  FREE: {
+    CREATE: {
+      POLL: Infinity /* 3 */,
+      VOTE: Infinity /* 3 */,
+    },
+    RESPONSE: {
+      POLL: 100,
+      VOTE: 100,
+    },
+  },
+  BASIC: {
+    CREATE: {
+      POLL: 7,
+      VOTE: 7,
+    },
+    RESPONSE: {
+      POLL: 200,
+      VOTE: 200,
+    },
+  },
+  PRO: {
+    CREATE: {
+      POLL: 12,
+      VOTE: 12,
+    },
+    RESPONSE: {
+      POLL: 500,
+      VOTE: 500,
+    },
+  },
+  PREMIUM: {
+    CREATE: {
+      POLL: 30,
+      VOTE: 30,
+    },
+    RESPONSE: {
+      POLL: 5000,
+      VOTE: 5000,
+    },
+  },
+} as const;

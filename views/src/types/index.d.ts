@@ -86,15 +86,6 @@ export declare global {
     ok: boolean;
     data: T;
   }
-  interface Subscribe {
-    id: string;
-    planId: string;
-    userId: string;
-    type: 'Monthly' | 'Yearly';
-    state: 'Active' | 'Cancelled' | 'Expired';
-    startDate: Date;
-    endDate: Date;
-  }
   interface Feature {
     id: string;
     planId: string;
@@ -106,11 +97,11 @@ export declare global {
     id: string;
     name: string;
     description: string;
-    planType: 'Basic' | 'Premium' | 'Enterprise';
+    planType: 'Free' | 'Basic' | 'Premium' | 'Enterprise';
     price: number;
     createdAt: Date;
     updatedAt: Date;
-    subscribe?: Subscribe[];
+    subscription?: Subscription[];
     feature?: Feature[];
   }
   type Role = 'Admin' | 'User';
@@ -129,7 +120,7 @@ export declare global {
     updatedAt: Date;
     deletedAt: Date | null;
     userProfile?: Profile;
-    subscription: Subscription[];
+    subscription: Subscription;
   }
   interface Subscription {
     id: string;

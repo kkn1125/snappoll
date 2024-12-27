@@ -102,7 +102,7 @@ export class PollsService {
   create(createPollDto: CreatePollDto) {
     const title = createPollDto.title;
     const description = createPollDto.description;
-    const createdBy = createPollDto.createdBy;
+    const userId = createPollDto.userId;
     const expiresAt = createPollDto.expiresAt;
 
     let question;
@@ -141,7 +141,7 @@ export class PollsService {
       data: {
         title,
         description,
-        createdBy,
+        userId,
         expiresAt,
         question,
       },
@@ -183,7 +183,7 @@ export class PollsService {
 
   async findMe(id: string, page: number) {
     const polls = await this.prisma.poll.findMany({
-      where: { createdBy: id },
+      where: { userId: id },
       take: 10,
       skip: (page - 1) * 10,
       orderBy: {
@@ -204,7 +204,7 @@ export class PollsService {
         sharePoll: true,
       },
     });
-    const count = await this.prisma.poll.count({ where: { createdBy: id } });
+    const count = await this.prisma.poll.count({ where: { userId: id } });
 
     return { polls, count };
   }
@@ -308,7 +308,7 @@ export class PollsService {
   update(id: string, updatePollDto: UpdatePollDto) {
     const title = updatePollDto.title;
     const description = updatePollDto.description;
-    const createdBy = updatePollDto.createdBy;
+    const userId = updatePollDto.userId;
     const expiresAt = updatePollDto.expiresAt;
 
     let question;
@@ -359,7 +359,7 @@ export class PollsService {
       data: {
         title,
         description,
-        createdBy,
+        userId,
         expiresAt,
         question,
       },

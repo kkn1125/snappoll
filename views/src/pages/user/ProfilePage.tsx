@@ -186,7 +186,7 @@ const ProfilePage: React.FC<ProfilePageProps> = () => {
   );
 
   const currentPlan = useMemo<Subscription | undefined>(() => {
-    return user?.subscription?.find((sub) => sub.endDate === null);
+    return user?.subscription;
   }, [user?.subscription]);
 
   return (

@@ -66,6 +66,15 @@ const DetailPollPage: React.FC<DetailPollPageProps> = ({
         setResponse(new SnapResponse());
         logoutToken();
         navigate('/');
+      } else {
+        openModal({
+          info: {
+            title: '안내',
+            content:
+              error.response?.data.errorCode.message ||
+              '저장하는데 문제가 발생했습니다.',
+          },
+        });
       }
     },
   });

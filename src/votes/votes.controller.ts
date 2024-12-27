@@ -17,12 +17,16 @@ import { UpdateVoteDto } from './dto/update-vote.dto';
 import { VotesService } from './votes.service';
 import { CreateShareVoteDto } from './dto/create-share-vote.dto';
 import { IgnoreCookie } from '@auth/ignore-cookie.decorator';
+import { PlanValidate } from '@middleware/plan-validate.decorator';
+import { PlanGuard } from '@middleware/plan.guard';
 
 @UseGuards(RoleGuard)
 @Controller('votes')
 export class VotesController {
   constructor(private readonly votesService: VotesService) {}
 
+  @PlanValidate('voteCreate')
+  @UseGuards(PlanGuard)
   @Post()
   create(@Body() createVoteDto: CreateVoteDto) {
     return this.votesService.create(createVoteDto);

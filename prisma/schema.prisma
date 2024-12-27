@@ -142,7 +142,7 @@ enum PlanType {
 
 model Subscription {
   id        String        @id @default(uuid()) @db.Uuid
-  userId    String        @map("user_id") @db.Uuid
+  userId    String        @unique @map("user_id") @db.Uuid
   planId    String        @map("plan_id") @db.Uuid
   type      SubscribeType
   state     State         @default(Active)
@@ -209,7 +209,7 @@ model User {
   response     Response[]
   voteResponse VoteResponse[]
   board        Board[]
-  subscription Subscription[]
+  subscription Subscription?
   allowTerms   AllowTerms[]
 
   @@index([username])
@@ -245,12 +245,12 @@ model Poll {
   id          String    @id @default(uuid()) @db.Uuid
   title       String    @db.VarChar(30)
   description String?
-  createdBy   String    @map("created_by") @db.Uuid
+  userId      String    @map("user_id") @db.Uuid
   expiresAt   DateTime? @map("expires_at")
   createdAt   DateTime  @default(now()) @map("created_at")
   updatedAt   DateTime  @updatedAt @map("updated_at")
 
-  user User @relation(fields: [createdBy], references: [id])
+  user User @relation(fields: [userId], references: [id])
 
   question  Question[]
   response  Response[]

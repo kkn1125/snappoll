@@ -1,7 +1,7 @@
-import { createPoll } from '@apis/poll/create.poll';
-import { updatePoll } from '@apis/poll/updatePoll';
 import { Action } from '@/models/Action';
 import { snapPollAtom } from '@/recoils/snapPoll.atom';
+import { createPoll } from '@apis/poll/create.poll';
+import { updatePoll } from '@apis/poll/updatePoll';
 import { Message } from '@common/messages';
 import CreatePollForm from '@components/moleculars/CreatePollForm';
 import CreateQuestionForm from '@components/moleculars/CreateQuestionForm';
@@ -33,16 +33,17 @@ interface CreatePollPageProps {
 }
 const CreatePollPage: React.FC<CreatePollPageProps> = ({ edit = false }) => {
   const { user, logoutToken } = useToken();
-  // const previous = useRecoilValue(previousAtom);
-  const { openInteractiveModal } = useModal();
+  const { openModal, openInteractiveModal } = useModal();
   const navigate = useNavigate();
   const [snapPoll, setSnapPoll] = useRecoilState(snapPollAtom);
-  const { validate, errors, validated, setValidated } = useValidate(snapPoll);
+  const { validate, errors, validated, setValidated, clearValidate } =
+    useValidate(snapPoll);
   const formRef = useRef<HTMLFormElement>(null);
   const createMutate = useMutation({
     mutationKey: ['createPoll'],
     mutationFn: createPoll,
     onSuccess(data, variables, context) {
+      clearValidate();
       setSnapPoll(new SnapPoll());
       navigate('/service/poll');
     },
@@ -51,6 +52,30 @@ const CreatePollPage: React.FC<CreatePollPageProps> = ({ edit = false }) => {
         setSnapPoll(new SnapPoll());
         logoutToken();
         navigate('/');
+      } else {
+        if (error.response?.data.errorCode.errorStatus === 108) {
+          openInteractiveModal({
+            content: {
+              title: '안내',
+              content: [
+                error.response?.data.errorCode.message,
+                '플랜 업그레이드를 원하시면 확인을 눌러주세요.',
+              ],
+            },
+            callback: () => {
+              navigate('/price');
+            },
+          });
+        } else {
+          openModal({
+            info: {
+              title: '안내',
+              content:
+                error.response?.data.errorCode.message ||
+                '저장하는데 문제가 발생했습니다.',
+            },
+          });
+        }
       }
     },
   });
@@ -75,6 +100,13 @@ const CreatePollPage: React.FC<CreatePollPageProps> = ({ edit = false }) => {
       formRef.current?.requestSubmit();
     }),
   ];
+
+  useEffect(() => {
+    if (validated) {
+      validate('snapPoll');
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [snapPoll, validated]);
 
   useEffect(() => {
     function handleBeforeUnloaded(e: BeforeUnloadEvent) {

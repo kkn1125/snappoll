@@ -1,11 +1,11 @@
 import { Poll, Question } from '@prisma/client';
 
 export class CreatePollDto
-  implements Pick<Poll, 'title' | 'description' | 'createdBy'>
+  implements Pick<Poll, 'title' | 'description' | 'userId'>
 {
   title: string;
   description: string;
-  createdBy: string;
+  userId: string;
   expiresAt?: Date;
   question?: Question[];
 }

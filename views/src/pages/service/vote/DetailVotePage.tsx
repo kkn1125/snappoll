@@ -25,7 +25,7 @@ const DetailVotePage: React.FC<DetailVotePageProps> = ({
   refetchShare,
 }) => {
   const { user, logoutToken } = useToken();
-  const { openInteractiveModal } = useModal();
+  const { openModal, openInteractiveModal } = useModal();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const [response, setResponse] = useRecoilState(snapVoteResponseAtom);
@@ -66,6 +66,15 @@ const DetailVotePage: React.FC<DetailVotePageProps> = ({
         setResponse(new SnapVoteResponse());
         logoutToken();
         navigate('/');
+      } else {
+        openModal({
+          info: {
+            title: '안내',
+            content:
+              error.response?.data.errorCode.message ||
+              '저장하는데 문제가 발생했습니다.',
+          },
+        });
       }
     },
   });

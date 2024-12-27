@@ -107,6 +107,7 @@ const PanelBoard: React.FC<PanelBoardProps> = () => {
       </Stack>
       {/* <WriteBoardModal /> */}
       <DataListTable
+        checkboxSelection
         columns={columns}
         rows={boards || []}
         getActions={({ id }) => {

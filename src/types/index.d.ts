@@ -1,10 +1,19 @@
 import { Role } from '@common/enums/Role';
-import { User as PrismaUser, UserProfile } from '@prisma/client';
+import {
+  User as PrismaUser,
+  Subscription as PrismaSubscription,
+  UserProfile,
+  Plan,
+} from '@prisma/client';
 
 export declare global {
   namespace Express {
+    interface Subscription extends PrismaSubscription {
+      plan: Plan;
+    }
     interface User extends Omit<PrismaUser, 'password'> {
       userProfile?: Partial<UserProfile>;
+      subscription?: Subscription;
     }
     interface Request {
       user?: User;

@@ -1,3 +1,4 @@
+import { SnapPollOption } from '@models/SnapPollOption';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Avatar, IconButton, ListItem, ListItemText } from '@mui/material';
 import { ChangeEvent } from 'react';
@@ -8,12 +9,14 @@ interface InputItemProps {
   content: string;
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
   handleRemove: () => void;
+  errors: ErrorMessage<SnapPollOption>;
 }
 const InputItem: React.FC<InputItemProps> = ({
   index,
   content,
   onChange,
   handleRemove,
+  errors,
 }) => {
   return (
     <ListItem
@@ -48,6 +51,7 @@ const InputItem: React.FC<InputItemProps> = ({
             onChange={onChange}
             type="text"
             sx={{ ['.MuiInputBase-input']: { pt: 1 } }}
+            errors={errors}
           />
         }
         sx={{ flex: 1 }}

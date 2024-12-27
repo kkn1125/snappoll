@@ -105,6 +105,7 @@ const PanelUser: React.FC<PanelUserProps> = () => {
   return (
     <Stack component={Paper} elevation={5} p={3} gap={2}>
       <DataListTable
+        checkboxSelection
         columns={columns}
         rows={(users ?? []) as GridValidRowModel[]}
         getActions={({ id }) => {

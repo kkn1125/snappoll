@@ -10,6 +10,7 @@ import ListIcon from '@mui/icons-material/List';
 import {
   Button,
   FormControlLabel,
+  FormHelperText,
   IconButton,
   List,
   MenuItem,
@@ -86,7 +87,7 @@ const CreateQuestionForm: React.FC<CreateQuestionFormProps> = ({
   }, [question, setSnapPoll]);
 
   const handleChangeType = useCallback((e: SelectChangeEvent) => {
-    const value = e.target.value;
+    const value = e.target.value as SnapPollQuestion['type'];
     setSnapPoll((snapPoll) => {
       const copyPoll = SnapPoll.copy(snapPoll);
       copyPoll.updateQuestionByInfo(question.id, 'type', value);
@@ -207,8 +208,16 @@ const CreateQuestionForm: React.FC<CreateQuestionFormProps> = ({
                 index={i + 1}
                 questionId={question.id}
                 option={option}
+                errors={
+                  errors?.['option']?.[
+                    i
+                  ] as unknown as ErrorMessage<SnapPollOption>
+                }
               />
             ))}
+            {typeof errors?.option === 'string' && errors?.option && (
+              <FormHelperText error>{errors.option}</FormHelperText>
+            )}
             <Button
               fullWidth
               variant="outlined"

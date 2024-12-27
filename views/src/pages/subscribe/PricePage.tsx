@@ -1,7 +1,20 @@
 import Pricing from '@components/organisms/Pricing';
-import { Container, Stack, Toolbar, Typography } from '@mui/material';
+import {
+  Container,
+  Paper,
+  Stack,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Toolbar,
+  Typography,
+} from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
 import { getPlans } from '@apis/plan/getPlans';
+import DataListTable from '@components/moleculars/DataListTable';
 
 interface SubscribeProps {}
 const Subscribe: React.FC<SubscribeProps> = () => {
@@ -34,13 +47,132 @@ const Subscribe: React.FC<SubscribeProps> = () => {
           <br />
           지금 무료로 사용해보세요!
         </Typography>
+
         <Toolbar />
+
         <Stack
           direction={{ xs: 'column', md: 'row' }}
           justifyContent="center"
           gap={3}
         >
           {plans?.map((plan) => <Pricing key={plan.id} plan={plan} />)}
+        </Stack>
+
+        <Toolbar />
+
+        <Stack direction="row" width="100%">
+          <TableContainer component={Paper}>
+            <Table>
+              <TableHead
+                sx={{
+                  backgroundColor: (theme) =>
+                    theme.palette.background.marketing,
+                }}
+              >
+                <TableRow>
+                  <TableCell
+                    width={190}
+                    align="center"
+                    sx={{ fontSize: 16, fontWeight: 700 }}
+                  >
+                    구분
+                  </TableCell>
+                  {plans?.map((plan) => (
+                    <TableCell
+                      key={plan.id}
+                      align="center"
+                      sx={{ fontSize: 16, fontWeight: 700 }}
+                    >
+                      {plan.name}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                <TableRow hover>
+                  <TableCell variant="head">요금제 기간</TableCell>
+                  {plans?.map((plan) => (
+                    <TableCell key={plan.id} align="center">
+                      {plan.planType === 'Free'
+                        ? ['❌'].join(', ')
+                        : ['월', '년'].join(' 또는 ')}
+                    </TableCell>
+                  ))}
+                </TableRow>
+                <TableRow hover>
+                  <TableCell variant="head">비용 (월단위)</TableCell>
+                  {plans?.map((plan) => (
+                    <TableCell key={plan.id} align="center">
+                      {plan.price.toLocaleString('ko-KR', {
+                        style: 'currency',
+                        currency: 'KRW',
+                      })}
+                    </TableCell>
+                  ))}
+                </TableRow>
+                <TableRow hover>
+                  <TableCell variant="head">설문, 투표 제작</TableCell>
+                  {plans?.map((plan, i) => (
+                    <TableCell key={plan.id} align="center">
+                      {[3, 7, 12, 30][i]}개
+                    </TableCell>
+                  ))}
+                </TableRow>
+                <TableRow hover>
+                  <TableCell variant="head">응답자 제한</TableCell>
+                  {plans?.map((plan, i) => (
+                    <TableCell key={plan.id} align="center">
+                      {[100, 200, 500, 5000][i].toLocaleString('ko-KR')}명
+                    </TableCell>
+                  ))}
+                </TableRow>
+                <TableRow hover>
+                  <TableCell variant="head">
+                    설문, 투표 공유 링크 제작
+                  </TableCell>
+                  {plans?.map((plan) => (
+                    <TableCell key={plan.id} align="center">
+                      ✅
+                    </TableCell>
+                  ))}
+                </TableRow>
+                <TableRow hover>
+                  <TableCell variant="head">통계 데이터</TableCell>
+                  {plans?.map((plan, i) => (
+                    <TableCell key={plan.id} align="center">
+                      {['❌', '✅', '✅', '✅'][i]}
+                    </TableCell>
+                  ))}
+                </TableRow>
+                <TableRow hover>
+                  <TableCell variant="head">응답자 추첨</TableCell>
+                  {plans?.map((plan, i) => (
+                    <TableCell key={plan.id} align="center">
+                      {['❌', '✅', '✅', '✅'][i]}
+                    </TableCell>
+                  ))}
+                </TableRow>
+                <TableRow hover>
+                  <TableCell variant="head">질문 비교 그래프</TableCell>
+                  {plans?.map((plan, i) => (
+                    <TableCell key={plan.id} align="center">
+                      {['❌', '❌', '✅', '✅'][i]}
+                    </TableCell>
+                  ))}
+                </TableRow>
+                <TableRow hover>
+                  <TableCell variant="head">
+                    통계 데이터 내보내기 지원(Excel, CSV)
+                  </TableCell>
+                  {plans?.map((plan, i) => (
+                    <TableCell key={plan.id} align="center">
+                      {['❌', '❌', '❌', '✅'][i]}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              </TableBody>
+            </Table>
+          </TableContainer>
         </Stack>
       </Stack>
     </Container>

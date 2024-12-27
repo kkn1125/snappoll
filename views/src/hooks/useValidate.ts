@@ -1,5 +1,8 @@
 import { Message } from '@common/messages';
+import { SnapPollOption } from '@models/SnapPollOption';
 import { SnapPollQuestion } from '@models/SnapPollQuestion';
+import { SnapVoteOption } from '@models/SnapVoteOption';
+import { isNil } from '@utils/isNil';
 import { useCallback, useMemo, useState } from 'react';
 import { Q } from 'vitest/dist/chunks/reporters.D7Jzd9GS.js';
 
@@ -190,27 +193,92 @@ function useValidate<T extends { [k in string]: any }>(data: T) {
               description: Message.Wrong.Required,
             });
           }
-          if (data.expiresAt && data.expiresAt < new Date()) {
+          if (!isNil(data.expiresAt) && data.expiresAt < new Date()) {
             Object.assign(validateErrors, {
               expiresAt: '현재보다 과거일 수 없습니다.',
             });
           }
-          if (
-            data.question.some(
-              (question: SnapPollQuestion) => question.title.length === 0,
-            )
-          ) {
-            const found = data.question.findIndex(
-              (question: SnapPollQuestion) => question.title.length === 0,
-            );
-            const array = new Array(data.question.length);
-            array[found] = '질문을 완성해주세요.';
+          if (data.question.length > 0) {
             Object.assign(validateErrors, {
-              question: array,
+              question: data.question.reduce(
+                (
+                  acc: ErrorMessage<SnapPollQuestion>[],
+                  question: SnapPollQuestion,
+                ) => {
+                  const error = {} as ErrorMessage<SnapPollQuestion>;
+                  if (question.title === '') {
+                    error.title = Message.Wrong.Required;
+                  }
+                  if (
+                    question.type === 'checkbox' ||
+                    question.type === 'select'
+                  ) {
+                    if (question.option.length === 0) {
+                      error.option = Message.Wrong.LeastRequired;
+                    } else {
+                      Object.assign(error, {
+                        option: question.option.map((opt) => {
+                          const error = {} as ErrorMessage<SnapPollOption>;
+                          if (opt.content === '') {
+                            error.content = Message.Wrong.Required;
+                          }
+                          return error;
+                        }),
+                      });
+                    }
+                  }
+                  if (Object.keys(error).length > 0) {
+                    acc.push(error);
+                  }
+                  return acc;
+                },
+                [],
+              ),
             });
+            //@ts-ignore
+            if (validateErrors.question.length === 0) {
+              delete validateErrors.question;
+            }
           }
           break;
         }
+        case 'snapVote':
+          if (data.title === '') {
+            Object.assign(validateErrors, {
+              title: Message.Wrong.Required,
+            });
+          }
+          if (data.description === '') {
+            Object.assign(validateErrors, {
+              description: Message.Wrong.Required,
+            });
+          }
+          if (!isNil(data.expiresAt) && data.expiresAt < new Date()) {
+            Object.assign(validateErrors, {
+              expiresAt: '현재보다 과거일 수 없습니다.',
+            });
+          }
+          if (data.voteOption.length === 0) {
+            Object.assign(validateErrors, {
+              voteOption: Message.Wrong.LeastRequired,
+            });
+          }
+          if (
+            data.voteOption.some(
+              (voteOption: SnapVoteOption) => voteOption.content.length === 0,
+            )
+          ) {
+            Object.assign(validateErrors, {
+              voteOption: data.voteOption.map((opt: SnapVoteOption) => {
+                const error = {} as ErrorMessage<SnapPollOption>;
+                if (opt.content === '') {
+                  error.content = Message.Wrong.Required;
+                }
+                return error;
+              }),
+            });
+          }
+          break;
         case 'boardPassword': {
           validateBoardPassword(data, validateErrors);
           break;

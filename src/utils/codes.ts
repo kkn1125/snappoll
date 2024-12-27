@@ -29,6 +29,10 @@ export const ErrorName = {
   ExpiredRefreshToken: 'ExpiredRefreshToken',
   InvalidateRequest: 'InvalidateRequest',
   InvalidateToken: 'InvalidateToken',
+  PollLimit: 'PollLimit',
+  PollResponseLimit: 'PollResponseLimit',
+  VoteLimit: 'VoteLimit',
+  VoteResponseLimit: 'VoteResponseLimit',
   ServerIssue: 'ServerIssue',
 } as const;
 
@@ -170,6 +174,7 @@ export const ErrorMessage = {
     [105, ErrorName.PrivateUrl, '비공개 URL입니다.'],
     [106, ErrorName.NotProvidedUrl, '발급되지 않은 URL입니다.'],
     [107, ErrorName.AlreadyClosed, '유효기간이 만료된 설문입니다.'],
+    [108, ErrorName.PollLimit, '설문 제작 한도에 도달했습니다.'],
   ],
   /* pollResponse */
   pollResponse: [
@@ -182,6 +187,7 @@ export const ErrorMessage = {
       '입력하지 않은 정보가 있습니다. 모두 입력해주세요.',
     ],
     [104, ErrorName.NotFound, '찾을 수 없습니다.'],
+    [105, ErrorName.PollResponseLimit, '설문 응답 한도에 도달하였습니다. '],
   ],
   /* vote */
   vote: [
@@ -197,6 +203,7 @@ export const ErrorMessage = {
     [105, ErrorName.PrivateUrl, '비공개 URL입니다.'],
     [106, ErrorName.NotProvidedUrl, '발급되지 않은 URL입니다.'],
     [107, ErrorName.AlreadyClosed, '유효기간이 만료된 투표입니다.'],
+    [108, ErrorName.VoteLimit, '투표 제작 한도에 도달했습니다.'],
   ],
   /* voteResponse */
   voteResponse: [
@@ -209,6 +216,7 @@ export const ErrorMessage = {
       '입력하지 않은 정보가 있습니다. 모두 입력해주세요.',
     ],
     [104, ErrorName.NotFound, '찾을 수 없습니다.'],
+    [105, ErrorName.VoteResponseLimit, '투표 응답 한도에 도달하였습니다. '],
   ],
   /* board */
   board: [

@@ -19,7 +19,6 @@ const CreateVoteOptionItem: React.FC<CreateVoteOptionItemProps> = ({
 }) => {
   const { openInteractiveModal } = useModal();
   const setSnapVote = useSetRecoilState(snapVoteAtom);
-
   const onChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setSnapVote((snapVote) => {
@@ -57,6 +56,7 @@ const CreateVoteOptionItem: React.FC<CreateVoteOptionItemProps> = ({
       content={option.content}
       onChange={onChange}
       handleRemove={handleRemove}
+      errors={errors}
     />
   );
 };

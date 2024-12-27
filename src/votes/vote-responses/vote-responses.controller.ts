@@ -1,23 +1,26 @@
+import { RoleGuard } from '@auth/role.guard';
+import { PlanValidate } from '@middleware/plan-validate.decorator';
+import { PlanGuard } from '@middleware/plan.guard';
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
-  Param,
+  Controller,
   Delete,
+  Get,
+  Param,
+  Post,
   Put,
   UseGuards,
 } from '@nestjs/common';
-import { VoteResponsesService } from './vote-responses.service';
 import { CreateVoteResponseDto } from './dto/create-vote-response.dto';
 import { UpdateVoteResponseDto } from './dto/update-vote-response.dto';
-import { RoleGuard } from '@auth/role.guard';
+import { VoteResponsesService } from './vote-responses.service';
 
 @Controller('response')
 export class VoteResponsesController {
   constructor(private readonly voteResponsesService: VoteResponsesService) {}
 
+  @PlanValidate('voteResponse')
+  @UseGuards(PlanGuard)
   @Post()
   create(
     @Body()
