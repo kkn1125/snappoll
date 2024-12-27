@@ -1,7 +1,6 @@
 import { messageAtom } from '@/recoils/message.atom';
 import { tokenAtom } from '@/recoils/token.atom';
-import ReadyAlert from '@components/atoms/ReadyAlert';
-import useSocket from '@hooks/useSocket';
+// import useSocket from '@hooks/useSocket';
 import {
   Button,
   Container,
@@ -28,7 +27,6 @@ const NoticePage: React.FC<NoticePageProps> = () => {
 
   useEffect(() => {
     // getMessages();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page, user]);
 
   const handleReaded = (messageId: string) => {
@@ -44,12 +42,6 @@ const NoticePage: React.FC<NoticePageProps> = () => {
       setPage(page);
     },
     [],
-  );
-
-  return (
-    <Stack alignItems="center" justifyContent="center">
-      <ReadyAlert />
-    </Stack>
   );
 
   return (

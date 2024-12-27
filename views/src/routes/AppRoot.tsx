@@ -1,4 +1,5 @@
 import { VERSION } from '@common/variables';
+import ReadyAlert from '@components/atoms/ReadyAlert';
 import {
   default as ProtectedRoute,
   default as ProtectedRouted,
@@ -29,6 +30,7 @@ import HomePage from '@pages/HomePage';
 import NotfoundPage from '@pages/NotfoundPage';
 import NoticePage from '@pages/notice/NoticePage';
 import Panel from '@pages/panel/Panel';
+import PrivacyPolicyPage from '@pages/PrivacyPolicyPage';
 import DetailPollGraphPage from '@pages/service/graph/polls/DetailPollGraphPage';
 import PollGraphListPage from '@pages/service/graph/polls/PollGraphListPage';
 import SelectGraphPage from '@pages/service/graph/SelectGraphPage';
@@ -50,6 +52,7 @@ import MyVotePage from '@pages/service/vote/MyVotePage';
 import DetailResponseVotePage from '@pages/service/vote/response/DetailResponseVotePage';
 import ResponseVotePage from '@pages/service/vote/response/ResponseVotePage';
 import VoteListPage from '@pages/service/vote/VoteListPage';
+import ServiceAgreementPage from '@pages/ServiceAgreement';
 import ChangePricePage from '@pages/subscribe/ChangePricePage';
 import PricePage from '@pages/subscribe/PricePage';
 import MyResponsePage from '@pages/user/MyResponsePage';
@@ -102,12 +105,17 @@ const AppRoot: React.FC<AppRootProps> = () => {
         <Route index element={isCrew ? <HomePage /> : <GuestHomePage />} />
 
         <Route element={<CommonLayout />}>
-          <Route path="price">
+          {/* 구독 결제 기능 연동 후 활성화 예정 */}
+          {/* <Route path="price">
             <Route index element={<PricePage />} />
             <Route path="change" element={<ChangePricePage />} />
-          </Route>
-          <Route path="notice" element={<NoticePage />} />
+          </Route> */}
+          <Route path="price" element={<ReadyAlert />} />
+          <Route path="notice" element={<ReadyAlert />} />
           <Route path="about" element={<AboutPage />} />
+          <Route path="privacy-policy" element={<PrivacyPolicyPage />} />
+          <Route path="service-agreement" element={<ServiceAgreementPage />} />
+          <Route path="help" element={<ReadyAlert />} />
         </Route>
 
         {/* Authentications */}

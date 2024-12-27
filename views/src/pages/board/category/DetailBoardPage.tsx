@@ -3,6 +3,7 @@ import { deleteBoardForce } from '@apis/board/deleteBoardForce';
 import { getBoardCategoryOne } from '@apis/board/getBoardCategoryOne';
 import { validateBoardPassword } from '@apis/board/validateBoardPassword';
 import { Message } from '@common/messages';
+import { UnknownName } from '@common/variables';
 import CustomInput from '@components/atoms/CustomInput';
 import ProfileAvatar from '@components/atoms/ProfileAvatar';
 import SunEditorContent from '@components/atoms/SunEditorContent';
@@ -290,7 +291,9 @@ const DetailBoardPage: React.FC<DetailBoardPageProps> = () => {
                 작성자
               </Typography>
               <Typography fontSize={14} color="textSecondary">
-                {getUsernameOrGuest(board?.author?.username)}
+                {getUsernameOrGuest(
+                  board?.isPrivate ? UnknownName : board?.author?.username,
+                )}
               </Typography>
             </Stack>
           </Stack>

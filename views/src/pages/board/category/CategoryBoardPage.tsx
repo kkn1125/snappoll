@@ -80,7 +80,7 @@ const CategoryBoardPage: React.FC<CategoryBoardPageProps> = ({
       </Stack>
       <Stack direction="row" justifyContent="space-between" alignItems="center">
         <Typography fontSize={24}>{translate(currentCategory!)}</Typography>
-        {(isMaster || currentCategory === 'community') && (
+        {(isMaster || ['community', 'faq'].includes(currentCategory || '')) && (
           <Button
             component={Link}
             variant="outlined"

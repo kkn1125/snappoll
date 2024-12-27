@@ -5,10 +5,13 @@ import CustomInput from '@components/atoms/CustomInput';
 import useModal, { OpenModalProps } from '@hooks/useModal';
 import useToken from '@hooks/useToken';
 import useValidate from '@hooks/useValidate';
+import { SnapBoard } from '@models/SnapBoard';
 import {
   Box,
   Button,
+  Checkbox,
   Divider,
+  FormControlLabel,
   FormHelperText,
   MenuItem,
   Select,
@@ -21,6 +24,7 @@ import { AxiosError } from 'axios';
 import {
   ChangeEvent,
   FormEvent,
+  SyntheticEvent,
   useEffect,
   useLayoutEffect,
   useState,
@@ -32,12 +36,17 @@ import { ko } from 'suneditor/src/lang';
 
 const logger = new Logger('WriteBoardPage');
 
+interface SnapBoardType extends Omit<SnapBoard, 'userId'> {
+  userId?: string;
+}
+
 interface WriteBoardProps {
   title: string;
   content: string;
   userId?: string;
   category: string;
   password?: string;
+  isPrivate: boolean;
 }
 interface WriteBoardPageProps {}
 const WriteBoardPage: React.FC<WriteBoardPageProps> = () => {
@@ -45,13 +54,14 @@ const WriteBoardPage: React.FC<WriteBoardPageProps> = () => {
   const locate = useLocation();
   const params = useParams();
   const { state } = useLocation();
-  const board = state?.board;
+  const board = state?.board as SnapBoardType;
   const isGuestBoard = !board?.userId;
   const [data, setData] = useState<WriteBoardProps>({
     title: '',
     content: '',
     category: board?.category || params?.category || 'community',
     password: undefined,
+    isPrivate: false,
   });
   const { isMaster, user } = useToken();
   const validateType = user ? 'writeBoardForUser' : 'writeBoard';
@@ -107,12 +117,16 @@ const WriteBoardPage: React.FC<WriteBoardPageProps> = () => {
   });
 
   useLayoutEffect(() => {
-    logger.log(isMaster);
+    // logger.log(isMaster);
     if (user && isMaster) {
       // navigate(-1);
     } else {
-      if (!locate.pathname.startsWith('/board/community/write')) {
-        logger.log('here?');
+      if (
+        !(
+          locate.pathname.startsWith('/board/community/write') ||
+          locate.pathname.startsWith('/board/faq/write')
+        )
+      ) {
         navigate(-1);
       }
     }
@@ -128,6 +142,7 @@ const WriteBoardPage: React.FC<WriteBoardPageProps> = () => {
         content: '',
         category: params?.category || 'community',
         password: undefined,
+        isPrivate: false,
       });
     }
   }, [board, params?.category]);
@@ -142,6 +157,12 @@ const WriteBoardPage: React.FC<WriteBoardPageProps> = () => {
   function handleChange(e: ChangeEvent<HTMLInputElement>) {
     const name = e.target.name;
     const value = e.target.value;
+    setData((data) => ({ ...data, [name]: value }));
+  }
+
+  function handleCheckboxChange(e: SyntheticEvent, checked: boolean) {
+    const name = (e.target as HTMLInputElement).name;
+    const value = checked;
     setData((data) => ({ ...data, [name]: value }));
   }
 
@@ -225,6 +246,15 @@ const WriteBoardPage: React.FC<WriteBoardPageProps> = () => {
         <FormHelperText error={!!errors['content']}>
           {errors['content']}
         </FormHelperText>
+      )}
+      {user && (
+        <FormControlLabel
+          name="isPrivate"
+          checked={data?.isPrivate}
+          onChange={handleCheckboxChange}
+          control={<Checkbox />}
+          label="익명으로 게시"
+        />
       )}
       {!user && (
         <CustomInput

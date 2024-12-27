@@ -46,7 +46,7 @@ export class BoardsService {
     const results = await Promise.all(
       categories.map((category) =>
         this.prisma.board.findMany({
-          where: { category, deletedAt: null, isPrivate: false },
+          where: { category, deletedAt: null },
           orderBy: { createdAt: 'desc' },
           take: eachAmount,
           skip: 0,
@@ -95,21 +95,21 @@ export class BoardsService {
 
   async findCategory(category: string, page: number = 1) {
     const boards = await this.prisma.board.findMany({
-      where: { category, deletedAt: null, isPrivate: false },
+      where: { category, deletedAt: null },
       take: 10,
       skip: (page - 1) * 10,
       orderBy: { createdAt: 'desc' },
       select: this.boardSelect,
     });
     const count = await this.prisma.board.count({
-      where: { category, deletedAt: null, isPrivate: false },
+      where: { category, deletedAt: null },
     });
     return { board: boards, count };
   }
 
   async findOne(id: string) {
     const board = await this.prisma.board.findUnique({
-      where: { id, deletedAt: null, isPrivate: false },
+      where: { id, deletedAt: null },
       select: this.boardSelect,
     });
     if (!board) {
@@ -151,7 +151,7 @@ export class BoardsService {
   }
 
   async update(id: string, updateBoardDto: UpdateBoardDto, isUser: boolean) {
-    const { password, title, content } = updateBoardDto;
+    const { password, author, ...data } = updateBoardDto;
     const board = await this.prisma.board.findUnique({ where: { id } });
 
     if (!board) {
@@ -173,7 +173,7 @@ export class BoardsService {
 
     return this.prisma.board.update({
       where: { id },
-      data: { title, content },
+      data,
     });
   }
 

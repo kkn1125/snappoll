@@ -18,6 +18,7 @@ import { translate } from '@utils/translate';
 import { useCallback } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
+import { UnknownName } from '@common/variables';
 
 interface BoardListPageProps {}
 const BoardListPage: React.FC<BoardListPageProps> = () => {
@@ -80,7 +81,7 @@ const BoardListPage: React.FC<BoardListPageProps> = () => {
                 >
                   <ListItemText
                     primary={category.title}
-                    secondary={`작성자: ${getUsernameOr(category.author?.username)} | 생성일: ${formattedDate(category.createdAt)}`}
+                    secondary={`작성자: ${getUsernameOr(category.isPrivate ? UnknownName : category.author?.username)} | 생성일: ${formattedDate(category.createdAt)}`}
                   />
                 </ListItemButton>
               </ListItem>

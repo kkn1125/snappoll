@@ -12,10 +12,9 @@ export const BRAND_NAME = 'SnapPoll';
 export const MODE = process.env.MODE;
 export const BASE_CLIENT_URL =
   MODE === 'development' ? `http://${location.hostname}:5000` : location.origin;
-export const BASE_URL =
-  MODE === 'development'
-    ? `http://${location.hostname}:8080/api`
-    : location.origin + '/api';
+export const BASE_SERVER_URL =
+  MODE === 'development' ? `http://${location.hostname}:8080` : location.origin;
+export const BASE_URL = BASE_SERVER_URL + '/api';
 export const HOST = process.env.HOST;
 export const PORT = process.env.PORT;
 export const PROJECT_BASEPATH = process.env.PROJECT_BASEPATH;

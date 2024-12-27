@@ -427,15 +427,6 @@ const SignupPage: React.FC<SignupPageProps> = () => {
         {usernameComponent}
         {passwordComponent}
         {checkPasswordComponent}
-        <Button
-          variant="contained"
-          size="large"
-          type="submit"
-          sx={{ fontSize: 18, fontWeight: 700 }}
-        >
-          회원가입
-        </Button>
-
         <Stack>
           <FormControlLabel
             control={<Checkbox disabled />}
@@ -482,6 +473,14 @@ const SignupPage: React.FC<SignupPageProps> = () => {
             }
           />
         </Stack>
+        <Button
+          variant="contained"
+          size="large"
+          type="submit"
+          sx={{ fontSize: 18, fontWeight: 700 }}
+        >
+          회원가입
+        </Button>
 
         <Typography>
           이미 계정이 있으신가요?{' '}
