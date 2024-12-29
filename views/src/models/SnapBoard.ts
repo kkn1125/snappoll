@@ -7,6 +7,7 @@ export class SnapBoard {
   title!: string;
   content!: string;
   viewCount!: number;
+  likeCount!: number;
   isPrivate!: boolean;
   isOnlyCrew!: boolean;
   createdAt!: Date;

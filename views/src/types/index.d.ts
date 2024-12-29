@@ -162,6 +162,32 @@ export declare global {
     updatedAt: Date;
     plan?: Plan;
   }
+  type SnapCommentAddDto = Omit<
+    SnapComment,
+    | 'id'
+    | 'order'
+    | 'likeCount'
+    | 'createdAt'
+    | 'updatedAt'
+    | 'deletedAt'
+    | 'user'
+  >;
+  interface SnapComment {
+    id: number;
+    boardId: string;
+    userId: string;
+    content: string;
+    isAuthorOnly: boolean;
+    group: number;
+    layer: number;
+    order: number;
+    likeCount: number;
+    createdAt: Date;
+    updatedAt: Date;
+    deletedAt: Date | null;
+
+    user: User;
+  }
   interface Profile {
     id: string;
     userId: string;

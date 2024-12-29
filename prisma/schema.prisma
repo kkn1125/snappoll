@@ -211,6 +211,7 @@ model User {
   board        Board[]
   subscription Subscription?
   allowTerms   AllowTerms[]
+  comment      Comment[]
 
   @@index([username])
   @@index([email])
@@ -402,13 +403,35 @@ model Board {
   title      String    @db.VarChar(100)
   content    String
   viewCount  Int       @default(0) @map("view_count")
+  likeCount  Int       @default(0) @map("like_count")
   isPrivate  Boolean   @default(false) @map("is_private")
   isOnlyCrew Boolean   @default(false) @map("is_only_crew")
   createdAt  DateTime  @default(now()) @map("created_at")
   updatedAt  DateTime  @updatedAt @map("updated_at")
   deletedAt  DateTime? @map("deleted_at")
 
-  author User? @relation(fields: [userId], references: [id])
+  author  User?     @relation(fields: [userId], references: [id])
+  comment Comment[]
 
   @@map("board")
+}
+
+model Comment {
+  id           Int       @id @default(autoincrement())
+  boardId      String    @map("board_id") @db.Uuid
+  userId       String?   @map("user_id") @db.Uuid // 사용자 삭제 시 null처리 되기 위함
+  content      String
+  isAuthorOnly Boolean   @default(false) @map("is_author_only")
+  group        Int? // 댓글 그룹 (고유 id 값)
+  layer        Int       @default(0) // 댓글 레이어
+  order        Int       @default(0) // 댓글 순서
+  likeCount    Int       @default(0) @map("like_count")
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+  deletedAt    DateTime? @map("deleted_at")
+
+  user  User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+  board Board @relation(fields: [boardId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@map("comment")
 }

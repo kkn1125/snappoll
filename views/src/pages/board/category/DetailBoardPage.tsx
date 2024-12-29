@@ -2,24 +2,30 @@ import { deleteBoard } from '@apis/board/deleteBoard';
 import { deleteBoardForce } from '@apis/board/deleteBoardForce';
 import { getBoardCategoryOne } from '@apis/board/getBoardCategoryOne';
 import { validateBoardPassword } from '@apis/board/validateBoardPassword';
+import { getComments } from '@apis/comment/getComments';
 import { Message } from '@common/messages';
 import { UnknownName } from '@common/variables';
 import CustomInput from '@components/atoms/CustomInput';
 import ProfileAvatar from '@components/atoms/ProfileAvatar';
 import SunEditorContent from '@components/atoms/SunEditorContent';
+import CommentWrite from '@components/moleculars/CommentWrite';
+import CommentList from '@components/organisms/CommentList';
 import useModal from '@hooks/useModal';
 import useToken from '@hooks/useToken';
 import useValidate from '@hooks/useValidate';
 import { SnapBoard } from '@models/SnapBoard';
+import ThumbUpIcon from '@mui/icons-material/ThumbUp';
+import VisibilityIcon from '@mui/icons-material/Visibility';
 import {
   Button,
+  Chip,
   Container,
   Divider,
   Paper,
   Stack,
   Typography,
 } from '@mui/material';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { getUsernameOrGuest } from '@utils/getUsernameOrGuest';
 import { AxiosError } from 'axios';
 import React, {
@@ -31,10 +37,16 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import {
+  Link,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from 'react-router-dom';
 
 interface DetailBoardPageProps {}
 const DetailBoardPage: React.FC<DetailBoardPageProps> = () => {
+  const queryClient = useQueryClient();
   const { isMaster, user } = useToken();
   const navigate = useNavigate();
   const { openModal, openInteractiveModal } = useModal();
@@ -51,6 +63,22 @@ const DetailBoardPage: React.FC<DetailBoardPageProps> = () => {
     useValidate(info);
   const passwordRef = useRef<HTMLInputElement>(null);
 
+  const [searchParams] = useSearchParams({ page: '1' });
+  const page = +(searchParams.get('page') || 1);
+  const { data: commentData } = useQuery<
+    SnapResponseType<{ comments: SnapComment[]; count: number }>
+  >({
+    queryKey: ['comments', page],
+    queryFn: () => getComments(page, board?.id),
+  });
+  const comments = commentData?.data?.comments;
+  const count = commentData?.data?.count ?? 0;
+
+  function initializeComments() {
+    queryClient.invalidateQueries({ queryKey: ['comments'] });
+  }
+
+  /* board... */
   const validateMutation = useMutation({
     mutationKey: ['validate'],
     mutationFn: validateBoardPassword,
@@ -277,9 +305,19 @@ const DetailBoardPage: React.FC<DetailBoardPageProps> = () => {
       )}
       <Stack gap={3}>
         <Stack>
-          <Typography fontSize={24} fontWeight={700} gutterBottom>
-            {board?.title}
-          </Typography>
+          <Stack
+            direction="row"
+            justifyContent="space-between"
+            alignItems="center"
+          >
+            <Typography fontSize={24} fontWeight={700} gutterBottom>
+              {board?.title}
+            </Typography>
+            <Stack direction="row" gap={1}>
+              <Chip icon={<ThumbUpIcon />} label={board?.likeCount} />
+              <Chip icon={<VisibilityIcon />} label={board?.viewCount} />
+            </Stack>
+          </Stack>
           <Stack direction="row" alignItems="center" gap={1}>
             <ProfileAvatar
               size={35}
@@ -301,6 +339,23 @@ const DetailBoardPage: React.FC<DetailBoardPageProps> = () => {
         <Divider flexItem />
         <SunEditorContent content={board?.content} />
         <Divider flexItem />
+        {board && (
+          <CommentWrite
+            // comment={comment}
+            // errors={cErrors}
+            // handleChange={handleChange}
+            // handleSwitchChange={handleSwitchChange}
+            // handleSubmit={handleCommentSubmit}
+            initializeComments={initializeComments}
+          />
+        )}
+        {comments && (
+          <CommentList
+            comments={comments}
+            count={count}
+            initializeComments={initializeComments}
+          />
+        )}
         <Stack direction="row" gap={2} justifyContent="space-between">
           <Button
             variant="outlined"

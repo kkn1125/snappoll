@@ -182,6 +182,14 @@ function useValidate<T extends { [k in string]: any }>(data: T) {
       const validateKeys = Object.keys(data) as (keyof T)[];
 
       switch (type) {
+        case 'comment' : {
+          if(data.content === '') {
+            Object.assign(validateErrors, {
+              content: Message.Wrong.Required
+            })
+          }
+          break;
+        }
         case 'snapPoll': {
           if (data.title === '') {
             Object.assign(validateErrors, {

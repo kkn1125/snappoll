@@ -20,6 +20,7 @@ export class BoardsService {
     category: true,
     title: true,
     content: true,
+    likeCount: true,
     viewCount: true,
     order: true,
     isOnlyCrew: true,
@@ -90,7 +91,11 @@ export class BoardsService {
       const errorCode = await this.prisma.getErrorCode('board', 'NotFound');
       throw new NotFoundException(errorCode);
     }
-    return board;
+    const updatedBoard = await this.prisma.board.update({
+      where: { id },
+      data: { viewCount: { increment: 1 } },
+    });
+    return updatedBoard;
   }
 
   async findCategory(category: string, page: number = 1) {

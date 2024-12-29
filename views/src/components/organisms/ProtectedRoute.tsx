@@ -1,8 +1,7 @@
 import { guestDisallowPaths, userDisallowPaths } from '@common/variables';
 import useToken from '@hooks/useToken';
 import ForbiddenPage from '@pages/ForbiddenPage';
-import e from 'express';
-import { memo, useLayoutEffect } from 'react';
+import { memo, useEffect } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 
 interface ProtectedRouteProps {
@@ -11,15 +10,16 @@ interface ProtectedRouteProps {
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ roles }) => {
   const { user } = useToken();
   const navigate = useNavigate();
-  const location = useLocation();
+  const locate = useLocation();
 
-  useLayoutEffect(() => {
-    if (!user && location.pathname.match(guestDisallowPaths)) {
+  useEffect(() => {
+    if (!user && locate.pathname.match(guestDisallowPaths)) {
       navigate('/');
-    } else if (user && location.pathname.match(userDisallowPaths)) {
+    } else if (user && locate.pathname.match(userDisallowPaths)) {
       navigate('/');
     }
-  }, [location.pathname, navigate, user]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [locate.pathname, user]);
 
   if (!user && roles.includes('Guest')) {
     return <Outlet />;

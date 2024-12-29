@@ -4,4 +4,6 @@ import { User } from '@prisma/client';
 
 export class UpdateBoardDto extends PartialType(CreateBoardDto) {
   author: User;
+  likeCount: number;
+  viewCount: number;
 }
