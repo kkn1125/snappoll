@@ -35,12 +35,12 @@ const BoardItem: React.FC<BoardItemProps> = ({ board }) => {
                 <Chip
                   size="small"
                   icon={<ThumbUpIcon />}
-                  label={board.likeCount}
+                  label={board.likeCount.toLocaleString('ko-KR')}
                 />
                 <Chip
                   size="small"
                   icon={<VisibilityIcon />}
-                  label={board.viewCount}
+                  label={board.viewCount.toLocaleString('ko-KR')}
                 />
               </Stack>
             </Stack>

@@ -402,13 +402,20 @@ const SignupPage: React.FC<SignupPageProps> = () => {
   }
 
   return (
-    <Stack gap={2} flex={1} alignItems="center" justifyContent="center">
+    <Stack
+      gap={2}
+      flex={1}
+      alignItems="center"
+      justifyContent="center"
+      width={{ xs: '100%', md: '50%' }}
+      mx="auto"
+    >
       <Stack
         component="form"
         gap={2}
         onSubmit={handleSubmit}
         noValidate
-        width="50%"
+        width="100%"
       >
         <Stack direction="row">
           <IconButton size="large" color="inherit" onClick={() => navigate(-1)}>
@@ -468,6 +475,26 @@ const SignupPage: React.FC<SignupPageProps> = () => {
                   onClick={handleOpenServiceAgreement}
                 >
                   서비스이용동의
+                </Typography>
+              </Fragment>
+            }
+          />
+          <FormControlLabel
+            control={<Checkbox  />}
+            name="serviceAgreement"
+            checked={signupInfo.serviceAgreement}
+            onChange={(e, checked) =>
+              setSignupInfo((signupInfo) => ({
+                ...signupInfo,
+                serviceAgreement: checked,
+              }))
+            }
+            label={
+              <Fragment>
+                <Typography
+                  fontWeight={700}
+                >
+                  마케팅 정보 수신 동의 (선택)
                 </Typography>
               </Fragment>
             }

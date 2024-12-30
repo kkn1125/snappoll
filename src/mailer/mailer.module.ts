@@ -5,11 +5,17 @@ import { ConfigService } from '@nestjs/config';
 import { MailerService } from './mailer.service';
 import { MailerController } from './mailer.controller';
 import { EncryptManager } from '@utils/EncryptManager';
+import { BatchMailerService } from './batch-mailer.service';
 
 @Module({
   imports: [forwardRef(() => AuthModule), DatabaseModule],
   controllers: [MailerController],
-  providers: [ConfigService, MailerService, EncryptManager],
+  providers: [
+    ConfigService,
+    MailerService,
+    EncryptManager,
+    BatchMailerService,
+  ],
   exports: [MailerService],
 })
 export class MailerModule {}

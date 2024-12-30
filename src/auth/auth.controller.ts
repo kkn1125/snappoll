@@ -214,6 +214,8 @@ export class AuthController {
   @Post('login')
   async login(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
     const user = req.user;
+    const mode = this.configService.get('common.mode');
+    const isProd = mode === 'production';
     const { token, refreshToken } = this.encryptManager.getToken({
       id: user.id,
       username: user.username,
@@ -224,13 +226,13 @@ export class AuthController {
 
     res.cookie('token', token, {
       httpOnly: true,
-      secure: true,
+      secure: isProd,
       sameSite: 'lax',
       path: '/',
     });
     res.cookie('refresh', refreshToken, {
       httpOnly: true,
-      secure: true,
+      secure: isProd,
       sameSite: 'lax',
       path: '/',
     });
@@ -247,7 +249,7 @@ export class AuthController {
   @Get('request/kakao')
   @Header('Content-Type', 'text/html')
   async requestAsKakao(@Res() res: Response) {
-    const data = await this.authService.requestLoginKakao();
+    /* const data =  */ await this.authService.requestLoginKakao();
     const kakaoKey = this.configService.get('common.kakaoKey');
     res.redirect(
       `https://kauth.kakao.com/oauth/authorize?client_id=${kakaoKey}&redirect_uri=${encodeURIComponent(`${CURRENT_DOMAIN}/api/auth/login/kakao`)}&response_type=code`,
@@ -258,6 +260,9 @@ export class AuthController {
   @Get('login/kakao')
   async loginAsKakao(@Query('code') code: string, @Res() res: Response) {
     const { data, userData } = await this.authService.getKakaoLoginToken(code);
+    const mode = this.configService.get('common.mode');
+    const isProd = mode === 'production';
+
     this.logger.info('data:', data);
     this.logger.info('userData:', userData);
 
@@ -279,13 +284,13 @@ export class AuthController {
 
     res.cookie('token', token, {
       httpOnly: true,
-      secure: true,
+      secure: isProd,
       sameSite: 'lax',
       path: '/',
     });
     res.cookie('refresh', refreshToken, {
       httpOnly: true,
-      secure: true,
+      secure: isProd,
       sameSite: 'lax',
       path: '/',
     });
@@ -302,23 +307,26 @@ export class AuthController {
   @HttpCode(HttpStatus.NO_CONTENT)
   @Post('logout')
   async logout(@Req() req: Request, @Res() res: Response) {
+    const mode = this.configService.get('common.mode');
+    const isProd = mode === 'production';
+
     await this.authService.lastLogin(req.user.id);
     if (req.user) {
       res.clearCookie('token', {
         httpOnly: true,
-        secure: true,
+        secure: isProd,
         sameSite: 'lax',
         path: '/',
       });
       res.clearCookie('admin-token', {
         httpOnly: true,
-        secure: true,
+        secure: isProd,
         sameSite: 'lax',
         path: '/',
       });
       res.clearCookie('refresh', {
         httpOnly: true,
-        secure: true,
+        secure: isProd,
         sameSite: 'lax',
         path: '/',
       });
@@ -356,6 +364,8 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response,
   ) {
     const { id, email, username, authProvider, loginAt } = req.verify;
+    const mode = this.configService.get('common.mode');
+    const isProd = mode === 'production';
 
     const { token, refreshToken } = this.encryptManager.getToken({
       id,
@@ -368,13 +378,13 @@ export class AuthController {
 
     res.cookie('token', token, {
       httpOnly: true,
-      secure: true,
+      secure: isProd,
       sameSite: 'lax',
       path: '/',
     });
     res.cookie('refresh', refreshToken, {
       httpOnly: true,
-      secure: true,
+      secure: isProd,
       sameSite: 'lax',
       path: '/',
     });

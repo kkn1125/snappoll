@@ -1,4 +1,5 @@
 import { addComment } from '@apis/comment/addComment';
+import { editComment } from '@apis/comment/editComment';
 import CustomInput from '@components/atoms/CustomInput';
 import ProfileAvatar from '@components/atoms/ProfileAvatar';
 import useToken from '@hooks/useToken';
@@ -20,9 +21,10 @@ import {
   useEffect,
   useState,
 } from 'react';
-import { useParams } from 'react-router-dom';
+import { Link, useLocation, useParams } from 'react-router-dom';
 
 interface CommentWriteProps {
+  commentData?: SnapComment;
   group?: number;
   layer?: number;
   initializeComments: () => void;
@@ -34,6 +36,7 @@ interface CommentWriteProps {
   // handleSubmit: (e: FormEvent) => false | undefined;
 }
 const CommentWrite: React.FC<CommentWriteProps> = ({
+  commentData,
   group,
   layer,
   initializeComments,
@@ -41,6 +44,7 @@ const CommentWrite: React.FC<CommentWriteProps> = ({
 }) => {
   const { id: boardId } = useParams();
   const { user } = useToken();
+  const locate = useLocation();
   /* write comment */
   const [comment, setComment] = useState<SnapCommentAddDto>({
     boardId: '',
@@ -50,7 +54,7 @@ const CommentWrite: React.FC<CommentWriteProps> = ({
     layer: layer ?? 0,
     userId: '',
   });
-
+  const isEditMode = !!commentData;
   const { validate, validated, setValidated, errors, clearValidate } =
     useValidate(comment);
 
@@ -72,6 +76,33 @@ const CommentWrite: React.FC<CommentWriteProps> = ({
       });
     },
   });
+
+  const editCommentMutation = useMutation({
+    mutationKey: ['editComment'],
+    mutationFn: editComment,
+    onSuccess(data, variables, context) {
+      initializeComments();
+      clearValidate();
+      setValidated(false);
+      callbackAddComment?.();
+      setComment({
+        boardId: boardId || '',
+        content: '',
+        isAuthorOnly: false,
+        group: group ?? 0,
+        layer: layer ?? 0,
+        userId: user?.id || '',
+      });
+    },
+  });
+
+  useEffect(() => {
+    if (commentData) {
+      const { boardId, content, isAuthorOnly, userId, group, layer } =
+        commentData;
+      setComment({ boardId, content, isAuthorOnly, userId, group, layer });
+    }
+  }, [commentData]);
 
   useEffect(() => {
     if (user) {
@@ -97,7 +128,11 @@ const CommentWrite: React.FC<CommentWriteProps> = ({
 
     // console.log('data:', comment);
 
-    addCommentMutation.mutate(comment);
+    if (isEditMode) {
+      editCommentMutation.mutate({ id: commentData.id, data: comment });
+    } else {
+      addCommentMutation.mutate(comment);
+    }
 
     return false;
   }
@@ -117,8 +152,20 @@ const CommentWrite: React.FC<CommentWriteProps> = ({
   if (!user)
     return (
       <Paper>
-        <Stack p={3}>
+        <Stack
+          direction="row"
+          justifyContent="space-between"
+          alignItems="center"
+          p={3}
+        >
           <Typography>로그인이 필요합니다.</Typography>
+          <Button
+            component={Link}
+            to="/auth/login"
+            state={{ from: locate.pathname }}
+          >
+            로그인하기
+          </Button>
         </Stack>
       </Paper>
     );
@@ -154,7 +201,7 @@ const CommentWrite: React.FC<CommentWriteProps> = ({
             fullWidth
           />
           <Button type="submit" variant="contained">
-            작성
+            {isEditMode ? '수정' : '작성'}
           </Button>
         </Stack>
         <FormControlLabel

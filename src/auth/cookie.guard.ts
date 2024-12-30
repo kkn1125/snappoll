@@ -66,7 +66,7 @@ export class CookieGuard implements CanActivate {
     const req = http.getRequest() as Request;
     const res = http.getResponse() as Response;
     const secretKey = this.configService.get('common.secretKey');
-
+    this.logger.info('cookie check:', req.cookies);
     if (!req.cookies.token) {
       this.logger.debug('쿠키 토큰 없음');
 
@@ -139,6 +139,9 @@ export class CookieGuard implements CanActivate {
     res: Response,
     secretKey: string,
   ) {
+    const mode = this.configService.get('common.mode');
+    const isProd = mode === 'production';
+
     try {
       const verifiedRefreshToken = jwt.verify(req.cookies.refresh, secretKey, {
         algorithms: ['HS256'],
@@ -167,13 +170,13 @@ export class CookieGuard implements CanActivate {
 
       res.cookie('token', token, {
         httpOnly: true,
-        secure: true,
+        secure: isProd,
         sameSite: 'lax',
         path: '/',
       });
       res.cookie('refresh', refreshToken, {
         httpOnly: true,
-        secure: true,
+        secure: isProd,
         sameSite: 'lax',
         path: '/',
       });
@@ -199,15 +202,18 @@ export class CookieGuard implements CanActivate {
   }
 
   private clearCookies(res: Response) {
+    const mode = this.configService.get('common.mode');
+    const isProd = mode === 'production';
+
     res.clearCookie('token', {
       httpOnly: true,
-      secure: true,
+      secure: isProd,
       sameSite: 'lax',
       path: '/',
     });
     res.clearCookie('refresh', {
       httpOnly: true,
-      secure: true,
+      secure: isProd,
       sameSite: 'lax',
       path: '/',
     });

@@ -52,7 +52,9 @@ const Subscribe: React.FC<SubscribeProps> = () => {
 
         <Stack
           direction={{ xs: 'column', md: 'row' }}
+          width="100%"
           justifyContent="center"
+          p={2}
           gap={3}
         >
           {plans?.map((plan) => <Pricing key={plan.id} plan={plan} />)}
@@ -65,14 +67,17 @@ const Subscribe: React.FC<SubscribeProps> = () => {
             <Table>
               <TableHead
                 sx={{
+                  whiteSpace: 'nowrap',
                   backgroundColor: (theme) =>
                     theme.palette.background.marketing,
                 }}
               >
                 <TableRow>
                   <TableCell
-                    width={190}
+                    width={270}
                     align="center"
+                    component="th"
+                    scope="column"
                     sx={{ fontSize: 16, fontWeight: 700 }}
                   >
                     구분
@@ -81,6 +86,8 @@ const Subscribe: React.FC<SubscribeProps> = () => {
                     <TableCell
                       key={plan.id}
                       align="center"
+                      component="th"
+                      scope="column"
                       sx={{ fontSize: 16, fontWeight: 700 }}
                     >
                       {plan.name}
@@ -88,7 +95,7 @@ const Subscribe: React.FC<SubscribeProps> = () => {
                   ))}
                 </TableRow>
               </TableHead>
-              <TableBody>
+              <TableBody sx={{ whiteSpace: 'nowrap' }}>
                 <TableRow hover>
                   <TableCell variant="head">요금제 기간</TableCell>
                   {plans?.map((plan) => (
@@ -104,6 +111,17 @@ const Subscribe: React.FC<SubscribeProps> = () => {
                   {plans?.map((plan) => (
                     <TableCell key={plan.id} align="center">
                       {plan.price.toLocaleString('ko-KR', {
+                        style: 'currency',
+                        currency: 'KRW',
+                      })}
+                    </TableCell>
+                  ))}
+                </TableRow>
+                <TableRow hover>
+                  <TableCell variant="head">비용 (연단위)</TableCell>
+                  {plans?.map((plan) => (
+                    <TableCell key={plan.id} align="center">
+                      {(plan.price * 12).toLocaleString('ko-KR', {
                         style: 'currency',
                         currency: 'KRW',
                       })}

@@ -68,7 +68,7 @@ const DetailBoardPage: React.FC<DetailBoardPageProps> = () => {
   const { data: commentData } = useQuery<
     SnapResponseType<{ comments: SnapComment[]; count: number }>
   >({
-    queryKey: ['comments', page],
+    queryKey: ['comments', page, board?.id],
     queryFn: () => getComments(page, board?.id),
   });
   const comments = commentData?.data?.comments;
@@ -314,15 +314,21 @@ const DetailBoardPage: React.FC<DetailBoardPageProps> = () => {
               {board?.title}
             </Typography>
             <Stack direction="row" gap={1}>
-              <Chip icon={<ThumbUpIcon />} label={board?.likeCount} />
-              <Chip icon={<VisibilityIcon />} label={board?.viewCount} />
+              <Chip
+                icon={<ThumbUpIcon />}
+                label={(board?.likeCount || 0).toLocaleString('ko-KR')}
+              />
+              <Chip
+                icon={<VisibilityIcon />}
+                label={(board?.viewCount || 0).toLocaleString('ko-KR')}
+              />
             </Stack>
           </Stack>
           <Stack direction="row" alignItems="center" gap={1}>
             <ProfileAvatar
               size={35}
               username={getUsernameOrGuest(board?.author?.username)}
-              profileImage={user?.userProfile?.id}
+              profileImage={board?.author?.userProfile?.id}
             />
             <Stack>
               <Typography fontSize={12} fontWeight={500} color="textDisabled">
@@ -339,23 +345,18 @@ const DetailBoardPage: React.FC<DetailBoardPageProps> = () => {
         <Divider flexItem />
         <SunEditorContent content={board?.content} />
         <Divider flexItem />
-        {board && (
-          <CommentWrite
-            // comment={comment}
-            // errors={cErrors}
-            // handleChange={handleChange}
-            // handleSwitchChange={handleSwitchChange}
-            // handleSubmit={handleCommentSubmit}
-            initializeComments={initializeComments}
-          />
-        )}
-        {comments && (
-          <CommentList
-            comments={comments}
-            count={count}
-            initializeComments={initializeComments}
-          />
-        )}
+
+        {/* 댓글 쓰기 */}
+        {board && <CommentWrite initializeComments={initializeComments} />}
+
+        {/* 댓글 리스트 */}
+        <CommentList
+          comments={comments}
+          count={count}
+          initializeComments={initializeComments}
+        />
+
+        {/* 페이지 컨트롤러 */}
         <Stack direction="row" gap={2} justifyContent="space-between">
           <Button
             variant="outlined"

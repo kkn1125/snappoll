@@ -74,12 +74,12 @@ const Modal: React.FC<ModalProps> = () => {
             id="modal-window"
             component={Stack}
             p={3}
-            minWidth={{ xs: '80vw', md: '20vw' }}
-            maxWidth={{ xs: '90vw', md: '40vw' }}
-            maxHeight={{ xs: '90vh', md: '80vh' }}
+            minWidth={{ xs: '90vw', md: '20vw' }}
+            maxWidth={{ xs: '95vw', md: '40vw' }}
+            maxHeight="calc(100vh - 10vh * 2)"
             gap={3}
             sx={{
-              position: 'absolute',
+              position: 'fixed',
               top: '10vh',
               left: '50%',
               transform: 'translate(-50%, 0%)',
@@ -87,11 +87,18 @@ const Modal: React.FC<ModalProps> = () => {
               ...(highlight && {
                 animation: `${shake} 200ms ease-in`,
               }),
-              overflow: 'auto',
             }}
           >
-            <Stack gap={1}>
-              <Typography fontSize={24}>{modalState.title}</Typography>
+            <Typography fontSize={24}>{modalState.title}</Typography>
+            <Stack
+              gap={1}
+              width="100%"
+              overflow="auto"
+              maxHeight={{
+                xs: '100%',
+                md: 'calc(90vh - 10vh)',
+              }}
+            >
               {modalState.content.map((ctt, i) => (
                 <Typography key={ctt + i} className="font-maru" fontSize={15}>
                   {ctt}

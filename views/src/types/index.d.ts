@@ -1,6 +1,7 @@
 import '@mui/material/styles';
 import '@mui/material/Button';
 import '@mui/material/AppBar';
+import { SnapBoard } from '@models/SnapBoard';
 
 export declare module '@mui/material/styles' {
   export declare interface Palette {
@@ -114,6 +115,7 @@ export declare global {
     lastLogin: Date;
     authProvider: 'Kakao' | 'Google' | 'Local';
     role: Role;
+    receiveMail: boolean;
     // grade: 'Free' | 'Hobby' | 'Pro';
     password?: string;
     createdAt: Date;
@@ -171,6 +173,7 @@ export declare global {
     | 'updatedAt'
     | 'deletedAt'
     | 'user'
+    | 'board'
   >;
   interface SnapComment {
     id: number;
@@ -187,6 +190,7 @@ export declare global {
     deletedAt: Date | null;
 
     user: User;
+    board: SnapBoard;
   }
   interface Profile {
     id: string;

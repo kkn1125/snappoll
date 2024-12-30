@@ -33,6 +33,11 @@ export class BoardsService {
         id: true,
         username: true,
         email: true,
+        userProfile: {
+          select: {
+            id: true,
+          },
+        },
       },
     },
   };
@@ -93,6 +98,7 @@ export class BoardsService {
     }
     const updatedBoard = await this.prisma.board.update({
       where: { id },
+      select: this.boardSelect,
       data: { viewCount: { increment: 1 } },
     });
     return updatedBoard;

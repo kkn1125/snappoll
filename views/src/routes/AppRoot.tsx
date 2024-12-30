@@ -106,10 +106,10 @@ const AppRoot: React.FC<AppRootProps> = () => {
 
         <Route element={<CommonLayout />}>
           {/* 구독 결제 기능 연동 후 활성화 예정 */}
-          {/* <Route path="price">
+          <Route path="price">
             <Route index element={<PricePage />} />
             <Route path="change" element={<ChangePricePage />} />
-          </Route> */}
+          </Route>
           <Route path="price" element={<ReadyAlert />} />
           <Route path="notice" element={<ReadyAlert />} />
           <Route path="about" element={<AboutPage />} />

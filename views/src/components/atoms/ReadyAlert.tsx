@@ -14,6 +14,7 @@ const ReadyAlert: React.FC<ReadyAlertProps> = () => {
         gap: 1,
         top: '50%',
         left: '50%',
+        whiteSpace: 'nowrap',
         transform: 'translate(-50%, -50%)',
         ['& .MuiSvgIcon-root']: {
           transition: 'all 150ms ease-in-out',

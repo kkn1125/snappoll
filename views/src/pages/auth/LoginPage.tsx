@@ -5,7 +5,14 @@ import CustomInput from '@components/atoms/CustomInput';
 import useModal from '@hooks/useModal';
 import useValidate from '@hooks/useValidate';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
-import { Button, Divider, IconButton, Stack, Typography } from '@mui/material';
+import {
+  Button,
+  Container,
+  Divider,
+  IconButton,
+  Stack,
+  Typography,
+} from '@mui/material';
 import { useMutation } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import {
@@ -22,13 +29,14 @@ import { useSetRecoilState } from 'recoil';
 interface LoginPageProps {}
 const LoginPage: React.FC<LoginPageProps> = () => {
   const setToken = useSetRecoilState(tokenAtom);
-  const { openModal } = useModal();
+  const { openModal, openInteractiveModal } = useModal();
   const locate = useLocation();
   const navigate = useNavigate();
   const [loginInfo, setLoginInfo] = useState<LoginDto>({
     email: '',
     password: '',
   });
+
   const { errors, validate, validated, setValidated } = useValidate(loginInfo);
   const mutation = useMutation<
     SnapResponseType<{ user: User; expiredTime: number }>,
@@ -39,8 +47,26 @@ const LoginPage: React.FC<LoginPageProps> = () => {
     mutationFn: login,
     onSuccess({ ok, data }, _variables, _context) {
       if (ok) {
-        navigate('/');
-        setToken({ user: data.user });
+        const from = locate.state?.from;
+        if (from) {
+          openInteractiveModal({
+            content: [
+              '이전에 보던 페이지가 있습니다.',
+              '바로 이동하시겠습니까?',
+            ],
+            callback: () => {
+              setToken({ user: data.user });
+              navigate(from);
+            },
+            closeCallback: () => {
+              setToken({ user: data.user });
+              navigate('/');
+            },
+          });
+        } else {
+          setToken({ user: data.user });
+          navigate('/');
+        }
       }
     },
     onError(error: AxiosError<AxiosException>, _variables, _context) {
@@ -100,13 +126,20 @@ const LoginPage: React.FC<LoginPageProps> = () => {
   const memoErrors = useMemo(() => errors, [errors]);
 
   return (
-    <Stack gap={2} flex={1} alignItems="center" justifyContent="center">
+    <Stack
+      gap={2}
+      flex={1}
+      alignItems="center"
+      justifyContent="center"
+      width={{ xs: '100%', md: '50%' }}
+      mx="auto"
+    >
       <Stack
         component="form"
         gap={2}
         onSubmit={handleSubmit}
         noValidate
-        width="50%"
+        width="100%"
         // onChange={onFormChange}
       >
         <Stack direction="row">

@@ -24,8 +24,14 @@ const Footer: React.FC<FooterProps> = () => {
         fontSize: '0.9em',
       }}
     >
-      <Stack direction="row" gap={2} justifyContent="center">
-        <Stack direction="row" gap={3}>
+      <Stack
+        direction="row"
+        gap={2}
+        justifyContent="center"
+        width="inherit"
+        overflow="auto"
+      >
+        <Stack direction="row" gap={3} flexWrap="nowrap" p={1}>
           {joinElement(footerMenu).map((footer, i) =>
             footer.name ? (
               <Typography
@@ -34,7 +40,11 @@ const Footer: React.FC<FooterProps> = () => {
                 to={footer.to}
                 target="_blank"
                 rel="noopener noreferrer"
-                sx={{ fontSize: 'inherit', textDecoration: 'none' }}
+                sx={{
+                  whiteSpace: 'nowrap',
+                  fontSize: 'inherit',
+                  textDecoration: 'none',
+                }}
               >
                 {footer.name}
               </Typography>

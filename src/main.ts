@@ -9,11 +9,7 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import { allowOrigins } from '@utils/allowOrigins';
 import compression from 'compression';
 import cookieParser from 'cookie-parser';
-import * as path from 'path';
 import { AppModule } from './app.module';
-import hbs from 'hbs';
-import * as exphbs from 'express-handlebars';
-import dayjs from 'dayjs';
 
 declare const module: any;
 

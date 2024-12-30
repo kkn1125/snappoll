@@ -163,6 +163,7 @@ model Plan {
   name        String   @db.VarChar(50)
   description String?
   price       Int      @db.Integer
+  discount    Int      @default(0) // 연 결제 할인율
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
 
@@ -192,9 +193,11 @@ model User {
   lastLogin    DateTime?    @map("last_login")
   authProvider AuthProvider @default(Local) @map("auth_provider")
   role         Role         @default(User)
-  createdAt    DateTime     @default(now()) @map("created_at")
-  updatedAt    DateTime     @updatedAt @map("updated_at")
-  deletedAt    DateTime?    @map("deleted_at")
+  receiveMail  Boolean      @default(false) @map("receive_mail")
+
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
 
   sendMessage    Message[] @relation("sendMessage")
   receiveMessage Message[] @relation("receiveMessage")
@@ -434,4 +437,19 @@ model Comment {
   board Board @relation(fields: [boardId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   @@map("comment")
+}
+
+enum NoticeType {
+  Normal
+  Batch
+}
+
+model Notice {
+  id        String     @id @default(uuid()) @db.Uuid
+  type      NoticeType @default(Normal)
+  cover     String? // image path
+  title     String     @db.VarChar(30)
+  content   String
+  createdAt DateTime   @default(now()) @map("created_at")
+  updatedAt DateTime   @updatedAt @map("updated_at")
 }

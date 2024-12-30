@@ -247,4 +247,7 @@ export class MailerService {
 
     return data;
   }
+
+  /* 수동 메일 발송 */
+  // sendManualMail(type: NoticeType, id: string) {}
 }

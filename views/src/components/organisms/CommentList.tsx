@@ -2,7 +2,7 @@ import CommentField from '@components/moleculars/CommentField';
 import { Stack, Typography } from '@mui/material';
 
 interface CommentListProps {
-  comments: SnapComment[];
+  comments?: SnapComment[];
   count: number;
   initializeComments: () => void;
 }
@@ -11,6 +11,7 @@ const CommentList: React.FC<CommentListProps> = ({
   count,
   initializeComments,
 }) => {
+  
   return (
     <Stack gap={3}>
       <Typography>Comments ({count})</Typography>
@@ -19,6 +20,7 @@ const CommentList: React.FC<CommentListProps> = ({
           <CommentField
             key={comment.id}
             comment={comment}
+            comments={comments}
             initializeComments={initializeComments}
           />
         ))}

@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  Put,
 } from '@nestjs/common';
 import { CommentsService } from './comments.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
@@ -21,10 +22,10 @@ export class CommentsController {
     return this.commentsService.create(id, createCommentDto);
   }
 
-  @Get()
-  findAll() {
-    return this.commentsService.findAll();
-  }
+  // @Get()
+  // findAll() {
+  //   return this.commentsService.findAll();
+  // }
 
   @IgnoreCookie()
   @Get('board/:id')
@@ -33,12 +34,22 @@ export class CommentsController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCommentDto: UpdateCommentDto) {
+  update(@Param('id') id: number, @Body() updateCommentDto: UpdateCommentDto) {
     return this.commentsService.update(+id, updateCommentDto);
   }
 
+  @Put('revoke/:id')
+  revokeComment(@Param('id') id: number) {
+    return this.commentsService.revoke(+id);
+  }
+
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  remove(@Param('id') id: number) {
     return this.commentsService.remove(+id);
+  }
+
+  @Delete('force/:id')
+  removeForce(@Param('id') id: number) {
+    return this.commentsService.removeForce(+id);
   }
 }

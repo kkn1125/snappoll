@@ -1,4 +1,7 @@
+import { TermsService } from '@/terms/terms.service';
 import { IgnoreCookie } from '@auth/ignore-cookie.decorator';
+import { IgnoreThrottle } from '@auth/ignore-throttle.decorator';
+import { PrismaService } from '@database/prisma.service';
 import {
   Body,
   Controller,
@@ -24,8 +27,6 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserPasswordDto } from './dto/update-user-password.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersService } from './users.service';
-import { TermsService } from '@/terms/terms.service';
-import { PrismaService } from '@database/prisma.service';
 
 @Controller('users')
 export class UsersController {
@@ -83,20 +84,9 @@ export class UsersController {
     return this.usersService.findOne(id);
   }
 
-  // @IgnoreCookie()
-  // @Get('profile/test')
-  // async getProfileImageTest(@Res() res: Response) {
-  //   const image = await this.usersService.getProfileImageTest();
-  //   // console.log(image.image instanceof Buffer);
-  //   // this.logger.debug('image.mimetype', image.mimetype);
-  //   // 이미지 응답
-  //   res.setHeader('Content-Type', 'image/jpg');
-  //   // res.setHeader('Content-Disposition', `inline; filename="test.jpg"`);
-  //   res.send(image);
-  // }
-
   @IgnoreCookie()
   @Get('profile/:id')
+  @IgnoreThrottle()
   async getProfileImage(@Res() res: Response, @Param('id') profileId: string) {
     const image = await this.usersService.getProfileImage(profileId);
     // console.log(image.image instanceof Buffer);

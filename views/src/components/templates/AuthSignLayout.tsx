@@ -1,6 +1,7 @@
 import {
   Box,
   Button,
+  Container,
   Stack,
   Toolbar,
   Typography,
@@ -17,7 +18,7 @@ const AuthSignLayout: React.FC<AuthSignLayoutProps> = () => {
 
   return (
     <Stack flexDirection="row" flex={1}>
-      <Stack flex={1}>
+      <Stack flex={1} px={2}>
         <Outlet />
       </Stack>
       {!isMdDown && (

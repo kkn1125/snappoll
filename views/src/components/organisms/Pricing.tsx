@@ -56,15 +56,15 @@ const Pricing: React.FC<PricingProps> = ({ plan }) => {
 
   return (
     <Stack
-      minWidth={250}
+      flex={1}
+      minWidth={200}
       width="100vw"
-      maxWidth={300}
-      alignItems="center"
+      maxWidth="100%"
       justifyContent="space-between"
       gap={5}
+      p={2}
       sx={{
         borderRadius: 3,
-        p: 2,
         transition: '150ms ease',
         borderColor: '#00000026',
         borderWidth: 5,
