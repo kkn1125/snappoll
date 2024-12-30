@@ -205,6 +205,7 @@ export declare global {
     checkPassword: string;
     privacyPolicy: boolean;
     serviceAgreement: boolean;
+    receiveMail: boolean;
   }
   // interface LoginUser
   //   extends Omit<User, 'id' | 'username' | 'createdAt' | 'updatedAt'> {}

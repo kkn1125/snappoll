@@ -59,6 +59,7 @@ const SignupPage: React.FC<SignupPageProps> = () => {
     checkPassword: '',
     privacyPolicy: false,
     serviceAgreement: false,
+    receiveMail: false,
   });
   const { errors, validate, validated, setValidated } = useValidate(signupInfo);
 
@@ -480,20 +481,18 @@ const SignupPage: React.FC<SignupPageProps> = () => {
             }
           />
           <FormControlLabel
-            control={<Checkbox  />}
-            name="serviceAgreement"
-            checked={signupInfo.serviceAgreement}
+            control={<Checkbox />}
+            name="receiveMail"
+            checked={signupInfo.receiveMail}
             onChange={(e, checked) =>
               setSignupInfo((signupInfo) => ({
                 ...signupInfo,
-                serviceAgreement: checked,
+                receiveMail: checked,
               }))
             }
             label={
               <Fragment>
-                <Typography
-                  fontWeight={700}
-                >
+                <Typography fontWeight={700}>
                   마케팅 정보 수신 동의 (선택)
                 </Typography>
               </Fragment>
