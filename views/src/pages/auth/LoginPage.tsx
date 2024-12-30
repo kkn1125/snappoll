@@ -56,7 +56,7 @@ const LoginPage: React.FC<LoginPageProps> = () => {
             ],
             callback: () => {
               setToken({ user: data.user });
-              navigate(from);
+              navigate('/');
             },
             closeCallback: () => {
               setToken({ user: data.user });

@@ -63,15 +63,14 @@ import { Logger } from '@utils/Logger';
 import { useLayoutEffect } from 'react';
 import { Route, Routes, useLocation } from 'react-router-dom';
 
-const logger = new Logger('AppRoot');
-
 interface AppRootProps {}
 const AppRoot: React.FC<AppRootProps> = () => {
-  const { log } = useLogger();
+  const { log, debug } = useLogger('AppRoot');
   const { isMaster, user, isCrew, verify } = useToken();
   const locate = useLocation();
   const { closeModal } = useModal();
   const { openLoading, closeLoading } = useLoading();
+
   /* when change page */
   useLayoutEffect(() => {
     const randomIndex = Math.floor(Math.random() * 2);
@@ -91,7 +90,7 @@ const AppRoot: React.FC<AppRootProps> = () => {
   }, []);
 
   useLayoutEffect(() => {
-    logger.debug('path change');
+    debug('path change');
 
     return () => {
       closeModal();
