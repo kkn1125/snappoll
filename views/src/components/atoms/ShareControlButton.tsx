@@ -142,7 +142,7 @@ const ShareControlButton: React.FC<ShareControlButtonProps> = ({
           size="small"
           color="info"
           to={`${BASE_CLIENT_URL}/service/${name}/share/?url=${encodeURIComponent(share.url)}`}
-          label={`/service/share/?url=${encodeURIComponent(share.url)}`}
+          label={`/service/share/${name}/?url=${encodeURIComponent(share.url)}`}
           sx={{
             cursor: 'pointer',
             whiteSpace: 'nowrap',

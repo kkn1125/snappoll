@@ -1,8 +1,9 @@
+import { snapResponseAtom } from '@/recoils/snapResponse.atom';
 import { getPoll } from '@apis/poll/getPoll';
 import { savePollResult } from '@apis/poll/savePollResult';
 import { getSharePollBy } from '@apis/poll/share/getSharePollBy';
-import { snapResponseAtom } from '@/recoils/snapResponse.atom';
 import { Message } from '@common/messages';
+import { guestAllowPaths } from '@common/variables';
 import PollLayout from '@components/templates/PollLayout';
 import useModal from '@hooks/useModal';
 import useToken from '@hooks/useToken';
@@ -13,7 +14,12 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { validateExpired } from '@utils/validateExpired';
 import { AxiosError } from 'axios';
 import { FormEvent, useCallback, useMemo } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import {
+  useLocation,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 
 interface DetailPollPageProps {
@@ -29,8 +35,13 @@ const DetailPollPage: React.FC<DetailPollPageProps> = ({
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const [response, setResponse] = useRecoilState(snapResponseAtom);
-
+  const locate = useLocation();
   const { id } = useParams();
+  const [searchParams] = useSearchParams();
+  const isShare =
+    searchParams.get('url') &&
+    !!pollId &&
+    !!locate.pathname.match(guestAllowPaths);
   const detailId = pollId || id;
 
   const { data, isPending } = useQuery<SnapResponseType<SnapPoll>>({
@@ -149,17 +160,31 @@ const DetailPollPage: React.FC<DetailPollPageProps> = ({
         >
           {isExpired ? '마감된 설문입니다.' : '제출'}
         </Button>
-        <Button
-          variant="contained"
-          size="large"
-          type="button"
-          color="inherit"
-          onClick={() => {
-            history.back();
-          }}
-        >
-          이전으로
-        </Button>
+        {isShare ? (
+          <Button
+            variant="contained"
+            size="large"
+            type="button"
+            color="inherit"
+            onClick={() => {
+              navigate('/');
+            }}
+          >
+            사이트로 이동
+          </Button>
+        ) : (
+          <Button
+            variant="contained"
+            size="large"
+            type="button"
+            color="inherit"
+            onClick={() => {
+              history.back();
+            }}
+          >
+            이전으로
+          </Button>
+        )}
       </Stack>
       <Toolbar />
     </Container>

@@ -1,4 +1,5 @@
 import { getSharePoll } from '@apis/poll/share/getSharePoll';
+import useToken from '@hooks/useToken';
 import { SnapSharePoll } from '@models/SnapSharePoll';
 import {
   Alert,
@@ -20,7 +21,8 @@ interface SharePollProps {
 }
 const SharePoll: React.FC<SharePollProps> = ({ url }) => {
   const queryClient = useQueryClient();
-  const query = useQuery<SnapSharePoll>({
+  const { user } = useToken();
+  const { data, isLoading } = useQuery<SnapResponseType<SnapSharePoll>>({
     queryKey: ['sharePoll', url],
     queryFn: () => getSharePoll(url),
   });
@@ -31,7 +33,7 @@ const SharePoll: React.FC<SharePollProps> = ({ url }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  if (query.isLoading)
+  if (isLoading)
     return (
       <Stack justifyContent="center" alignItems="center" height="inherit">
         <Typography variant="h3" fontWeight={700} className="font-maru">
@@ -40,8 +42,10 @@ const SharePoll: React.FC<SharePollProps> = ({ url }) => {
       </Stack>
     );
 
-  if (!query.data) return <Notfound comment="공유되지 않은 설문입니다." />;
-  if (query.data && query.data.deletedAt !== null)
+  const shareData = data?.data;
+
+  if (!shareData) return <Notfound comment="공유되지 않은 설문입니다." />;
+  if (shareData && shareData.deletedAt !== null)
     return <Notfound comment="공유 정지된 설문입니다." />;
 
   return (
@@ -50,13 +54,20 @@ const SharePoll: React.FC<SharePollProps> = ({ url }) => {
         <AlertTitle>안내</AlertTitle>
         <Typography gutterBottom>
           SnapPoll에서 제공하는 공개 설문지입니다.
+          {user && (
+            <Typography component="span" gutterBottom>
+              {' '}
+              {user?.username}님의 계정 정보로 응답이 제출됩니다.
+            </Typography>
+          )}
         </Typography>
+
         <Button component={Link} size="small" variant="contained" to="/">
-          사이트로 보러가기
+          사이트 보러가기
         </Button>
       </Alert>
       <Stack>
-        <DetailPoll pollId={query.data.pollId} refetchShare={refetchShare} />
+        <DetailPoll pollId={shareData.pollId} refetchShare={refetchShare} />
       </Stack>
       <Chip
         label="shared by SnapPoll"

@@ -223,6 +223,7 @@ export declare global {
     errorCode: ErrorCode;
   }
   interface UserToken {
+    initialize: boolean;
     user?: User;
   }
   interface Vote {

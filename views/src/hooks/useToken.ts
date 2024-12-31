@@ -6,7 +6,7 @@ import { Message } from '@common/messages';
 import { useMutation } from '@tanstack/react-query';
 import { Logger } from '@utils/Logger';
 import { AxiosError } from 'axios';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 import useModal from './useModal';
@@ -16,14 +16,11 @@ const logger = new Logger('useToken');
 const useToken = () => {
   const navigate = useNavigate();
   const [state, setToken] = useRecoilState(tokenAtom);
-  const [initialize, setInitialize] = useState(false);
   const { openModal } = useModal();
 
   // 로그아웃
   const logoutToken = useCallback(() => {
-    setToken({
-      user: undefined,
-    });
+    setToken((token) => ({ ...token, user: undefined }));
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -33,7 +30,7 @@ const useToken = () => {
     mutationFn: getMe,
     onSuccess({ ok, data }, variables, context) {
       if (ok) {
-        setToken((token) => ({ ...token, user: data }));
+        setToken((token) => ({ ...token, user: data, initialize: true }));
       }
     },
     onError(error, variables, context) {
@@ -56,7 +53,6 @@ const useToken = () => {
     onSuccess(data, variables, context) {
       const leftTime = data.data?.leftTime;
       logger.info('로그인 완료', data.data?.leftTime);
-      setInitialize(true);
       getMeMutate.mutate();
 
       setTimeout(() => {
@@ -64,6 +60,7 @@ const useToken = () => {
       }, leftTime * 1000);
     },
     onError(error: AxiosError<AxiosException>, variables, context) {
+      setToken((token) => ({ ...token, initialize: true }));
       if (error.code === 'ECONNABORTED') {
         openModal({ info: Message.Info.ServerEConnection });
         return;
@@ -88,13 +85,13 @@ const useToken = () => {
 
   const saveTokenData = useCallback(
     (user: User) => {
-      setToken({ user });
+      setToken((token) => ({ ...token, user }));
     },
     [setToken],
   );
 
   const clearTokenData = useCallback(() => {
-    setToken({ user: undefined });
+    setToken((token) => ({ ...token, user: undefined }));
   }, [setToken]);
 
   const isCrew = useMemo(() => {
@@ -102,7 +99,7 @@ const useToken = () => {
   }, [state.user]);
 
   return {
-    initialize,
+    initialize: state.initialize,
     role: state.user?.role,
     isMaster: state.user?.role === 'Admin',
     isCrew,

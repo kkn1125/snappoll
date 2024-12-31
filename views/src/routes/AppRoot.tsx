@@ -1,9 +1,6 @@
 import { VERSION } from '@common/variables';
 import ReadyAlert from '@components/atoms/ReadyAlert';
-import {
-  default as ProtectedRoute,
-  default as ProtectedRouted,
-} from '@components/organisms/ProtectedRoute';
+import { default as ProtectedRoute } from '@components/organisms/ProtectedRoute';
 import AuthSignLayout from '@components/templates/AuthSignLayout';
 import BoardLayout from '@components/templates/BoardLayout';
 import CommonLayout from '@components/templates/CommonLayout';
@@ -119,7 +116,7 @@ const AppRoot: React.FC<AppRootProps> = () => {
 
         {/* Authentications */}
 
-        <Route path="auth" element={<ProtectedRouted roles={['Guest']} />}>
+        <Route path="auth" element={<ProtectedRoute roles={['Guest']} />}>
           <Route index element={<AuthPage />} />
           <Route element={<AuthSignLayout />}>
             <Route path="login" element={<LoginPage />} />
@@ -222,7 +219,7 @@ const AppRoot: React.FC<AppRootProps> = () => {
       <Route element={<CommonLayout />}>
         <Route
           path="service"
-          element={<ProtectedRoute roles={['User', 'Admin']} />}
+          element={<ProtectedRoute roles={['Guest', 'User', 'Admin']} />}
         >
           <Route path="poll">
             <Route element={<ShareLayout />}>

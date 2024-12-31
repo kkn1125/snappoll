@@ -31,7 +31,8 @@ export { default as Illu02 } from '@assets/illustrations/illu-02.svg?react';
 export { default as DefaultProfile } from '@assets/illustrations/default_profile.svg?react';
 
 /* disallow */
-export const guestDisallowPaths = /\/(user|service|notice|panel)\/?(.*)/;
+export const guestDisallowPaths = /\/(user|service|notice|panel|graph)\/?(.*)/;
+export const guestAllowPaths = /^\/service\/(poll|vote)\/share(.*)$/g;
 export const userDisallowPaths = /\/(auth)\/?(.*)/;
 
 export const scrollSize = 5;

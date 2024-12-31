@@ -1,9 +1,6 @@
 import { getShareVote } from '@apis/vote/share/getShareVote';
+import useToken from '@hooks/useToken';
 import { SnapShareVote } from '@models/SnapShareVote';
-import Notfound from '@pages/NotfoundPage';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { useCallback } from 'react';
-import DetailVote from '../DetailVotePage';
 import {
   Alert,
   AlertTitle,
@@ -13,14 +10,19 @@ import {
   Stack,
   Typography,
 } from '@mui/material';
+import Notfound from '@pages/NotfoundPage';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useCallback } from 'react';
 import { Link } from 'react-router-dom';
+import DetailVote from '../DetailVotePage';
 
 interface ShareVoteProps {
   url: string;
 }
 const ShareVote: React.FC<ShareVoteProps> = ({ url }) => {
   const queryClient = useQueryClient();
-  const query = useQuery<SnapShareVote>({
+  const { user } = useToken();
+  const { data, isLoading } = useQuery<SnapResponseType<SnapShareVote>>({
     queryKey: ['shareVote', url],
     queryFn: () => getShareVote(url),
   });
@@ -31,11 +33,13 @@ const ShareVote: React.FC<ShareVoteProps> = ({ url }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  if (!query.data) return <Notfound comment="공유되지 않은 투표입니다." />;
-  if (query.data && query.data.deletedAt !== null)
+  const shareData = data?.data;
+
+  if (!shareData) return <Notfound comment="공유되지 않은 투표입니다." />;
+  if (shareData && shareData.deletedAt !== null)
     return <Notfound comment="공유 정지된 투표입니다." />;
 
-  if (query.isLoading)
+  if (isLoading)
     return (
       <Stack justifyContent="center" alignItems="center" height="inherit">
         <Typography variant="h3" fontWeight={700} className="font-maru">
@@ -50,13 +54,19 @@ const ShareVote: React.FC<ShareVoteProps> = ({ url }) => {
         <AlertTitle>안내</AlertTitle>
         <Typography gutterBottom>
           SnapPoll에서 제공하는 공개 투표지입니다.
+          {user && (
+            <Typography component="span" gutterBottom>
+              {' '}
+              {user?.username}님의 계정 정보로 응답이 제출됩니다.
+            </Typography>
+          )}
         </Typography>
         <Button component={Link} size="small" variant="contained" to="/">
-          사이트로 보러가기
+          사이트 보러가기
         </Button>
       </Alert>
       <Stack>
-        <DetailVote voteId={query.data.voteId} refetchShare={refetchShare} />
+        <DetailVote voteId={shareData.voteId} refetchShare={refetchShare} />
       </Stack>
       <Chip
         label="shared by SnapPoll"
