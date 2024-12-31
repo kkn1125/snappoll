@@ -3,6 +3,7 @@
   "private": true,
   "version": "0.0.47",
   "type": "module",
+  "license": "MIT",
   "description": "SnapPoll은 사용자들이 설문을 쉽게 만들고 참여할 수 있는 플랫폼입니다.",
   "author": {
     "name": "devkimson",

@@ -17,7 +17,7 @@
     "result-graph"
   ],
   "private": true,
-  "license": "UNLICENSED",
+  "license": "MIT",
   "scripts": {
     "seed": "npx prisma db seed",
     "dev": "concurrently --kill-others-on-fail \"npm run start:dev\" \"cd views/ && npm run dev\"",
