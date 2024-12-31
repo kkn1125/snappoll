@@ -146,16 +146,16 @@ export declare global {
     subscription?: Subscription[];
     feature?: Feature[];
   }
-  interface UserPoll {
-    id: string;
-    title: string;
-    description: string;
-    options: string;
-    createdBy: string;
-    expiresAt: Date;
-    createdAt: Date;
-    updatedAt: Date;
-  }
+  // interface UserPoll {
+  //   id: string;
+  //   title: string;
+  //   description: string;
+  //   options: string;
+  //   createdBy: string;
+  //   expiresAt: Date;
+  //   createdAt: Date;
+  //   updatedAt: Date;
+  // }
   interface Feature {
     id: string;
     planId: string;
@@ -262,14 +262,14 @@ export declare global {
     createdAt: Date;
     updatedAt: Date;
   }
-  interface Poll extends DateTemplate {
-    id: string;
-    title: string;
-    description: string;
-    createdBy: string;
-    expiresAt: Date;
-    question: Question[];
-  }
+  // interface Poll extends DateTemplate {
+  //   id: string;
+  //   title: string;
+  //   description: string;
+  //   userId: string;
+  //   expiresAt: Date;
+  //   question: Question[];
+  // }
   interface Question {
     id: string;
     pollId: string;

@@ -35,7 +35,7 @@ const Subscribe: React.FC<SubscribeProps> = () => {
           fontWeight={300}
           align="center"
           minWidth={150}
-          width="90vw"
+          width="90%"
           maxWidth={1000}
           gutterBottom
           sx={{ wordBreak: 'auto-phrase' }}
@@ -53,8 +53,9 @@ const Subscribe: React.FC<SubscribeProps> = () => {
         <Stack
           direction={{ xs: 'column', md: 'row' }}
           width="100%"
-          justifyContent="center"
+          justifyContent="flex-start"
           p={2}
+          overflow="auto"
           gap={3}
         >
           {plans?.map((plan) => <Pricing key={plan.id} plan={plan} />)}

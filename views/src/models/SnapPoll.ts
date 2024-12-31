@@ -12,13 +12,13 @@ export class SnapPoll {
   id: string = v4();
   title: string = '';
   description: string = '';
-  createdBy: string = '';
+  userId: string = '';
   expiresAt: Date | null = null;
   createdAt: Date = new Date();
   updatedAt: Date = new Date();
   question: SnapPollQuestion[] = [];
   user?: User;
-  response?: SnapResponse[];
+  response: SnapResponse[] = [];
   sharePoll?: SnapSharePoll;
 
   constructor(props?: SnapPoll) {
@@ -26,7 +26,7 @@ export class SnapPoll {
       this.id = props.id;
       this.title = props.title;
       this.description = props.description;
-      this.createdBy = props.createdBy;
+      this.userId = props.userId;
       this.expiresAt = props.expiresAt;
       this.question = [...props.question];
       this.createdAt = props.createdAt;

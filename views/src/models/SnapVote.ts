@@ -19,7 +19,7 @@ export class SnapVote {
   updatedAt: Date = new Date();
 
   user?: User;
-  voteResponse?: SnapVoteResponse[];
+  voteResponse: SnapVoteResponse[] = [];
   voteOption: SnapVoteOption[] = [];
   shareVote?: SnapShareVote;
 

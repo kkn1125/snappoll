@@ -38,6 +38,7 @@ const FlexibleMenu: React.FC<FlexibleMenuProps> = ({
   const highlight = useMemo(() => {
     const paths = to.split('/').filter(($) => $).slice(0,2);
     const current = '/' + paths.join('/');
+
     return locate.pathname.startsWith(current);
   }, [locate.pathname, to]);
 

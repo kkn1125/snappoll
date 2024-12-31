@@ -1,6 +1,6 @@
 {
-  "name": "realtime-poll",
-  "version": "0.0.45",
+  "name": "snappoll",
+  "version": "0.0.46",
   "description": "SnapPoll은 사용자들이 설문을 쉽게 만들고 참여할 수 있는 플랫폼입니다.",
   "author": {
     "name": "devkimson",
@@ -8,6 +8,14 @@
     "url": "https://kkn1125.github.io/",
     "profile": "https://avatars.githubusercontent.com/u/71887242?v=4"
   },
+  "keywords": [
+    "easy-survey",
+    "share-survey",
+    "survey",
+    "vote",
+    "free",
+    "result-graph"
+  ],
   "private": true,
   "license": "UNLICENSED",
   "scripts": {

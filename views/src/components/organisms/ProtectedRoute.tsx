@@ -10,20 +10,23 @@ interface ProtectedRouteProps {
 }
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ roles }) => {
   const { debug } = useLogger('ProtectedRoute');
-  const { user } = useToken();
+  const { initialize, user } = useToken();
   const navigate = useNavigate();
   const locate = useLocation();
 
   useEffect(() => {
-    if (!user && locate.pathname.match(guestDisallowPaths)) {
-      debug('게스트 접근 방지');
-      navigate(locate.state?.from || '/');
-    } else if (user && locate.pathname.match(userDisallowPaths)) {
-      debug('회원 접근 방지');
-      navigate(locate.state?.from || '/');
+    if(initialize){
+
+      if (!user && locate.pathname.match(guestDisallowPaths)) {
+        debug('게스트 접근 방지');
+        navigate(locate.state?.from || '/');
+      } else if (user && locate.pathname.match(userDisallowPaths)) {
+        debug('회원 접근 방지');
+        navigate(locate.state?.from || '/');
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [locate.pathname, user]);
+  }, [initialize,locate.pathname, user]);
 
   if (!user && roles.includes('Guest')) {
     return <Outlet />;

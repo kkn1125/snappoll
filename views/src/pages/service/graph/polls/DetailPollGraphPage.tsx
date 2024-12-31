@@ -1,4 +1,6 @@
 import { getPoll } from '@apis/poll/getPoll';
+import { GRAPH } from '@common/variables';
+import ResponsiveChart from '@components/atoms/ResponsiveChart';
 import CorrelationChart from '@components/organisms/CorrelationChart';
 import { SnapPoll } from '@models/SnapPoll';
 import { SnapPollQuestion } from '@models/SnapPollQuestion';
@@ -68,16 +70,36 @@ const DetailPollGraphPage: React.FC<DetailPollGraphPageProps> = () => {
     return temp;
   }, [responseData?.createdAt]);
 
-  const responseAmountPerDay = useMemo(() => {
+  // const responseAmountPerDay = useMemo(() => {
+  //   const response = responseData?.response;
+  //   if (!response) return [];
+  //   return getPollDates.map((date) =>
+  //     response.reduce((acc, response) => {
+  //       const formatted = dayjs(response.createdAt).format('YYYY-MM-DD');
+  //       return date === formatted ? acc + 1 : acc;
+  //     }, 0),
+  //   );
+  // }, [getPollDates, responseData?.response]);
+
+  const getDates = useMemo(() => {
+    const now = dayjs();
+    const todayNumber = now.day();
+    const sunday = now.add(6 - todayNumber, 'd');
+    return Array.from(Array(7), (_, i) => {
+      return sunday.subtract(7 - i - 1, 'day').format('YYYY-MM-DD');
+    });
+  }, []);
+
+  const respondentWeek = useMemo(() => {
     const response = responseData?.response;
     if (!response) return [];
-    return getPollDates.map((date) =>
+    return getDates.map((date) =>
       response.reduce((acc, response) => {
         const formatted = dayjs(response.createdAt).format('YYYY-MM-DD');
         return date === formatted ? acc + 1 : acc;
       }, 0),
     );
-  }, [getPollDates, responseData?.response]);
+  }, [getDates, responseData?.response]);
 
   if (!responseData) return <></>;
 
@@ -137,7 +159,7 @@ const DetailPollGraphPage: React.FC<DetailPollGraphPageProps> = () => {
             </TableRow>
           </TableBody>
         </Table>
-
+        <Divider flexItem />
         <Typography variant="h5" fontWeight={700}>
           일별 질문 참여도
         </Typography>
@@ -148,15 +170,15 @@ const DetailPollGraphPage: React.FC<DetailPollGraphPageProps> = () => {
           mx="auto"
           minHeight="30vh"
           height="100vh"
-          maxHeight="70vh"
+          maxHeight={GRAPH.MAX_HEIGHT}
         >
-          <BarChart
+          {/* <BarChart
             axisHighlight={{ y: 'line' }}
             borderRadius={10}
             xAxis={[
               {
                 scaleType: 'band',
-                data: getPollDates,
+                data: getDates,
                 ...(isMdDown && {
                   tickLabelStyle: {
                     angle: -20,
@@ -168,11 +190,30 @@ const DetailPollGraphPage: React.FC<DetailPollGraphPageProps> = () => {
             ]}
             series={[
               {
-                data: responseAmountPerDay,
+                data: respondentWeek,
                 highlightScope: { highlight: 'item', fade: 'global' },
               },
             ]}
-          />
+          /> */}
+          <Stack
+            direction="row"
+            width="100%"
+            mx="auto"
+            minHeight="30vh"
+            height="100vh"
+            maxHeight={GRAPH.MAX_HEIGHT}
+          >
+            <ResponsiveChart
+              dates={getDates}
+              responseData={[
+                {
+                  type: 'line',
+                  data: respondentWeek,
+                  label: '일별 질문 참여도',
+                },
+              ]}
+            />
+          </Stack>
         </Stack>
 
         <Typography variant="h5" fontWeight={700}>
@@ -229,7 +270,7 @@ const DetailPollGraphPage: React.FC<DetailPollGraphPageProps> = () => {
                 mx="auto"
                 minHeight="30vh"
                 height="100vh"
-                maxHeight="70vh"
+                maxHeight={GRAPH.MAX_HEIGHT}
               >
                 <BarChart
                   axisHighlight={{ y: 'line' }}

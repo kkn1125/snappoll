@@ -5,6 +5,7 @@ import { CreatePollDto } from './dto/create-poll.dto';
 import { UpdatePollDto } from './dto/update-poll.dto';
 import { CreateSharePollDto } from './dto/create-share-poll.dto';
 import { EncryptManager } from '@utils/EncryptManager';
+import dayjs from 'dayjs';
 
 @Injectable()
 export class PollsService {
@@ -96,6 +97,78 @@ export class PollsService {
       where: { id },
       data: { deletedAt: null },
     });
+  }
+
+  /* results */
+  async getMyResults(id: string) {
+    /* 주간 일자 배열 생성 */
+    const now = dayjs();
+    const todayNumber = now.day();
+    const sunday = now.add(6 - todayNumber, 'd');
+    const weeks = Array.from(Array(7), (_, i) => {
+      return sunday.subtract(7 - i - 1, 'day').format('YYYY-MM-DD');
+    });
+
+    // 나의 설문 수
+    const pollCount = await this.prisma.poll.count({
+      where: { userId: id },
+    });
+
+    // 나의 응답 수
+    const pollResponseCount = await this.prisma.response.count({
+      where: { userId: id },
+    });
+
+    // 나의 응답들
+    const responses = await this.prisma.response.findMany({
+      where: { userId: id },
+    });
+
+    // 내가 작성한 설문의 응답들
+    const respondents = await this.prisma.response.findMany({
+      where: {
+        poll: {
+          userId: id,
+        },
+      },
+    });
+
+    // 주간 나의 응답 수 분포
+    const responsesWeek =
+      responses.reduce(
+        (acc: number[], response) => {
+          const date = dayjs(response.createdAt).format('YYYY-MM-DD');
+          const index = weeks.indexOf(date);
+          if (!acc[index]) {
+            acc[index] = 0;
+          }
+          acc[index] += 1;
+          return acc;
+        },
+        Array.from({ length: 7 }, () => 0),
+      ) ?? [];
+
+    // 주간 나의 설문에 응답 수 분포
+    const respondentWeek =
+      respondents.reduce(
+        (acc: number[], response) => {
+          const date = dayjs(response.createdAt).format('YYYY-MM-DD');
+          const index = weeks.indexOf(date);
+          if (!acc[index]) {
+            acc[index] = 0;
+          }
+          acc[index] += 1;
+          return acc;
+        },
+        Array.from({ length: 7 }, () => 0),
+      ) ?? [];
+    return {
+      weeks,
+      pollCount,
+      pollResponseCount,
+      responsesWeek,
+      respondentWeek,
+    };
   }
 
   /* polls */

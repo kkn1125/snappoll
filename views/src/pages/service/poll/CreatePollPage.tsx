@@ -16,6 +16,7 @@ import {
   Button,
   Container,
   Divider,
+  FormHelperText,
   SpeedDial,
   SpeedDialAction,
   SpeedDialIcon,
@@ -138,12 +139,12 @@ const CreatePollPage: React.FC<CreatePollPageProps> = ({ edit = false }) => {
       e.preventDefault();
       setValidated(true);
 
+      console.log(errors);
       if (!validate('snapPoll')) return;
-
       const copyPoll = SnapPoll.copy(snapPoll);
 
       if (user) {
-        copyPoll.createdBy = user.id;
+        copyPoll.userId = user.id;
       }
 
       openInteractiveModal({
@@ -187,6 +188,9 @@ const CreatePollPage: React.FC<CreatePollPageProps> = ({ edit = false }) => {
 
         <Divider />
 
+        {typeof errors?.question === 'string' && errors?.question && (
+          <FormHelperText error>{errors.question}</FormHelperText>
+        )}
         <Stack gap={3}>
           {snapPoll.question.map((question, i) => (
             <CreateQuestionForm

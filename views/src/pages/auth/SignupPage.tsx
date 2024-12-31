@@ -33,6 +33,7 @@ import {
   FormEvent,
   Fragment,
   MouseEvent,
+  SyntheticEvent,
   useCallback,
   useEffect,
   useMemo,
@@ -144,6 +145,15 @@ const SignupPage: React.FC<SignupPageProps> = () => {
     const value = e.target.value;
     setSignupInfo((signupInfo) => ({ ...signupInfo, [name]: value }));
   }, []);
+
+  const onCheckboxChange = useCallback(
+    (e: SyntheticEvent, checked: boolean) => {
+      const name = (e.target as HTMLInputElement).name;
+      const value = checked;
+      setSignupInfo((signupInfo) => ({ ...signupInfo, [name]: value }));
+    },
+    [],
+  );
 
   function handleRandomUsername(e: MouseEvent) {
     e.preventDefault();
@@ -413,17 +423,17 @@ const SignupPage: React.FC<SignupPageProps> = () => {
     >
       <Stack
         component="form"
-        gap={2}
+        gap={1}
         onSubmit={handleSubmit}
         noValidate
         width="100%"
       >
-        <Stack direction="row">
+        <Stack direction="row" alignItems="center">
           <IconButton size="large" color="inherit" onClick={() => navigate(-1)}>
             <ArrowBackIosIcon />
           </IconButton>
           <Typography
-            fontSize={32}
+            fontSize={28}
             fontWeight={700}
             align="center"
             color="info"
@@ -440,15 +450,11 @@ const SignupPage: React.FC<SignupPageProps> = () => {
             control={<Checkbox disabled />}
             name="privacyPolicy"
             checked={signupInfo.privacyPolicy}
-            onChange={(e, checked) =>
-              setSignupInfo((signupInfo) => ({
-                ...signupInfo,
-                privacyPolicy: checked,
-              }))
-            }
+            onChange={onCheckboxChange}
             label={
               <Fragment>
                 <Typography
+                  fontSize={14}
                   fontWeight={700}
                   sx={{ cursor: 'pointer' }}
                   onClick={handleOpenPrivacyPolicy}
@@ -462,15 +468,11 @@ const SignupPage: React.FC<SignupPageProps> = () => {
             control={<Checkbox disabled />}
             name="serviceAgreement"
             checked={signupInfo.serviceAgreement}
-            onChange={(e, checked) =>
-              setSignupInfo((signupInfo) => ({
-                ...signupInfo,
-                serviceAgreement: checked,
-              }))
-            }
+            onChange={onCheckboxChange}
             label={
               <Fragment>
                 <Typography
+                  fontSize={14}
                   fontWeight={700}
                   sx={{ cursor: 'pointer' }}
                   onClick={handleOpenServiceAgreement}
@@ -484,36 +486,27 @@ const SignupPage: React.FC<SignupPageProps> = () => {
             control={<Checkbox />}
             name="receiveMail"
             checked={signupInfo.receiveMail}
-            onChange={(e, checked) =>
-              setSignupInfo((signupInfo) => ({
-                ...signupInfo,
-                receiveMail: checked,
-              }))
-            }
+            onChange={onCheckboxChange}
             label={
               <Fragment>
-                <Typography fontWeight={700}>
+                <Typography fontSize={14} fontWeight={700}>
                   마케팅 정보 수신 동의 (선택)
                 </Typography>
               </Fragment>
             }
           />
         </Stack>
-        <Button
-          variant="contained"
-          size="large"
-          type="submit"
-          sx={{ fontSize: 18, fontWeight: 700 }}
-        >
+        <Button variant="contained" size="large" type="submit">
           회원가입
         </Button>
 
-        <Typography>
+        <Typography fontSize={14}>
           이미 계정이 있으신가요?{' '}
           <Typography
             component={Link}
             color="info"
             to="/auth/login"
+            fontSize={14}
             fontWeight={700}
             sx={{ textDecoration: 'none' }}
           >

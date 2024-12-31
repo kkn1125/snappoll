@@ -108,7 +108,7 @@ const CreateQuestionForm: React.FC<CreateQuestionFormProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [],
   );
-
+// console.log(errors?.[0])
   return (
     <Paper sx={{ p: 3 }}>
       <Stack gap={2}>

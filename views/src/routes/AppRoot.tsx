@@ -66,7 +66,7 @@ import { Route, Routes, useLocation } from 'react-router-dom';
 interface AppRootProps {}
 const AppRoot: React.FC<AppRootProps> = () => {
   const { log, debug } = useLogger('AppRoot');
-  const { isMaster, user, isCrew, verify } = useToken();
+  const { isMaster, isCrew, verify } = useToken();
   const locate = useLocation();
   const { closeModal } = useModal();
   const { openLoading, closeLoading } = useLoading();

@@ -43,7 +43,7 @@ const AuthSignLayout: React.FC<AuthSignLayoutProps> = () => {
             }}
           >
             <Typography
-              fontSize={56}
+              fontSize="3em"
               fontWeight={700}
               sx={{
                 WebkitBackgroundClip: 'text',
@@ -56,7 +56,7 @@ const AuthSignLayout: React.FC<AuthSignLayoutProps> = () => {
             </Typography>
             <Stack alignItems="center" gap={2}>
               <Typography
-                fontSize={36}
+                fontSize="2em"
                 fontWeight={600}
                 sx={{
                   color: '#007BFF',
@@ -66,7 +66,7 @@ const AuthSignLayout: React.FC<AuthSignLayoutProps> = () => {
                 쉽고 빠른 설문조사
               </Typography>
               <Typography
-                fontSize={20}
+                fontSize="1.2em"
                 fontWeight={400}
                 sx={{
                   color: '#343A40',
@@ -81,13 +81,14 @@ const AuthSignLayout: React.FC<AuthSignLayoutProps> = () => {
               </Typography>
             </Stack>
             <Typography
-              fontSize={24}
+              fontSize="1.5em"
               fontWeight={500}
               sx={{
                 color: '#007BFF',
                 mt: 2,
                 textAlign: 'center',
                 lineHeight: 1.5,
+                wordBreak: 'auto-phrase',
               }}
             >
               설문과 투표, 통계까지, 지금 무료로 시작하세요!

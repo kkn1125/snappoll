@@ -6,19 +6,20 @@ import SeoMetaTag from '@components/moleculars/SeoMetaTag';
 import Footer from '@components/organisms/Footer';
 import Header from '@components/organisms/Header';
 import Sidebar from '@components/organisms/Sidebar';
+import useToken from '@hooks/useToken';
+import BallotIcon from '@mui/icons-material/Ballot';
+import DashboardIcon from '@mui/icons-material/Dashboard';
+import EventIcon from '@mui/icons-material/Event';
+import ForumIcon from '@mui/icons-material/Forum';
 import HistoryEduIcon from '@mui/icons-material/HistoryEdu';
 import HowToVoteIcon from '@mui/icons-material/HowToVote';
+import LiveHelpIcon from '@mui/icons-material/LiveHelp';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import StackedLineChartIcon from '@mui/icons-material/StackedLineChart';
-import { Box, Stack, Toolbar, useMediaQuery, useTheme } from '@mui/material';
+import { Stack, Toolbar, useMediaQuery, useTheme } from '@mui/material';
 import { useMemo } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
-import DashboardIcon from '@mui/icons-material/Dashboard';
-import ForumIcon from '@mui/icons-material/Forum';
-import EventIcon from '@mui/icons-material/Event';
-import LiveHelpIcon from '@mui/icons-material/LiveHelp';
-import useToken from '@hooks/useToken';
 
 interface LayoutProps {}
 const Layout: React.FC<LayoutProps> = () => {
@@ -51,6 +52,7 @@ const Layout: React.FC<LayoutProps> = () => {
     },
   ];
   const userMenu = [
+    // { name: '서비스 보기', path: '/service', icon: <BallotIcon /> },
     { name: '나의 설문지', path: '/service/poll/me', icon: <HistoryEduIcon /> },
     { name: '나의 투표지', path: '/service/vote/me', icon: <HowToVoteIcon /> },
     {

@@ -6,7 +6,7 @@ import { Message } from '@common/messages';
 import { useMutation } from '@tanstack/react-query';
 import { Logger } from '@utils/Logger';
 import { AxiosError } from 'axios';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 import useModal from './useModal';
@@ -16,6 +16,7 @@ const logger = new Logger('useToken');
 const useToken = () => {
   const navigate = useNavigate();
   const [state, setToken] = useRecoilState(tokenAtom);
+  const [initialize, setInitialize] = useState(false);
   const { openModal } = useModal();
 
   // 로그아웃
@@ -55,6 +56,7 @@ const useToken = () => {
     onSuccess(data, variables, context) {
       const leftTime = data.data?.leftTime;
       logger.info('로그인 완료', data.data?.leftTime);
+      setInitialize(true);
       getMeMutate.mutate();
 
       setTimeout(() => {
@@ -100,6 +102,7 @@ const useToken = () => {
   }, [state.user]);
 
   return {
+    initialize,
     role: state.user?.role,
     isMaster: state.user?.role === 'Admin',
     isCrew,

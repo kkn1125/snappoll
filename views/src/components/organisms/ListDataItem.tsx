@@ -113,75 +113,53 @@ function ListDataItem<T extends SnapPoll | SnapVote>({
         )}
       </Stack>
 
-      <List disablePadding>
+      <List>
         {dataList && dataList.length > 0 ? (
           (limit ? dataList.slice(0, limit) : dataList).map((data, i) => (
-            <ListItem
-              key={data.id}
-              secondaryAction={
-                <Stack
-                  direction="row"
-                  gap={1}
-                  alignItems="center"
-                  flexWrap="wrap"
-                >
-                  <Tooltip title="응답자" placement="top">
-                    <Chip
-                      size="small"
-                      icon={<ThreePIcon />}
-                      label={respondAmount(data)}
-                      sx={{ pl: 0.5 }}
-                    />
-                  </Tooltip>
-                  <Tooltip title="유효기간" placement="top">
-                    <Chip
-                      size="small"
-                      variant="outlined"
-                      icon={<AccessTime />}
-                      label={
-                        !isNil(data.expiresAt)
-                          ? formattedDate(data.expiresAt, 'YYYY. MM. DD.')
-                          : '상시'
-                      }
-                    />
-                  </Tooltip>
-
-                  {data.user?.id === user?.id && (
-                    <ListItemIcons
-                      dataId={data.id}
-                      type={name}
-                      handleRemove={() => handleRemove(data.id)}
-                    />
-                  )}
-                </Stack>
-              }
-              sx={{
-                px: '0 !important',
-                boxSizing: 'border-box',
-                ['&:not(:last-of-type)']: {
-                  borderBottom: '1px solid #eee',
-                },
-                flexDirection: {
-                  xs: 'column',
-                  md: 'row',
-                },
-                ['.MuiListItemSecondaryAction-root']: {
-                  position: { xs: 'static', md: 'auto' },
-                  transform: { xs: 'none' },
-                },
-              }}
-            >
+            <ListItem key={data.id}>
               <ListItemButton
                 onClick={() => navigate(`/service/${name}/${data.id}`)}
-                sx={{
-                  px: '0 !important',
-                }}
               >
                 <ListItemText
                   primary={data.title}
                   secondary={`작성자: ${getUsernameOr(data.user?.username)} | 생성일: ${formattedDate(data.createdAt)}`}
                 />
               </ListItemButton>
+              <Stack
+                direction="row"
+                gap={1}
+                alignItems="center"
+                flexWrap="wrap"
+              >
+                <Tooltip title="응답자" placement="top">
+                  <Chip
+                    size="small"
+                    icon={<ThreePIcon />}
+                    label={respondAmount(data)}
+                    sx={{ pl: 0.5 }}
+                  />
+                </Tooltip>
+                <Tooltip title="유효기간" placement="top">
+                  <Chip
+                    size="small"
+                    variant="outlined"
+                    icon={<AccessTime />}
+                    label={
+                      !isNil(data.expiresAt)
+                        ? formattedDate(data.expiresAt, 'YYYY. MM. DD.')
+                        : '상시'
+                    }
+                  />
+                </Tooltip>
+
+                {data.user?.id === user?.id && (
+                  <ListItemIcons
+                    dataId={data.id}
+                    type={name}
+                    handleRemove={() => handleRemove(data.id)}
+                  />
+                )}
+              </Stack>
             </ListItem>
           ))
         ) : (

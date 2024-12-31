@@ -182,11 +182,11 @@ function useValidate<T extends { [k in string]: any }>(data: T) {
       const validateKeys = Object.keys(data) as (keyof T)[];
 
       switch (type) {
-        case 'comment' : {
-          if(data.content === '') {
+        case 'comment': {
+          if (data.content === '') {
             Object.assign(validateErrors, {
-              content: Message.Wrong.Required
-            })
+              content: Message.Wrong.Required,
+            });
           }
           break;
         }
@@ -204,6 +204,11 @@ function useValidate<T extends { [k in string]: any }>(data: T) {
           if (!isNil(data.expiresAt) && data.expiresAt < new Date()) {
             Object.assign(validateErrors, {
               expiresAt: '현재보다 과거일 수 없습니다.',
+            });
+          }
+          if (data.question.length === 0) {
+            Object.assign(validateErrors, {
+              question: Message.Wrong.LeastRequired,
             });
           }
           if (data.question.length > 0) {
@@ -224,15 +229,25 @@ function useValidate<T extends { [k in string]: any }>(data: T) {
                     if (question.option.length === 0) {
                       error.option = Message.Wrong.LeastRequired;
                     } else {
-                      Object.assign(error, {
-                        option: question.option.map((opt) => {
+                      const errors = question.option.reduce(
+                        (acc: ErrorMessage<SnapPollOption>[], opt) => {
                           const error = {} as ErrorMessage<SnapPollOption>;
                           if (opt.content === '') {
                             error.content = Message.Wrong.Required;
                           }
-                          return error;
-                        }),
-                      });
+                          acc.push(error);
+                          return acc;
+                        },
+                        [],
+                      );
+                      if (
+                        errors.length > 0 &&
+                        errors.filter((er) => er.content).length > 0
+                      ) {
+                        Object.assign(error, {
+                          option: errors,
+                        });
+                      }
                     }
                   }
                   if (Object.keys(error).length > 0) {

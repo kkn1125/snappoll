@@ -32,6 +32,11 @@ export class VotesController {
     return this.votesService.create(createVoteDto);
   }
 
+  @Get('results')
+  getMyResults(@Req() req: Request) {
+    return this.votesService.getMyResults(req.user.id);
+  }
+
   @Get()
   findAll(@Query('page') page: number = 1) {
     return this.votesService.findAll(page);

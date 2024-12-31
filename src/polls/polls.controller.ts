@@ -31,6 +31,11 @@ export class PollsController {
     return this.pollsService.create(createPollDto);
   }
 
+  @Get('results')
+  getMyResults(@Req() req: Request) {
+    return this.pollsService.getMyResults(req.user.id);
+  }
+
   @Get()
   findAll(@Query('page') page: number = 1) {
     return this.pollsService.findAll(page);

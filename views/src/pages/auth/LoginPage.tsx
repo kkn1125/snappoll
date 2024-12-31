@@ -127,7 +127,7 @@ const LoginPage: React.FC<LoginPageProps> = () => {
 
   return (
     <Stack
-      gap={2}
+      gap={1}
       flex={1}
       alignItems="center"
       justifyContent="center"
@@ -136,18 +136,18 @@ const LoginPage: React.FC<LoginPageProps> = () => {
     >
       <Stack
         component="form"
-        gap={2}
+        gap={1}
         onSubmit={handleSubmit}
         noValidate
         width="100%"
         // onChange={onFormChange}
       >
-        <Stack direction="row">
+        <Stack direction="row" alignItems="center">
           <IconButton size="large" color="inherit" onClick={() => navigate(-1)}>
             <ArrowBackIosIcon />
           </IconButton>
           <Typography
-            fontSize={32}
+            fontSize={28}
             fontWeight={700}
             align="center"
             color="info"

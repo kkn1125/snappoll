@@ -43,3 +43,7 @@ export const SIDEBAR_WIDTH = {
   MIN: 56,
   MAX: 250,
 };
+
+export const GRAPH = {
+  MAX_HEIGHT: '50vmin' /* '70vh' */,
+};
