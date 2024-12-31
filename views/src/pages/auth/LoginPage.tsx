@@ -55,16 +55,16 @@ const LoginPage: React.FC<LoginPageProps> = () => {
               '바로 이동하시겠습니까?',
             ],
             callback: () => {
-              setToken({ user: data.user });
+              setToken((token) => ({ ...token, user: data.user }));
               navigate('/');
             },
             closeCallback: () => {
-              setToken({ user: data.user });
+              setToken((token) => ({ ...token, user: data.user }));
               navigate('/');
             },
           });
         } else {
-          setToken({ user: data.user });
+          setToken((token) => ({ ...token, user: data.user }));
           navigate('/');
         }
       }
