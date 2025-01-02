@@ -9,6 +9,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import ListIcon from '@mui/icons-material/List';
 import {
   Button,
+  ButtonGroup,
   FormControlLabel,
   FormHelperText,
   IconButton,
@@ -30,7 +31,8 @@ import {
 } from 'react';
 import { useSetRecoilState } from 'recoil';
 import CreateOptionForm from './CreateOptionForm';
-
+import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 interface CreateQuestionFormProps {
   index: number;
   errors: ErrorMessage<SnapPollQuestion>;
@@ -47,6 +49,46 @@ const CreateQuestionForm: React.FC<CreateQuestionFormProps> = ({
   // const [options, setOptions] = useState<SnapPollOption[]>([
   //   new SnapPollOption(),
   // ]);
+
+  function setOrder(dir: boolean, questionId: string) {
+    setSnapPoll((snapPoll) => {
+      // console.log(snapPoll.question.map((q) => q.order));
+      const copyPoll = SnapPoll.copy(snapPoll);
+      const index = copyPoll.question.findIndex(
+        (question) => question.id === questionId,
+      );
+      copyPoll.question = copyPoll.question.map((question, index) =>
+        SnapPollQuestion.copy(question),
+      );
+
+      if (dir) {
+        // console.log('위');
+        if (index - 1 >= 0) {
+          // console.log(copyPoll.question[index - 1]);
+          // console.log(copyPoll.question[index]);
+          [copyPoll.question[index - 1], copyPoll.question[index]] = [
+            copyPoll.question[index],
+            copyPoll.question[index - 1],
+          ];
+        }
+      } else {
+        // console.log('아래', index + 1, copyPoll.question.length);
+        if (index + 1 < copyPoll.question.length) {
+          [copyPoll.question[index + 1], copyPoll.question[index]] = [
+            copyPoll.question[index],
+            copyPoll.question[index + 1],
+          ];
+        }
+      }
+      copyPoll.question = copyPoll.question.map((question, index) => {
+        // console.log(question);
+        question.order = index;
+        return question;
+      });
+      // console.log(copyPoll.question);
+      return copyPoll;
+    });
+  }
 
   const handleRemove = useCallback((questionId: string) => {
     openInteractiveModal({
@@ -108,7 +150,7 @@ const CreateQuestionForm: React.FC<CreateQuestionFormProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [],
   );
-// console.log(errors?.[0])
+  // console.log(errors?.[0])
   return (
     <Paper sx={{ p: 3 }}>
       <Stack gap={2}>
@@ -161,6 +203,22 @@ const CreateQuestionForm: React.FC<CreateQuestionFormProps> = ({
           <IconButton color="error" onClick={() => handleRemove(question.id)}>
             <DeleteIcon />
           </IconButton>
+          <ButtonGroup orientation="vertical">
+            <Button
+              size="small"
+              sx={{ width: 30, minWidth: '0 !important', p: 0, fontSize: 10 }}
+              onClick={() => setOrder(true, question.id)}
+            >
+              <ArrowDropUpIcon fontSize="small" sx={{ fontSize: 12 }} />
+            </Button>
+            <Button
+              size="small"
+              sx={{ width: 30, minWidth: '0 !important', p: 0, fontSize: 10 }}
+              onClick={() => setOrder(false, question.id)}
+            >
+              <ArrowDropDownIcon fontSize="small" sx={{ fontSize: 12 }} />
+            </Button>
+          </ButtonGroup>
         </Stack>
         <CustomInput
           label="설명"

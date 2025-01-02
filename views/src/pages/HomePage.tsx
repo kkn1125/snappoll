@@ -22,18 +22,6 @@ const HomePage = () => {
   const theme = useTheme();
   const isMdUp = useMediaQuery(theme.breakpoints.up('lg'));
   const { user } = useToken();
-  // const poll = useQuery<SnapResponseType<{ polls: SnapPoll[]; count: number }>>(
-  //   {
-  //     queryKey: ['polls'],
-  //     queryFn: getPolls,
-  //   },
-  // );
-  // const vote = useQuery<SnapResponseType<{ votes: SnapVote[]; count: number }>>(
-  //   {
-  //     queryKey: ['votes'],
-  //     queryFn: getVotes,
-  //   },
-  // );
   const poll = useQuery<
     SnapResponseType<{
       weeks: string[];
@@ -69,106 +57,6 @@ const HomePage = () => {
       return sunday.subtract(7 - i - 1, 'day').format('YYYY-MM-DD');
     });
   }, []);
-
-  // const pollResponseData = useMemo(() => {
-  //   return (
-  //     // 내가 작성한 설문의 응답 (주간 분포)
-  //     pollData?.polls
-  //       .filter((poll) => poll.userId === user?.id)
-  //       .flatMap((poll) => poll.response)
-  //       .reduce(
-  //         (acc: number[], response) => {
-  //           const date = dayjs(response.createdAt).format('YYYY-MM-DD');
-  //           const index = getDates.indexOf(date);
-  //           if (!acc[index]) {
-  //             acc[index] = 0;
-  //           }
-
-  //           acc[index] += 1;
-  //           return acc;
-  //         },
-  //         Array.from({ length: 7 }, () => 0),
-  //       ) ?? []
-  //   );
-  // }, [getDates, pollData?.polls, user]);
-
-  // const voteResponseData = useMemo(() => {
-  //   return (
-  //     voteData?.votes
-  //       .filter((vote) => vote.userId === user?.id)
-  //       .flatMap((vote) => vote.voteResponse)
-  //       .reduce(
-  //         (acc: number[], response) => {
-  //           const date = dayjs(response.createdAt).format('YYYY-MM-DD');
-  //           const index = getDates.indexOf(date);
-  //           if (!acc[index]) {
-  //             acc[index] = 0;
-  //           }
-  //           acc[index] += 1;
-  //           return acc;
-  //         },
-  //         Array.from({ length: 7 }, () => 0),
-  //       ) ?? []
-  //   );
-  // }, [getDates, voteData?.votes, user]);
-
-  // const myPollResponseData = useMemo(() => {
-  //   return (
-  //     // 내가 응답 (주간 분포)
-  //     pollData?.polls
-  //       .flatMap((poll) => poll.response)
-  //       .filter((res) => res.userId === user?.id)
-  //       .reduce(
-  //         (acc: number[], response) => {
-  //           const date = dayjs(response.createdAt).format('YYYY-MM-DD');
-  //           const index = getDates.indexOf(date);
-  //           if (!acc[index]) {
-  //             acc[index] = 0;
-  //           }
-
-  //           acc[index] += 1;
-  //           return acc;
-  //         },
-  //         Array.from({ length: 7 }, () => 0),
-  //       ) ?? []
-  //   );
-  // }, [getDates, pollData?.polls, user]);
-
-  // const myVoteResponseData = useMemo(() => {
-  //   return (
-  //     voteData?.votes
-  //       .flatMap((vote) => vote.voteResponse)
-  //       .filter((res) => res.userId === user?.id)
-  //       .reduce(
-  //         (acc: number[], response) => {
-  //           const date = dayjs(response.createdAt).format('YYYY-MM-DD');
-  //           const index = getDates.indexOf(date);
-  //           if (!acc[index]) {
-  //             acc[index] = 0;
-  //           }
-  //           acc[index] += 1;
-  //           return acc;
-  //         },
-  //         Array.from({ length: 7 }, () => 0),
-  //       ) ?? []
-  //   );
-  // }, [getDates, voteData?.votes, user]);
-
-  // const myPollResponseCount = useMemo(() => {
-  //   return (
-  //     pollData?.polls
-  //       .flatMap((poll) => poll.response)
-  //       .filter((res) => res.userId === user?.id).length ?? 0
-  //   );
-  // }, [pollData?.polls, user]);
-
-  // const myVoteResponseCount = useMemo(() => {
-  //   return (
-  //     voteData?.votes
-  //       .flatMap((vote) => vote.voteResponse)
-  //       .filter((res) => res.userId === user?.id).length ?? 0
-  //   );
-  // }, [voteData?.votes, user]);
 
   return (
     <Stack gap={5}>
@@ -212,13 +100,6 @@ const HomePage = () => {
               생성한 투표 수
             </Typography>
           </Paper>
-        </Stack>
-      </Stack>
-      <Stack gap={2}>
-        {/* <Typography variant="h5" fontWeight="bold">
-          나의 응답
-        </Typography> */}
-        <Stack direction="row" gap={2}>
           <Paper
             sx={{
               p: 2,

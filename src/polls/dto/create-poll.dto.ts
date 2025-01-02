@@ -1,4 +1,4 @@
-import { Poll, Question } from '@prisma/client';
+import { Option, Poll, Question } from '@prisma/client';
 
 export class CreatePollDto
   implements Pick<Poll, 'title' | 'description' | 'userId'>
@@ -7,5 +7,9 @@ export class CreatePollDto
   description: string;
   userId: string;
   expiresAt?: Date;
-  question?: Question[];
+  question?: SnapQuestion[];
+}
+
+export interface SnapQuestion extends Question {
+  option?: Option[];
 }

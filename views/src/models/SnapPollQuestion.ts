@@ -12,7 +12,7 @@ export class SnapPollQuestion {
   type: 'text' | 'checkbox' | 'select' = 'text';
   title: string = '';
   description?: string = '';
-  order?: number = -1;
+  order: number = -1;
   isMultiple: boolean = false;
   isRequired: boolean = false;
   useEtc: boolean = false;

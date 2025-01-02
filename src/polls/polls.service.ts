@@ -1,14 +1,17 @@
 import { PrismaService } from '@database/prisma.service';
 import { Injectable } from '@nestjs/common';
-import { Option } from '@prisma/client';
-import { CreatePollDto } from './dto/create-poll.dto';
+import { Option, Question } from '@prisma/client';
+import { CreatePollDto, SnapQuestion } from './dto/create-poll.dto';
 import { UpdatePollDto } from './dto/update-poll.dto';
 import { CreateSharePollDto } from './dto/create-share-poll.dto';
 import { EncryptManager } from '@utils/EncryptManager';
 import dayjs from 'dayjs';
+import SnapLogger from '@utils/SnapLogger';
 
 @Injectable()
 export class PollsService {
+  logger = new SnapLogger(this);
+
   constructor(
     private readonly prisma: PrismaService,
     private readonly encryptManager: EncryptManager,
@@ -300,6 +303,9 @@ export class PollsService {
             option: true,
             answer: true,
           },
+          orderBy: {
+            order: 'asc',
+          },
         },
         response: {
           include: {
@@ -379,73 +385,124 @@ export class PollsService {
   }
 
   update(id: string, updatePollDto: UpdatePollDto) {
-    const title = updatePollDto.title;
-    const description = updatePollDto.description;
-    const userId = updatePollDto.userId;
-    const expiresAt = updatePollDto.expiresAt;
+    return this.prisma.$transaction(async () => {
+      const title = updatePollDto.title;
+      const description = updatePollDto.description;
+      const userId = updatePollDto.userId;
+      const expiresAt = updatePollDto.expiresAt;
+      const questions = updatePollDto.question;
 
-    let question;
-    if (
-      'question' in updatePollDto &&
-      updatePollDto.question instanceof Array
-    ) {
-      question = {
-        update: updatePollDto.question.map(({ id, ...question }) => {
-          let option;
-          if ('option' in question && question.option instanceof Array) {
-            option = {
-              updateMany: question.option.map(({ id, ...option }: Option) => {
-                return {
-                  where: { id },
-                  data: {
-                    content: option.content,
-                  },
-                };
-              }),
-            };
-          }
-
-          const type = question.type;
-          const title = question.title;
-          const description = question.description;
-          const isMultiple = question.isMultiple;
-          const useEtc = question.useEtc;
-          const order = question.order;
-          return {
-            where: { id },
-            data: {
-              type,
-              title,
-              description,
-              isMultiple,
-              useEtc,
-              order,
-              option,
-            },
-          };
-        }),
-      };
-    }
-
-    return this.prisma.poll.update({
-      where: { id },
-      data: {
-        title,
-        description,
-        userId,
-        expiresAt,
-        question,
-      },
-      include: {
-        question: {
-          include: {
-            option: true,
-          },
+      await this.prisma.poll.update({
+        where: { id },
+        data: {
+          title,
+          description,
+          userId,
+          expiresAt,
         },
-      },
-    });
+      });
 
-    return this.prisma.poll.update({ where: { id }, data: updatePollDto });
+      for (const { option: options, id, answer, ...question } of questions) {
+        this.logger.debug(id, question);
+        await this.prisma.question.upsert({
+          where: { id },
+          create: question,
+          update: question,
+        });
+        for (const { id, ...option } of options) {
+          await this.prisma.option.upsert({
+            where: { id },
+            create: option,
+            update: option,
+          });
+        }
+      }
+
+      return this.prisma.poll.findUnique({
+        where: { id },
+      });
+
+      // for (const { id, ...update } of reduced.update) {
+      //   await this.prisma.question.update({
+      //     where: { id },
+      //     data: update,
+      //     include: {
+      //       option: true,
+      //     },
+      //   });
+      // }
+
+      // await this.prisma.question.updateMany({
+      //   data: reduced.update.map((question) => ({
+      //     id: question.id,
+      //     ...question,
+      //   })),
+      //   include: {
+      //     option: true,
+      //   },
+      // });
+
+      // let question;
+      // if (
+      //   'question' in updatePollDto &&
+      //   updatePollDto.question instanceof Array
+      // ) {
+      //   question = {
+      //     update: updatePollDto.question.map(({ id, ...question }) => {
+      //       let option;
+      //       if ('option' in question && question.option instanceof Array) {
+      //         option = {
+      //           updateMany: question.option.map(({ id, ...option }: Option) => {
+      //             return {
+      //               where: { id },
+      //               data: {
+      //                 content: option.content,
+      //               },
+      //             };
+      //           }),
+      //         };
+      //       }
+
+      //       const type = question.type;
+      //       const title = question.title;
+      //       const description = question.description;
+      //       const isMultiple = question.isMultiple;
+      //       const useEtc = question.useEtc;
+      //       const order = question.order;
+      //       return {
+      //         where: { id },
+      //         data: {
+      //           type,
+      //           title,
+      //           description,
+      //           isMultiple,
+      //           useEtc,
+      //           order,
+      //           option,
+      //         },
+      //       };
+      //     }),
+      //   };
+      // }
+
+      // return this.prisma.poll.update({
+      //   where: { id },
+      //   data: {
+      //     title,
+      //     description,
+      //     userId,
+      //     expiresAt,
+      //     question,
+      //   },
+      //   include: {
+      //     question: {
+      //       include: {
+      //         option: true,
+      //       },
+      //     },
+      //   },
+      // });
+    });
   }
 
   remove(id: string) {

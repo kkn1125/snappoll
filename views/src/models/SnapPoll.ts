@@ -39,6 +39,7 @@ export class SnapPoll {
   }
 
   addQuestion(question: SnapPollQuestion) {
+    question.order = this.question.length;
     this.question = [...this.question, question];
   }
 
@@ -47,14 +48,16 @@ export class SnapPoll {
     name: K,
     value: T[K],
   ) {
-    this.question = this.question.map((q) => {
-      if (q.id === id) {
-        const copyQuestion = SnapPollQuestion.copy(q);
-        Object.assign(copyQuestion, { [name]: value });
-        return copyQuestion;
-      }
-      return q;
-    });
+    this.question = this.question
+      .toSorted((a, b) => a.order - b.order)
+      .map((q, index) => {
+        if (q.id === id) {
+          const copyQuestion = SnapPollQuestion.copy(q);
+          Object.assign(copyQuestion, { [name]: value, order: index });
+          return copyQuestion;
+        }
+        return q;
+      });
   }
 
   updateOptionByInfo(questionId: string, option: SnapPollOption) {

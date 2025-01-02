@@ -1,7 +1,12 @@
-import { guestAllowPaths, guestDisallowPaths, userDisallowPaths } from '@common/variables';
+import {
+  guestAllowPaths,
+  guestDisallowPaths,
+  userDisallowPaths,
+} from '@common/variables';
 import useLogger from '@hooks/useLogger';
 import useToken from '@hooks/useToken';
 import ForbiddenPage from '@pages/ForbiddenPage';
+import NotfoundPage from '@pages/NotfoundPage';
 import { memo, useEffect } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 
@@ -37,6 +42,13 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ roles }) => {
   } else if (user && roles.includes(user.role)) {
     return <Outlet />;
   } else {
+    if (
+      roles.includes('Admin') &&
+      user?.role !== 'Admin' &&
+      locate.pathname.startsWith('/panel')
+    ) {
+      return <NotfoundPage />;
+    }
     return <ForbiddenPage />;
   }
 };

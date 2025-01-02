@@ -1,4 +1,5 @@
 import PanelBoard from '@components/organisms/PanelBoard';
+import PanelNotice from '@components/organisms/PanelNotice';
 import PanelUser from '@components/organisms/PanelUser';
 import { Stack, Toolbar } from '@mui/material';
 import { useOutletContext } from 'react-router-dom';
@@ -16,6 +17,7 @@ const Panel: React.FC<PanelProps> = () => {
       <Toolbar />
       {currentTab === 0 && <PanelUser />}
       {currentTab === 1 && <PanelBoard />}
+      {currentTab === 2 && <PanelNotice />}
     </Stack>
   );
 };

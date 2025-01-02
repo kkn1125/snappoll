@@ -25,7 +25,7 @@ model Terms {
   version   String   @unique @db.VarChar(20)
   isActive  Boolean  @default(true)
   createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
 
   termsSection TermsSection[]
   allowTerms   AllowTerms[]
@@ -39,7 +39,7 @@ model TermsSection {
   title     String   @db.VarChar(100)
   content   String
   createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
 
   terms Terms @relation(fields: [termsId], references: [id], onDelete: Cascade)
 
@@ -102,7 +102,7 @@ model SocialUser {
   userId    String    @unique @map("user_id") @db.Uuid
   provider  String
   createdAt DateTime  @default(now()) @map("created_at")
-  updatedAt DateTime  @updatedAt @map("updated_at")
+  updatedAt DateTime  @default(now()) @updatedAt @map("updated_at")
   deletedAt DateTime? @map("deleted_at")
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -165,7 +165,7 @@ model Plan {
   price       Int      @db.Integer
   discount    Int      @default(0) // 연 결제 할인율
   createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @updatedAt @map("updated_at")
+  updatedAt   DateTime @default(now()) @updatedAt @map("updated_at")
 
   subscription Subscription[]
   feature      Feature[]
@@ -178,7 +178,7 @@ model Feature {
   planId    String   @map("plan_id") @db.Uuid
   feature   String
   createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
 
   plan Plan @relation(fields: [planId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
@@ -196,7 +196,7 @@ model User {
   receiveMail  Boolean      @default(false) @map("receive_mail")
 
   createdAt DateTime  @default(now()) @map("created_at")
-  updatedAt DateTime  @updatedAt @map("updated_at")
+  updatedAt DateTime  @default(now()) @updatedAt @map("updated_at")
   deletedAt DateTime? @map("deleted_at")
 
   sendMessage    Message[] @relation("sendMessage")
@@ -252,7 +252,7 @@ model Poll {
   userId      String    @map("user_id") @db.Uuid
   expiresAt   DateTime? @map("expires_at")
   createdAt   DateTime  @default(now()) @map("created_at")
-  updatedAt   DateTime  @updatedAt @map("updated_at")
+  updatedAt   DateTime  @default(now()) @updatedAt @map("updated_at")
 
   user User @relation(fields: [userId], references: [id])
 
@@ -264,15 +264,17 @@ model Poll {
 }
 
 model Question {
-  id          String  @id @default(uuid()) @db.Uuid
-  pollId      String  @map("poll_id") @db.Uuid
-  type        String  @default("input") @map("type") @db.VarChar(20)
-  title       String  @db.VarChar(30)
+  id          String   @id @default(uuid()) @db.Uuid
+  pollId      String   @map("poll_id") @db.Uuid
+  type        String   @default("input") @map("type") @db.VarChar(20)
+  title       String   @db.VarChar(30)
   description String?
   order       Int?
-  isRequired  Boolean @default(false) @map("is_required")
-  isMultiple  Boolean @default(false) @map("is_multiple")
-  useEtc      Boolean @default(false) @map("use_etc")
+  isRequired  Boolean  @default(false) @map("is_required")
+  isMultiple  Boolean  @default(false) @map("is_multiple")
+  useEtc      Boolean  @default(false) @map("use_etc")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @default(now()) @updatedAt @map("updated_at")
 
   poll Poll @relation(fields: [pollId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
@@ -287,7 +289,7 @@ model Response {
   userId    String?  @map("user_id") @db.Uuid
   pollId    String   @map("poll_id") @db.Uuid
   createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
 
   user User? @relation(fields: [userId], references: [id])
   poll Poll  @relation(fields: [pollId], references: [id], onDelete: Cascade, onUpdate: Cascade)
@@ -298,13 +300,15 @@ model Response {
 }
 
 model Answer {
-  id         String  @id @default(uuid()) @db.Uuid
-  responseId String? @map("response_id") @db.Uuid
-  questionId String  @map("question_id") @db.Uuid
-  optionId   String? @map("option_id") @db.Uuid
+  id         String   @id @default(uuid()) @db.Uuid
+  responseId String?  @map("response_id") @db.Uuid
+  questionId String   @map("question_id") @db.Uuid
+  optionId   String?  @map("option_id") @db.Uuid
   // select, multiple checkbox
-  value      String? @db.VarChar(100)
+  value      String?  @db.VarChar(100)
   // text input only
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @default(now()) @updatedAt @map("updated_at")
 
   response Response? @relation(fields: [responseId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   question Question  @relation(fields: [questionId], references: [id])
@@ -333,7 +337,7 @@ model Vote {
   useEtc      Boolean   @default(false) @map("use_etc")
   expiresAt   DateTime? @map("expires_at")
   createdAt   DateTime  @default(now()) @map("created_at")
-  updatedAt   DateTime  @updatedAt @map("updated_at")
+  updatedAt   DateTime  @default(now()) @updatedAt @map("updated_at")
 
   user User @relation(fields: [userId], references: [id])
 
@@ -349,7 +353,7 @@ model VoteResponse {
   userId    String?  @map("user_id") @db.Uuid
   voteId    String   @map("vote_id") @db.Uuid
   createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
 
   user       User?        @relation(fields: [userId], references: [id])
   vote       Vote         @relation(fields: [voteId], references: [id], onDelete: Cascade, onUpdate: Cascade)
@@ -359,10 +363,12 @@ model VoteResponse {
 }
 
 model VoteAnswer {
-  id             String  @id @default(uuid()) @db.Uuid
-  voteResponseId String? @map("vote_response_id") @db.Uuid
-  voteOptionId   String? @map("vote_option_id") @db.Uuid
-  value          String? @db.VarChar(100)
+  id             String   @id @default(uuid()) @db.Uuid
+  voteResponseId String?  @map("vote_response_id") @db.Uuid
+  voteOptionId   String?  @map("vote_option_id") @db.Uuid
+  value          String?  @db.VarChar(100)
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @default(now()) @updatedAt @map("updated_at")
 
   voteResponse VoteResponse? @relation(fields: [voteResponseId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   voteOption   VoteOption?   @relation(fields: [voteOptionId], references: [id])
@@ -375,7 +381,7 @@ model VoteOption {
   voteId    String   @map("vote_id") @db.Uuid
   content   String   @db.VarChar(100)
   createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
 
   vote       Vote         @relation(fields: [voteId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   voteAnswer VoteAnswer[]
@@ -410,7 +416,7 @@ model Board {
   isPrivate  Boolean   @default(false) @map("is_private")
   isOnlyCrew Boolean   @default(false) @map("is_only_crew")
   createdAt  DateTime  @default(now()) @map("created_at")
-  updatedAt  DateTime  @updatedAt @map("updated_at")
+  updatedAt  DateTime  @default(now()) @updatedAt @map("updated_at")
   deletedAt  DateTime? @map("deleted_at")
 
   author  User?     @relation(fields: [userId], references: [id])
@@ -430,7 +436,7 @@ model Comment {
   order        Int       @default(0) // 댓글 순서
   likeCount    Int       @default(0) @map("like_count")
   createdAt    DateTime  @default(now()) @map("created_at")
-  updatedAt    DateTime  @updatedAt @map("updated_at")
+  updatedAt    DateTime  @default(now()) @updatedAt @map("updated_at")
   deletedAt    DateTime? @map("deleted_at")
 
   user  User? @relation(fields: [userId], references: [id], onDelete: SetNull)
@@ -451,5 +457,5 @@ model Notice {
   title     String     @db.VarChar(30)
   content   String
   createdAt DateTime   @default(now()) @map("created_at")
-  updatedAt DateTime   @updatedAt @map("updated_at")
+  updatedAt DateTime   @default(now()) @updatedAt @map("updated_at")
 }

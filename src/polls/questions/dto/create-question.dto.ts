@@ -1,7 +1,8 @@
 import { Question } from '@prisma/client';
 
 export class CreateQuestionDto
-  implements Omit<Question, 'id' | 'description' | 'order'>
+  implements
+    Omit<Question, 'id' | 'description' | 'order' | 'createdAt' | 'updatedAt'>
 {
   pollId: string;
   type: string;

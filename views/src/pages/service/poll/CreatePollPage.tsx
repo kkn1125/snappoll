@@ -126,13 +126,16 @@ const CreatePollPage: React.FC<CreatePollPageProps> = ({ edit = false }) => {
 
   const addQuestion = useCallback(() => {
     const newQuestion = new SnapPollQuestion();
+    if (edit) {
+      newQuestion.pollId = snapPoll.id;
+    }
     setSnapPoll((snapPoll) => {
       const copyPoll = SnapPoll.copy(snapPoll);
       copyPoll.addQuestion(newQuestion);
       return copyPoll;
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [edit]);
 
   const handleSubmit = useCallback(
     (e: FormEvent) => {
@@ -192,18 +195,20 @@ const CreatePollPage: React.FC<CreatePollPageProps> = ({ edit = false }) => {
           <FormHelperText error>{errors.question}</FormHelperText>
         )}
         <Stack gap={3}>
-          {snapPoll.question.map((question, i) => (
-            <CreateQuestionForm
-              key={question.id}
-              index={i + 1}
-              question={question}
-              errors={
-                errors.question?.[
-                  i
-                ] as unknown as ErrorMessage<SnapPollQuestion>
-              }
-            />
-          ))}
+          {snapPoll.question
+            .toSorted((a, b) => a.order - b.order)
+            .map((question, i) => (
+              <CreateQuestionForm
+                key={question.id}
+                index={i + 1}
+                question={question}
+                errors={
+                  errors.question?.[
+                    i
+                  ] as unknown as ErrorMessage<SnapPollQuestion>
+                }
+              />
+            ))}
           <Button
             size="large"
             fullWidth
