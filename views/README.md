@@ -5,8 +5,11 @@
 - 2025-01-02
   - add
     - help page 추가
+    - 패널 Notice 추가
   - fix
     - password change validate 분기 추가
+  - todo
+    - [ ] 패널 Notice 세부 내용 작성
 - 2024-12-31
   - add
     - 대시보드 복합 그래프 컴포넌트 추가
