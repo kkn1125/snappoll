@@ -57,6 +57,7 @@ export const ErrorCode = [
   [700, 'board'],
   // mailer
   [800, 'mailer'],
+  [801, 'notice'],
   // database
   [900, 'database'],
   // server
@@ -248,6 +249,19 @@ export const ErrorMessage = {
     ],
     [105, ErrorName.InvalidateRequest, '검증되지 않은 요청입니다.'],
     [106, ErrorName.InvalidateToken, '유효하지 않은 토큰입니다.'],
+  ],
+  /* notice */
+  notice: [
+    [100, ErrorName.BadRequest, '잘못된 요청입니다.'],
+    [
+      101,
+      ErrorName.SendMailIssue,
+      '메일 발송에 실패했습니다. 이 문제가 계속해서 발생한다면 관리자에게 문의해주세요.',
+    ],
+    [102, ErrorName.Forbidden, '접근 권한이 없습니다.'],
+    [103, ErrorName.InvalidateRequest, '검증되지 않은 요청입니다.'],
+    [104, ErrorName.NotFound, '찾을 수 없습니다.'],
+    [105, ErrorName.InvalidateToken, '유효하지 않은 토큰입니다.'],
   ],
   /* database */
   database: [

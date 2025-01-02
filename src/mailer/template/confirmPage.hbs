@@ -1,48 +1,18 @@
-<div style="text-align: center">
-  <form style="display: inline-flex" method='post' action='{{action}}'>
-    <table>
-      <thead>
-        <tr>
-          <th>
-            <div>
-              <img
-                src={{image}}
-                alt='snappoll-logo'
-                width='35'
-                height='35'
-                style="border-radius: 50%;"
-              />{{title}}
-            </div>
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>
-            <div>
-              <h2>
-                SnapPoll 안내
-              </h2>
-              <input type='hidden' name='token' value='{{token}}' />
-
-              <input type='hidden' name='domain' value={{domain}} />
-              <div style="padding: 1rem; border: 1px solid #7ac67c; background: #7ac67c56; color: #333333;">
-                {{content}}
-              </div>
-            </div>
-          </td>
-        </tr>
-        <tr>
-          <td><button type='submit' style="cursor: pointer; border: none; background-color: #419644; color: white; min-width: 120px; padding: 0.5rem 0.8rem; font-size: 1.2rem; font-weight: 700; transition: 150ms ease-in-out;">확인</button></td>
-        </tr>
-      </tbody>
-      <tfoot>
-        <tr>
-          <td>
-            <a href='mailto:{{email}}'>{{email}}</a>
-          </td>
-        </tr>
-      </tfoot>
-    </table>
+<div
+  style='border: 2px solid #7ac67c; background: #7ac67c56; color: #333333; margin: 1rem 0; border-radius: 0.5rem;'
+>
+  <div style='padding: 1rem; font-size: 1em; word-break: auto-phrase;'>
+    <h4 style='margin: 0; margin-bottom: 0.3rem;'>{{title}}</h4>
+    {{content}}
+  </div>
+</div>
+<div>
+  <form style='display: inline-flex' method='post' action='{{action}}'>
+    <input type='hidden' name='token' value='{{token}}' />
+    <input type='hidden' name='domain' value={{domain}} />
+    <button
+      type='submit'
+      style='cursor: pointer; border: none; border-radius: 0; background-color: #419644; color: white; min-width: 80px; padding: 0.6rem 0.8rem; font-size: 1.1rem; font-weight: 700;'
+    >확인</button>
   </form>
 </div>

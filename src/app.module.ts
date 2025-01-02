@@ -24,6 +24,7 @@ import { PlansModule } from './plans/plans.module';
 import { EncryptManager } from '@utils/EncryptManager';
 import { TermsModule } from './terms/terms.module';
 import { CommentsModule } from './comments/comments.module';
+import { NoticesModule } from './notices/notices.module';
 
 @Module({
   imports: [
@@ -63,6 +64,7 @@ import { CommentsModule } from './comments/comments.module';
     PlansModule,
     TermsModule,
     CommentsModule,
+    NoticesModule,
     // ViewsModule,
   ],
   controllers: [],

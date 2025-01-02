@@ -106,7 +106,7 @@ export class AuthController {
     if (has && matched) {
       resolve(data);
 
-      const hashedPassword =
+      const originalPassword =
         await this.authService.initializeUserPassword(email);
       await this.mailerService.renderTemplatePage(res, 'alertPage', {
         image,
@@ -114,7 +114,7 @@ export class AuthController {
         email: defaultEmail,
         content: `${email}님의 계정이 확인되었습니다. 페이지로 돌아가 남은 과정을
         진행해주세요. 발급된 비밀번호는
-        <strong style="font-weight: 700;">${hashedPassword}</strong>
+        <strong style="font-weight: 700;">${originalPassword}</strong>
         입니다.<br/>발급된 비밀번호는 다시 확인 하실 수 없기 때문에 별도로 메모해두시기 바랍니다.`,
       });
     } else {

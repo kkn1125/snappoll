@@ -23,6 +23,7 @@ import DetailBoardPage from '@pages/board/category/DetailBoardPage';
 import WriteBoardPage from '@pages/board/WriteBoardPage';
 import ForbiddenPage from '@pages/ForbiddenPage';
 import GuestHomePage from '@pages/GuestHomePage';
+import HelpPage from '@pages/HelpPage';
 import HomePage from '@pages/HomePage';
 import NotfoundPage from '@pages/NotfoundPage';
 import NoticePage from '@pages/notice/NoticePage';
@@ -111,7 +112,7 @@ const AppRoot: React.FC<AppRootProps> = () => {
           <Route path="about" element={<AboutPage />} />
           <Route path="privacy-policy" element={<PrivacyPolicyPage />} />
           <Route path="service-agreement" element={<ServiceAgreementPage />} />
-          <Route path="help" element={<ReadyAlert />} />
+          <Route path="help" element={<HelpPage />} />
         </Route>
 
         {/* Authentications */}

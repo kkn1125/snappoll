@@ -3,7 +3,7 @@
     <meta charset='UTF-8' />
     <meta http-equiv='X-UA-Compatible' content='IE=edge' />
     <meta name='viewport' content='width=device-width, initial-scale=1.0' />
-    <style>
+    {{! <style>
       html,
       body {
         height: 100%;
@@ -87,25 +87,38 @@
                 &:visited {
                   color: blueviolet;
                 }
-                &::before {
-                  content: '관리자 메일 : ';
-                }
                 text-decoration: none;
               }
             }
           }
         }
       }
-    </style>
+    </style> }}
     <title>{{title}}</title>
   </head>
-  <body>
-    <main>
-      {{{header}}} <!-- 공통 헤더 -->
+  <body style='height: 100%; margin: 0; box-sizing: border-box;'>
+    <main style='display: flex; flex-direction: column; height: 100%;'>
+      {{{header}}}
+      <!-- 공통 헤더 -->
 
-      {{{replace}}} <!-- 각 페이지의 내용이 여기에 렌더링 -->
+      <div
+        style='flex: 1; overflow: auto; width: 80%; margin: auto; min-width: 20vmax; max-width: 40vmax; margin-top: 1rem; margin-bottom: 1rem;'
+      >
+        {{{replace}}}
+        <!-- 각 페이지의 내용이 여기에 렌더링 -->
 
-      {{{footer}}} <!-- 공통 푸터 -->
-    </div>
+        <div style='margin-top: 1rem;'>
+          <hr />
+          <a
+            href='mailto:{{email}}'
+            target='_blank'
+            style='cursor: pointer; text-decoration: none; color: #419644;'
+          >관리자: {{email}}</a>
+        </div>
+      </div>
+
+      {{{footer}}}
+      <!-- 공통 푸터 -->
+    </main>
   </body>
 </html>

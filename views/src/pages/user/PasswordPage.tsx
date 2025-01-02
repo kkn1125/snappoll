@@ -71,7 +71,7 @@ const PasswordPage: React.FC<PasswordPageProps> = () => {
 
   useEffect(() => {
     if (validated) {
-      validate();
+      validate('passwordChange');
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [validated, data]);
@@ -92,9 +92,10 @@ const PasswordPage: React.FC<PasswordPageProps> = () => {
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
     setValidated(true);
-    validate();
     const id = user?.id;
     if (!id || !data.password || data.password !== data.checkPassword) return;
+
+    if (!validate('passwordChange')) return;
 
     const { currentPassword, password } = data;
     changePassword.mutate({ id, password, currentPassword });

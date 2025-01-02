@@ -302,6 +302,11 @@ function useValidate<T extends { [k in string]: any }>(data: T) {
             });
           }
           break;
+        case 'passwordChange':
+          validatePassword(data, validateErrors, 'currentPassword');
+          validatePassword(data, validateErrors, 'password');
+          validateCheckPassword(data, validateErrors);
+          break;
         case 'boardPassword': {
           validateBoardPassword(data, validateErrors);
           break;

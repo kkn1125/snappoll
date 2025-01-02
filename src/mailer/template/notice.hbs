@@ -7,8 +7,10 @@
   </div>
 </div>
 <div>
-  <button
-    style='cursor: pointer; border: none; border-radius: 0; background-color: #419644; color: white; min-width: 80px; padding: 0.6rem 0.8rem; font-size: 1.1rem; font-weight: 700;'
-    onclick='window.close();'
-  >확인</button>
+  {{#if notice}}{{else}}
+    <button
+      style='cursor: pointer; border: none; border-radius: 0; background-color: #419644; color: white; min-width: 80px; padding: 0.6rem 0.8rem; font-size: 1.1rem; font-weight: 700;'
+      onclick='window.close();'
+    >확인</button>
+  {{/if}}
 </div>

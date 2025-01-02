@@ -2,6 +2,11 @@
 
 실시간 설문조사 프론트엔드
 
+- 2025-01-02
+  - add
+    - help page 추가
+  - fix
+    - password change validate 분기 추가
 - 2024-12-31
   - add
     - 대시보드 복합 그래프 컴포넌트 추가

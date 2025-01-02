@@ -1,4 +1,5 @@
 import { BatchService } from '@auth/batch.service';
+import { BRAND_NAME } from '@common/variables';
 import { PrismaService } from '@database/prisma.service';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
@@ -43,45 +44,80 @@ export class MailerService {
     });
   }
 
-  async createHtml(token: string, filename: string, context: any) {
-    const layout = await fs.readFile(
-      path.join(path.resolve(), 'src', 'mailer', 'template', 'layout.hbs'),
-      { encoding: 'utf-8' },
+  async sendTestMail() {
+    const message = {
+      to: `chaplet01@gmail.com`,
+      subject: 'SnapPoll',
+      text: '보안메일입니다.',
+    };
+    const defaultName = this.configService.get('email.defaultName');
+    const defaultEmail = this.configService.get('email.defaultEmail');
+    const context = {
+      title: '이메일 본인인증',
+      content:
+        '본인인증을 위한 메일입니다. 본인에 의한 확인 메일이 아닌 경우, 아래 메일로 문의해주세요.',
+      email: defaultEmail,
+      image: 'https://snappoll.kro.kr/images/original.png',
+    };
+    const templatePath = path.join(
+      path.resolve(),
+      'src',
+      'mailer',
+      'template',
+      'notice.hbs',
     );
-    const headerTemplate = await fs.readFile(
-      path.join(path.resolve(), 'src', 'mailer', 'template', 'header.hbs'),
-      { encoding: 'utf-8' },
-    );
-    const footerTemplate = await fs.readFile(
-      path.join(path.resolve(), 'src', 'mailer', 'template', 'header.hbs'),
-      { encoding: 'utf-8' },
-    );
-    const template = await fs.readFile(
-      path.join(path.resolve(), 'src', 'mailer', 'template', filename + '.hbs'),
-      { encoding: 'utf-8' },
-    );
-    const header = Handlebars.compile(headerTemplate, { strict: true })(
+    const template = await this.generateHTML({
       context,
-    );
-    const footer = Handlebars.compile(footerTemplate, { strict: true })(
-      context,
-    );
-    const html = Handlebars.compile(template, { strict: true })(context);
-
-    const layoutTemplate = Handlebars.compile(layout, { strict: true })({
-      title: context.title,
-      header,
-      replace: html,
-      footer,
+      templatePath,
+      email: defaultEmail,
     });
 
-    const data = this.batchService.mapper.get(token);
-    if (data) {
-      data.resolve({ token });
-    }
-
-    return layoutTemplate;
+    return this.transporter.sendMail({
+      ...message,
+      from: `"${defaultName}" <${defaultEmail}>`,
+      html: template,
+    });
   }
+
+  // async createHtml(token: string, filename: string, context: any) {
+  //   const layout = await fs.readFile(
+  //     path.join(path.resolve(), 'src', 'mailer', 'template', 'layout.hbs'),
+  //     { encoding: 'utf-8' },
+  //   );
+  //   const headerTemplate = await fs.readFile(
+  //     path.join(path.resolve(), 'src', 'mailer', 'template', 'header.hbs'),
+  //     { encoding: 'utf-8' },
+  //   );
+  //   const footerTemplate = await fs.readFile(
+  //     path.join(path.resolve(), 'src', 'mailer', 'template', 'header.hbs'),
+  //     { encoding: 'utf-8' },
+  //   );
+  //   const template = await fs.readFile(
+  //     path.join(path.resolve(), 'src', 'mailer', 'template', filename + '.hbs'),
+  //     { encoding: 'utf-8' },
+  //   );
+  //   const header = Handlebars.compile(headerTemplate, { strict: true })(
+  //     context,
+  //   );
+  //   const footer = Handlebars.compile(footerTemplate, { strict: true })(
+  //     context,
+  //   );
+  //   const html = Handlebars.compile(template, { strict: true })(context);
+
+  //   const layoutTemplate = Handlebars.compile(layout, { strict: true })({
+  //     title: context.title,
+  //     header,
+  //     replace: html,
+  //     footer,
+  //   });
+
+  //   const data = this.batchService.mapper.get(token);
+  //   if (data) {
+  //     data.resolve({ token });
+  //   }
+
+  //   return layoutTemplate;
+  // }
 
   async getAdminToken(defaultEmail: string) {
     const admin = await this.prisma.user.findUnique({
@@ -102,15 +138,17 @@ export class MailerService {
     return token;
   }
 
-  async sendConfirmMail({
+  async generateHTML({
     templatePath,
     context,
-    ...mailOptions
+    html,
+    email,
   }: Mail.Options & {
     templatePath: string;
     context: Record<string, unknown>;
+    email: string;
   }) {
-    let html: string | Buffer | Mail.Options['html'] | undefined;
+    let htmlText: string | Buffer | Mail.Options['html'] | undefined;
 
     const layout = await fs.readFile(
       path.join(path.resolve(), 'src', 'mailer', 'template', 'layout.hbs'),
@@ -137,25 +175,40 @@ export class MailerService {
 
     if (templatePath) {
       const template = await fs.readFile(templatePath, { encoding: 'utf-8' });
-      html = Handlebars.compile(template, { strict: true })(context);
+      htmlText = Handlebars.compile(template, { strict: true })(context);
     }
-    html = mailOptions.html ? mailOptions.html : html;
+    htmlText = html ? html : htmlText;
     const layoutTemplate = Handlebars.compile(layout, { strict: true })({
       title: context.title,
       header,
       footer,
-      replace: html,
+      replace: htmlText,
+      email,
     });
+    return layoutTemplate;
+  }
 
+  async sendConfirmMail({
+    templatePath,
+    context,
+    from,
+    ...mailOptions
+  }: Mail.Options & {
+    templatePath: string;
+    context: Record<string, unknown>;
+  }) {
     const defaultName = this.configService.get('email.defaultName');
     const defaultEmail = this.configService.get('email.defaultEmail');
-    const from = mailOptions.from
-      ? mailOptions.from
-      : `"${defaultName}" <${defaultEmail}>`;
-
+    const fromText = from ? from : `"${defaultName}" <${defaultEmail}>`;
+    const layoutTemplate = await this.generateHTML({
+      templatePath,
+      context,
+      html: mailOptions.html,
+      email: defaultEmail,
+    });
     return this.transporter.sendMail({
       ...mailOptions,
-      from,
+      from: fromText,
       html: layoutTemplate,
     });
   }
@@ -165,6 +218,7 @@ export class MailerService {
     filename: string,
     context: Record<string, unknown>,
   ) {
+    const defaultEmail = this.configService.get('email.defaultEmail');
     const layout = await fs.readFile(
       path.join(path.resolve(), 'src', 'mailer', 'template', 'layout.hbs'),
       { encoding: 'utf-8' },
@@ -200,7 +254,13 @@ export class MailerService {
     res.send(
       Handlebars.compile(layout, {
         strict: true,
-      })({ title: context.title, header, footer, replace: content }),
+      })({
+        title: context.title,
+        header,
+        footer,
+        replace: content,
+        email: defaultEmail,
+      }),
     );
   }
 

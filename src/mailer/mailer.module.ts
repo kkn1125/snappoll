@@ -10,12 +10,7 @@ import { BatchMailerService } from './batch-mailer.service';
 @Module({
   imports: [forwardRef(() => AuthModule), DatabaseModule],
   controllers: [MailerController],
-  providers: [
-    ConfigService,
-    MailerService,
-    EncryptManager,
-    BatchMailerService,
-  ],
+  providers: [ConfigService, MailerService, EncryptManager, BatchMailerService],
   exports: [MailerService],
 })
 export class MailerModule {}

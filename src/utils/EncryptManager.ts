@@ -48,7 +48,10 @@ export class EncryptManager {
     const hex = this.randomHex();
 
     const hashedPassword = hex.slice(0, 10) + alphabet + randomSpecial;
-    return this.encryptData(hashedPassword);
+    return {
+      password: hashedPassword,
+      hashedPassword: this.encryptData(hashedPassword),
+    };
   }
 
   generateShareUrl(serviceId: string, prefix: string) {

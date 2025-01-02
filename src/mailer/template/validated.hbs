@@ -1,33 +1,14 @@
-<table>
-  <thead>
-    <tr>
-      <th>
-        <div>
-          <img
-            src={{image}}
-            alt='snappoll-logo'
-            width='35'
-            height='35'
-          />{{title}}
-        </div>
-      </th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>
-        <div>
-          <h2>
-            SnapPoll 안내
-          </h2>
-          <div class='alert'>
-            {{content}}
-          </div>
-        </div>
-      </td>
-    </tr>
-    <tr>
-      <td><button onclick="window.close()">확인</button></td>
-    </tr>
-  </tbody>
-</table>
+<div
+  style='border: 2px solid #7ac67c; background: #7ac67c56; color: #333333; margin: 1rem 0; border-radius: 0.5rem;'
+>
+  <div style='padding: 1rem; font-size: 1em; word-break: auto-phrase;'>
+    <h4 style='margin: 0; margin-bottom: 0.3rem;'>{{title}}</h4>
+    {{content}}
+  </div>
+</div>
+<div>
+  <button
+    style='cursor: pointer; border: none; border-radius: 0; background-color: #419644; color: white; min-width: 80px; padding: 0.6rem 0.8rem; font-size: 1.1rem; font-weight: 700;'
+    onclick='window.close();'
+  >확인</button>
+</div>

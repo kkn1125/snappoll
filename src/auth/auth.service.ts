@@ -69,13 +69,14 @@ export class AuthService {
   }
 
   async initializeUserPassword(email: string) {
-    const hashedPassword = this.encryptManager.getRandomHashedPassword();
+    const { password, hashedPassword } =
+      this.encryptManager.getRandomHashedPassword();
 
     await this.prisma.user.update({
       where: { email, deletedAt: null },
       data: { localUser: { update: { password: hashedPassword } } },
     });
-    return hashedPassword;
+    return password;
   }
 
   async signUpSocial(decodedToken: jwt.JwtPayload) {
@@ -140,6 +141,7 @@ export class AuthService {
           '계정 비밀번호 초기화 후 발급된 비밀번호로 로그인하여 프로필 > 비밀번호 변경으로 이동하여 새로운 비밀번호로 변경하시기 바랍니다. 본인에 의한 확인 메일이 아니라면 아래 메일로 문의해주세요.',
         action: domain + '/api/auth/init/confirm',
         token,
+        domain,
         email: defaultEmail,
         image: 'https://snappoll.kro.kr/images/original.png',
       },
