@@ -236,7 +236,14 @@ export class BoardsService {
 
       return this.prisma.board.update({
         where: { id },
-        data,
+        data: {
+          title: data.title,
+          content: data.content,
+          category: data.category,
+          isPrivate: data.isPrivate,
+          isOnlyCrew: data.isOnlyCrew,
+          order: data.order,
+        },
       });
     });
   }

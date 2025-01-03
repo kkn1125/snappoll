@@ -23,6 +23,7 @@
     - poll option, vote option order 컬럼 추가
   - bugfix
     - ctype 깃허브 액션 빌드 오작동 수정
+    - 게시글 수정 버그 원인 파악 및 해결
 - 2025-01-02
   - add
     - notice hbs 페이지 추가
