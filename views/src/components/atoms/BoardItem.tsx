@@ -35,7 +35,7 @@ const BoardItem: React.FC<BoardItemProps> = ({ board }) => {
                 <Chip
                   size="small"
                   icon={<ThumbUpIcon />}
-                  label={board.likeCount.toLocaleString('ko-KR')}
+                  label={board?._count?.boardLike?.toLocaleString('ko-KR') || 0}
                 />
                 <Chip
                   size="small"
