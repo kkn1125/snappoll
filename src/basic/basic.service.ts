@@ -9,63 +9,44 @@ export class BasicService {
   constructor(private readonly prisma: PrismaService) {}
 
   async sitemap() {
-    const polls = await this.prisma.poll.findMany({
-      include: { response: true },
-    });
-    const votes = await this.prisma.vote.findMany({
-      include: { voteResponse: true },
-    });
+    const polls = await this.prisma.poll.findMany();
+    const votes = await this.prisma.vote.findMany();
     const boards = await this.prisma.board.findMany({
-      where: { deletedAt: null, isPrivate: false, isOnlyCrew: false },
+      where: { deletedAt: null, isOnlyCrew: false },
+    });
+    const sharePolls = await this.prisma.sharePoll.findMany({
+      where: { deletedAt: null, url: { not: undefined } },
+    });
+    const shareVotes = await this.prisma.shareVote.findMany({
+      where: { deletedAt: null, url: { not: undefined } },
     });
 
-    const base = new PathDomain('').addPath('notice', 'about');
-    const graph = new PathDomain('graph').addPath(
-      'polls',
-      'votes',
-      ...polls.map((p) => 'polls/' + p.id),
-      ...votes.map((p) => 'votes/' + p.id),
-    );
-    const auth = new PathDomain('auth').addPath('login', 'signup');
-    const user = new PathDomain('user').addPath(
-      'password',
-      'profile',
-      'response',
-    );
+    const auth = new PathDomain('auth').addPath('login', 'signup', 'account');
     const board = new PathDomain('board').addPath(
       'community',
       'notice',
       'event',
       'faq',
-      ...boards.map((board) => board.category + '/' + board.id),
+      ...boards.map((board) => `${board.category}/${board.id}`),
     );
-    const poll = new PathDomain('polls').include.addPath(
-      'me',
-      'me/response',
-      'new',
+    const poll = new PathDomain('poll').include.addPath(
       ...polls.map((p) => p.id),
-      ...polls.map((p) => p.id + '/response'),
-      ...polls.flatMap((p) =>
-        p.response.map((res) => p.id + '/response/' + res.id),
-      ),
+      ...sharePolls.map((share) => `share/?url=${share.url}`),
     );
-    const vote = new PathDomain('votes').include.addPath(
-      'me',
-      'me/response',
-      'new',
+    const vote = new PathDomain('vote').include.addPath(
       ...votes.map((v) => v.id),
-      ...votes.map((v) => v.id + '/response'),
-      ...votes.flatMap((v) =>
-        v.voteResponse.map((res) => v.id + '/response/' + res.id),
-      ),
+      ...shareVotes.map((share) => `share/?url=${share.url}`),
     );
+    const service = new PathDomain('service').addSubPath(poll, vote);
+    const base = new PathDomain('').addPath(
+      'about',
+      'price',
+      'price/change',
+      'help',
+    );
+    base.addSubPath(auth, board, service);
+    const paths = base.output();
 
-    const pages = [
-      DOMAIN + '/',
-      ...[base, auth, user, board, graph, poll, vote].flatMap((domain) =>
-        domain.output(),
-      ),
-    ];
     const SitemapGeneratedDate = new Date().toISOString(); /* .slice(0, 10) */
 
     const pageSitemap = (page) => `
@@ -78,7 +59,7 @@ export class BasicService {
     `;
 
     const generateSitemap = () => {
-      return pages.map(pageSitemap).join('');
+      return paths.map(pageSitemap).join('');
     };
 
     const sitemapTemplate = `

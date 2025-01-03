@@ -107,8 +107,8 @@ const AppRoot: React.FC<AppRootProps> = () => {
             <Route index element={<PricePage />} />
             <Route path="change" element={<ChangePricePage />} />
           </Route>
-          <Route path="price" element={<ReadyAlert />} />
-          <Route path="notice" element={<ReadyAlert />} />
+          {/* <Route path="price" element={<ReadyAlert />} /> */}
+          {/* <Route path="notice" element={<ReadyAlert />} /> */}
           <Route path="about" element={<AboutPage />} />
           <Route path="privacy-policy" element={<PrivacyPolicyPage />} />
           <Route path="service-agreement" element={<ServiceAgreementPage />} />

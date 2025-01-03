@@ -1,6 +1,11 @@
 import { messageAtom } from '@/recoils/message.atom';
 import { sidebarAtom } from '@/recoils/sidebar.atom';
-import { BRAND_NAME, scrollSize, SIDEBAR_WIDTH } from '@common/variables';
+import {
+  BRAND_NAME,
+  DESCRIPTION,
+  scrollSize,
+  SIDEBAR_WIDTH,
+} from '@common/variables';
 import SnapBreadCrumbs from '@components/atoms/SnapBreadCrumbs';
 import SeoMetaTag from '@components/moleculars/SeoMetaTag';
 import Footer from '@components/organisms/Footer';
@@ -60,12 +65,12 @@ const Layout: React.FC<LayoutProps> = () => {
       path: '/service/graph',
       icon: <StackedLineChartIcon />,
     },
-    {
-      name: '알림',
-      path: '/notice',
-      icon: <NotificationsIcon />,
-      badge: message.notReadMessages.length,
-    },
+    // {
+    //   name: '알림',
+    //   path: '/notice',
+    //   icon: <NotificationsIcon />,
+    //   badge: message.notReadMessages.length,
+    // },
   ];
 
   return (
@@ -74,10 +79,13 @@ const Layout: React.FC<LayoutProps> = () => {
         canonical={canonical}
         title={BRAND_NAME}
         author={BRAND_NAME}
-        description="Snappoll은 쉽고 간편한 무료 설문 및 투표 플랫폼입니다. 커뮤니티를 위한 다양한 설문과 실시간 통계 그래프를 제공해 누구나 손쉽게 투표와 설문을 만들고 분석할 수 있습니다. 지금 무료로 시작하세요!"
+        description={DESCRIPTION}
         url="https://snappoll.kro.kr"
-        site_name="SnapPoll"
+        site_name={BRAND_NAME}
         keywords={[
+          'survey',
+          'poll',
+          'vote',
           '설문',
           '투표',
           'SnapPoll',

@@ -22,6 +22,7 @@ export const USER_NAME = process.env.USER_NAME as string;
 export const USER_BLOG = process.env.USER_BLOG as string;
 export const USER_PROFILE = process.env.USER_PROFILE as string;
 export const VERSION = process.env.VERSION as string;
+export const DESCRIPTION = process.env.DESCRIPTION as string;
 
 export const DATE_FORMAT = 'YYYY. MM. DD. HH:mm';
 

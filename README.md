@@ -2,6 +2,15 @@
 
 서버사이드 구현
 
+- 2025-01-03
+  - feat
+    - jest config 설정 pkg에서 파일로 분리
+  - add
+    - PathDomain 클래스 테스트 케이스 추가
+  - fix
+    - 사이트맵 최신화
+      - PathDomain 클래스 재구성 및 Nested 구현
+      - 회원 경로 제외
 - 2025-01-02
   - add
     - notice hbs 페이지 추가
