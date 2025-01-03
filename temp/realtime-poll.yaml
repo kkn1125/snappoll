@@ -28,5 +28,5 @@ options:
   strategy: rolling
 context:
   git:
-    url: git@github.com:kkn1125/realtime-poll.git
+    url: git@github.com:kkn1125/snappoll.git
     ref: refs/heads/main
