@@ -1,11 +1,18 @@
 import { sidebarAtom } from '@/recoils/sidebar.atom';
 import { scrollSize, SIDEBAR_WIDTH } from '@common/variables';
+import HistoryPrevBtn from '@components/atoms/HistoryPrevBtn';
 import SnapBreadCrumbs from '@components/atoms/SnapBreadCrumbs';
 import Footer from '@components/organisms/Footer';
 import Header from '@components/organisms/Header';
 import PanelSidebar from '@components/organisms/PanelSidebar';
 import useToken from '@hooks/useToken';
-import { Stack, Toolbar, useMediaQuery, useTheme } from '@mui/material';
+import {
+  Container,
+  Stack,
+  Toolbar,
+  useMediaQuery,
+  useTheme,
+} from '@mui/material';
 import { SyntheticEvent, useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
@@ -80,6 +87,7 @@ const PanelLayout: React.FC<PanelLayoutProps> = () => {
           }}
         >
           {isCrew && <SnapBreadCrumbs />}
+
           <Outlet context={{ currentTab }} />
           <Toolbar />
         </Stack>

@@ -6,6 +6,7 @@ export const ErrorName = {
   BlockSave: 'BlockSave',
   SendMailIssue: 'SendMailIssue',
   Deactivated: 'Deactivated',
+  AlreadyLike: 'AlreadyLike',
   Private: 'Private',
   PrivateUrl: 'PrivateUrl',
   NotProvidedUrl: 'NotProvidedUrl',
@@ -231,6 +232,7 @@ export const ErrorMessage = {
     ],
     [104, ErrorName.NotFound, '찾을 수 없습니다.'],
     [105, ErrorName.Private, '비공개 게시글입니다.'],
+    [106, ErrorName.AlreadyLike, '이미 좋아요를 누른 게시글입니다.'],
   ],
   /* mailer */
   mailer: [

@@ -12,8 +12,13 @@ export class BatchMailerService {
   @Cron('59 59 23 * * *', {
     name: 'sendManualMail',
   })
-  batchMailer() {
+  manualMailer() {
     this.logger.debug('메뉴얼 메일 발송 테스트');
-    // this.mailerService.sendManualMail()
+  }
+
+  @Cron('59 59 23 * * *', { name: 'sendBatchMail' })
+  async sendBatchMailer() {
+    this.logger.debug('정기 메일 발송');
+    await this.mailerService.sendBatchMail();
   }
 }

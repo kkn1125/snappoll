@@ -42,8 +42,8 @@ export class BoardsController {
   }
 
   @Get()
-  findAll() {
-    return this.boardsService.findAll();
+  findAll(@Query('page') page: number = 1) {
+    return this.boardsService.findAll(+page);
   }
 
   @Throttle({ short: { limit: 5, ttl: 1000 } })
@@ -67,10 +67,42 @@ export class BoardsController {
   @IgnoreCookie()
   @Get('category/:category/:id')
   findOneOfCategory(
+    @Req() req: Request,
+    @Query('only') only: boolean,
     @Param('category') category: string,
     @Param('id') id: string,
   ) {
-    return this.boardsService.findCategoryOne(category, id);
+    const userId = req.user?.id;
+    if (!only) {
+      return this.boardsService
+        .viewCount(category, id)
+        .then(() => this.boardsService.findCategoryOne(category, id, userId));
+    }
+    return this.boardsService.findCategoryOne(category, id, userId);
+  }
+
+  // @Throttle({ short: { limit: 5, ttl: 1000 } })
+  // @IgnoreCookie()
+  // @Put('category/:category/:id/view')
+  // viewCountOneOfCategory(
+  //   @Param('category') category: string,
+  //   @Param('id') id: string,
+  // ) {
+  //   return this.boardsService.viewCount(category, id);
+  // }
+
+  @Throttle({ short: { limit: 5, ttl: 1000 } })
+  @Post(':id/like')
+  addLike(@Req() req: Request, @Param('id') id: string) {
+    const userId = req.user?.id;
+    return this.boardsService.addLike(id, userId);
+  }
+
+  @Throttle({ short: { limit: 5, ttl: 1000 } })
+  @Delete(':id/like')
+  removeLike(@Req() req: Request, @Param('id') id: string) {
+    const userId = req.user?.id;
+    return this.boardsService.removeLike(id, userId);
   }
 
   @IgnoreCookie()

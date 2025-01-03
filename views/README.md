@@ -4,6 +4,9 @@
 
 - 2025-01-03
   - add
+    - Panel Notice 페이지 제작
+      - Notice 생성 페이지 제작
+    - 게시글 좋아요 기능 추가
     - UserLayout 컴포넌트 추가
     - QR Code 생성 기능 추가
     - 설문, 투표 응답
@@ -27,7 +30,7 @@
   - fix
     - password change validate 분기 추가
   - todo
-    - [ ] 패널 Notice 세부 내용 작성
+    - [x] 패널 Notice 세부 내용 작성
 - 2024-12-31
   - add
     - 대시보드 복합 그래프 컴포넌트 추가

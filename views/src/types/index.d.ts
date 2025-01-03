@@ -124,6 +124,16 @@ export declare global {
     userProfile?: Profile;
     subscription: Subscription;
   }
+  interface SnapNotice {
+    id: string;
+    type: 'Normal' | 'Batch';
+    cover: string | null;
+    title: string;
+    content: string;
+    createdAt: Date;
+    updatedAt: Date;
+    sendAt?: Date | null;
+  }
   interface Subscription {
     id: string;
     userId: string;

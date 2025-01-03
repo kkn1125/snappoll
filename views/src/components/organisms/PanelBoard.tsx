@@ -11,6 +11,8 @@ import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import { Button, IconButton, Paper, Stack, Tooltip } from '@mui/material';
 import { GridColDef } from '@mui/x-data-grid';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { isNil } from '@utils/isNil';
+import dayjs from 'dayjs';
 import { useMemo } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 
@@ -37,6 +39,42 @@ const PanelBoard: React.FC<PanelBoardProps> = () => {
           field: column,
           headerName: column,
           flex: 1,
+          type: (() => {
+            switch (column) {
+              case 'id':
+              case 'userId':
+              case 'title':
+              case 'content':
+                return 'string';
+              case 'order':
+              case 'viewCount':
+              case 'likeCount':
+                return 'number';
+              case 'isOnlyCrew':
+              case 'isPrivate':
+                return 'string';
+              case 'createdAt':
+              case 'updatedAt':
+              case 'deletedAt':
+                return 'dateTime';
+              default:
+                return 'string';
+            }
+          })(),
+          valueFormatter: (params) => {
+            if (column === 'isPrivate') {
+              return params ? '비공개' : '공개';
+            }
+            if (column === 'isOnlyCrew') {
+              return params ? '회원 공개' : '전체 공개';
+            }
+            if (column.match(/^(created|updated|deleted|last_login)/gi)) {
+              if (isNil(params)) return '-';
+              return dayjs(params).format('YYYY. MM. DD. HH:mm');
+            }
+            if (isNil(params)) return '-';
+            return params;
+          },
         }) as GridColDef,
     );
   }, [columnList]);

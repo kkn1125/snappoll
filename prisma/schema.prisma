@@ -215,6 +215,7 @@ model User {
   subscription Subscription?
   allowTerms   AllowTerms[]
   comment      Comment[]
+  boardLike    BoardLike[]
 
   @@index([username])
   @@index([email])
@@ -405,6 +406,22 @@ model Message {
   @@map("message")
 }
 
+model BoardLike {
+  id        String   @id @default(uuid()) @db.Uuid
+  boardId   String   @map("board_id") @db.Uuid
+  // 게시글 삭제되면 좋아요도 삭제
+  userId    String?  @map("user_id") @db.Uuid
+  // 유저 탈퇴해도 좋아요는 유지
+  createdAt DateTime @default(now()) @map("created_at")
+
+  board Board @relation(fields: [boardId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  user  User? @relation(fields: [userId], references: [id], onDelete: SetNull, onUpdate: Cascade)
+
+  @@index([userId])
+  @@index([boardId])
+  @@map("board_like")
+}
+
 model Board {
   id         String    @id @default(uuid()) @db.Uuid
   userId     String?   @map("user_id") @db.Uuid
@@ -414,15 +431,16 @@ model Board {
   title      String    @db.VarChar(100)
   content    String
   viewCount  Int       @default(0) @map("view_count")
-  likeCount  Int       @default(0) @map("like_count")
+  // likeCount  Int       @default(0) @map("like_count")
   isPrivate  Boolean   @default(false) @map("is_private")
   isOnlyCrew Boolean   @default(false) @map("is_only_crew")
   createdAt  DateTime  @default(now()) @map("created_at")
   updatedAt  DateTime  @default(now()) @updatedAt @map("updated_at")
   deletedAt  DateTime? @map("deleted_at")
 
-  author  User?     @relation(fields: [userId], references: [id])
-  comment Comment[]
+  author    User?       @relation(fields: [userId], references: [id])
+  comment   Comment[]
+  boardLike BoardLike[]
 
   @@map("board")
 }
@@ -460,4 +478,7 @@ model Notice {
   content   String
   createdAt DateTime   @default(now()) @map("created_at")
   updatedAt DateTime   @default(now()) @updatedAt @map("updated_at")
+  sendAt    DateTime?  @map("send_at")
+
+  @@map("notice")
 }

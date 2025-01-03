@@ -4,13 +4,7 @@ export class CreateBoardDto
   implements
     Omit<
       Board,
-      | 'id'
-      | 'userId'
-      | 'likeCount'
-      | 'viewCount'
-      | 'createdAt'
-      | 'updatedAt'
-      | 'deletedAt'
+      'id' | 'userId' | 'viewCount' | 'createdAt' | 'updatedAt' | 'deletedAt'
     >
 {
   password: string;

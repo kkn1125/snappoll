@@ -1,11 +1,14 @@
 import { deleteBoard } from '@apis/board/deleteBoard';
 import { deleteBoardForce } from '@apis/board/deleteBoardForce';
 import { getBoardCategoryOne } from '@apis/board/getBoardCategoryOne';
+import { getBoardCategoryOneOnly } from '@apis/board/getBoardCategoryOneOnly';
 import { validateBoardPassword } from '@apis/board/validateBoardPassword';
+import { viewCount } from '@apis/board/viewCount';
 import { getComments } from '@apis/comment/getComments';
 import { Message } from '@common/messages';
 import { UnknownName } from '@common/variables';
 import CustomInput from '@components/atoms/CustomInput';
+import LikeButton from '@components/atoms/LikeButton';
 import ProfileAvatar from '@components/atoms/ProfileAvatar';
 import SunEditorContent from '@components/atoms/SunEditorContent';
 import CommentWrite from '@components/moleculars/CommentWrite';
@@ -55,8 +58,13 @@ const DetailBoardPage: React.FC<DetailBoardPageProps> = () => {
     queryKey: ['board', id, category],
     queryFn: () => getBoardCategoryOne(category, id),
   });
+  const { data: onlyBoard, refetch } = useQuery<SnapResponseType<SnapBoard>>({
+    queryKey: ['boardOnly', id, category],
+    queryFn: () => getBoardCategoryOneOnly(category, id),
+  });
   const [showModal, setShowModal] = useState('');
   const board = data?.data;
+  const onlyBoardData = onlyBoard?.data;
   const isGuestBoard = !board?.userId;
   const [info, setInfo] = useState({ password: '' });
   const { errors, validate, validated, setValidated, clearValidate } =
@@ -316,7 +324,9 @@ const DetailBoardPage: React.FC<DetailBoardPageProps> = () => {
             <Stack direction="row" gap={1}>
               <Chip
                 icon={<ThumbUpIcon />}
-                label={(board?.likeCount || 0).toLocaleString('ko-KR')}
+                label={(onlyBoardData?._count?.boardLike || 0).toLocaleString(
+                  'ko-KR',
+                )}
               />
               <Chip
                 icon={<VisibilityIcon />}
@@ -344,7 +354,10 @@ const DetailBoardPage: React.FC<DetailBoardPageProps> = () => {
         </Stack>
         <Divider flexItem />
         <SunEditorContent content={board?.content} />
+
         <Divider flexItem />
+
+        <LikeButton board={onlyBoardData} refetch={refetch} />
 
         {/* 댓글 쓰기 */}
         {board && <CommentWrite initializeComments={initializeComments} />}

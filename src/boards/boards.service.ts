@@ -1,5 +1,6 @@
 import { PrismaService } from '@database/prisma.service';
 import {
+  BadRequestException,
   ForbiddenException,
   Injectable,
   NotFoundException,
@@ -20,7 +21,7 @@ export class BoardsService {
     category: true,
     title: true,
     content: true,
-    likeCount: true,
+    // likeCount: true,
     viewCount: true,
     order: true,
     isOnlyCrew: true,
@@ -40,6 +41,7 @@ export class BoardsService {
         },
       },
     },
+    _count: { select: { boardLike: true } },
   };
 
   constructor(
@@ -87,7 +89,25 @@ export class BoardsService {
     return { columns, boards, count };
   }
 
-  async findCategoryOne(category: string, id: string) {
+  async viewCount(category: string, id: string) {
+    const board = await this.prisma.board.findUnique({
+      where: { id, category, deletedAt: null },
+      select: this.boardSelect,
+    });
+
+    if (!board) {
+      const errorCode = await this.prisma.getErrorCode('board', 'NotFound');
+      throw new NotFoundException(errorCode);
+    }
+
+    await this.prisma.board.update({
+      where: { id, category },
+      select: this.boardSelect,
+      data: { viewCount: { increment: 1 } },
+    });
+  }
+
+  async findCategoryOne(category: string, id: string, userId?: string) {
     const board = await this.prisma.board.findUnique({
       where: { id, category, deletedAt: null },
       select: this.boardSelect,
@@ -96,12 +116,37 @@ export class BoardsService {
       const errorCode = await this.prisma.getErrorCode('board', 'NotFound');
       throw new NotFoundException(errorCode);
     }
-    const updatedBoard = await this.prisma.board.update({
-      where: { id },
-      select: this.boardSelect,
-      data: { viewCount: { increment: 1 } },
+    // await this.prisma.board.update({
+    //   where: { id },
+    //   select: this.boardSelect,
+    //   data: { viewCount: { increment: 1 } },
+    // });
+    const getBoard = await this.prisma.board.findUnique({
+      where: { id, category, deletedAt: null },
+      select: {
+        ...this.boardSelect,
+        boardLike: {
+          select: {
+            id: true,
+            boardId: true,
+            userId: true,
+            createdAt: true,
+          },
+        },
+      },
     });
-    return updatedBoard;
+
+    if (userId) {
+      const alreadyLike = await this.prisma.boardLike.findFirst({
+        where: {
+          boardId: getBoard.id,
+          userId,
+        },
+      });
+      Object.assign(getBoard, { liked: !!alreadyLike });
+    }
+    // this.prisma.board.aggregate();
+    return getBoard;
   }
 
   async findCategory(category: string, page: number = 1) {
@@ -162,29 +207,97 @@ export class BoardsService {
   }
 
   async update(id: string, updateBoardDto: UpdateBoardDto, isUser: boolean) {
-    const { password, author, ...data } = updateBoardDto;
-    const board = await this.prisma.board.findUnique({ where: { id } });
+    return this.prisma.$transaction(async () => {
+      const { password, author, ...data } = updateBoardDto;
+      const board = await this.prisma.board.findUnique({ where: { id } });
 
-    if (!board) {
-      const errorCode = await this.prisma.getErrorCode('board', 'NotFound');
-      throw new NotFoundException(errorCode);
+      if (!board) {
+        const errorCode = await this.prisma.getErrorCode('board', 'NotFound');
+        throw new NotFoundException(errorCode);
+      }
+
+      if (!isUser && board.password !== null) {
+        if (!password) {
+          const errorCode = await this.prisma.getErrorCode(
+            'board',
+            'Forbidden',
+          );
+          throw new ForbiddenException(errorCode);
+        }
+        const encryptedPassword = this.encryptManager.encryptData(password);
+        if (board.password !== encryptedPassword) {
+          const errorCode = await this.prisma.getErrorCode(
+            'board',
+            'Forbidden',
+          );
+          throw new ForbiddenException(errorCode);
+        }
+      }
+
+      return this.prisma.board.update({
+        where: { id },
+        data,
+      });
+    });
+  }
+
+  async addLike(boardId: string, userId?: string) {
+    if (!userId) {
+      const errorCode = await this.prisma.getErrorCode('board', 'Forbidden');
+      throw new ForbiddenException(errorCode);
     }
 
-    if (!isUser && board.password !== null) {
-      if (!password) {
-        const errorCode = await this.prisma.getErrorCode('board', 'Forbidden');
-        throw new ForbiddenException(errorCode);
+    return this.prisma.$transaction(async () => {
+      const board = await this.prisma.board.findUnique({
+        where: { id: boardId },
+      });
+
+      if (!board) {
+        const errorCode = await this.prisma.getErrorCode('board', 'NotFound');
+        throw new NotFoundException(errorCode);
       }
-      const encryptedPassword = this.encryptManager.encryptData(password);
-      if (board.password !== encryptedPassword) {
-        const errorCode = await this.prisma.getErrorCode('board', 'Forbidden');
-        throw new ForbiddenException(errorCode);
+
+      const alreadyLike = await this.prisma.boardLike.findFirst({
+        where: { boardId, userId },
+      });
+
+      if (alreadyLike) {
+        const errorCode = await this.prisma.getErrorCode(
+          'board',
+          'AlreadyLike',
+        );
+        throw new BadRequestException(errorCode);
       }
+
+      return this.prisma.boardLike.create({
+        data: {
+          boardId,
+          userId,
+          // boardLike,
+        },
+      });
+    });
+  }
+
+  async removeLike(boardId: string, userId?: string) {
+    if (!userId) {
+      const errorCode = await this.prisma.getErrorCode('board', 'Forbidden');
+      throw new ForbiddenException(errorCode);
     }
 
-    return this.prisma.board.update({
-      where: { id },
-      data,
+    return this.prisma.$transaction(async () => {
+      const board = await this.prisma.board.findFirst({
+        where: { id: boardId },
+      });
+
+      if (!board) {
+        const errorCode = await this.prisma.getErrorCode('board', 'NotFound');
+        throw new NotFoundException(errorCode);
+      }
+
+      return this.prisma.boardLike.deleteMany({
+        where: { boardId, userId },
+      });
     });
   }
 

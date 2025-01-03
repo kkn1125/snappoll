@@ -7,6 +7,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
 } from '@nestjs/common';
 import { CreateNoticeDto } from './dto/create-notice.dto';
 import { UpdateNoticeDto } from './dto/update-notice.dto';
@@ -26,8 +27,8 @@ export class NoticesController {
   }
 
   @Get()
-  findAll() {
-    return this.noticesService.findAll();
+  findAll(@Query('page') page: number = 1) {
+    return this.noticesService.findAll(+page);
   }
 
   @Roles(['Admin'])
@@ -40,18 +41,18 @@ export class NoticesController {
     };
   }
 
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.noticesService.findOne(+id);
-  // }
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.noticesService.findOne(id);
+  }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateNoticeDto: UpdateNoticeDto) {
-    return this.noticesService.update(+id, updateNoticeDto);
+    return this.noticesService.update(id, updateNoticeDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.noticesService.remove(+id);
+    return this.noticesService.remove(id);
   }
 }

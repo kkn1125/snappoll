@@ -28,7 +28,7 @@ import HelpPage from '@pages/HelpPage';
 import HomePage from '@pages/HomePage';
 import NotfoundPage from '@pages/NotfoundPage';
 import NoticePage from '@pages/notice/NoticePage';
-import Panel from '@pages/panel/Panel';
+import PanelPage from '@pages/panel/PanelPage';
 import PrivacyPolicyPage from '@pages/PrivacyPolicyPage';
 import DetailPollGraphPage from '@pages/service/graph/polls/DetailPollGraphPage';
 import PollGraphListPage from '@pages/service/graph/polls/PollGraphListPage';
@@ -61,6 +61,7 @@ import UserPage from '@pages/user/UserPage';
 import { Logger } from '@utils/Logger';
 import { useLayoutEffect } from 'react';
 import { Route, Routes, useLocation } from 'react-router-dom';
+import WriteNoticePage from '@pages/panel/WriteNoticePage';
 
 interface AppRootProps {}
 const AppRoot: React.FC<AppRootProps> = () => {
@@ -241,7 +242,8 @@ const AppRoot: React.FC<AppRootProps> = () => {
       <Route element={<CommonLayout />}>
         <Route element={<ProtectedRoute roles={['Admin']} />}>
           <Route path="panel" element={<PanelLayout />}>
-            <Route index element={<Panel />} />
+            <Route index element={<PanelPage />} />
+            <Route path="notice" element={<WriteNoticePage />} />
           </Route>
         </Route>
       </Route>

@@ -55,10 +55,13 @@ const PanelUser: React.FC<PanelUserProps> = () => {
           })(),
           flex: 1,
           valueFormatter: (params) => {
-            if (column === 'is_active') {
+            if (column === 'isActive') {
               return params ? '활동' : '활동정지';
             }
-            if (column.match(/^(created|updated|deleted|last_login)/gi)) {
+            if (column === 'receiveMail') {
+              return params ? '메일 수신' : '메일 거부';
+            }
+            if (column.match(/^(created|updated|deleted|lastLogin)/gi)) {
               if (isNil(params)) return '-';
               return dayjs(params).format('YYYY. MM. DD. HH:mm');
             }

@@ -6,8 +6,8 @@ export class SnapBoard {
   password!: string;
   title!: string;
   content!: string;
+  // likeCount!: number;
   viewCount!: number;
-  likeCount!: number;
   isPrivate!: boolean;
   isOnlyCrew!: boolean;
   createdAt!: Date;
@@ -15,4 +15,10 @@ export class SnapBoard {
   deletedAt!: Date;
 
   author?: User;
+
+  liked?: boolean;
+
+  _count?: {
+    boardLike?: number;
+  };
 }

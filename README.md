@@ -4,6 +4,10 @@
 
 - 2025-01-03
   - feat
+    - 게시글 likeCount 컬럼 제거
+    - BoardLike 테이블 추가 및 교체
+    - 게시글 좋아요 기능 추가
+      - 기존 API only 파라미터 유무로 viewCount 구분
     - jest config 설정 pkg에서 파일로 분리
   - add
     - PathDomain 클래스 테스트 케이스 추가

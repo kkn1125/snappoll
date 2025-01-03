@@ -10,6 +10,7 @@ import * as path from 'path';
 import { CreateNoticeDto } from './dto/create-notice.dto';
 import { UpdateNoticeDto } from './dto/update-notice.dto';
 import SnapLogger from '@utils/SnapLogger';
+import { snakeToCamel } from '@utils/snakeToCamel';
 
 @Injectable()
 export class NoticesService {
@@ -27,13 +28,25 @@ export class NoticesService {
     });
   }
 
-  findAll() {
-    return this.prisma.notice.findMany();
+  async findAll(page: number) {
+    const notices = await this.prisma.notice.findMany({
+      skip: (page - 1) * 10,
+      take: 10,
+      orderBy: { createdAt: 'desc' },
+    });
+    const columnList = (await this.prisma
+      .$queryRaw`SELECT COLUMN_NAME column FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'notice' ORDER BY ORDINAL_POSITION`) as {
+      column: string;
+    }[];
+    const columns = columnList.map(({ column }) => snakeToCamel(column));
+    const count = await this.prisma.notice.count();
+
+    return { notices, columns, count };
   }
 
-  // findOne(id: number) {
-  //   return `This action returns a #${id} notice`;
-  // }
+  findOne(id: string) {
+    return this.prisma.notice.findUnique({ where: { id } });
+  }
 
   async sendMail(id: string) {
     this.logger.debug('notice id:', id);
@@ -97,11 +110,13 @@ export class NoticesService {
     );
   }
 
-  update(id: number, updateNoticeDto: UpdateNoticeDto) {
+  update(id: string, updateNoticeDto: UpdateNoticeDto) {
     return `This action updates a #${id} notice`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} notice`;
+  remove(id: string) {
+    return this.prisma.notice.delete({
+      where: { id },
+    });
   }
 }
