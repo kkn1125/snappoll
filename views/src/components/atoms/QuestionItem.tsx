@@ -1,6 +1,7 @@
 import { SnapPollQuestion } from '@models/SnapPollQuestion';
 import {
   Checkbox,
+  Chip,
   FormControlLabel,
   List,
   ListItem,
@@ -23,6 +24,7 @@ import { snapResponseAtom } from '@/recoils/snapResponse.atom';
 import { SnapResponse } from '@models/SnapResponse';
 import { SnapAnswer } from '@models/SnapAnswer';
 import CheckedComponent from './CheckedComponent';
+import { grey } from '@mui/material/colors';
 
 interface QuestionItemProps {
   question: SnapPollQuestion;
@@ -102,9 +104,34 @@ const QuestionItem: React.FC<QuestionItemProps> = ({ question }) => {
         <Typography className="font-maru" fontSize={24} fontWeight={700}>
           {question.title}
         </Typography>
-        <Typography className="font-maru" variant="subtitle2">
+        <Typography
+          className="font-maru"
+          variant="subtitle2"
+          // fontSize={14}
+          // fontWeight={100}
+          sx={{
+            p: 1,
+            backgroundColor: grey['100'],
+            borderRadius: 1,
+            borderLeft: '2px solid #aaa',
+            mt: 1,
+            mb: 2,
+          }}
+        >
           {question.description}
         </Typography>
+        <Stack direction="row" my={1} gap={1}>
+          <Chip
+            color={question.isMultiple ? 'info' : 'default'}
+            size="small"
+            label={question.isMultiple ? '다중 선택' : '단일 선택'}
+          />
+          <Chip
+            color={question.isRequired ? 'error' : 'default'}
+            size="small"
+            label={question.isRequired ? '필수' : '선택'}
+          />
+        </Stack>
       </Stack>
       {question.type === 'text' ? (
         <TextField

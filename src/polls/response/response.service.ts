@@ -94,6 +94,8 @@ export class ResponseService {
       );
       throw new NotFoundException(errorCode);
     }
+
+    return response;
   }
 
   update(id: string, updateResponseDto: UpdateResponseDto) {

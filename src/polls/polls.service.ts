@@ -402,106 +402,41 @@ export class PollsService {
         },
       });
 
+      await this.prisma.question.deleteMany({
+        where: {
+          pollId: id,
+          id: { notIn: questions.map((question) => question.id) },
+        },
+      });
+
       for (const { option: options, id, answer, ...question } of questions) {
+        const questionId = id;
         this.logger.debug(id, question);
         await this.prisma.question.upsert({
           where: { id },
           create: question,
           update: question,
         });
-        for (const { id, ...option } of options) {
-          await this.prisma.option.upsert({
-            where: { id },
-            create: option,
-            update: option,
-          });
+        if (question.type !== 'text') {
+          for (const { id, ...option } of options) {
+            await this.prisma.option.deleteMany({
+              where: {
+                questionId,
+                id: { notIn: options.map((option) => option.id) },
+              },
+            });
+            await this.prisma.option.upsert({
+              where: { id },
+              create: option,
+              update: option,
+            });
+          }
         }
       }
 
       return this.prisma.poll.findUnique({
         where: { id },
       });
-
-      // for (const { id, ...update } of reduced.update) {
-      //   await this.prisma.question.update({
-      //     where: { id },
-      //     data: update,
-      //     include: {
-      //       option: true,
-      //     },
-      //   });
-      // }
-
-      // await this.prisma.question.updateMany({
-      //   data: reduced.update.map((question) => ({
-      //     id: question.id,
-      //     ...question,
-      //   })),
-      //   include: {
-      //     option: true,
-      //   },
-      // });
-
-      // let question;
-      // if (
-      //   'question' in updatePollDto &&
-      //   updatePollDto.question instanceof Array
-      // ) {
-      //   question = {
-      //     update: updatePollDto.question.map(({ id, ...question }) => {
-      //       let option;
-      //       if ('option' in question && question.option instanceof Array) {
-      //         option = {
-      //           updateMany: question.option.map(({ id, ...option }: Option) => {
-      //             return {
-      //               where: { id },
-      //               data: {
-      //                 content: option.content,
-      //               },
-      //             };
-      //           }),
-      //         };
-      //       }
-
-      //       const type = question.type;
-      //       const title = question.title;
-      //       const description = question.description;
-      //       const isMultiple = question.isMultiple;
-      //       const useEtc = question.useEtc;
-      //       const order = question.order;
-      //       return {
-      //         where: { id },
-      //         data: {
-      //           type,
-      //           title,
-      //           description,
-      //           isMultiple,
-      //           useEtc,
-      //           order,
-      //           option,
-      //         },
-      //       };
-      //     }),
-      //   };
-      // }
-
-      // return this.prisma.poll.update({
-      //   where: { id },
-      //   data: {
-      //     title,
-      //     description,
-      //     userId,
-      //     expiresAt,
-      //     question,
-      //   },
-      //   include: {
-      //     question: {
-      //       include: {
-      //         option: true,
-      //       },
-      //     },
-      //   },
-      // });
     });
   }
 

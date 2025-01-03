@@ -356,38 +356,38 @@ export class VotesService {
     const isMultiple = updateVoteDto.isMultiple;
     const useEtc = updateVoteDto.useEtc;
     const expiresAt = updateVoteDto.expiresAt || null;
-    console.log('expiresAt', expiresAt);
 
-    let voteOption;
-    if (
-      'voteOption' in updateVoteDto &&
-      updateVoteDto.voteOption instanceof Array
-    ) {
-      voteOption = {
-        updateMany: updateVoteDto.voteOption.map(({ id, ...option }) => ({
-          where: { id },
-          data: {
-            content: option.content,
-          },
-        })),
-      };
+    const voteOption = updateVoteDto.voteOption;
+
+    await this.prisma.vote.update({
+      where: { id },
+      data: {
+        title,
+        description,
+        userId,
+        isMultiple,
+        useEtc,
+        expiresAt,
+      },
+    });
+
+    await this.prisma.voteOption.deleteMany({
+      where: {
+        voteId: id,
+        id: { notIn: voteOption.map((option) => option.id) },
+      },
+    });
+
+    for (const option of voteOption) {
+      await this.prisma.voteOption.upsert({
+        where: { id: option.id },
+        create: option,
+        update: option,
+      });
     }
 
-    const data = {
-      title,
-      description,
-      userId,
-      isMultiple,
-      useEtc,
-      expiresAt,
-      voteOption,
-    };
-    return this.prisma.vote.update({
+    return this.prisma.vote.findUnique({
       where: { id },
-      data,
-      include: {
-        voteOption: true,
-      },
     });
   }
 

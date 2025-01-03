@@ -1,6 +1,7 @@
 import { v4 } from 'uuid';
 import { SnapPollOption } from './SnapPollOption';
 import { SnapAnswer } from './SnapAnswer';
+import { isNil } from '@utils/isNil';
 
 export class SnapPollQuestion {
   static copy(question: SnapPollQuestion) {
@@ -26,7 +27,7 @@ export class SnapPollQuestion {
       this.type = props.type;
       this.title = props.title;
       if (props.description) this.description = props.description;
-      if (props.order) this.order = props.order;
+      if (!isNil(props.order)) this.order = props.order;
       this.isMultiple = props.isMultiple || false;
       this.isRequired = props.isRequired || false;
       this.useEtc = props.useEtc;
@@ -35,6 +36,7 @@ export class SnapPollQuestion {
   }
 
   addOption(option: SnapPollOption) {
+    option.order = this.option.length;
     this.option = [...this.option, option];
   }
 

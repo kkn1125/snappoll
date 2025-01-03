@@ -1,5 +1,6 @@
 import { useMediaQuery, useTheme } from '@mui/material';
 import {
+  AllSeriesType,
   BarPlot,
   BarSeriesType,
   ChartsAxisHighlight,
@@ -24,18 +25,16 @@ import dayjs from 'dayjs';
 interface ResponsiveChartProps {
   type?: 'time' | 'linear' | 'log' | 'band' | 'point' | 'pow' | 'sqrt' | 'utc';
   hidden?: boolean;
+  guideline?: boolean;
   dates: string[];
-  responseData: {
-    type: 'line' | 'bar' | 'scatter' | 'pie' | string;
-    data: number[];
-    label: string;
-  }[];
+  responseData: AllSeriesType[];
 }
 const ResponsiveChart: React.FC<ResponsiveChartProps> = ({
-  type,
+  type = 'point',
   hidden = false,
   dates,
   responseData,
+  guideline = false,
 }) => {
   const theme = useTheme();
   const isMdUp = useMediaQuery(theme.breakpoints.up('md'));
@@ -60,7 +59,8 @@ const ResponsiveChart: React.FC<ResponsiveChartProps> = ({
       ]}
       xAxis={[
         {
-          scaleType: type ?? 'point',
+          scaleType: type,
+          label: 'weeks',
           data: dates,
           ...(!isMdUp && {
             tickLabelStyle: {
@@ -71,20 +71,9 @@ const ResponsiveChart: React.FC<ResponsiveChartProps> = ({
           }),
         },
       ]}
-      series={
-        responseData.map((item) => ({
-          type: item.type,
-          data: item.data,
-          label: item.label,
-        })) as (
-          | BarSeriesType
-          | LineSeriesType
-          | ScatterSeriesType
-          | PieSeriesType<MakeOptional<PieValueType, 'id'>>
-        )[]
-      }
+      series={responseData}
     >
-      <ChartsAxisHighlight x="line" y="line" />
+      <ChartsAxisHighlight x={type === 'band' ? 'band' : 'line'} y="line" />
       <ChartsLegend
         itemMarkHeight={2}
         itemMarkWidth={10}
@@ -98,16 +87,21 @@ const ResponsiveChart: React.FC<ResponsiveChartProps> = ({
       <BarPlot />
       <MarkPlot />
       <LineHighlightPlot />
-      <ChartsReferenceLine
-        x={dayjs().format('YYYY-MM-DD')}
-        lineStyle={{ strokeDasharray: '10 5' }}
-        labelStyle={{
-          fontSize: 12,
-          fontWeight: 700,
-        }}
-        label={`Today`}
-        labelAlign="start"
-      />
+      {guideline && (
+        <ChartsReferenceLine
+          x={dayjs().format('YYYY-MM-DD')}
+          lineStyle={{
+            strokeDasharray: '10 5',
+            display: 'flex',
+          }}
+          labelStyle={{
+            fontSize: 12,
+            fontWeight: 700,
+          }}
+          label={`Today`}
+          labelAlign="start"
+        />
+      )}
       <ChartsXAxis />
       <ChartsYAxis />
     </ResponsiveChartContainer>

@@ -8,6 +8,7 @@ import Layout from '@components/templates/Layout';
 import PanelLayout from '@components/templates/PanelLayout';
 import ServiceLayout from '@components/templates/ServiceLayout';
 import ShareLayout from '@components/templates/ShareLayout';
+import UserLayout from '@components/templates/UserLayout';
 import useLoading from '@hooks/useLoading';
 import useLogger from '@hooks/useLogger';
 import useModal from '@hooks/useModal';
@@ -131,13 +132,15 @@ const AppRoot: React.FC<AppRootProps> = () => {
           <Route index element={<BoardListPage />} />
           <Route path=":category" element={<CategoryBoardPage />} />
           {isMaster && <Route path="new" element={<WriteBoardPage />} />}
-          <Route path=":category/write" element={<WriteBoardPage />} />
-          <Route path=":category/edit" element={<WriteBoardPage />} />
+          <Route element={<ProtectedRoute roles={['User', 'Admin']} />}>
+            <Route path=":category/write" element={<WriteBoardPage />} />
+            <Route path=":category/edit" element={<WriteBoardPage />} />
+          </Route>
           <Route path=":category/:id" element={<DetailBoardPage />} />
         </Route>
 
         {/* User */}
-        <Route element={<CommonLayout />}>
+        <Route element={<UserLayout />}>
           <Route
             path="user"
             element={<ProtectedRoute roles={['User', 'Admin']} />}

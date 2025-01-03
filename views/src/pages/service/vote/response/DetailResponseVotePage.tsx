@@ -21,31 +21,27 @@ const DetailResponseVotePage: React.FC<DetailResponseVotePageProps> = () => {
   const username = getUsernameOr(responseData?.user?.username);
 
   return (
-    <Container maxWidth="md">
-      <Toolbar />
-      <Stack gap={3}>
-        {responseData?.vote && (
-          <VoteResponseLayout
-            vote={responseData.vote}
-            answer={responseData.voteAnswer}
-            contributor={username === user?.username ? '나' : username}
-          />
-        )}
-        <Divider />
-        <Button
-          variant="contained"
-          size="large"
-          type="button"
-          color="inherit"
-          onClick={() => {
-            history.back();
-          }}
-        >
-          이전으로
-        </Button>
-      </Stack>
-      <Toolbar />
-    </Container>
+    <Stack gap={3}>
+      {responseData?.vote && (
+        <VoteResponseLayout
+          vote={responseData.vote}
+          answer={responseData.voteAnswer}
+          contributor={username === user?.username ? '나' : username}
+        />
+      )}
+      <Divider />
+      <Button
+        variant="contained"
+        size="large"
+        type="button"
+        color="inherit"
+        onClick={() => {
+          history.back();
+        }}
+      >
+        이전으로
+      </Button>
+    </Stack>
   );
 };
 

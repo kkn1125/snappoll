@@ -40,6 +40,7 @@ export class SnapVote {
   }
 
   addOption(option: SnapVoteOption) {
+    option.order = this.voteOption.length;
     this.voteOption.push(option);
   }
 
@@ -47,5 +48,12 @@ export class SnapVote {
     this.voteOption = this.voteOption.filter(
       (voteOption) => voteOption.id !== id,
     );
+    this.voteOption = this.voteOption
+      .toSorted((a, b) => a.order - b.order)
+      .map((option, index) => {
+        const newOption = SnapVoteOption.copy(option);
+        newOption.order = index;
+        return newOption;
+      });
   }
 }

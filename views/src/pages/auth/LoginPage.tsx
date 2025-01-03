@@ -2,6 +2,7 @@ import { tokenAtom } from '@/recoils/token.atom';
 import { login } from '@apis/login';
 import { Message } from '@common/messages';
 import CustomInput from '@components/atoms/CustomInput';
+import HistoryPrevBtn from '@components/atoms/HistoryPrevBtn';
 import useModal from '@hooks/useModal';
 import useValidate from '@hooks/useValidate';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
@@ -143,17 +144,10 @@ const LoginPage: React.FC<LoginPageProps> = () => {
         // onChange={onFormChange}
       >
         <Stack direction="row" alignItems="center">
-          <IconButton size="large" color="inherit" onClick={() => navigate(-1)}>
-            <ArrowBackIosIcon />
-          </IconButton>
-          <Typography
-            fontSize={28}
-            fontWeight={700}
-            align="center"
-            color="info"
-          >
-            로그인
-          </Typography>
+          <HistoryPrevBtn
+            name="로그인"
+            sx={{ fontSize: 24, fontWeight: 700 }}
+          />
         </Stack>
         <CustomInput
           size="small"
@@ -183,16 +177,7 @@ const LoginPage: React.FC<LoginPageProps> = () => {
         <Button component={Link} size="large" to="/auth/signup">
           스냅폴이 처음인가요?
         </Button>
-        <Divider />
-        <Typography
-          component={Link}
-          to="/auth/account"
-          color="textSecondary"
-          sx={{ textDecoration: 'none' }}
-        >
-          비밀번호를 잊으셨나요?
-        </Typography>
-
+        <Divider sx={{ my: 1 }} />
         <Button
           component={Link}
           variant="outlined"
@@ -202,6 +187,23 @@ const LoginPage: React.FC<LoginPageProps> = () => {
         >
           메인으로
         </Button>
+        <Typography
+          fontSize={14}
+          color="textSecondary"
+          sx={{ textDecoration: 'none' }}
+        >
+          비밀번호를 잊으셨나요?{" "}
+          <Typography
+            component={Link}
+            color="info"
+            to="/auth/account"
+            fontSize={14}
+            fontWeight={700}
+            sx={{ textDecoration: 'none' }}
+          >
+            여기를 눌러주세요.
+          </Typography>
+        </Typography>
       </Stack>
     </Stack>
   );

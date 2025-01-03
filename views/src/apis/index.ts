@@ -1,6 +1,6 @@
 import { BASE_URL } from '@common/variables';
 import { Logger } from '@utils/Logger';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 
 const logger = new Logger('SnapApi');
 
@@ -27,8 +27,13 @@ snapApi.interceptors.response.use(
   (response) => {
     return response;
   },
-  (error) => {
+  (error: AxiosError) => {
     logger.error(error);
+    const httpCode = error.response?.data;
+    if (httpCode === 401) {
+      location.href = '/';
+    }
+    // logger.debug(error.response?.data);
     return Promise.reject(error);
   },
 );

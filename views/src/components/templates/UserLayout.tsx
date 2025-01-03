@@ -2,8 +2,8 @@ import HistoryPrevBtn from '@components/atoms/HistoryPrevBtn';
 import { Container, Stack, useMediaQuery, useTheme } from '@mui/material';
 import { Outlet } from 'react-router-dom';
 
-interface ServiceLayoutProps {}
-const ServiceLayout: React.FC<ServiceLayoutProps> = () => {
+interface UserLayoutProps {}
+const UserLayout: React.FC<UserLayoutProps> = () => {
   const theme = useTheme();
   const isMdUp = useMediaQuery(theme.breakpoints.up('md'));
   return (
@@ -18,4 +18,4 @@ const ServiceLayout: React.FC<ServiceLayoutProps> = () => {
   );
 };
 
-export default ServiceLayout;
+export default UserLayout;

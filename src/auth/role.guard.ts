@@ -13,7 +13,9 @@ export class RoleGuard implements CanActivate {
 
   async canActivate(context: ExecutionContext) {
     this.logger.debug('역할 검증 시작');
-    const roles = this.reflector.get(Roles, context.getHandler());
+    const roles =
+      this.reflector.get(Roles, context.getHandler()) ||
+      this.reflector.get(Roles, context.getClass());
     if (!roles) {
       this.logger.debug('정의된 역할 없음');
       return true;

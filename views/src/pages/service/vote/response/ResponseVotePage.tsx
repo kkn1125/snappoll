@@ -1,7 +1,7 @@
+import { tokenAtom } from '@/recoils/token.atom';
 import { getVoteResponse } from '@apis/vote/response/getVoteResponse';
 import { getVoteResponseMe } from '@apis/vote/response/getVoteResponseMe';
 import { removeVoteResponse } from '@apis/vote/response/removeVoteResponse';
-import { tokenAtom } from '@/recoils/token.atom';
 import { Message } from '@common/messages';
 import CommonPagination from '@components/atoms/CommonPagination';
 import SkeletonResponseList from '@components/moleculars/SkeletonResponseList';
@@ -12,16 +12,12 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import {
   Alert,
   AlertTitle,
-  Button,
-  Container,
-  Divider,
   IconButton,
   List,
   ListItem,
   ListItemButton,
   ListItemText,
   Stack,
-  Toolbar,
   Typography,
 } from '@mui/material';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -94,74 +90,60 @@ const ResponseVotePage: React.FC<ResponseVotePageProps> = ({ me }) => {
   if (isLoading) return <SkeletonResponseList />;
 
   return (
-    <Container maxWidth="md">
-      <Toolbar />
-      <Stack gap={3}>
-        {isExpired && (
-          <Alert severity="warning">
-            <AlertTitle>안내</AlertTitle>
-            마감된 투표입니다.
-          </Alert>
-        )}
+    <Stack gap={3}>
+      {isExpired && (
+        <Alert severity="warning">
+          <AlertTitle>안내</AlertTitle>
+          마감된 투표입니다.
+        </Alert>
+      )}
 
-        <List>
-          {responseData?.responses.slice(0, 10).map((response, i) => (
-            <ListItem
-              key={response.id}
-              secondaryAction={
-                user?.id === response.userId && (
-                  <IconButton
-                    color="error"
-                    onClick={() => handleRemove(response.id)}
-                  >
-                    <DeleteIcon />
-                  </IconButton>
+      <List>
+        {responseData?.responses.slice(0, 10).map((response, i) => (
+          <ListItem
+            key={response.id}
+            secondaryAction={
+              user?.id === response.userId && (
+                <IconButton
+                  color="error"
+                  onClick={() => handleRemove(response.id)}
+                >
+                  <DeleteIcon />
+                </IconButton>
+              )
+            }
+          >
+            <ListItemButton
+              onClick={() =>
+                navigate(
+                  `/service/vote/${me ? response.voteId : id}/response/${response.id}`,
                 )
               }
             >
-              <ListItemButton
-                onClick={() =>
-                  navigate(
-                    `/service/vote/${me ? response.voteId : id}/response/${response.id}`,
-                  )
-                }
-              >
-                <Stack direction="row" gap={3}>
-                  <Typography>{i + 1}.</Typography>
-                  <Typography>{getTitle(response)}</Typography>
-                  <Typography>{getUser(response)}</Typography>
-                  <Typography>{formattedDate(response.createdAt)}</Typography>
-                </Stack>
-              </ListItemButton>
-            </ListItem>
-          ))}
+              <Stack direction="row" gap={3}>
+                <Typography>{i + 1}.</Typography>
+                <Typography>{getTitle(response)}</Typography>
+                <Typography>{getUser(response)}</Typography>
+                <Typography>{formattedDate(response.createdAt)}</Typography>
+              </Stack>
+            </ListItemButton>
+          </ListItem>
+        ))}
 
-          {responseData?.responses.length === 0 && (
-            <ListItem>
-              <ListItemButton>
-                <ListItemText>
-                  {me
-                    ? '아직 응답한 투표가 없습니다.'
-                    : '아직 투표에 참여한 사람이 없습니다.'}
-                </ListItemText>
-              </ListItemButton>
-            </ListItem>
-          )}
-        </List>
-        <CommonPagination total={total} />
-        <Divider />
-        <Button
-          variant="contained"
-          size="large"
-          type="button"
-          color="inherit"
-          onClick={() => navigate(-1)}
-        >
-          이전으로
-        </Button>
-      </Stack>
-      <Toolbar />
-    </Container>
+        {responseData?.responses.length === 0 && (
+          <ListItem>
+            <ListItemButton>
+              <ListItemText>
+                {me
+                  ? '아직 응답한 투표가 없습니다.'
+                  : '아직 투표에 참여한 사람이 없습니다.'}
+              </ListItemText>
+            </ListItemButton>
+          </ListItem>
+        )}
+      </List>
+      <CommonPagination total={total} />
+    </Stack>
   );
 };
 

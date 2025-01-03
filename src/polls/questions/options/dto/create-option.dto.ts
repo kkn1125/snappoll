@@ -4,4 +4,5 @@ export class CreateOptionDto implements Option {
   id: string;
   questionId: string;
   content: string;
+  order: number | null;
 }

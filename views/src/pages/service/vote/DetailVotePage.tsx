@@ -104,6 +104,18 @@ const DetailVotePage: React.FC<DetailVotePageProps> = ({
 
       if (!responseData?.id) return;
 
+      if (response.voteAnswer.length === 0) {
+        openModal({
+          info: {
+            title: '안내',
+            content: responseData.isMultiple
+              ? '다중 선택 가능한 투표입니다. 최소 1개 이상 선택해주세요.'
+              : '선택지를 하나 선택해주세요.',
+          },
+        });
+        return;
+      }
+
       openInteractiveModal({
         content: '작성을 완료하시겠습니까?',
         callback: () => {
@@ -125,53 +137,37 @@ const DetailVotePage: React.FC<DetailVotePageProps> = ({
   }, [responseData]);
 
   return (
-    <Container maxWidth="md">
-      <Toolbar />
-      <Stack component="form" gap={3} onSubmit={handleSavePollResult}>
-        {responseData && (
-          <VoteLayout
-            vote={responseData}
-            expired={isExpired}
-            refetchVote={refetchVote}
-          />
-        )}
-        <Divider />
+    <Stack component="form" gap={3} onSubmit={handleSavePollResult}>
+      {responseData && (
+        <VoteLayout
+          vote={responseData}
+          expired={isExpired}
+          refetchVote={refetchVote}
+        />
+      )}
+      <Divider />
+      <Button
+        disabled={isExpired}
+        variant="contained"
+        size="large"
+        type="submit"
+      >
+        {isExpired ? '마감된 설문입니다.' : '제출'}
+      </Button>
+      {isShare && (
         <Button
-          disabled={isExpired}
           variant="contained"
           size="large"
-          type="submit"
+          type="button"
+          color="inherit"
+          onClick={() => {
+            navigate('/');
+          }}
         >
-          {isExpired ? '마감된 설문입니다.' : '제출'}
+          사이트로 이동
         </Button>
-        {isShare ? (
-          <Button
-            variant="contained"
-            size="large"
-            type="button"
-            color="inherit"
-            onClick={() => {
-              navigate('/');
-            }}
-          >
-            사이트로 이동
-          </Button>
-        ) : (
-          <Button
-            variant="contained"
-            size="large"
-            type="button"
-            color="inherit"
-            onClick={() => {
-              history.back();
-            }}
-          >
-            이전으로
-          </Button>
-        )}
-      </Stack>
-      <Toolbar />
-    </Container>
+      )}
+    </Stack>
   );
 };
 

@@ -1,24 +1,26 @@
-import useToken from '@hooks/useToken';
-import { Stack, Typography, Toolbar, Button } from '@mui/material';
+import { Button, Stack, Toolbar, Typography } from '@mui/material';
 import { Link } from 'react-router-dom';
 
 interface ForbiddenPageProps {}
 const ForbiddenPage: React.FC<ForbiddenPageProps> = () => {
-  const { user } = useToken();
-
   return (
-    <Stack alignItems="center" justifyContent="center" flex={1}>
-      <Typography variant="h1" fontWeight={700}>
-        403
-      </Typography>
+    <Stack alignItems="center" justifyContent="center" flex={1} gap={2}>
       <Typography variant="h3" fontWeight={700}>
-        Forbidden
+        안내
       </Typography>
-      <Typography variant="h6">권한이 없습니다.</Typography>
+      <Typography variant="h4" fontWeight={700}>
+        잘못된 접근
+      </Typography>
+      <Typography variant="h6">
+        권한이 없습니다. 회원 전용 페이지입니다. 로그인 후 접근해주세요.
+      </Typography>
       <Toolbar />
-      <Button component={Link} variant="contained" to="/">
-        메인으로
-      </Button>
+      <Stack direction="row" gap={2}>
+        <Button component={Link} variant="contained" to="/">
+          메인으로
+        </Button>
+        <Button onClick={() => window.history.back()}>이전으로</Button>
+      </Stack>
     </Stack>
   );
 };

@@ -11,7 +11,12 @@ import {
   Toolbar,
   Typography,
 } from '@mui/material';
-import { BarChart, BarSeriesType, LineSeriesType } from '@mui/x-charts';
+import {
+  AllSeriesType,
+  BarChart,
+  BarSeriesType,
+  LineSeriesType,
+} from '@mui/x-charts';
 import { MakeOptional } from '@mui/x-date-pickers/internals';
 import { useCallback, useState } from 'react';
 
@@ -70,7 +75,7 @@ const CorrelationChart: React.FC<CorrelationChartProps> = ({ data }) => {
   }, []);
 
   const getCounter = useCallback(
-    (question: SnapPollQuestion) => {
+    (question: SnapPollQuestion): AllSeriesType[] => {
       if (baseQuestion === null) return [];
       if (!baseQuestion.answer) return [];
 
@@ -92,7 +97,7 @@ const CorrelationChart: React.FC<CorrelationChartProps> = ({ data }) => {
           label: option.content,
           // highlightScope: { highlight: 'item', fade: 'global' },
         };
-      });
+      }) as AllSeriesType[];
 
       return result;
     },

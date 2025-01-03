@@ -142,7 +142,6 @@ const CreatePollPage: React.FC<CreatePollPageProps> = ({ edit = false }) => {
       e.preventDefault();
       setValidated(true);
 
-      console.log(errors);
       if (!validate('snapPoll')) return;
       const copyPoll = SnapPoll.copy(snapPoll);
 
@@ -166,85 +165,70 @@ const CreatePollPage: React.FC<CreatePollPageProps> = ({ edit = false }) => {
   );
 
   return (
-    <Container maxWidth="md">
-      <Toolbar />
-      <Stack
-        component="form"
-        ref={formRef}
-        noValidate
-        onSubmit={handleSubmit}
-        gap={2}
-      >
-        <Stack direction="row">
-          <Button
-            component={Link}
-            to={'/service/poll'}
-            reloadDocument
-            variant="contained"
-            color="inherit"
-          >
-            이전으로
-          </Button>
-        </Stack>
+    <Stack
+      component="form"
+      ref={formRef}
+      noValidate
+      onSubmit={handleSubmit}
+      gap={2}
+    >
+      <CreatePollForm errors={errors} />
 
-        <CreatePollForm errors={errors} />
+      <Divider />
 
-        <Divider />
-
-        {typeof errors?.question === 'string' && errors?.question && (
-          <FormHelperText error>{errors.question}</FormHelperText>
-        )}
-        <Stack gap={3}>
-          {snapPoll.question
-            .toSorted((a, b) => a.order - b.order)
-            .map((question, i) => (
-              <CreateQuestionForm
-                key={question.id}
-                index={i + 1}
-                question={question}
-                errors={
-                  errors.question?.[
-                    i
-                  ] as unknown as ErrorMessage<SnapPollQuestion>
-                }
-              />
-            ))}
-          <Button
-            size="large"
-            fullWidth
-            variant="outlined"
-            onClick={addQuestion}
-            sx={{
-              display: 'flex',
-              alignItems: 'center',
-              fontSize: '18px !important',
-              ['& svg']: {
-                fontSize: '24px !important',
-              },
-              gap: 1,
-            }}
-          >
-            <AddBoxIcon />
-            질문 추가
-          </Button>
-        </Stack>
-        <Toolbar />
-        <SpeedDial
-          ariaLabel="SpeedDial basic example"
-          sx={{ position: 'absolute', bottom: 16, right: 16 }}
-          icon={<SpeedDialIcon />}
-        >
-          {actions.map((action) => (
-            <SpeedDialAction
-              key={action.name}
-              icon={action.icon}
-              tooltipTitle={action.name}
-              onClick={action.onClick}
+      {typeof errors?.question === 'string' && errors?.question && (
+        <FormHelperText error>{errors.question}</FormHelperText>
+      )}
+      <Stack gap={3}>
+        {snapPoll.question
+          .toSorted((a, b) => a.order - b.order)
+          .map((question, i) => (
+            <CreateQuestionForm
+              key={question.id}
+              index={i + 1}
+              question={question}
+              errors={
+                errors.question?.[
+                  i
+                ] as unknown as ErrorMessage<SnapPollQuestion>
+              }
             />
           ))}
-        </SpeedDial>
+        <Button
+          size="large"
+          fullWidth
+          variant="outlined"
+          onClick={addQuestion}
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            fontSize: '18px !important',
+            ['& svg']: {
+              fontSize: '24px !important',
+            },
+            gap: 1,
+          }}
+        >
+          <AddBoxIcon />
+          질문 추가
+        </Button>
       </Stack>
-    </Container>
+      <Toolbar />
+      <SpeedDial
+        ariaLabel="SpeedDial basic example"
+        sx={{ position: 'absolute', bottom: 16, right: 16 }}
+        icon={<SpeedDialIcon />}
+      >
+        {actions.map((action) => (
+          <SpeedDialAction
+            key={action.name}
+            icon={action.icon}
+            tooltipTitle={action.name}
+            onClick={action.onClick}
+          />
+        ))}
+      </SpeedDial>
+    </Stack>
   );
 };
 

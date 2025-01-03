@@ -1,7 +1,7 @@
+import { tokenAtom } from '@/recoils/token.atom';
 import { getPollResponse } from '@apis/poll/response/getPollResponse';
 import { getPollResponseMe } from '@apis/poll/response/getPollResponseMe';
 import { removeResponse } from '@apis/poll/response/removeResponse';
-import { tokenAtom } from '@/recoils/token.atom';
 import { Message } from '@common/messages';
 import CommonPagination from '@components/atoms/CommonPagination';
 import SkeletonResponseList from '@components/moleculars/SkeletonResponseList';
@@ -12,16 +12,12 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import {
   Alert,
   AlertTitle,
-  Button,
-  Container,
-  Divider,
   IconButton,
   List,
   ListItem,
   ListItemButton,
   ListItemText,
   Stack,
-  Toolbar,
   Typography,
 } from '@mui/material';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -96,74 +92,60 @@ const ResponsePollPage: React.FC<ResponsePollPageProps> = ({ me }) => {
   if (isLoading) return <SkeletonResponseList />;
 
   return (
-    <Container maxWidth="md">
-      <Toolbar />
-      <Stack gap={3}>
-        {isExpired && (
-          <Alert severity="warning">
-            <AlertTitle>안내</AlertTitle>
-            마감된 설문입니다.
-          </Alert>
-        )}
+    <Stack gap={3}>
+      {isExpired && (
+        <Alert severity="warning">
+          <AlertTitle>안내</AlertTitle>
+          마감된 설문입니다.
+        </Alert>
+      )}
 
-        <List>
-          {responseData?.responses.slice(0, 10).map((response, i) => (
-            <ListItem
-              key={response.id}
-              secondaryAction={
-                user?.id === response.userId && (
-                  <IconButton
-                    color="error"
-                    onClick={() => handleRemove(response.id)}
-                  >
-                    <DeleteIcon />
-                  </IconButton>
+      <List>
+        {responseData?.responses.slice(0, 10).map((response, i) => (
+          <ListItem
+            key={response.id}
+            secondaryAction={
+              user?.id === response.userId && (
+                <IconButton
+                  color="error"
+                  onClick={() => handleRemove(response.id)}
+                >
+                  <DeleteIcon />
+                </IconButton>
+              )
+            }
+          >
+            <ListItemButton
+              onClick={() =>
+                navigate(
+                  `/service/poll/${me ? response.pollId : id}/response/${response.id}`,
                 )
               }
             >
-              <ListItemButton
-                onClick={() =>
-                  navigate(
-                    `/service/poll/${me ? response.pollId : id}/response/${response.id}`,
-                  )
-                }
-              >
-                <Stack direction="row" gap={3} flexWrap="wrap">
-                  <Typography>{i + 1 + (page - 1) * 10}.</Typography>
-                  <Typography flex={1}>{getTitle(response)}</Typography>
-                  <Typography>{getUser(response)}</Typography>
-                  <Typography>{formattedDate(response.createdAt)}</Typography>
-                </Stack>
-              </ListItemButton>
-            </ListItem>
-          ))}
+              <Stack direction="row" gap={3} flexWrap="wrap">
+                <Typography>{i + 1 + (page - 1) * 10}.</Typography>
+                <Typography flex={1}>{getTitle(response)}</Typography>
+                <Typography>{getUser(response)}</Typography>
+                <Typography>{formattedDate(response.createdAt)}</Typography>
+              </Stack>
+            </ListItemButton>
+          </ListItem>
+        ))}
 
-          {responseData?.responses.length === 0 && (
-            <ListItem>
-              <ListItemButton>
-                <ListItemText>
-                  {me
-                    ? '아직 응답한 설문이 없습니다.'
-                    : '아직 설문조사에 참여한 사람이 없습니다.'}
-                </ListItemText>
-              </ListItemButton>
-            </ListItem>
-          )}
-        </List>
-        <CommonPagination total={total} />
-        <Divider />
-        <Button
-          variant="contained"
-          size="large"
-          type="button"
-          color="inherit"
-          onClick={() => navigate(-1)}
-        >
-          이전으로
-        </Button>
-      </Stack>
-      <Toolbar />
-    </Container>
+        {responseData?.responses.length === 0 && (
+          <ListItem>
+            <ListItemButton>
+              <ListItemText>
+                {me
+                  ? '아직 응답한 설문이 없습니다.'
+                  : '아직 설문조사에 참여한 사람이 없습니다.'}
+              </ListItemText>
+            </ListItemButton>
+          </ListItem>
+        )}
+      </List>
+      <CommonPagination total={total} />
+    </Stack>
   );
 };
 

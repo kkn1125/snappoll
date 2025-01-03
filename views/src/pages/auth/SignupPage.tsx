@@ -3,6 +3,7 @@ import { signup } from '@apis/signup';
 import { getTerms } from '@apis/terms/getTerms';
 import { Message } from '@common/messages';
 import CustomInput from '@components/atoms/CustomInput';
+import HistoryPrevBtn from '@components/atoms/HistoryPrevBtn';
 import useModal from '@hooks/useModal';
 import useValidate from '@hooks/useValidate';
 import { SnapTerms } from '@models/SnapTerms';
@@ -429,17 +430,10 @@ const SignupPage: React.FC<SignupPageProps> = () => {
         width="100%"
       >
         <Stack direction="row" alignItems="center">
-          <IconButton size="large" color="inherit" onClick={() => navigate(-1)}>
-            <ArrowBackIosIcon />
-          </IconButton>
-          <Typography
-            fontSize={28}
-            fontWeight={700}
-            align="center"
-            color="info"
-          >
-            회원가입
-          </Typography>
+          <HistoryPrevBtn
+            name="회원가입"
+            sx={{ fontSize: 24, fontWeight: 700 }}
+          />
         </Stack>
         {emailComponent}
         {usernameComponent}
@@ -499,8 +493,17 @@ const SignupPage: React.FC<SignupPageProps> = () => {
         <Button variant="contained" size="large" type="submit">
           회원가입
         </Button>
-
-        <Typography fontSize={14}>
+        <Button
+          component={Link}
+          variant="outlined"
+          size="large"
+          to="/"
+          color="inherit"
+        >
+          메인으로
+        </Button>
+        <Divider sx={{ my: 1 }} />
+        <Typography fontSize={14} color="textSecondary">
           이미 계정이 있으신가요?{' '}
           <Typography
             component={Link}
@@ -513,16 +516,6 @@ const SignupPage: React.FC<SignupPageProps> = () => {
             여기를 눌러주세요.
           </Typography>
         </Typography>
-        <Divider />
-        <Button
-          component={Link}
-          variant="outlined"
-          size="large"
-          to="/"
-          color="inherit"
-        >
-          메인으로
-        </Button>
       </Stack>
     </Stack>
   );

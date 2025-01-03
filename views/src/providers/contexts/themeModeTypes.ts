@@ -39,16 +39,16 @@ const lightTheme = createTheme({
   },
   typography: {
     fontFamily: "'Noto Sans KR', 'Nanum', 'Montserrat', 'moneyg', 'Maruburi'",
-    h1: {
-      fontSize: '2.125rem',
-      fontWeight: 600,
-      color: '#343A40',
-    },
-    h2: {
-      fontSize: '1.75rem',
-      fontWeight: 500,
-      color: '#343A40',
-    },
+    // h1: {
+    //   fontSize: '2.125rem',
+    //   fontWeight: 600,
+    //   color: '#343A40',
+    // },
+    // h2: {
+    //   fontSize: '1.75rem',
+    //   fontWeight: 500,
+    //   color: '#343A40',
+    // },
     body1: {
       fontSize: '1rem',
       color: '#343A40',

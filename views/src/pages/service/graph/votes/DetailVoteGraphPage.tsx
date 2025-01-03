@@ -1,7 +1,7 @@
 import { getVote } from '@apis/vote/getVote';
 import { SnapVote } from '@models/SnapVote';
 import { SnapVoteOption } from '@models/SnapVoteOption';
-import { Box, Button, Stack, Typography } from '@mui/material';
+import { Stack, Typography } from '@mui/material';
 import { PieChart, PieValueType } from '@mui/x-charts';
 import { MakeOptional } from '@mui/x-date-pickers/internals';
 import { useQuery } from '@tanstack/react-query';
@@ -32,15 +32,6 @@ const DetailVoteGraphPage: React.FC<DetailVoteGraphPageProps> = () => {
 
   return (
     <Stack gap={4}>
-      <Box>
-        <Button
-          onClick={() => {
-            history.back();
-          }}
-        >
-          이전으로
-        </Button>
-      </Box>
       <Stack spacing={4} alignItems="center">
         <Typography variant="h4" fontWeight={700}>
           투표지: {responseData.title}

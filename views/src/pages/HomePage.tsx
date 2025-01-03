@@ -14,6 +14,7 @@ import {
   useMediaQuery,
   useTheme,
 } from '@mui/material';
+import { BarChart, ChartsReferenceLine } from '@mui/x-charts';
 import { useQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import { useMemo } from 'react';
@@ -55,7 +56,9 @@ const HomePage = () => {
     const sunday = now.add(6 - todayNumber, 'd');
     return Array.from(Array(7), (_, i) => {
       return sunday.subtract(7 - i - 1, 'day').format('YYYY-MM-DD');
-    });
+    }).map((date) => ({
+      label: date,
+    }));
   }, []);
 
   return (
@@ -63,9 +66,9 @@ const HomePage = () => {
       {/* first section */}
       <Stack gap={2}>
         <Typography variant="h5" fontWeight="bold">
-          나의 설문, 투표
+          나의 활동
         </Typography>
-        <Stack direction="row" gap={2}>
+        <Stack direction={{ xs: 'column', md: 'row' }} gap={{ xs: 2, md: 5 }}>
           <Paper
             sx={{
               p: 2,
@@ -142,17 +145,22 @@ const HomePage = () => {
       <Stack gap={2}>
         {/* todo: section1 : 최근 7일간 설문 응답자 그래프(일별로 몇명 응답했는지 선형그래프) */}
         {/* todo: section2 : 최근 7일간 투표 응답자 그래프(일별로 몇명 응답했는지 선형그래프) */}
+        <Typography variant="h5" fontWeight="bold">
+          주간 응답 그래프
+        </Typography>
         <Stack direction={{ xs: 'column', md: 'row' }} gap={{ xs: 2, md: 3 }}>
           <Stack flex={1}>
             <Stack alignItems="center" gap={1}>
               <Typography variant="h6" fontWeight="bold">
-                내가 응답한 설문, 투표 (주간)
+                내가 응답한 설문, 투표
               </Typography>
             </Stack>
             <Stack gap={2}>
               <Stack height={300}>
                 {pollData && voteData && (
                   <ResponsiveChart
+                    // type="band"
+                    guideline
                     dates={pollData.weeks ?? getDates}
                     responseData={[
                       {
@@ -175,24 +183,26 @@ const HomePage = () => {
           <Stack flex={1}>
             <Stack alignItems="center" gap={1}>
               <Typography variant="h6" fontWeight="bold">
-                나의 설문, 투표에 응답한 사람 (주간)
+                나의 설문, 투표에 응답 사람
               </Typography>
             </Stack>
             <Stack gap={2}>
               <Stack height={300}>
                 {pollData && voteData && (
                   <ResponsiveChart
+                    // type="band"
+                    guideline
                     dates={pollData.weeks ?? getDates}
                     responseData={[
                       {
                         type: 'line',
                         data: pollData.respondentWeek,
-                        label: '설문 응답자',
+                        label: '설문 응답',
                       },
                       {
                         type: 'line',
                         data: voteData?.respondentWeek,
-                        label: '투표 응답자',
+                        label: '투표 응답',
                       },
                     ]}
                   />
@@ -201,6 +211,38 @@ const HomePage = () => {
             </Stack>
           </Stack>
         </Stack>
+        {/* <BarChart
+          height={300}
+          dataset={[
+            { x: 0, y: 10 },
+            { x: 1, y: 20 },
+            { x: 2, y: 30 },
+          ]}
+          xAxis={[
+            {
+              scaleType: 'band',
+              data: [0, 1, 2],
+            },
+          ]}
+          series={[{ type: 'bar', data: [10, 20, 30] }]}
+          sx={{
+            position: 'relative',
+          }}
+        >
+          <ChartsReferenceLine
+            x={2} // 밴드 중앙값 설정
+            lineStyle={{
+              strokeDasharray: '10 5',
+              transform: 'translateX(calc(0%))',
+            }}
+            labelStyle={{
+              fontSize: 12,
+              fontWeight: 700,
+            }}
+            label={`Today`}
+            labelAlign="start"
+          />
+        </BarChart> */}
 
         {/* <Stack gap={2}>
         <Stack gap={2}>

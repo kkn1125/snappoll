@@ -5,4 +5,5 @@ export class CreateVoteOptionDto
 {
   voteId: string;
   content: string;
+  order: number | null;
 }

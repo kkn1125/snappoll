@@ -49,7 +49,7 @@ const SharePoll: React.FC<SharePollProps> = ({ url }) => {
     return <Notfound comment="공유 정지된 설문입니다." />;
 
   return (
-    <Container maxWidth="md">
+    <Stack gap={5}>
       <Alert>
         <AlertTitle>안내</AlertTitle>
         <Typography gutterBottom>
@@ -74,7 +74,7 @@ const SharePoll: React.FC<SharePollProps> = ({ url }) => {
         size="small"
         sx={{ position: 'fixed', bottom: 10, right: 10 }}
       />
-    </Container>
+    </Stack>
   );
 };
 

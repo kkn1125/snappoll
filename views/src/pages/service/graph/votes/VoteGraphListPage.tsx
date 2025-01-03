@@ -8,7 +8,6 @@ import {
   ListItem,
   ListItemButton,
   ListItemText,
-  Pagination,
   Stack,
 } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';

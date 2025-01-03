@@ -1,8 +1,18 @@
 import { SnapPollOption } from '@models/SnapPollOption';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { Avatar, IconButton, ListItem, ListItemText } from '@mui/material';
+import {
+  Avatar,
+  Button,
+  ButtonGroup,
+  IconButton,
+  ListItem,
+  ListItemText,
+  Stack,
+} from '@mui/material';
 import { ChangeEvent } from 'react';
 import CustomInput from './CustomInput';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 
 interface InputItemProps {
   index: number;
@@ -10,6 +20,7 @@ interface InputItemProps {
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
   handleRemove: () => void;
   errors: ErrorMessage<SnapPollOption>;
+  handleOrder: (dir: boolean) => void;
 }
 const InputItem: React.FC<InputItemProps> = ({
   index,
@@ -17,21 +28,10 @@ const InputItem: React.FC<InputItemProps> = ({
   onChange,
   handleRemove,
   errors,
+  handleOrder,
 }) => {
   return (
-    <ListItem
-      secondaryAction={
-        <IconButton
-          edge="end"
-          aria-label="delete"
-          color="error"
-          onClick={handleRemove}
-        >
-          <DeleteIcon />
-        </IconButton>
-      }
-      sx={{ gap: 1 }}
-    >
+    <ListItem sx={{ gap: 1 }}>
       <ListItemText
         primary={
           <Avatar sx={{ width: 20, height: 20, fontSize: 14 }}>{index}</Avatar>
@@ -56,6 +56,32 @@ const InputItem: React.FC<InputItemProps> = ({
         }
         sx={{ flex: 1 }}
       />
+      <Stack direction="row" gap={2} alignItems="center">
+        <IconButton
+          edge="end"
+          aria-label="delete"
+          color="error"
+          onClick={handleRemove}
+        >
+          <DeleteIcon />
+        </IconButton>
+        <Button
+          size="small"
+          variant="outlined"
+          onClick={() => handleOrder(true)}
+          sx={{ minWidth: 'auto', px: 1 }}
+        >
+          <ArrowDropUpIcon fontSize="small" />
+        </Button>
+        <Button
+          size="small"
+          variant="outlined"
+          onClick={() => handleOrder(false)}
+          sx={{ minWidth: 'auto', px: 1 }}
+        >
+          <ArrowDropDownIcon fontSize="small" />
+        </Button>
+      </Stack>
     </ListItem>
   );
 };

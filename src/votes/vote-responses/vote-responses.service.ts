@@ -81,6 +81,7 @@ export class VoteResponsesService {
         },
       },
     });
+
     if (!response) {
       const errorCode = await this.prisma.getErrorCode(
         'voteResponse',
@@ -88,6 +89,8 @@ export class VoteResponsesService {
       );
       throw new NotFoundException(errorCode);
     }
+
+    return response;
   }
 
   findVoteResponses(id: string) {

@@ -81,6 +81,19 @@ export class SnapPoll {
     });
   }
 
+  deleteQuestion(questionId: string) {
+    this.question = this.question.filter(
+      (question) => question.id !== questionId,
+    );
+    this.question = this.question
+      .toSorted((a, b) => a.order - b.order)
+      .map((question, index) => {
+        const newQuestion = SnapPollQuestion.copy(question);
+        newQuestion.order = index;
+        return newQuestion;
+      });
+  }
+
   deleteOption(questionId: string, id: string) {
     this.question = this.question.map((question) => {
       if (question.id === questionId) {
@@ -88,6 +101,13 @@ export class SnapPoll {
         newQuestion.option = newQuestion.option.filter(
           (option) => option.id !== id,
         );
+        newQuestion.option = newQuestion.option
+          .toSorted((a, b) => a.order - b.order)
+          .map((opt, index) => {
+            const newOpt = SnapPollOption.copy(opt);
+            newOpt.order = index;
+            return newOpt;
+          });
         return newQuestion;
       }
       return question;

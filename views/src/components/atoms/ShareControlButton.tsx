@@ -16,6 +16,8 @@ import { useMutation } from '@tanstack/react-query';
 import { useCallback, useState } from 'react';
 import { Link } from 'react-router-dom';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import LinkIcon from '@mui/icons-material/Link';
+import QR from 'qrcode';
 
 interface ShareControlButtonProps {
   data?: SnapPoll | SnapVote;
@@ -113,6 +115,37 @@ const ShareControlButton: React.FC<ShareControlButtonProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  function handleCopyQrCodeImage() {
+    if (share) {
+      const qrCodeUrl = `${BASE_CLIENT_URL}/service/${name}/share/?url=${encodeURIComponent(share.url)}`;
+      QR.toDataURL(qrCodeUrl).then((url) => {
+        const image = new Image();
+        image.src = url;
+        image.onload = () => {
+          const canvas = document.createElement('canvas');
+          canvas.width = image.width;
+          canvas.height = image.height;
+          const ctx = canvas.getContext('2d');
+          ctx?.drawImage(image, 0, 0);
+          canvas.toBlob((blob) => {
+            if (blob) {
+              const item = new ClipboardItem({ 'image/png': blob });
+              navigator.clipboard.write([item]).then(() => {
+                openModal({
+                  info: { title: '안내', content: 'QR 코드가 복사되었습니다.' },
+                  closeCallback: () => {
+                    image.remove();
+                    URL.revokeObjectURL(url);
+                  },
+                });
+              });
+            }
+          }, 'image/png');
+        };
+      });
+    }
+  }
+
   if (!data || !user || data.user?.id !== user.id) return <></>;
 
   return (
@@ -137,20 +170,24 @@ const ShareControlButton: React.FC<ShareControlButtonProps> = ({
       </Button>
     ) : (
       <Stack direction="column" alignItems="flex-end">
-        <Chip
-          component={Link}
-          size="small"
-          color="info"
-          to={`${BASE_CLIENT_URL}/service/${name}/share/?url=${encodeURIComponent(share.url)}`}
-          label={`/service/share/${name}/?url=${encodeURIComponent(share.url)}`}
-          sx={{
-            cursor: 'pointer',
-            whiteSpace: 'nowrap',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            maxWidth: '50vw',
-          }}
-        />
+        {share.url && (
+          <Button size="small" onClick={handleCopyQrCodeImage}>
+            공유 QR코드 복사
+          </Button>
+        )}
+        {share.url && (
+          <Button
+            component={Link}
+            color="inherit"
+            size="small"
+            startIcon={<LinkIcon />}
+            to={`${BASE_CLIENT_URL}/service/${name}/share/?url=${encodeURIComponent(share.url)}`}
+            target="_blank"
+          >
+            공유 URL 확인하기
+          </Button>
+        )}
+
         <Button
           color={copy ? 'success' : 'inherit'}
           size="small"

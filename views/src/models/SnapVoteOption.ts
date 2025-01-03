@@ -1,5 +1,6 @@
 import { v4 } from 'uuid';
 import { SnapVoteAnswer } from './SnapVoteAnswer';
+import { isNil } from '@utils/isNil';
 
 export class SnapVoteOption {
   static copy(voteOption: SnapVoteOption) {
@@ -9,6 +10,7 @@ export class SnapVoteOption {
   id: string = v4();
   voteId: string = '';
   content: string = '';
+  order: number = -1;
   createdAt: Date = new Date();
   updatedAt: Date = new Date();
   voteAnswer?: SnapVoteAnswer[];
@@ -18,6 +20,7 @@ export class SnapVoteOption {
       this.id = props.id;
       this.voteId = props.voteId;
       this.content = props.content;
+      if (!isNil(props.order)) this.order = props.order;
       this.createdAt = props.createdAt;
       this.updatedAt = props.updatedAt;
     }

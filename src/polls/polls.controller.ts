@@ -1,4 +1,7 @@
 import { IgnoreCookie } from '@auth/ignore-cookie.decorator';
+import { RoleGuard } from '@auth/role.guard';
+import { PlanValidate } from '@middleware/plan-validate.decorator';
+import { PlanGuard } from '@middleware/plan.guard';
 import {
   Body,
   Controller,
@@ -16,9 +19,8 @@ import { CreatePollDto } from './dto/create-poll.dto';
 import { CreateSharePollDto } from './dto/create-share-poll.dto';
 import { UpdatePollDto } from './dto/update-poll.dto';
 import { PollsService } from './polls.service';
-import { PlanGuard } from '@middleware/plan.guard';
-import { PlanValidate } from '@middleware/plan-validate.decorator';
 
+@UseGuards(RoleGuard)
 @Controller('polls')
 export class PollsController {
   constructor(private readonly pollsService: PollsService) {}

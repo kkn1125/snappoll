@@ -1,6 +1,7 @@
 import { initPass } from '@apis/initPass';
 import { Message } from '@common/messages';
 import CustomInput from '@components/atoms/CustomInput';
+import HistoryPrevBtn from '@components/atoms/HistoryPrevBtn';
 import useModal from '@hooks/useModal';
 import useValidate from '@hooks/useValidate';
 import {
@@ -26,7 +27,7 @@ const AccountPage: React.FC<AccountPageProps> = () => {
     mutationKey: ['initPass'],
     mutationFn: initPass,
     onSuccess(data, variables, context) {
-      console.log(data)
+      // console.log(data);
       openModal({ info: Message.Info.SuccessInitPassword });
     },
   });
@@ -66,53 +67,75 @@ const AccountPage: React.FC<AccountPageProps> = () => {
         justifyContent="center"
         height="100%"
       >
-        <Typography variant="h4" fontWeight={700} align="center" gutterBottom>
-          이메일로 비밀번호 초기화
-        </Typography>
-        <FormControl>
-          <FormLabel sx={{ fontWeight: 700 }}>Email</FormLabel>
-          <CustomInput
-            name="email"
-            type="email"
-            autoComplete="current-username"
-            required
-            autoFocus
-            placeholder="youremail@example.com"
-            value={data.email}
-            errors={errors}
-            fullWidth
-            disabled={sendInitPass.isSuccess}
-            onChange={onChange}
-            sx={{
-              ['.MuiInputBase-root']: { fontWeight: 700, color: 'GrayText' },
-            }}
+        <Stack direction="row">
+          <HistoryPrevBtn
+            name="이전으로"
+            sx={{ fontSize: 24, fontWeight: 700 }}
           />
-        </FormControl>
-        {!sendInitPass.isSuccess ? (
-          <Button
-            type="submit"
-            size="large"
-            variant="outlined"
-            sx={{ fontSize: 18 }}
-            startIcon={sendInitPass.isPending && <CircularProgress size={18} />}
-          >
-            비밀번호 초기화 이메일 보내기
-          </Button>
-        ) : (
-          <>
-            <Typography color="warning">
-              초기화에 성공했습니다. 초기화된 비밀번호로 다시 로그인해주세요.
-            </Typography>
+        </Stack>
+        <Stack gap={2}>
+          <Typography variant="h4" fontWeight={700} align="center" gutterBottom>
+            이메일로 비밀번호 초기화
+          </Typography>
+          <FormControl>
+            <FormLabel sx={{ fontWeight: 700 }}>Email</FormLabel>
+            <CustomInput
+              name="email"
+              type="email"
+              autoComplete="current-username"
+              required
+              autoFocus
+              placeholder="youremail@example.com"
+              value={data.email}
+              errors={errors}
+              fullWidth
+              disabled={sendInitPass.isSuccess}
+              onChange={onChange}
+              sx={{
+                ['.MuiInputBase-root']: { fontWeight: 700, color: 'GrayText' },
+              }}
+            />
+          </FormControl>
+          {!sendInitPass.isSuccess ? (
             <Button
-              component={Link}
-              variant="outlined"
+              type="submit"
               size="large"
-              to="/auth/login"
+              variant="outlined"
+              sx={{ fontSize: 18 }}
+              startIcon={
+                sendInitPass.isPending && <CircularProgress size={18} />
+              }
             >
-              로그인하기
+              비밀번호 초기화 이메일 보내기
             </Button>
-          </>
-        )}
+          ) : (
+            <>
+              <Typography color="warning">
+                초기화에 성공했습니다. 초기화된 비밀번호로 다시 로그인해주세요.
+              </Typography>
+              <Button
+                type="button"
+                component={Link}
+                variant="outlined"
+                size="large"
+                to="/auth/login"
+                sx={{ fontSize: 18 }}
+              >
+                로그인하기
+              </Button>
+            </>
+          )}
+          <Button
+            type="button"
+            component={Link}
+            variant="outlined"
+            size="large"
+            to="/"
+            sx={{ fontSize: 18 }}
+          >
+            메인으로
+          </Button>
+        </Stack>
       </Stack>
     </Container>
   );

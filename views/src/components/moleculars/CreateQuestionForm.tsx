@@ -5,6 +5,8 @@ import useModal from '@hooks/useModal';
 import { SnapPoll } from '@models/SnapPoll';
 import { SnapPollOption } from '@models/SnapPollOption';
 import { SnapPollQuestion } from '@models/SnapPollQuestion';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ListIcon from '@mui/icons-material/List';
 import {
@@ -31,8 +33,6 @@ import {
 } from 'react';
 import { useSetRecoilState } from 'recoil';
 import CreateOptionForm from './CreateOptionForm';
-import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
-import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 interface CreateQuestionFormProps {
   index: number;
   errors: ErrorMessage<SnapPollQuestion>;
@@ -45,14 +45,9 @@ const CreateQuestionForm: React.FC<CreateQuestionFormProps> = ({
 }) => {
   const { openInteractiveModal } = useModal();
   const setSnapPoll = useSetRecoilState(snapPollAtom);
-  // const [type, setType] = useState('text');
-  // const [options, setOptions] = useState<SnapPollOption[]>([
-  //   new SnapPollOption(),
-  // ]);
 
   function setOrder(dir: boolean, questionId: string) {
     setSnapPoll((snapPoll) => {
-      // console.log(snapPoll.question.map((q) => q.order));
       const copyPoll = SnapPoll.copy(snapPoll);
       const index = copyPoll.question.findIndex(
         (question) => question.id === questionId,
@@ -62,17 +57,15 @@ const CreateQuestionForm: React.FC<CreateQuestionFormProps> = ({
       );
 
       if (dir) {
-        // console.log('위');
+        // top
         if (index - 1 >= 0) {
-          // console.log(copyPoll.question[index - 1]);
-          // console.log(copyPoll.question[index]);
           [copyPoll.question[index - 1], copyPoll.question[index]] = [
             copyPoll.question[index],
             copyPoll.question[index - 1],
           ];
         }
       } else {
-        // console.log('아래', index + 1, copyPoll.question.length);
+        // down
         if (index + 1 < copyPoll.question.length) {
           [copyPoll.question[index + 1], copyPoll.question[index]] = [
             copyPoll.question[index],
@@ -81,11 +74,9 @@ const CreateQuestionForm: React.FC<CreateQuestionFormProps> = ({
         }
       }
       copyPoll.question = copyPoll.question.map((question, index) => {
-        // console.log(question);
         question.order = index;
         return question;
       });
-      // console.log(copyPoll.question);
       return copyPoll;
     });
   }
@@ -96,9 +87,7 @@ const CreateQuestionForm: React.FC<CreateQuestionFormProps> = ({
       callback: () => {
         setSnapPoll((snapPoll) => {
           const copySnapPoll = SnapPoll.copy(snapPoll);
-          copySnapPoll.question = copySnapPoll.question.filter(
-            (question) => question.id !== questionId,
-          );
+          copySnapPoll.deleteQuestion(questionId);
           return copySnapPoll;
         });
       },
@@ -122,6 +111,9 @@ const CreateQuestionForm: React.FC<CreateQuestionFormProps> = ({
     setSnapPoll((snapPoll) => {
       const copyPoll = SnapPoll.copy(snapPoll);
       const copyQuestion = SnapPollQuestion.copy(question);
+      if (copyQuestion.id) {
+        newOption.questionId = copyQuestion.id;
+      }
       copyQuestion.addOption(newOption);
       copyPoll.updateQuestion(copyQuestion);
       return copyPoll;
@@ -150,7 +142,7 @@ const CreateQuestionForm: React.FC<CreateQuestionFormProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [],
   );
-  // console.log(errors?.[0])
+
   return (
     <Paper sx={{ p: 3 }}>
       <Stack gap={2}>
@@ -165,7 +157,6 @@ const CreateQuestionForm: React.FC<CreateQuestionFormProps> = ({
             {index}
           </Typography>
           <CustomInput
-            // label="제목"
             autoFocus
             placeholder="질문"
             name="title"

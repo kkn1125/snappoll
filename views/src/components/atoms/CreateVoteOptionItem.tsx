@@ -6,6 +6,7 @@ import { SnapVoteOption } from '@models/SnapVoteOption';
 import { ChangeEvent, useCallback } from 'react';
 import { useSetRecoilState } from 'recoil';
 import InputItem from './InputItem';
+import useLogger from '@hooks/useLogger';
 
 interface CreateVoteOptionItemProps {
   index: number;
@@ -17,6 +18,7 @@ const CreateVoteOptionItem: React.FC<CreateVoteOptionItemProps> = ({
   option,
   errors,
 }) => {
+  const { debug } = useLogger('CreateVoteOptionItem');
   const { openInteractiveModal } = useModal();
   const setSnapVote = useSetRecoilState(snapVoteAtom);
   const onChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
@@ -25,8 +27,9 @@ const CreateVoteOptionItem: React.FC<CreateVoteOptionItemProps> = ({
       const copySnapVote = SnapVote.copy(snapVote);
       copySnapVote.voteOption = copySnapVote.voteOption.map((opt) => {
         if (opt.id === option.id) {
-          const copyOption = SnapVoteOption.copy(option);
+          const copyOption = SnapVoteOption.copy(opt);
           copyOption.content = value;
+          // debug(`${copyOption.content} : ${copyOption.order}`);
           return copyOption;
         }
         return opt;
@@ -50,6 +53,42 @@ const CreateVoteOptionItem: React.FC<CreateVoteOptionItemProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  function handleOrder(dir: boolean) {
+    setSnapVote((snapVote) => {
+      const copyVote = SnapVote.copy(snapVote);
+      const index = copyVote.voteOption.findIndex(
+        (voteOption) => voteOption.id === option.id,
+      );
+      copyVote.voteOption = copyVote.voteOption.map((voteOption, index) =>
+        SnapVoteOption.copy(voteOption),
+      );
+
+      if (dir) {
+        // top
+        if (index - 1 >= 0) {
+          [copyVote.voteOption[index - 1], copyVote.voteOption[index]] = [
+            copyVote.voteOption[index],
+            copyVote.voteOption[index - 1],
+          ];
+        }
+      } else {
+        // down
+        if (index + 1 < copyVote.voteOption.length) {
+          [copyVote.voteOption[index + 1], copyVote.voteOption[index]] = [
+            copyVote.voteOption[index],
+            copyVote.voteOption[index + 1],
+          ];
+        }
+      }
+      copyVote.voteOption = copyVote.voteOption.map((option, index) => {
+        option.order = index;
+        return option;
+      });
+      // debug(copyVote.voteOption.map((opt) => `${opt.content} : ${opt.order}`));
+      return copyVote;
+    });
+  }
+
   return (
     <InputItem
       index={index}
@@ -57,6 +96,7 @@ const CreateVoteOptionItem: React.FC<CreateVoteOptionItemProps> = ({
       onChange={onChange}
       handleRemove={handleRemove}
       errors={errors}
+      handleOrder={handleOrder}
     />
   );
 };

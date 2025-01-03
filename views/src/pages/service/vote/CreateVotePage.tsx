@@ -167,36 +167,24 @@ const CreateVotePage: React.FC<CreateVotePageProps> = ({ edit = false }) => {
   );
 
   return (
-    <Container maxWidth="md">
-      <Toolbar />
-      <Stack
-        component="form"
-        ref={formRef}
-        noValidate
-        onSubmit={handleSubmit}
-        gap={2}
-      >
-        <Stack direction="row">
-          <Button
-            component={Link}
-            to={'/service/vote'}
-            color="inherit"
-            variant="contained"
-            reloadDocument
-          >
-            이전으로
-          </Button>
-        </Stack>
+    <Stack
+      component="form"
+      ref={formRef}
+      noValidate
+      onSubmit={handleSubmit}
+      gap={2}
+    >
+      <CreateVoteForm errors={errors} />
 
-        <CreateVoteForm errors={errors} />
+      <Divider />
 
-        <Divider />
-
-        <List>
-          {typeof errors?.voteOption === 'string' && errors?.voteOption && (
-            <FormHelperText error>{errors.voteOption}</FormHelperText>
-          )}
-          {snapVote.voteOption.map((option, i) => (
+      <List>
+        {typeof errors?.voteOption === 'string' && errors?.voteOption && (
+          <FormHelperText error>{errors.voteOption}</FormHelperText>
+        )}
+        {snapVote.voteOption
+          .toSorted((a, b) => a.order - b.order)
+          .map((option, i) => (
             <CreateVoteOptionItem
               key={option.id}
               index={i + 1}
@@ -208,35 +196,34 @@ const CreateVotePage: React.FC<CreateVotePageProps> = ({ edit = false }) => {
               }
             />
           ))}
-        </List>
-        <Button
-          fullWidth
-          size="large"
-          variant="outlined"
-          startIcon={<AddBoxIcon />}
-          onClick={addOption}
-        >
-          항목 추가
-        </Button>
+      </List>
+      <Button
+        fullWidth
+        size="large"
+        variant="outlined"
+        startIcon={<AddBoxIcon />}
+        onClick={addOption}
+      >
+        항목 추가
+      </Button>
 
-        <Toolbar />
+      <Toolbar />
 
-        <SpeedDial
-          ariaLabel="SpeedDial basic example"
-          sx={{ position: 'absolute', bottom: 16, right: 16 }}
-          icon={<SpeedDialIcon />}
-        >
-          {actions.map((action) => (
-            <SpeedDialAction
-              key={action.name}
-              icon={action.icon}
-              tooltipTitle={action.name}
-              onClick={action.onClick}
-            />
-          ))}
-        </SpeedDial>
-      </Stack>
-    </Container>
+      <SpeedDial
+        ariaLabel="SpeedDial basic example"
+        sx={{ position: 'absolute', bottom: 16, right: 16 }}
+        icon={<SpeedDialIcon />}
+      >
+        {actions.map((action) => (
+          <SpeedDialAction
+            key={action.name}
+            icon={action.icon}
+            tooltipTitle={action.name}
+            onClick={action.onClick}
+          />
+        ))}
+      </SpeedDial>
+    </Stack>
   );
 };
 

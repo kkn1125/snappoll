@@ -49,7 +49,7 @@ const ShareVote: React.FC<ShareVoteProps> = ({ url }) => {
     );
 
   return (
-    <Container maxWidth="md">
+    <Stack gap={5}>
       <Alert>
         <AlertTitle>안내</AlertTitle>
         <Typography gutterBottom>
@@ -73,7 +73,7 @@ const ShareVote: React.FC<ShareVoteProps> = ({ url }) => {
         size="small"
         sx={{ position: 'fixed', bottom: 10, right: 10 }}
       />
-    </Container>
+    </Stack>
   );
 };
 

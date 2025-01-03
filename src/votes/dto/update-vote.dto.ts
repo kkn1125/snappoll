@@ -1,4 +1,5 @@
 import { PartialType } from '@nestjs/mapped-types';
+import { VoteOption } from '@prisma/client';
 
 class CustomUpdateDto {
   title: string;
@@ -8,4 +9,6 @@ class CustomUpdateDto {
   useEtc: boolean;
   expiresAt?: Date;
 }
-export class UpdateVoteDto extends PartialType(CustomUpdateDto) {}
+export class UpdateVoteDto extends PartialType(CustomUpdateDto) {
+  voteOption: VoteOption[];
+}

@@ -10,8 +10,6 @@ import ThreePIcon from '@mui/icons-material/ThreeP';
 import {
   Alert,
   AlertTitle,
-  Box,
-  Button,
   Divider,
   Stack,
   Table,
@@ -105,15 +103,6 @@ const DetailPollGraphPage: React.FC<DetailPollGraphPageProps> = () => {
 
   return (
     <Stack gap={4}>
-      <Box>
-        <Button
-          onClick={() => {
-            history.back();
-          }}
-        >
-          이전으로
-        </Button>
-      </Box>
       <Stack spacing={4} alignItems="center">
         <Typography variant="h4" fontWeight={700}>
           설문지: {responseData.title}
@@ -204,7 +193,7 @@ const DetailPollGraphPage: React.FC<DetailPollGraphPageProps> = () => {
             maxHeight={GRAPH.MAX_HEIGHT}
           >
             <ResponsiveChart
-              dates={getDates}
+              dates={getPollDates ?? getDates}
               responseData={[
                 {
                   type: 'line',

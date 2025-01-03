@@ -11,6 +11,7 @@ import {
   Alert,
   AlertTitle,
   Checkbox,
+  Chip,
   FormControlLabel,
   ListItemButton,
   Stack,
@@ -157,19 +158,26 @@ const VoteLayout: React.FC<VoteLayoutProps> = ({
             backgroundColor: grey['100'],
             borderRadius: 1,
             borderLeft: '5px solid #aaa',
+            mb: 5,
           }}
         >
           {vote.description}
         </Typography>
       )}
-
       {expired ? (
         <Alert severity="warning">
           <AlertTitle>안내</AlertTitle> {formattedDate(vote.expiresAt) + ' '}에
           마감된 투표입니다.
         </Alert>
       ) : (
-        <Stack gap={10}>
+        <Stack>
+          <Stack direction="row" my={1}>
+            <Chip
+              color={vote.isMultiple ? 'info' : 'default'}
+              size="small"
+              label={vote.isMultiple ? '다중 선택' : '단일 선택'}
+            />
+          </Stack>
           <Stack
             direction="row"
             sx={{ border: '1px solid #eee', borderRadius: 1, p: 2 }}

@@ -141,53 +141,37 @@ const DetailPollPage: React.FC<DetailPollPageProps> = ({
   }, [responseData]);
 
   return (
-    <Container maxWidth="md">
-      <Toolbar />
-      <Stack component="form" gap={3} onSubmit={handleSavePollResult}>
-        {responseData && (
-          <PollLayout
-            poll={responseData}
-            expired={isExpired}
-            refetchPoll={refetchPoll}
-          />
-        )}
-        <Divider />
+    <Stack component="form" gap={3} onSubmit={handleSavePollResult}>
+      {responseData && (
+        <PollLayout
+          poll={responseData}
+          expired={isExpired}
+          refetchPoll={refetchPoll}
+        />
+      )}
+      <Divider />
+      <Button
+        disabled={isExpired}
+        variant="contained"
+        size="large"
+        type="submit"
+      >
+        {isExpired ? '마감된 설문입니다.' : '제출'}
+      </Button>
+      {isShare && (
         <Button
-          disabled={isExpired}
           variant="contained"
           size="large"
-          type="submit"
+          type="button"
+          color="inherit"
+          onClick={() => {
+            navigate('/');
+          }}
         >
-          {isExpired ? '마감된 설문입니다.' : '제출'}
+          사이트로 이동
         </Button>
-        {isShare ? (
-          <Button
-            variant="contained"
-            size="large"
-            type="button"
-            color="inherit"
-            onClick={() => {
-              navigate('/');
-            }}
-          >
-            사이트로 이동
-          </Button>
-        ) : (
-          <Button
-            variant="contained"
-            size="large"
-            type="button"
-            color="inherit"
-            onClick={() => {
-              history.back();
-            }}
-          >
-            이전으로
-          </Button>
-        )}
-      </Stack>
-      <Toolbar />
-    </Container>
+      )}
+    </Stack>
   );
 };
 

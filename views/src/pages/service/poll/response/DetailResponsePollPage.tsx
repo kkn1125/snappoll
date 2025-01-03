@@ -3,7 +3,7 @@ import { tokenAtom } from '@/recoils/token.atom';
 import { UnknownName } from '@common/variables';
 import PollResponseLayout from '@components/templates/PollResponseLayout';
 import { SnapResponse } from '@models/SnapResponse';
-import { Button, Divider, Stack } from '@mui/material';
+import { Button, Container, Divider, Stack, Toolbar } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
 import { getUsernameOr } from '@utils/getUsernameOr';
 import { useParams } from 'react-router-dom';

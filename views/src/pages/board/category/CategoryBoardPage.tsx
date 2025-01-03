@@ -69,7 +69,7 @@ const CategoryBoardPage: React.FC<CategoryBoardPageProps> = ({
 
   return (
     <Stack>
-      <Stack direction="row" mb={1}>
+      {/* <Stack direction="row" mb={1}>
         <Button
           component={Link}
           to="/board"
@@ -77,7 +77,7 @@ const CategoryBoardPage: React.FC<CategoryBoardPageProps> = ({
         >
           목록으로
         </Button>
-      </Stack>
+      </Stack> */}
       <Stack direction="row" justifyContent="space-between" alignItems="center">
         <Typography fontSize={24}>{translate(currentCategory!)}</Typography>
         {(isMaster || ['community', 'faq'].includes(currentCategory || '')) && (
