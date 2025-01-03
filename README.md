@@ -17,6 +17,8 @@
       - PathDomain 클래스 재구성 및 Nested 구현
       - 회원 경로 제외
     - poll option, vote option order 컬럼 추가
+  - bugfix
+    - ctype 깃허브 액션 빌드 오작동 수정
 - 2025-01-02
   - add
     - notice hbs 페이지 추가
