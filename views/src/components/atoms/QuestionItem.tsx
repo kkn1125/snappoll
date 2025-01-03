@@ -121,11 +121,13 @@ const QuestionItem: React.FC<QuestionItemProps> = ({ question }) => {
           {question.description}
         </Typography>
         <Stack direction="row" my={1} gap={1}>
-          <Chip
-            color={question.isMultiple ? 'info' : 'default'}
-            size="small"
-            label={question.isMultiple ? '다중 선택' : '단일 선택'}
-          />
+          {question.type !== 'text' && (
+            <Chip
+              color={question.isMultiple ? 'info' : 'default'}
+              size="small"
+              label={question.isMultiple ? '다중 선택' : '단일 선택'}
+            />
+          )}
           <Chip
             color={question.isRequired ? 'error' : 'default'}
             size="small"
