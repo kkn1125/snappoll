@@ -160,42 +160,45 @@ export class VotesService {
 
   /* votes */
   create(createVoteDto: CreateVoteDto) {
-    const title = createVoteDto.title;
-    const description = createVoteDto.description;
-    const userId = createVoteDto.userId;
-    const isMultiple = createVoteDto.isMultiple;
-    const useEtc = createVoteDto.useEtc;
-    const expiresAt = createVoteDto.expiresAt;
+    this.prisma.$transaction(async () => {
+      const title = createVoteDto.title;
+      const description = createVoteDto.description;
+      const userId = createVoteDto.userId;
+      const isMultiple = createVoteDto.isMultiple;
+      const useEtc = createVoteDto.useEtc;
+      const expiresAt = createVoteDto.expiresAt;
 
-    let voteOption;
-    if (
-      'voteOption' in createVoteDto &&
-      createVoteDto.voteOption instanceof Array
-    ) {
-      voteOption = {
-        create: createVoteDto.voteOption.map((option) => {
-          const content = option.content;
-          return {
-            content,
-          };
-        }),
+      let voteOption;
+      if (
+        'voteOption' in createVoteDto &&
+        createVoteDto.voteOption instanceof Array
+      ) {
+        voteOption = {
+          create: createVoteDto.voteOption.map((option) => {
+            const content = option.content;
+            return {
+              content,
+            };
+          }),
+        };
+      }
+
+      const data = {
+        title,
+        description,
+        userId,
+        isMultiple,
+        useEtc,
+        expiresAt,
+        voteOption,
       };
-    }
 
-    const data = {
-      title,
-      description,
-      userId,
-      isMultiple,
-      useEtc,
-      expiresAt,
-      voteOption,
-    };
-    return this.prisma.vote.create({
-      data,
-      include: {
-        voteOption: true,
-      },
+      return this.prisma.vote.create({
+        data,
+        include: {
+          voteOption: true,
+        },
+      });
     });
   }
 

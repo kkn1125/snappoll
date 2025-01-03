@@ -176,58 +176,62 @@ export class PollsService {
 
   /* polls */
   create(createPollDto: CreatePollDto) {
-    const title = createPollDto.title;
-    const description = createPollDto.description;
-    const userId = createPollDto.userId;
-    const expiresAt = createPollDto.expiresAt;
+    return this.prisma.$transaction(async () => {
+      const title = createPollDto.title;
+      const description = createPollDto.description;
+      const userId = createPollDto.userId;
+      const expiresAt = createPollDto.expiresAt;
 
-    let question;
-    if ('question' in createPollDto) {
-      question = {
-        create: createPollDto.question.map((question) => {
-          let option;
-          if ('option' in question && question.option instanceof Array) {
-            option = {
-              create: question.option.map((option: Option) => {
-                return { content: option.content };
-              }),
+      let question;
+      if ('question' in createPollDto) {
+        question = {
+          create: createPollDto.question.map((question) => {
+            let option;
+            if ('option' in question && question.option instanceof Array) {
+              option = {
+                create: question.option.map((option: Option) => {
+                  return { content: option.content };
+                }),
+              };
+            }
+
+            const type = question.type;
+            const title = question.title;
+            const description = question.description;
+            const isMultiple = question.isMultiple;
+            const useEtc = question.useEtc;
+            const order = question.order;
+            return {
+              type,
+              title,
+              description,
+              isMultiple,
+              useEtc,
+              order,
+              option,
             };
-          }
+          }),
+        };
+      }
 
-          const type = question.type;
-          const title = question.title;
-          const description = question.description;
-          const isMultiple = question.isMultiple;
-          const useEtc = question.useEtc;
-          const order = question.order;
-          return {
-            type,
-            title,
-            description,
-            isMultiple,
-            useEtc,
-            order,
-            option,
-          };
-        }),
-      };
-    }
-
-    return this.prisma.poll.create({
-      data: {
+      const data = {
         title,
         description,
         userId,
         expiresAt,
         question,
-      },
-      include: {
-        question: {
-          include: {
-            option: true,
+      };
+
+      return this.prisma.poll.create({
+        data,
+        include: {
+          question: {
+            include: {
+              option: true,
+            },
           },
         },
-      },
+      });
     });
   }
 

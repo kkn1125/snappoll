@@ -5,22 +5,16 @@ import { RouterModule } from '@nestjs/core';
 import { EncryptManager } from '@utils/EncryptManager';
 import { PollsController } from './polls.controller';
 import { PollsService } from './polls.service';
-import { QuestionsModule } from './questions/questions.module';
 import { ResponseModule } from './response/response.module';
 
 @Module({
   imports: [
     AuthModule,
     ResponseModule,
-    QuestionsModule,
     RouterModule.register([
       {
         path: 'polls',
         module: ResponseModule,
-      },
-      {
-        path: 'polls',
-        module: QuestionsModule,
       },
     ]),
     // ResponseModule,
