@@ -2,7 +2,13 @@ import { snapPollAtom } from '@/recoils/snapPoll.atom';
 import { snapVoteAtom } from '@/recoils/snapVote.atom';
 import CustomInput from '@components/atoms/CustomInput';
 import { SnapVote } from '@models/SnapVote';
-import { FormControlLabel, Stack, Switch, Typography } from '@mui/material';
+import {
+  FormControlLabel,
+  FormHelperText,
+  Stack,
+  Switch,
+  Typography,
+} from '@mui/material';
 import {
   DateTimePicker,
   DateTimeValidationError,
@@ -114,6 +120,9 @@ const CreateVoteForm: React.FC<CreateVoteFormProps> = ({ errors }) => {
             checked={useExpires}
             control={<Switch />}
           />
+          {errors.expiresAt && (
+            <FormHelperText error>{errors.expiresAt}</FormHelperText>
+          )}
         </Stack>
       </Stack>
 

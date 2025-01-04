@@ -5,6 +5,7 @@ import { getShareVoteBy } from '@apis/vote/share/getShareVoteBy';
 import { Message } from '@common/messages';
 import { guestAllowPaths } from '@common/variables';
 import VoteLayout from '@components/templates/VoteLayout';
+import useLogger from '@hooks/useLogger';
 import useModal from '@hooks/useModal';
 import useToken from '@hooks/useToken';
 import { SnapVote } from '@models/SnapVote';
@@ -30,6 +31,7 @@ const DetailVotePage: React.FC<DetailVotePageProps> = ({
   voteId,
   refetchShare,
 }) => {
+  const { debug } = useLogger('DetailVotePage');
   const { user, logoutToken } = useToken();
   const { openModal, openInteractiveModal } = useModal();
   const queryClient = useQueryClient();
@@ -49,7 +51,11 @@ const DetailVotePage: React.FC<DetailVotePageProps> = ({
     queryFn: () => (voteId ? getShareVoteBy(detailId) : getVote(detailId)),
   });
   const responseData = data?.data;
-
+  const alreadyResponded = useMemo(() => {
+    return responseData?.voteResponse.some(
+      (response) => response.userId === user?.id,
+    );
+  }, [responseData?.voteResponse, user?.id]);
   const saveResponseMutate = useMutation({
     mutationKey: ['saveResponse'],
     mutationFn: saveVoteResult,
@@ -147,12 +153,16 @@ const DetailVotePage: React.FC<DetailVotePageProps> = ({
       )}
       <Divider />
       <Button
-        disabled={isExpired}
+        disabled={alreadyResponded || isExpired}
         variant="contained"
         size="large"
         type="submit"
       >
-        {isExpired ? '마감된 설문입니다.' : '제출'}
+        {isExpired
+          ? '마감된 설문입니다.'
+          : alreadyResponded
+            ? '이미 응답한 투표입니다.'
+            : '제출'}
       </Button>
       {isShare && (
         <Button

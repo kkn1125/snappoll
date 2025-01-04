@@ -279,6 +279,11 @@ export class VotesService {
             voteAnswer: true,
           },
         },
+        voteResponse: {
+          include: {
+            voteAnswer: true,
+          },
+        },
         shareVote: true,
       },
     });
@@ -381,7 +386,7 @@ export class VotesService {
       },
     });
 
-    for (const option of voteOption) {
+    for (const { voteAnswer, ...option } of voteOption) {
       await this.prisma.voteOption.upsert({
         where: { id: option.id },
         create: option,

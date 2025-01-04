@@ -14,6 +14,7 @@ export const ErrorName = {
   OnlyLocalUser: 'OnlyLocalUser',
   SleepUser: 'SleepUser',
   RemovedUser: 'RemovedUser',
+  AlreadyRespond: 'AlreadyRespond',
   AlreadyClosed: 'AlreadyClosed',
   AlreadyUsedEmail: 'AlreadyUsedEmail',
   CheckUserData: 'CheckUserData',
@@ -191,6 +192,7 @@ export const ErrorMessage = {
     ],
     [104, ErrorName.NotFound, '찾을 수 없습니다.'],
     [105, ErrorName.PollResponseLimit, '설문 응답 한도에 도달하였습니다. '],
+    [106, ErrorName.AlreadyRespond, '이미 응답한 설문입니다. '],
   ],
   /* vote */
   vote: [
@@ -220,6 +222,7 @@ export const ErrorMessage = {
     ],
     [104, ErrorName.NotFound, '찾을 수 없습니다.'],
     [105, ErrorName.VoteResponseLimit, '투표 응답 한도에 도달하였습니다. '],
+    [106, ErrorName.AlreadyRespond, '이미 응답한 투표입니다. '],
   ],
   /* board */
   board: [

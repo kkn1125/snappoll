@@ -1,5 +1,5 @@
 import { getPoll } from '@apis/poll/getPoll';
-import { GRAPH } from '@common/variables';
+import { CHART_COLORS, GRAPH } from '@common/variables';
 import ResponsiveChart from '@components/atoms/ResponsiveChart';
 import CorrelationChart from '@components/organisms/CorrelationChart';
 import { SnapPoll } from '@models/SnapPoll';
@@ -161,29 +161,6 @@ const DetailPollGraphPage: React.FC<DetailPollGraphPageProps> = () => {
           height="100vh"
           maxHeight={GRAPH.MAX_HEIGHT}
         >
-          {/* <BarChart
-            axisHighlight={{ y: 'line' }}
-            borderRadius={10}
-            xAxis={[
-              {
-                scaleType: 'band',
-                data: getDates,
-                ...(isMdDown && {
-                  tickLabelStyle: {
-                    angle: -20,
-                    textAnchor: 'end',
-                    fontSize: 10,
-                  },
-                }),
-              },
-            ]}
-            series={[
-              {
-                data: respondentWeek,
-                highlightScope: { highlight: 'item', fade: 'global' },
-              },
-            ]}
-          /> */}
           <Stack
             direction="row"
             width="100%"
@@ -193,12 +170,12 @@ const DetailPollGraphPage: React.FC<DetailPollGraphPageProps> = () => {
             maxHeight={GRAPH.MAX_HEIGHT}
           >
             <ResponsiveChart
-              dates={getPollDates ?? getDates}
+              dates={getDates}
               responseData={[
                 {
                   type: 'line',
                   data: respondentWeek,
-                  label: '일별 질문 참여도',
+                  label: '응답 수',
                 },
               ]}
             />
@@ -210,6 +187,7 @@ const DetailPollGraphPage: React.FC<DetailPollGraphPageProps> = () => {
         </Typography>
         <Stack direction="row" width="100%">
           <PieChart
+            colors={CHART_COLORS}
             series={[
               {
                 innerRadius: 50,

@@ -177,7 +177,7 @@ function useValidate<T extends { [k in string]: any }>(data: T) {
   }, []);
 
   const validate = useCallback(
-    (type?: string) => {
+    (type?: string, edit?: boolean) => {
       const validateErrors = {} as ErrorMessage<T>;
       const validateKeys = Object.keys(data) as (keyof T)[];
 
@@ -201,7 +201,11 @@ function useValidate<T extends { [k in string]: any }>(data: T) {
               description: Message.Wrong.Required,
             });
           }
-          if (!isNil(data.expiresAt) && data.expiresAt < new Date()) {
+          if (
+            !edit &&
+            !isNil(data.expiresAt) &&
+            new Date(data.expiresAt) < new Date()
+          ) {
             Object.assign(validateErrors, {
               expiresAt: '현재보다 과거일 수 없습니다.',
             });
@@ -276,7 +280,11 @@ function useValidate<T extends { [k in string]: any }>(data: T) {
               description: Message.Wrong.Required,
             });
           }
-          if (!isNil(data.expiresAt) && data.expiresAt < new Date()) {
+          if (
+            !edit &&
+            !isNil(data.expiresAt) &&
+            new Date(data.expiresAt) < new Date()
+          ) {
             Object.assign(validateErrors, {
               expiresAt: '현재보다 과거일 수 없습니다.',
             });

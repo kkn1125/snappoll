@@ -6,6 +6,7 @@ import {
   Stack,
   TextField,
   Typography,
+  unstable_createMuiStrictModeTheme,
 } from '@mui/material';
 import { useCallback, useMemo } from 'react';
 import CheckedComponent from './CheckedComponent';
@@ -13,9 +14,9 @@ import { SnapAnswer } from '@models/SnapAnswer';
 
 interface AnswerItemProps {
   question: SnapPollQuestion;
-  answer?: SnapAnswer;
+  answers?: SnapAnswer[];
 }
-const AnswerItem: React.FC<AnswerItemProps> = ({ question, answer }) => {
+const AnswerItem: React.FC<AnswerItemProps> = ({ question, answers }) => {
   const isDeactivateStyle = useCallback(
     (isDeactive: boolean) =>
       isDeactive
@@ -27,9 +28,22 @@ const AnswerItem: React.FC<AnswerItemProps> = ({ question, answer }) => {
     [],
   );
 
-  const isEtc = useMemo(() => {
-    return !!answer?.value;
-  }, [answer]);
+  const etc = useMemo(() => {
+    return answers?.find((answer) => answer.value);
+  }, [answers]);
+
+  const getSelected = useCallback(
+    (optionId: string) => {
+      // console.log(answers, optionId);
+      return answers?.some((ans) => ans.optionId === optionId);
+    },
+    [answers],
+  );
+
+  const textAnswer = useMemo(
+    () => answers?.find((answer) => !answer.optionId),
+    [answers],
+  );
 
   return (
     <Stack>
@@ -48,7 +62,7 @@ const AnswerItem: React.FC<AnswerItemProps> = ({ question, answer }) => {
             },
           }}
           disabled
-          value={answer?.value}
+          value={textAnswer?.value || ''}
         />
       ) : (
         <List component={Stack} gap={1}>
@@ -56,20 +70,20 @@ const AnswerItem: React.FC<AnswerItemProps> = ({ question, answer }) => {
             <ListItemButton
               key={option.id}
               component="label"
-              {...isDeactivateStyle(answer?.optionId === option.id)}
+              {...isDeactivateStyle(!!getSelected(option.id))}
               sx={{
                 border: '1px solid #eee',
                 borderRadius: 1,
                 // p: 2,
               }}
             >
-              <CheckedComponent checked={answer?.optionId === option.id} />
+              <CheckedComponent checked={!!getSelected(option.id)} />
               <ListItemText>{option.content}</ListItemText>
             </ListItemButton>
           ))}
           {question.useEtc && (
             <ListItemButton
-              {...isDeactivateStyle(isEtc)}
+              {...isDeactivateStyle(!!etc)}
               component="label"
               sx={{
                 border: '1px solid #eee',
@@ -77,14 +91,14 @@ const AnswerItem: React.FC<AnswerItemProps> = ({ question, answer }) => {
                 p: 2,
               }}
             >
-              <CheckedComponent checked={isEtc} />
+              <CheckedComponent checked={!!etc} />
               <ListItemText>기타</ListItemText>
             </ListItemButton>
           )}
-          {isEtc && (
+          {etc && (
             <TextField
               variant="filled"
-              value={answer?.value}
+              value={etc?.value || ''}
               disabled
               slotProps={{
                 input: {

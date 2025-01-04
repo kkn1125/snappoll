@@ -49,7 +49,11 @@ const DetailPollPage: React.FC<DetailPollPageProps> = ({
     queryFn: () => (pollId ? getSharePollBy(detailId) : getPoll(detailId)),
   });
   const responseData = data?.data;
-
+  const alreadyResponded = useMemo(() => {
+    return responseData?.response.some(
+      (response) => response.userId === user?.id,
+    );
+  }, [responseData?.response, user?.id]);
   const saveResponseMutate = useMutation({
     mutationKey: ['saveResponse'],
     mutationFn: savePollResult,
@@ -151,12 +155,16 @@ const DetailPollPage: React.FC<DetailPollPageProps> = ({
       )}
       <Divider />
       <Button
-        disabled={isExpired}
+        disabled={alreadyResponded || isExpired}
         variant="contained"
         size="large"
         type="submit"
       >
-        {isExpired ? '마감된 설문입니다.' : '제출'}
+        {isExpired
+          ? '마감된 설문입니다.'
+          : alreadyResponded
+            ? '이미 응답한 설문입니다.'
+            : '제출'}
       </Button>
       {isShare && (
         <Button

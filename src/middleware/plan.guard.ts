@@ -1,3 +1,4 @@
+import { LIMIT } from '@common/variables';
 import { PrismaService } from '@database/prisma.service';
 import {
   BadRequestException,
@@ -7,11 +8,10 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
+import { $Enums } from '@prisma/client';
 import SnapLogger from '@utils/SnapLogger';
 import { Request } from 'express';
 import { PlanValidate, ValidateType } from './plan-validate.decorator';
-import { LIMIT } from '@common/variables';
-import { $Enums } from '@prisma/client';
 
 @Injectable()
 export class PlanGuard implements CanActivate {
@@ -92,6 +92,7 @@ export class PlanGuard implements CanActivate {
           const count = await this.prisma.response.count({
             where: { pollId },
           });
+          // 플랜 별 응답 수 제한 검증
           if (count >= LIMIT[UPPER_CASE].RESPONSE.POLL) {
             const errorCode = await this.prisma.getErrorCode(
               'pollResponse',
@@ -99,7 +100,19 @@ export class PlanGuard implements CanActivate {
             );
             throw new BadRequestException(errorCode);
           }
+          /* 이미 응답했는지 검증 */
+          const alreadyRespond = await this.prisma.response.count({
+            where: { pollId, userId: user.id },
+          });
+          if (alreadyRespond > 0) {
+            const errorCode = await this.prisma.getErrorCode(
+              'pollResponse',
+              'AlreadyRespond',
+            );
+            throw new BadRequestException(errorCode);
+          }
         } else {
+          // 조작된 바디 데이터 예외 처리
           const errorCode = await this.prisma.getErrorCode(
             'pollResponse',
             'BadRequest',
@@ -110,6 +123,7 @@ export class PlanGuard implements CanActivate {
         const count = await this.prisma.vote.count({
           where: { userId: user.id },
         });
+        // 플랜 별 응답 수 제한 검증
         if (count >= LIMIT[UPPER_CASE].CREATE.VOTE) {
           const errorCode = await this.prisma.getErrorCode('vote', 'VoteLimit');
           throw new BadRequestException(errorCode);
@@ -127,7 +141,19 @@ export class PlanGuard implements CanActivate {
             );
             throw new BadRequestException(errorCode);
           }
+          /* 이미 응답했는지 검증 */
+          const alreadyRespond = await this.prisma.voteResponse.count({
+            where: { voteId, userId: user.id },
+          });
+          if (alreadyRespond > 0) {
+            const errorCode = await this.prisma.getErrorCode(
+              'voteResponse',
+              'AlreadyRespond',
+            );
+            throw new BadRequestException(errorCode);
+          }
         } else {
+          // 조작된 바디 데이터 예외 처리
           const errorCode = await this.prisma.getErrorCode(
             'voteResponse',
             'BadRequest',

@@ -104,7 +104,7 @@ const CreatePollPage: React.FC<CreatePollPageProps> = ({ edit = false }) => {
 
   useEffect(() => {
     if (validated) {
-      validate('snapPoll');
+      validate('snapPoll', edit);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [snapPoll, validated]);
@@ -142,7 +142,7 @@ const CreatePollPage: React.FC<CreatePollPageProps> = ({ edit = false }) => {
       e.preventDefault();
       setValidated(true);
 
-      if (!validate('snapPoll')) return;
+      if (!validate('snapPoll', edit)) return;
       const copyPoll = SnapPoll.copy(snapPoll);
 
       if (user) {

@@ -21,6 +21,7 @@ export class VoteResponsesController {
   constructor(private readonly voteResponsesService: VoteResponsesService) {}
 
   @PlanValidate('voteResponse')
+  @UseGuards(PlanGuard)
   @Post()
   create(
     @Body()

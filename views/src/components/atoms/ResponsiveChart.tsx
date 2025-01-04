@@ -1,8 +1,8 @@
+import { CHART_COLORS } from '@common/variables';
 import { useMediaQuery, useTheme } from '@mui/material';
 import {
   AllSeriesType,
   BarPlot,
-  BarSeriesType,
   ChartsAxisHighlight,
   ChartsGrid,
   ChartsLegend,
@@ -12,14 +12,9 @@ import {
   ChartsYAxis,
   LineHighlightPlot,
   LinePlot,
-  LineSeriesType,
   MarkPlot,
-  PieSeriesType,
-  PieValueType,
   ResponsiveChartContainer,
-  ScatterSeriesType,
 } from '@mui/x-charts';
-import { MakeOptional } from '@mui/x-date-pickers/internals';
 import dayjs from 'dayjs';
 
 interface ResponsiveChartProps {
@@ -40,23 +35,7 @@ const ResponsiveChart: React.FC<ResponsiveChartProps> = ({
   const isMdUp = useMediaQuery(theme.breakpoints.up('md'));
   return (
     <ResponsiveChartContainer
-      colors={[
-        '#ff9800',
-        '#ff69b4',
-        '#4caf50',
-        '#2196f3',
-        '#9c27b0',
-        '#e91e63',
-        '#009688',
-        '#673ab7',
-        '#3f51b5',
-        '#ffc107',
-        '#8bc34a',
-        '#9e9e9e',
-        '#795548',
-        '#03a9f4',
-        '#00bcd4',
-      ]}
+      colors={CHART_COLORS}
       xAxis={[
         {
           scaleType: type,

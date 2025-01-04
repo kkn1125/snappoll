@@ -40,7 +40,7 @@ const VoteLayout: React.FC<VoteLayoutProps> = ({
   const [useEtc, setUseEtc] = useState(false);
   const setSnapVoteResponse = useSetRecoilState(snapVoteResponseAtom);
   const locate = useLocation();
-  const isShare = locate.pathname.startsWith('/service/poll/share');
+  const isShare = locate.pathname.startsWith('/service/vote/share');
 
   const handleChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;

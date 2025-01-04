@@ -1,10 +1,12 @@
 import { tokenAtom } from '@/recoils/token.atom';
 import AnswerItem from '@components/atoms/AnswerItem';
 import { SnapPoll } from '@models/SnapPoll';
+import { SnapPollQuestion } from '@models/SnapPollQuestion';
 import { Stack, Toolbar, Typography } from '@mui/material';
 import { grey } from '@mui/material/colors';
 import { getUsernameOr } from '@utils/getUsernameOr';
 import { printDateOrNot } from '@utils/printDateOrNot';
+import { useCallback, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 
@@ -18,6 +20,14 @@ const PollResponseLayout: React.FC<PollResponseLayoutProps> = ({
 }) => {
   const { user } = useRecoilValue(tokenAtom);
   const { responseId } = useParams();
+  const getRespondAnswers = useCallback(
+    (question: SnapPollQuestion) => {
+      return (
+        question.answer?.filter((ans) => ans.responseId === responseId) ?? []
+      );
+    },
+    [responseId],
+  );
   return (
     <Stack gap={1}>
       <Stack justifyContent="baseline" gap={1}>
@@ -81,11 +91,7 @@ const PollResponseLayout: React.FC<PollResponseLayoutProps> = ({
           <AnswerItem
             key={question.id}
             question={question}
-            answer={question.answer?.find(
-              (answer) =>
-                answer.responseId === responseId &&
-                answer.questionId === question.id,
-            )}
+            answers={getRespondAnswers(question)}
           />
         ))}
       </Stack>

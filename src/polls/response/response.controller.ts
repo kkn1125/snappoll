@@ -13,6 +13,7 @@ import { UpdateResponseDto } from './dto/update-response.dto';
 import { ResponseService } from './response.service';
 import { RoleGuard } from '@auth/role.guard';
 import { PlanValidate } from '@middleware/plan-validate.decorator';
+import { PlanGuard } from '@middleware/plan.guard';
 
 @UseGuards(RoleGuard)
 @Controller('response')
@@ -20,6 +21,7 @@ export class ResponseController {
   constructor(private readonly responseService: ResponseService) {}
 
   @PlanValidate('pollResponse')
+  @UseGuards(PlanGuard)
   @Post()
   create(@Body() createResponseDto: CreateResponseDto) {
     return this.responseService.create(createResponseDto);

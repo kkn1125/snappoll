@@ -1,5 +1,5 @@
 import { PartialType } from '@nestjs/mapped-types';
-import { VoteOption } from '@prisma/client';
+import { VoteAnswer, VoteOption } from '@prisma/client';
 
 class CustomUpdateDto {
   title: string;
@@ -10,5 +10,9 @@ class CustomUpdateDto {
   expiresAt?: Date;
 }
 export class UpdateVoteDto extends PartialType(CustomUpdateDto) {
-  voteOption: VoteOption[];
+  voteOption: SnapVoteOption[];
+}
+
+interface SnapVoteOption extends VoteOption {
+  voteAnswer: VoteAnswer[];
 }

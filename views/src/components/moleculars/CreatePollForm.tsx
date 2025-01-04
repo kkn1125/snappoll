@@ -1,7 +1,7 @@
 import { snapPollAtom } from '@/recoils/snapPoll.atom';
 import CustomInput from '@components/atoms/CustomInput';
 import { SnapPoll } from '@models/SnapPoll';
-import { FormControlLabel, Stack, Switch, Typography } from '@mui/material';
+import { FormControlLabel, FormHelperText, Stack, Switch, Typography } from '@mui/material';
 import {
   DateTimePicker,
   DateTimeValidationError,
@@ -113,6 +113,9 @@ const CreatePollForm: React.FC<CreatePollFormProps> = ({ errors }) => {
             checked={useExpires}
             control={<Switch />}
           />
+          {errors.expiresAt && (
+            <FormHelperText error>{errors.expiresAt}</FormHelperText>
+          )}
         </Stack>
       </Stack>
     </Stack>

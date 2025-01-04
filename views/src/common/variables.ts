@@ -32,8 +32,7 @@ export { default as Illu02 } from '@assets/illustrations/illu-02.svg?react';
 export { default as DefaultProfile } from '@assets/illustrations/default_profile.svg?react';
 
 /* disallow */
-export const guestDisallowPaths =
-  /\/(user|service|notice|panel|graph)\/?(.*)/;
+export const guestDisallowPaths = /\/(user|service|notice|panel|graph)\/?(.*)/;
 export const guestAllowPaths = /^\/service\/(poll|vote)\/share(.*)$/g;
 export const userDisallowPaths = /\/(auth)\/?(.*)/;
 
@@ -50,3 +49,21 @@ export const SIDEBAR_WIDTH = {
 export const GRAPH = {
   MAX_HEIGHT: '50vmin' /* '70vh' */,
 };
+
+export const CHART_COLORS = [
+  '#ff9800',
+  '#ff69b4',
+  '#4caf50',
+  '#2196f3',
+  '#9c27b0',
+  '#e91e63',
+  '#009688',
+  '#673ab7',
+  '#3f51b5',
+  '#ffc107',
+  '#8bc34a',
+  '#9e9e9e',
+  '#795548',
+  '#03a9f4',
+  '#00bcd4',
+];

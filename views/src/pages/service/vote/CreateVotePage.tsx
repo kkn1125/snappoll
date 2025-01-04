@@ -119,7 +119,7 @@ const CreateVotePage: React.FC<CreateVotePageProps> = ({ edit = false }) => {
 
   useEffect(() => {
     if (validated) {
-      validate('snapVote');
+      validate('snapVote', edit);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [snapVote, validated]);
@@ -144,7 +144,7 @@ const CreateVotePage: React.FC<CreateVotePageProps> = ({ edit = false }) => {
       e.preventDefault();
       setValidated(true);
 
-      if (!validate('snapVote')) return;
+      if (!validate('snapVote', edit)) return;
 
       openInteractiveModal({
         content: Message.Single.Save,
