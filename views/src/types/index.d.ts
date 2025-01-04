@@ -100,6 +100,7 @@ export declare global {
     description: string;
     planType: 'Free' | 'Basic' | 'Premium' | 'Enterprise';
     price: number;
+    discount: number;
     createdAt: Date;
     updatedAt: Date;
     subscription?: Subscription[];
@@ -124,6 +125,17 @@ export declare global {
     userProfile?: Profile;
     subscription: Subscription;
   }
+  // interface SnapPlan {
+  //   id: string;
+  //   name: string;
+  //   description: string;
+  //   planType: 'Free' | 'Basic' | 'Premium' | 'Enterprise';
+  //   price: number;
+  //   createdAt: Date;
+  //   updatedAt: Date;
+  //   subscription?: Subscription[];
+  //   feature?: Feature[];
+  // }
   interface SnapNotice {
     id: string;
     type: 'Normal' | 'Batch';

@@ -1,12 +1,12 @@
 import { PrismaService } from '@database/prisma.service';
 import { Injectable } from '@nestjs/common';
-import { Option, Question } from '@prisma/client';
-import { CreatePollDto, SnapQuestion } from './dto/create-poll.dto';
-import { UpdatePollDto } from './dto/update-poll.dto';
-import { CreateSharePollDto } from './dto/create-share-poll.dto';
+import { Option } from '@prisma/client';
 import { EncryptManager } from '@utils/EncryptManager';
-import dayjs from 'dayjs';
 import SnapLogger from '@utils/SnapLogger';
+import dayjs from 'dayjs';
+import { CreatePollDto } from './dto/create-poll.dto';
+import { CreateSharePollDto } from './dto/create-share-poll.dto';
+import { UpdatePollDto } from './dto/update-poll.dto';
 
 @Injectable()
 export class PollsService {
@@ -415,7 +415,7 @@ export class PollsService {
 
       for (const { option: options, id, answer, ...question } of questions) {
         const questionId = id;
-        this.logger.debug(id, question);
+        // this.logger.debug(id, question);
         await this.prisma.question.upsert({
           where: { id },
           create: question,

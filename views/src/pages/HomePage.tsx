@@ -183,7 +183,7 @@ const HomePage = () => {
           <Stack flex={1}>
             <Stack alignItems="center" gap={1}>
               <Typography variant="h6" fontWeight="bold">
-                나의 설문, 투표에 응답 사람
+                나의 설문, 투표에 응답한 사람
               </Typography>
             </Stack>
             <Stack gap={2}>

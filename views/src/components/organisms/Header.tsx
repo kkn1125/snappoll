@@ -52,6 +52,7 @@ const Header: React.FC<HeaderProps> = () => {
   const boardPath = locate.pathname.startsWith('/board');
 
   const menuList = [
+    { name: 'Panel', to: '/panel', allow: ['Admin'] },
     { name: 'SnapPoll이란?', to: '/about', allow: ['Guest', 'User', 'Admin'] },
     { name: '요금제', to: '/price', allow: ['Guest', 'User', 'Admin'] },
     { name: '게시판', to: '/board', allow: ['Guest', 'User', 'Admin'] },

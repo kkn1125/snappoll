@@ -1,5 +1,4 @@
 import { SnapPollOption } from '@models/SnapPollOption';
-import DeleteIcon from '@mui/icons-material/Delete';
 import {
   Avatar,
   Button,
@@ -11,8 +10,7 @@ import {
 } from '@mui/material';
 import { ChangeEvent } from 'react';
 import CustomInput from './CustomInput';
-import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
+import OrderControlButton from './OrderControlButton';
 
 interface InputItemProps {
   index: number;
@@ -56,32 +54,10 @@ const InputItem: React.FC<InputItemProps> = ({
         }
         sx={{ flex: 1 }}
       />
-      <Stack direction="row" gap={2} alignItems="center">
-        <IconButton
-          edge="end"
-          aria-label="delete"
-          color="error"
-          onClick={handleRemove}
-        >
-          <DeleteIcon />
-        </IconButton>
-        <Button
-          size="small"
-          variant="outlined"
-          onClick={() => handleOrder(true)}
-          sx={{ minWidth: 'auto', px: 1 }}
-        >
-          <ArrowDropUpIcon fontSize="small" />
-        </Button>
-        <Button
-          size="small"
-          variant="outlined"
-          onClick={() => handleOrder(false)}
-          sx={{ minWidth: 'auto', px: 1 }}
-        >
-          <ArrowDropDownIcon fontSize="small" />
-        </Button>
-      </Stack>
+      <OrderControlButton
+        handleRemove={handleRemove}
+        handleOrder={handleOrder}
+      />
     </ListItem>
   );
 };

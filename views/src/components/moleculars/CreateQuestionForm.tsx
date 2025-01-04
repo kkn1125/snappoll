@@ -33,6 +33,7 @@ import {
 } from 'react';
 import { useSetRecoilState } from 'recoil';
 import CreateOptionForm from './CreateOptionForm';
+import OrderControlButton from '@components/atoms/OrderControlButton';
 interface CreateQuestionFormProps {
   index: number;
   errors: ErrorMessage<SnapPollQuestion>;
@@ -191,25 +192,10 @@ const CreateQuestionForm: React.FC<CreateQuestionFormProps> = ({
             <MenuItem value="select">선택</MenuItem>
             <MenuItem value="checkbox">체크박스</MenuItem>
           </Select>
-          <IconButton color="error" onClick={() => handleRemove(question.id)}>
-            <DeleteIcon />
-          </IconButton>
-          <ButtonGroup orientation="vertical">
-            <Button
-              size="small"
-              sx={{ width: 30, minWidth: '0 !important', p: 0, fontSize: 10 }}
-              onClick={() => setOrder(true, question.id)}
-            >
-              <ArrowDropUpIcon fontSize="small" sx={{ fontSize: 12 }} />
-            </Button>
-            <Button
-              size="small"
-              sx={{ width: 30, minWidth: '0 !important', p: 0, fontSize: 10 }}
-              onClick={() => setOrder(false, question.id)}
-            >
-              <ArrowDropDownIcon fontSize="small" sx={{ fontSize: 12 }} />
-            </Button>
-          </ButtonGroup>
+          <OrderControlButton
+            handleRemove={() => handleRemove(question.id)}
+            handleOrder={(isUp: boolean) => setOrder(isUp, question.id)}
+          />
         </Stack>
         <CustomInput
           label="설명"

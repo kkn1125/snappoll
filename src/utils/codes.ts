@@ -2,6 +2,7 @@ export const ErrorName = {
   BadRequest: 'BadRequest',
   NotFound: 'NotFound',
   Forbidden: 'Forbidden',
+  InvalidPlan: 'InvalidPlan',
   TooManyRequest: 'TooManyRequest',
   BlockSave: 'BlockSave',
   SendMailIssue: 'SendMailIssue',
@@ -82,7 +83,7 @@ export const ErrorMessage = {
   ],
   plan: [
     [100, ErrorName.BadRequest, '잘못된 요청입니다.'],
-    [101, ErrorName.NotFound, '찾을 수 없습니다.'],
+    [101, ErrorName.InvalidPlan, '잘못된 플랜 정보입니다.'],
     [102, ErrorName.Forbidden, '접근 권한이 없습니다.'],
     [
       103,

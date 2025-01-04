@@ -4,6 +4,7 @@ import InputItem from '@components/atoms/InputItem';
 import useModal from '@hooks/useModal';
 import { SnapPoll } from '@models/SnapPoll';
 import { SnapPollOption } from '@models/SnapPollOption';
+import { SnapPollQuestion } from '@models/SnapPollQuestion';
 import { ChangeEvent, memo, useCallback } from 'react';
 import { useSetRecoilState } from 'recoil';
 
@@ -50,47 +51,48 @@ const CreateOptionForm: React.FC<CreateOptionFormProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  function handleOrder(optionId: string) {
-    return (dir: boolean) => {
-      setSnapPoll((snapPoll) => {
-        const copyPoll = SnapPoll.copy(snapPoll);
-        const question = copyPoll.question.find(
-          (question) => question.id === questionId,
-        );
+  function handleOrder(dir: boolean) {
+    setSnapPoll((snapPoll) => {
+      const copyPoll = SnapPoll.copy(snapPoll);
+      copyPoll.question = copyPoll.question.map((question) =>
+        SnapPollQuestion.copy(question),
+      );
+      const question = copyPoll.question.find(
+        (question) => question.id === questionId,
+      );
 
-        if (!question) return copyPoll;
+      if (!question) return copyPoll;
 
-        const index = question.option.findIndex(
-          (voteOption) => voteOption.id === optionId,
-        );
-        question.option = question.option.map((voteOption, index) =>
-          SnapPollOption.copy(voteOption),
-        );
+      const index = question.option.findIndex(
+        (voteOption) => voteOption.id === option.id,
+      );
+      question.option = question.option.map((voteOption, index) =>
+        SnapPollOption.copy(voteOption),
+      );
 
-        if (dir) {
-          // top
-          if (index - 1 >= 0) {
-            [question.option[index - 1], question.option[index]] = [
-              question.option[index],
-              question.option[index - 1],
-            ];
-          }
-        } else {
-          // down
-          if (index + 1 < question.option.length) {
-            [question.option[index + 1], question.option[index]] = [
-              question.option[index],
-              question.option[index + 1],
-            ];
-          }
+      if (dir) {
+        // top
+        if (index - 1 >= 0) {
+          [question.option[index - 1], question.option[index]] = [
+            question.option[index],
+            question.option[index - 1],
+          ];
         }
-        question.option = question.option.map((option, index) => {
-          option.order = index;
-          return option;
-        });
-        return copyPoll;
+      } else {
+        // down
+        if (index + 1 < question.option.length) {
+          [question.option[index + 1], question.option[index]] = [
+            question.option[index],
+            question.option[index + 1],
+          ];
+        }
+      }
+      question.option = question.option.map((option, index) => {
+        option.order = index;
+        return option;
       });
-    };
+      return copyPoll;
+    });
   }
 
   return (
@@ -100,7 +102,7 @@ const CreateOptionForm: React.FC<CreateOptionFormProps> = ({
       onChange={onChange}
       handleRemove={handleRemove}
       errors={errors}
-      handleOrder={handleOrder(option.id)}
+      handleOrder={handleOrder}
     />
   );
 };

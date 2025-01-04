@@ -127,7 +127,7 @@ export class UsersService {
       createUserDto.username,
     );
 
-    const { password, provider, plan, subscribeType, ...userCommon } =
+    const { role, password, provider, plan, subscribeType, ...userCommon } =
       createUserDto;
     const orFreePlan = await this.prisma.plan.findFirst({
       where: { planType: plan || $Enums.PlanType.Free },
@@ -138,6 +138,7 @@ export class UsersService {
       return this.prisma.user.create({
         data: {
           ...userCommon,
+          role: $Enums.Role.User,
           localUser: { create: { password: encryptedPassword } },
           subscription: {
             create: {
@@ -155,6 +156,7 @@ export class UsersService {
       return this.prisma.user.create({
         data: {
           ...userCommon,
+          role: $Enums.Role.User,
           socialUser: { create: { provider } },
           subscription: {
             create: {

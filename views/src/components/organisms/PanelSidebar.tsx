@@ -23,8 +23,9 @@ const PanelSidebar: React.FC<PanelSidebarProps> = ({
         <Tab label="사용자 관리" value={0} />
         <Tab label="게시글 관리" value={1} />
         <Tab label="메일링 관리" value={2} />
-        <Tab label="설문 관리" value={3} />
-        <Tab label="투표 관리" value={4} />
+        <Tab label="플랜 관리" value={3} />
+        <Tab label="설문 관리" value={4} />
+        <Tab label="투표 관리" value={5} />
       </Tabs>
     </Stack>
   );

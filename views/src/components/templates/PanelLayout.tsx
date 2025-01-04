@@ -16,14 +16,16 @@ import {
 import { SyntheticEvent, useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
+import { useNavigate } from 'react-router-dom';
 
 interface PanelLayoutProps {}
 const PanelLayout: React.FC<PanelLayoutProps> = () => {
   const { isCrew } = useToken();
   const [currentTab, setCurrentTab] = useState(0);
-
+  const navigate = useNavigate();
   const handleTabChange = (event: SyntheticEvent, newValue: number) => {
     setCurrentTab(newValue);
+    navigate('/panel');
   };
   const theme = useTheme();
   const isMdDown = useMediaQuery(theme.breakpoints.down('md'));

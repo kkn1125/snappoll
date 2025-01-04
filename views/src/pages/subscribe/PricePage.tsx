@@ -1,5 +1,7 @@
+import { getPlans } from '@apis/plan/getPlans';
 import Pricing from '@components/organisms/Pricing';
 import {
+  Chip,
   Container,
   Paper,
   Stack,
@@ -13,8 +15,7 @@ import {
   Typography,
 } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
-import { getPlans } from '@apis/plan/getPlans';
-import DataListTable from '@components/moleculars/DataListTable';
+import { useCallback } from 'react';
 
 interface SubscribeProps {}
 const Subscribe: React.FC<SubscribeProps> = () => {
@@ -23,6 +24,16 @@ const Subscribe: React.FC<SubscribeProps> = () => {
   >({ queryKey: ['plans'], queryFn: getPlans });
   const plans = data?.data.plans;
   const subscribers = data?.data.subscribers;
+
+  const getPrice = useCallback(
+    (price: number, month: number = 1, discount?: number) => {
+      if (discount) {
+        return price * month * (1 - 0.01 * discount);
+      }
+      return price * month;
+    },
+    [],
+  );
 
   return (
     <Container sx={{ flex: 1 }}>
@@ -111,7 +122,7 @@ const Subscribe: React.FC<SubscribeProps> = () => {
                   <TableCell variant="head">비용 (월단위)</TableCell>
                   {plans?.map((plan) => (
                     <TableCell key={plan.id} align="center">
-                      {plan.price.toLocaleString('ko-KR', {
+                      {getPrice(plan.price, 1).toLocaleString('ko-KR', {
                         style: 'currency',
                         currency: 'KRW',
                       })}
@@ -121,11 +132,50 @@ const Subscribe: React.FC<SubscribeProps> = () => {
                 <TableRow hover>
                   <TableCell variant="head">비용 (연단위)</TableCell>
                   {plans?.map((plan) => (
-                    <TableCell key={plan.id} align="center">
-                      {(plan.price * 12).toLocaleString('ko-KR', {
-                        style: 'currency',
-                        currency: 'KRW',
-                      })}
+                    <TableCell key={plan.id} align="center" valign="middle">
+                      <Typography
+                        component="span"
+                        fontSize="inherit"
+                        sx={{
+                          textDecoration:
+                            plan.discount > 0 ? 'line-through' : 'none',
+                        }}
+                      >
+                        {getPrice(plan.price, 12).toLocaleString('ko-KR', {
+                          style: 'currency',
+                          currency: 'KRW',
+                        })}
+                      </Typography>
+
+                      {plan.discount > 0 && (
+                        <Typography
+                          component="span"
+                          fontSize="inherit"
+                          sx={{ position: 'relative' }}
+                        >
+                          <Chip
+                            color="info"
+                            size="small"
+                            label={`-${plan.discount}%`}
+                            sx={{
+                              position: 'absolute',
+                              bottom: '50%',
+                              right: '100%',
+                              transform: 'translate(-50%, -50%)',
+                              fontWeight: 700,
+                            }}
+                          />{' '}
+                          ⇒{' '}
+                          {getPrice(
+                            plan.price,
+                            12,
+                            plan.discount,
+                          ).toLocaleString('ko-KR', {
+                            style: 'currency',
+                            currency: 'KRW',
+                          })}
+                        </Typography>
+                      )}
                     </TableCell>
                   ))}
                 </TableRow>

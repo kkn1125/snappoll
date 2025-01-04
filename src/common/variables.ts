@@ -39,8 +39,8 @@ export const BUFFER_TIME = 5;
 export const LIMIT = {
   FREE: {
     CREATE: {
-      POLL: Infinity /* 3 */,
-      VOTE: Infinity /* 3 */,
+      POLL: 30 /* 3 */,
+      VOTE: 30 /* 3 */,
     },
     RESPONSE: {
       POLL: 100,

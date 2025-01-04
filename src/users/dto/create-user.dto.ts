@@ -56,6 +56,7 @@ export class CreateUserDto
   /* social user */
   provider?: string;
 
+  role?: $Enums.Role;
   plan?: $Enums.PlanType;
 
   @Transform(({ value }) => value || $Enums.SubscribeType.Monthly)

@@ -62,6 +62,7 @@ import { Logger } from '@utils/Logger';
 import { useLayoutEffect } from 'react';
 import { Route, Routes, useLocation } from 'react-router-dom';
 import WriteNoticePage from '@pages/panel/WriteNoticePage';
+import EditPlanPage from '@pages/panel/EditPlanPage';
 
 interface AppRootProps {}
 const AppRoot: React.FC<AppRootProps> = () => {
@@ -244,6 +245,7 @@ const AppRoot: React.FC<AppRootProps> = () => {
           <Route path="panel" element={<PanelLayout />}>
             <Route index element={<PanelPage />} />
             <Route path="notice" element={<WriteNoticePage />} />
+            <Route path="plan" element={<EditPlanPage />} />
           </Route>
         </Route>
       </Route>

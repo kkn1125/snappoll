@@ -1,6 +1,7 @@
 import ReadyAlert from '@components/atoms/ReadyAlert';
 import PanelBoard from '@components/organisms/PanelBoard';
 import PanelNotice from '@components/organisms/PanelNotice';
+import PanelPlan from '@components/organisms/PanelPlan';
 import PanelUser from '@components/organisms/PanelUser';
 import { Stack, Toolbar } from '@mui/material';
 import { useOutletContext } from 'react-router-dom';
@@ -19,7 +20,8 @@ const PanelPage: React.FC<PanelPageProps> = () => {
       {currentTab === 0 && <PanelUser />}
       {currentTab === 1 && <PanelBoard />}
       {currentTab === 2 && <PanelNotice />}
-      {currentTab > 2 && <ReadyAlert />}
+      {currentTab === 3 && <PanelPlan />}
+      {currentTab > 3 && <ReadyAlert />}
     </Stack>
   );
 };

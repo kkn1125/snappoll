@@ -11,6 +11,7 @@ import SnapLogger from '@utils/SnapLogger';
 import { Request } from 'express';
 import { PlanValidate, ValidateType } from './plan-validate.decorator';
 import { LIMIT } from '@common/variables';
+import { $Enums } from '@prisma/client';
 
 @Injectable()
 export class PlanGuard implements CanActivate {
@@ -40,10 +41,27 @@ export class PlanGuard implements CanActivate {
 
     const user = req.user;
     const subscription = user.subscription;
+    const dbUser = await this.prisma.user.findUnique({
+      where: { id: user.id },
+      include: { subscription: { include: { plan: true } } },
+    });
 
-    const target = validateType.startsWith('poll') ? 'poll' : 'vote';
-    const type = validateType.endsWith('Create') ? 'create' : 'response';
-    this.logger.debug('플랜 검증:', target, type);
+    /* 유저 존재 검증 */
+    if (!dbUser) {
+      const errorCode = await this.prisma.getErrorCode('user', 'NotFound');
+      throw new BadRequestException(errorCode);
+    }
+    /* 토큰 구독과 db 유저 구독 일치 검증 */
+    const dbSubscription = dbUser.subscription;
+
+    if (subscription.plan.id !== dbSubscription.plan.id) {
+      const errorCode = await this.prisma.getErrorCode('plan', 'InvalidPlan');
+      throw new BadRequestException(errorCode);
+    }
+
+    // const target = validateType.startsWith('poll') ? 'poll' : 'vote';
+    // const type = validateType.endsWith('Create') ? 'create' : 'response';
+    // this.logger.debug('플랜 검증:', validateType);
 
     if (
       !subscription ||
@@ -54,13 +72,13 @@ export class PlanGuard implements CanActivate {
       throw new ForbiddenException(errorCode);
     }
 
-    this.logger.info(`${target} ${type} 작업 진행`);
+    this.logger.info(`${validateType} 작업 진행`);
+
     const UPPER_CASE =
       subscription.plan.planType.toUpperCase() as keyof typeof LIMIT;
 
-    this.logger.info('Free plan');
-    if (subscription.type === 'Infinite') {
-      if (target === 'poll' && type === 'create') {
+    if (subscription.type in $Enums.SubscribeType) {
+      if (validateType === 'pollCreate') {
         const count = await this.prisma.poll.count({
           where: { userId: user.id },
         });
@@ -68,7 +86,7 @@ export class PlanGuard implements CanActivate {
           const errorCode = await this.prisma.getErrorCode('poll', 'PollLimit');
           throw new BadRequestException(errorCode);
         }
-      } else if (target === 'poll' && type === 'response') {
+      } else if (validateType === 'pollResponse') {
         if ('pollId' in req.body) {
           const pollId = req.body.pollId;
           const count = await this.prisma.response.count({
@@ -88,7 +106,7 @@ export class PlanGuard implements CanActivate {
           );
           throw new BadRequestException(errorCode);
         }
-      } else if (target === 'vote' && type === 'create') {
+      } else if (validateType === 'voteCreate') {
         const count = await this.prisma.vote.count({
           where: { userId: user.id },
         });
@@ -96,7 +114,7 @@ export class PlanGuard implements CanActivate {
           const errorCode = await this.prisma.getErrorCode('vote', 'VoteLimit');
           throw new BadRequestException(errorCode);
         }
-      } else if (target === 'vote' && type === 'response') {
+      } else if (validateType === 'voteResponse') {
         if ('voteId' in req.body) {
           const voteId = req.body.voteId;
           const count = await this.prisma.voteResponse.count({

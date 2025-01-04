@@ -1,10 +1,19 @@
 import { IgnoreCookie } from '@auth/ignore-cookie.decorator';
-import { Body, Controller, Get, Param, Patch, Post, Req } from '@nestjs/common';
-import { UpdatePlanDto } from './dto/update-plan.dto';
-import { PlansService } from './plans.service';
-import { SubscriptionPlanDto } from './dto/subscription-plan.dto';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Query,
+  Req,
+} from '@nestjs/common';
 import { PlanType, SubscribeType } from '@prisma/client';
 import { Request } from 'express';
+import { UpdatePlanDto } from './dto/update-plan.dto';
+import { PlansService } from './plans.service';
 
 @Controller('plans')
 export class PlansController {
@@ -14,6 +23,12 @@ export class PlansController {
   // create(@Body() createPlanDto: CreatePlanDto) {
   //   return this.plansService.create(createPlanDto);
   // }
+
+  @IgnoreCookie()
+  @Get('view')
+  findAllView(@Query('page') page: number = 1) {
+    return this.plansService.findAllView(page);
+  }
 
   @IgnoreCookie()
   @Get()
@@ -42,8 +57,8 @@ export class PlansController {
     return this.plansService.update(id, updatePlanDto);
   }
 
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.plansService.remove(+id);
-  // }
+  @Delete(':id')
+  remove(@Param('id') id: string) {
+    return this.plansService.remove(id);
+  }
 }
