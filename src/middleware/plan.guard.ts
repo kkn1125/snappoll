@@ -38,35 +38,30 @@ export class PlanGuard implements CanActivate {
     this.logger.debug('플랜 검증 시작:', validateType);
     const http = context.switchToHttp();
     const req = http.getRequest() as Request;
-
-    const user = req.user;
-    const subscription = user.subscription;
-    const dbUser = await this.prisma.user.findUnique({
-      where: { id: user.id },
-      include: { subscription: { include: { plan: true } } },
+    const registeredUser = req.user;
+    const pollId = req.body.pollId;
+    const { user } = await this.prisma.poll.findUnique({
+      where: { id: pollId },
+      include: {
+        user: {
+          include: {
+            subscription: {
+              include: { plan: true },
+            },
+          },
+        },
+      },
     });
-
     /* 유저 존재 검증 */
-    if (!dbUser) {
+    if (!user) {
       const errorCode = await this.prisma.getErrorCode('user', 'NotFound');
       throw new BadRequestException(errorCode);
     }
-    /* 토큰 구독과 db 유저 구독 일치 검증 */
-    const dbSubscription = dbUser.subscription;
-
-    if (subscription.plan.id !== dbSubscription.plan.id) {
-      const errorCode = await this.prisma.getErrorCode('plan', 'InvalidPlan');
-      throw new BadRequestException(errorCode);
-    }
-
-    // const target = validateType.startsWith('poll') ? 'poll' : 'vote';
-    // const type = validateType.endsWith('Create') ? 'create' : 'response';
-    // this.logger.debug('플랜 검증:', validateType);
 
     if (
-      !subscription ||
-      subscription.endDate !== null ||
-      subscription.state !== 'Active'
+      !user.subscription ||
+      user.subscription.endDate !== null ||
+      user.subscription.state !== 'Active'
     ) {
       const errorCode = await this.prisma.getErrorCode('plan', 'Forbidden');
       throw new ForbiddenException(errorCode);
@@ -75,9 +70,9 @@ export class PlanGuard implements CanActivate {
     this.logger.info(`${validateType} 작업 진행`);
 
     const UPPER_CASE =
-      subscription.plan.planType.toUpperCase() as keyof typeof LIMIT;
+      user.subscription.plan.planType.toUpperCase() as keyof typeof LIMIT;
 
-    if (subscription.type in $Enums.SubscribeType) {
+    if (user.subscription.type in $Enums.SubscribeType) {
       if (validateType === 'pollCreate') {
         const count = await this.prisma.poll.count({
           where: { userId: user.id },
@@ -100,16 +95,18 @@ export class PlanGuard implements CanActivate {
             );
             throw new BadRequestException(errorCode);
           }
-          /* 이미 응답했는지 검증 */
-          const alreadyRespond = await this.prisma.response.count({
-            where: { pollId, userId: user.id },
-          });
-          if (alreadyRespond > 0) {
-            const errorCode = await this.prisma.getErrorCode(
-              'pollResponse',
-              'AlreadyRespond',
-            );
-            throw new BadRequestException(errorCode);
+          if (registeredUser) {
+            /* 이미 응답했는지 검증 */
+            const alreadyRespond = await this.prisma.response.count({
+              where: { pollId, userId: registeredUser.id },
+            });
+            if (alreadyRespond > 0) {
+              const errorCode = await this.prisma.getErrorCode(
+                'pollResponse',
+                'AlreadyRespond',
+              );
+              throw new BadRequestException(errorCode);
+            }
           }
         } else {
           // 조작된 바디 데이터 예외 처리
@@ -141,16 +138,18 @@ export class PlanGuard implements CanActivate {
             );
             throw new BadRequestException(errorCode);
           }
-          /* 이미 응답했는지 검증 */
-          const alreadyRespond = await this.prisma.voteResponse.count({
-            where: { voteId, userId: user.id },
-          });
-          if (alreadyRespond > 0) {
-            const errorCode = await this.prisma.getErrorCode(
-              'voteResponse',
-              'AlreadyRespond',
-            );
-            throw new BadRequestException(errorCode);
+          if (registeredUser) {
+            /* 이미 응답했는지 검증 */
+            const alreadyRespond = await this.prisma.voteResponse.count({
+              where: { voteId, userId: user.id },
+            });
+            if (alreadyRespond > 0) {
+              const errorCode = await this.prisma.getErrorCode(
+                'voteResponse',
+                'AlreadyRespond',
+              );
+              throw new BadRequestException(errorCode);
+            }
           }
         } else {
           // 조작된 바디 데이터 예외 처리

@@ -6,15 +6,14 @@ import {
   AlertTitle,
   Button,
   Chip,
-  Container,
   Stack,
-  Typography,
+  Typography
 } from '@mui/material';
 import Notfound from '@pages/NotfoundPage';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import DetailPoll from '../DetailPollPage';
+import DetailPollPage from '../DetailPollPage';
 
 interface SharePollProps {
   url: string;
@@ -67,7 +66,7 @@ const SharePoll: React.FC<SharePollProps> = ({ url }) => {
         </Button>
       </Alert>
       <Stack>
-        <DetailPoll pollId={shareData.pollId} refetchShare={refetchShare} />
+        <DetailPollPage pollId={shareData.pollId} refetchShare={refetchShare} />
       </Stack>
       <Chip
         label="shared by SnapPoll"

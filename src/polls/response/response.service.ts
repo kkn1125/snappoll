@@ -42,6 +42,9 @@ export class ResponseService {
         userId,
         answer,
       },
+      include: {
+        answer: true,
+      },
     });
   }
 

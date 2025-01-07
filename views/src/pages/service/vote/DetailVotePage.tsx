@@ -70,6 +70,7 @@ const DetailVotePage: React.FC<DetailVotePageProps> = ({
           },
           closeCallback: () => {
             setResponse(new SnapVoteResponse());
+            navigate('/');
           },
         });
       } else {

@@ -41,6 +41,9 @@ export class VoteResponsesService {
         userId,
         voteAnswer,
       },
+      include: {
+        voteAnswer: true,
+      },
     });
   }
 

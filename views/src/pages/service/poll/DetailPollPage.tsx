@@ -9,7 +9,7 @@ import useModal from '@hooks/useModal';
 import useToken from '@hooks/useToken';
 import { SnapPoll } from '@models/SnapPoll';
 import { SnapResponse } from '@models/SnapResponse';
-import { Button, Container, Divider, Stack, Toolbar } from '@mui/material';
+import { Button, Divider, Stack } from '@mui/material';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { validateExpired } from '@utils/validateExpired';
 import { AxiosError } from 'axios';
@@ -68,6 +68,7 @@ const DetailPollPage: React.FC<DetailPollPageProps> = ({
           },
           closeCallback: () => {
             setResponse(new SnapResponse());
+            navigate('/');
           },
         });
       } else {

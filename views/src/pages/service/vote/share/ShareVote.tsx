@@ -6,7 +6,6 @@ import {
   AlertTitle,
   Button,
   Chip,
-  Container,
   Stack,
   Typography,
 } from '@mui/material';
@@ -14,7 +13,7 @@ import Notfound from '@pages/NotfoundPage';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import DetailVote from '../DetailVotePage';
+import DetailVotePage from '../DetailVotePage';
 
 interface ShareVoteProps {
   url: string;
@@ -66,7 +65,7 @@ const ShareVote: React.FC<ShareVoteProps> = ({ url }) => {
         </Button>
       </Alert>
       <Stack>
-        <DetailVote voteId={shareData.voteId} refetchShare={refetchShare} />
+        <DetailVotePage voteId={shareData.voteId} refetchShare={refetchShare} />
       </Stack>
       <Chip
         label="shared by SnapPoll"

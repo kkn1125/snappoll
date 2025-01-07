@@ -24,10 +24,7 @@ export const CustomMessage = {
   },
   SuccessResponse: {
     title: '안내',
-    content: [
-      '응답을 성공적으로 제출했습니다. 확인을 누르면 사이트로 이동, 닫기를 누르면 창이 종료됩니다.',
-      '사이트로 이동하시겠습니까?',
-    ],
+    content: ['응답을 성공적으로 제출했습니다.'],
   },
   SuccessChangePassword: {
     title: '안내',
