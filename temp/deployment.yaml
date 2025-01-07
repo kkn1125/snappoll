@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: snappoll-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: snappoll
+  template:
+    metadata:
+      labels:
+        app: snappoll
+    spec:
+      containers:
+        - name: snappoll
+          image: snappoll:v1
+          ports:
+            - containerPort: 8080
+          # imagePullPolicy: Never
+          env:
+            - name: NODE_ENV
+              value: staging

@@ -14,12 +14,14 @@ import {
 import { CreateVoteResponseDto } from './dto/create-vote-response.dto';
 import { UpdateVoteResponseDto } from './dto/update-vote-response.dto';
 import { VoteResponsesService } from './vote-responses.service';
+import { IgnoreCookie } from '@auth/ignore-cookie.decorator';
 
 @UseGuards(RoleGuard)
 @Controller('response')
 export class VoteResponsesController {
   constructor(private readonly voteResponsesService: VoteResponsesService) {}
 
+  @IgnoreCookie()
   @PlanValidate('voteResponse')
   @UseGuards(PlanGuard)
   @Post()
