@@ -8,6 +8,27 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
+enum NoticeType {
+  Normal
+  Batch
+}
+
+enum Role {
+  User
+  Admin
+}
+
+enum Group {
+  Normal
+  Test
+}
+
+enum AuthProvider {
+  Local
+  Kakao
+  Google
+}
+
 model AllowTerms {
   id        String   @id @default(uuid()) @db.Uuid
   termsId   String   @map("terms_id") @db.Uuid
@@ -78,23 +99,6 @@ model UserProfile {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("user_profile")
-}
-
-enum Role {
-  User
-  Admin
-}
-
-// enum Grade {
-//   Free
-//   Hobby
-//   Pro
-// }
-
-enum AuthProvider {
-  Local
-  Kakao
-  Google
 }
 
 model SocialUser {
@@ -192,12 +196,12 @@ model User {
   isActive     Boolean      @default(true) @map("is_active")
   lastLogin    DateTime?    @map("last_login")
   authProvider AuthProvider @default(Local) @map("auth_provider")
+  group        Group        @default(Normal)
   role         Role         @default(User)
   receiveMail  Boolean      @default(false) @map("receive_mail")
-
-  createdAt DateTime  @default(now()) @map("created_at")
-  updatedAt DateTime  @default(now()) @updatedAt @map("updated_at")
-  deletedAt DateTime? @map("deleted_at")
+  createdAt    DateTime     @default(now()) @map("created_at")
+  updatedAt    DateTime     @default(now()) @updatedAt @map("updated_at")
+  deletedAt    DateTime?    @map("deleted_at")
 
   sendMessage    Message[] @relation("sendMessage")
   receiveMessage Message[] @relation("receiveMessage")
@@ -463,11 +467,6 @@ model Comment {
   board Board @relation(fields: [boardId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   @@map("comment")
-}
-
-enum NoticeType {
-  Normal
-  Batch
 }
 
 model Notice {
