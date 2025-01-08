@@ -21,6 +21,7 @@ export class CreateUserDto
       User,
       | 'id'
       | 'isActive'
+      | 'group'
       | 'role'
       | 'authProvider'
       | 'lastLogin'
