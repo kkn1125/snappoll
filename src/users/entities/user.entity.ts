@@ -7,6 +7,7 @@ export class User implements PrismaUser {
   isActive: boolean;
   lastLogin: Date;
   authProvider: $Enums.AuthProvider;
+  group: $Enums.Group;
   role: $Enums.Role;
   receiveMail: boolean;
   createdAt: Date;

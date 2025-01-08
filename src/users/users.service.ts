@@ -127,8 +127,20 @@ export class UsersService {
       createUserDto.username,
     );
 
-    const { role, password, provider, plan, subscribeType, ...userCommon } =
-      createUserDto;
+    const {
+      // 기본 그룹 사용 (데이터 조작 방지)
+      group,
+      // 기본 역할 사용 (데이터 조작 방지)
+      role,
+      // 해시처리 패스워드 적용
+      password,
+      // 사이트 회원 가입 기본 프로바이더 적용
+      provider,
+      // 기본 플랜 사용 (데이터 조작 방지)
+      plan,
+      subscribeType,
+      ...userCommon
+    } = createUserDto;
     const orFreePlan = await this.prisma.plan.findFirst({
       where: { planType: plan || $Enums.PlanType.Free },
     });

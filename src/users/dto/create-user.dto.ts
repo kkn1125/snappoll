@@ -56,6 +56,7 @@ export class CreateUserDto
   /* social user */
   provider?: string;
 
+  group?: $Enums.Group;
   role?: $Enums.Role;
   plan?: $Enums.PlanType;
 
