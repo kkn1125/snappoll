@@ -159,6 +159,8 @@ const VoteLayout: React.FC<VoteLayoutProps> = ({
             borderRadius: 1,
             borderLeft: '5px solid #aaa',
             mb: 5,
+            whiteSpace: 'pre-wrap',
+            textBreak: 'auto-phrase',
           }}
         >
           {vote.description}

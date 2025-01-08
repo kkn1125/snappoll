@@ -89,6 +89,8 @@ const PollLayout: React.FC<PollLayoutProps> = ({
             borderRadius: 1,
             borderLeft: '5px solid #aaa',
             mb: 5,
+            whiteSpace: 'pre-wrap',
+            textBreak: 'auto-phrase',
           }}
         >
           {poll.description}
