@@ -295,6 +295,7 @@ export class UsersService {
       where: { id },
       data: {
         deletedAt: new Date(),
+        isActive: false,
       },
     });
   }

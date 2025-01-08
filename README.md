@@ -16,6 +16,7 @@
     - 회원 가입 방지 (마스터 권한 특수 허용)
     - role guard 강화
     - UserController RoleGuard 추가
+    - user remove 시 active false 적용
 - 2025-01-07
   - feat
     - Kubernates 테스트
