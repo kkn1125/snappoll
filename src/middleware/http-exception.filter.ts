@@ -21,6 +21,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const request = ctx.getRequest<Request>();
     const timestamp = new Date().toISOString();
     const requestUrl = request.url;
+    const method = request.method;
 
     this.logger.error('에러 확인 필요', exception);
 
@@ -28,6 +29,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
       response.status(400).json({
         statusCode: exception.name,
         message: exception.code,
+        method,
         path: requestUrl,
         timestamp,
       });
@@ -43,6 +45,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
       response.status(status).json({
         httpCode: status,
         errorCode: { message: exceptionResponse },
+        method,
         path: requestUrl,
         timestamp,
       });
@@ -64,6 +67,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
           errorStatus: -999,
           message: '잘못된 요청입니다.',
         },
+        method,
         path: requestUrl,
         timestamp,
       });
@@ -71,6 +75,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
       response.status(status).json({
         httpCode: status,
         errorCode: exceptionResponse ?? -999,
+        method,
         path: requestUrl,
         timestamp,
       });

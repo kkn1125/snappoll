@@ -3,11 +3,19 @@
 서버사이드 구현
 
 - 2025-01-08
+  - add
+    - 회원가입 임시 금지
+    - 임시 참여 계정 생성
+    - 탈퇴 회원 정보 완전 제거 배치 일정 추가
+    - exception filter 응답 method 속성 추가
   - fix
     - 좋아요 API 수정
       - removeLike API 제거
       - post메서드 like API를 action 바디값으로 분기
       - Throttler Exception와 Exception 생성자 인자 차이로 ThrottlerException만 예외 응답 메세지 포맷 변경
+    - 회원 가입 방지 (마스터 권한 특수 허용)
+    - role guard 강화
+    - UserController RoleGuard 추가
 - 2025-01-07
   - feat
     - Kubernates 테스트

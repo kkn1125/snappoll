@@ -1,6 +1,16 @@
 import { requestKakaoLogin } from '@apis/requestKakaoLogin';
 import { Kakao } from '@common/variables';
-import { Button, Container, Divider, Stack, Typography } from '@mui/material';
+import SignupNotice from '@components/moleculars/SignupNotice';
+import useModal from '@hooks/useModal';
+import {
+  Alert,
+  AlertTitle,
+  Button,
+  Container,
+  Divider,
+  Stack,
+  Typography,
+} from '@mui/material';
 import { useMutation } from '@tanstack/react-query';
 import { Logger } from '@utils/Logger';
 import { useEffect } from 'react';
@@ -15,7 +25,7 @@ const AuthPage: React.FC<AuthPageProps> = () => {
     mutationKey: ['kakaoLogin'],
     mutationFn: requestKakaoLogin,
   });
-
+  const { openInteractiveModal } = useModal();
   function handleRedirectKakaoLogin() {
     kakaoLoginMutation.mutate();
   }
@@ -51,6 +61,7 @@ const AuthPage: React.FC<AuthPageProps> = () => {
               간편한 설문조사, 스냅폴
             </Typography>
           </Stack>
+          <SignupNotice />
           <Stack gap={1}>
             <Button
               variant="contained"
@@ -65,7 +76,20 @@ const AuthPage: React.FC<AuthPageProps> = () => {
                 fontSize: 18,
                 fontWeight: 700,
               }}
-              onClick={handleRedirectKakaoLogin}
+              onClick={
+                /* handleRedirectKakaoLogin */
+                () => {
+                  openInteractiveModal({
+                    content: {
+                      title: '안내',
+                      content: [
+                        '현재 인증된 사용자에게 서비스를 허용하고 있습니다.',
+                        '"회원 가입 안내"의 메일로 문의주시면 빠른 시일내로 답변드리겠습니다. 감사합니다.',
+                      ],
+                    },
+                  });
+                }
+              }
             >
               카카오 계정으로 계속하기
             </Button>

@@ -10,6 +10,7 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { BatchService } from './batch.service';
 import { LocalStrategy } from './local.strategy';
+import { ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { LocalStrategy } from './local.strategy';
     LocalStrategy,
     BatchService,
     EncryptManager,
+    ConfigService,
   ],
   controllers: [AuthController],
   exports: [AuthService, BatchService],

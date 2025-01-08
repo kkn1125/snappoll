@@ -4,6 +4,7 @@ import { getTerms } from '@apis/terms/getTerms';
 import { Message } from '@common/messages';
 import CustomInput from '@components/atoms/CustomInput';
 import HistoryPrevBtn from '@components/atoms/HistoryPrevBtn';
+import SignupNotice from '@components/moleculars/SignupNotice';
 import useModal from '@hooks/useModal';
 import useValidate from '@hooks/useValidate';
 import { SnapTerms } from '@models/SnapTerms';
@@ -15,6 +16,8 @@ import MarkEmailReadIcon from '@mui/icons-material/MarkEmailRead';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import {
+  Alert,
+  AlertTitle,
   Button,
   Checkbox,
   Divider,
@@ -64,7 +67,6 @@ const SignupPage: React.FC<SignupPageProps> = () => {
     receiveMail: false,
   });
   const { errors, validate, validated, setValidated } = useValidate(signupInfo);
-
   const pendingAnimation = keyframes`
     0%   { transform: rotate(0deg) }
     100% { transform: rotate(359deg) }
@@ -419,9 +421,11 @@ const SignupPage: React.FC<SignupPageProps> = () => {
       flex={1}
       alignItems="center"
       justifyContent="center"
+      py={1}
       width={{ xs: '100%', md: '50%' }}
       mx="auto"
     >
+      <SignupNotice />
       <Stack
         component="form"
         gap={1}

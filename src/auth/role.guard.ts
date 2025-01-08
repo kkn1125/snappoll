@@ -1,4 +1,9 @@
-import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+import {
+  CanActivate,
+  ExecutionContext,
+  ForbiddenException,
+  Injectable,
+} from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import SnapLogger from '@utils/SnapLogger';
 import { Request } from 'express';
@@ -26,6 +31,11 @@ export class RoleGuard implements CanActivate {
     const role = req.user?.role as $Enums.Role;
     this.logger.debug('역할:', role);
     this.logger.debug('역할 검증 끝');
+    if (roles.includes($Enums.Role.Admin) && role !== $Enums.Role.Admin) {
+      throw new ForbiddenException({
+        message: '권한이 없습니다.',
+      });
+    }
     return roles.includes(role);
   }
 }

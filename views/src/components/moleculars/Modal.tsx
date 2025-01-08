@@ -100,7 +100,12 @@ const Modal: React.FC<ModalProps> = () => {
               }}
             >
               {modalState.content.map((ctt, i) => (
-                <Typography key={ctt + i} className="font-maru" fontSize={15}>
+                <Typography
+                  key={ctt + i}
+                  className="font-maru"
+                  fontSize={15}
+                  sx={{ whiteSpace: 'pre-wrap', wordBreak: 'auto-phrase' }}
+                >
                   {ctt}
                 </Typography>
               ))}

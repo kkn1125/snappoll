@@ -1,8 +1,12 @@
+import { PrismaService } from '@database/prisma.service';
 import { Injectable } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
+import SnapLogger from '@utils/SnapLogger';
+import dayjs from 'dayjs';
 
 @Injectable()
 export class BatchService {
+  logger = new SnapLogger(this);
   cacheTime: number = 1 * 60 * 1000;
   mapper: Map<
     string,
@@ -13,6 +17,8 @@ export class BatchService {
       expired?: boolean;
     }
   > = new Map();
+
+  constructor(private readonly prisma: PrismaService) {}
 
   @Cron('*/30 * * * * *', {
     name: 'expiresToken',
@@ -47,5 +53,26 @@ export class BatchService {
     if (data && data instanceof Object && 'token' in data) {
       this.mapper.delete(data.token);
     }
+  }
+
+  @Cron('59 59 23 * * 0', {
+    name: 'removeDeletedUser',
+  })
+  async removeDeletedUser() {
+    this.logger.info('제거 시각:', dayjs().format('YYYY. MM. DD HH:mm:ss'));
+    const deletedUser = await this.prisma.user.findMany({
+      where: { deletedAt: { not: null } },
+    });
+    const deletedCount = await this.prisma.user.deleteMany({
+      where: { deletedAt: { not: null } },
+    });
+    this.logger.info(
+      `제거 계정 목록 (${deletedCount}개 계정)`,
+      '=====',
+      deletedUser
+        .map(({ id, username, email }) => `${id}:\n${username}\n${email} <<✨`)
+        .join('\n\n'),
+      '=====',
+    );
   }
 }

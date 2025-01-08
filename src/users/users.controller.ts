@@ -6,6 +6,7 @@ import {
   Body,
   Controller,
   Delete,
+  ForbiddenException,
   Get,
   HttpStatus,
   Param,
@@ -16,6 +17,7 @@ import {
   Req,
   Res,
   UploadedFile,
+  UseGuards,
   UseInterceptors,
   ValidationPipe,
 } from '@nestjs/common';
@@ -27,7 +29,11 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserPasswordDto } from './dto/update-user-password.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersService } from './users.service';
+import { ConfigService } from '@nestjs/config';
+import { RoleGuard } from '@auth/role.guard';
+import { Roles } from '@auth/roles.decorator';
 
+@UseGuards(RoleGuard)
 @Controller('users')
 export class UsersController {
   logger = new SnapLogger(this);
@@ -36,17 +42,30 @@ export class UsersController {
     private readonly usersService: UsersService,
     private readonly termsService: TermsService,
     private readonly prisma: PrismaService,
+    private readonly configService: ConfigService,
   ) {}
 
+  @Roles(['Admin'])
   @IgnoreCookie()
   @Post()
   async create(
+    @Body('masterPass') masterPass: string,
     @Body(new ValidationPipe({ transform: true }))
     createUserDto: CreateUserDto & {
       privacyPolicy: boolean;
       serviceAgreement: boolean;
     },
   ) {
+    const master = this.configService.get('email.masterPass');
+    if (!masterPass || masterPass !== master) {
+      throw new ForbiddenException({
+        status: 403,
+        domain: 'server',
+        errorStatus: -999,
+        message:
+          '현재 회원가입을 허용하지 않고 있습니다.\n제한된 인원에게 계정을 발급하고 있으니 양해바랍니다.\n\n문의사항은 "회원 가입 안내" 하단의 대표 이메일로 문의 주시기 바랍니다.',
+      });
+    }
     const user = await this.prisma.$transaction(async (prisma) => {
       const { privacyPolicy, serviceAgreement, ...createUserDtoData } =
         createUserDto;
@@ -142,6 +161,7 @@ export class UsersController {
     return this.usersService.update(id, updateUserDto);
   }
 
+  @Roles(['Admin'])
   // @IgnoreCookie()
   @Put(':id/password')
   updatePassword(
@@ -158,6 +178,7 @@ export class UsersController {
     return this.usersService.deleteProfileImage(id);
   }
 
+  @Roles(['Admin'])
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.usersService.remove(id);
