@@ -16,7 +16,7 @@ export class SnapBoard {
 
   author?: User;
 
-  liked?: boolean;
+  liked!: boolean;
 
   _count?: {
     boardLike?: number;

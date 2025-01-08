@@ -243,7 +243,7 @@ const DetailBoardPage: React.FC<DetailBoardPageProps> = () => {
   }
 
   return (
-    <Container maxWidth="md">
+    <>
       {!!showModal && (
         <Paper
           id="sub-modal"
@@ -357,7 +357,11 @@ const DetailBoardPage: React.FC<DetailBoardPageProps> = () => {
 
         <Divider flexItem />
 
-        <LikeButton board={onlyBoardData} refetch={refetch} />
+{
+  onlyBoardData&&
+
+        <LikeButton boardId={onlyBoardData.id} liked={onlyBoardData.liked} refetch={refetch} />
+}
 
         {/* 댓글 쓰기 */}
         {board && <CommentWrite initializeComments={initializeComments} />}
@@ -388,7 +392,7 @@ const DetailBoardPage: React.FC<DetailBoardPageProps> = () => {
           </Button>
         </Stack>
       </Stack>
-    </Container>
+    </>
   );
 };
 

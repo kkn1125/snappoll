@@ -93,17 +93,25 @@ export class BoardsController {
 
   @Throttle({ short: { limit: 5, ttl: 1000 } })
   @Post(':id/like')
-  addLike(@Req() req: Request, @Param('id') id: string) {
+  addLike(
+    @Req() req: Request,
+    @Param('id') id: string,
+    @Body('action') action: string,
+  ) {
     const userId = req.user?.id;
-    return this.boardsService.addLike(id, userId);
+    if (action === 'like') {
+      return this.boardsService.addLike(id, userId);
+    } else {
+      return this.boardsService.removeLike(id, userId);
+    }
   }
 
-  @Throttle({ short: { limit: 5, ttl: 1000 } })
-  @Delete(':id/like')
-  removeLike(@Req() req: Request, @Param('id') id: string) {
-    const userId = req.user?.id;
-    return this.boardsService.removeLike(id, userId);
-  }
+  // @Throttle({ short: { limit: 5, ttl: 1000 } })
+  // @Delete(':id/like')
+  // removeLike(@Req() req: Request, @Param('id') id: string) {
+  //   const userId = req.user?.id;
+  //   return this.boardsService.removeLike(id, userId);
+  // }
 
   @IgnoreCookie()
   @Patch(':id')

@@ -2,6 +2,12 @@
 
 서버사이드 구현
 
+- 2025-01-08
+  - fix
+    - 좋아요 API 수정
+      - removeLike API 제거
+      - post메서드 like API를 action 바디값으로 분기
+      - Throttler Exception와 Exception 생성자 인자 차이로 ThrottlerException만 예외 응답 메세지 포맷 변경
 - 2025-01-07
   - feat
     - Kubernates 테스트

@@ -16,21 +16,24 @@ import { isNil } from '@utils/isNil';
 import { useCallback, useMemo, useState } from 'react';
 
 interface LikeButtonProps {
-  board?: SnapBoard;
+  // board?: SnapBoard;
+  boardId: string;
+  liked: boolean;
   refetch?: (
     options?: RefetchOptions,
   ) => Promise<QueryObserverResult<SnapResponseType<SnapBoard>, Error>>;
 }
-const LikeButton: React.FC<LikeButtonProps> = ({ board, refetch }) => {
+const LikeButton: React.FC<LikeButtonProps> = ({ boardId, liked, refetch }) => {
   const { openModal } = useModal();
   const { user } = useToken();
-  const [pressLike, setPressLike] = useState(false);
+  const [like, setLike] = useState(liked)
+  // const [pressLike, setPressLike] = useState(false);
 
   const addLikeMutation = useMutation({
     mutationKey: ['addLike'],
     mutationFn: addLike,
     onSuccess(data, variables, context) {
-      setPressLike(false);
+      // setPressLike(false);
       refetch?.();
     },
     onError(error: AxiosError<AxiosException>, variables, context) {
@@ -41,7 +44,7 @@ const LikeButton: React.FC<LikeButtonProps> = ({ board, refetch }) => {
             error.response?.data?.errorCode?.message || '문제가 발생했습니다.',
         },
       });
-      setPressLike(false);
+      // setPressLike(false);
       refetch?.();
     },
   });
@@ -49,22 +52,24 @@ const LikeButton: React.FC<LikeButtonProps> = ({ board, refetch }) => {
     mutationKey: ['removeLike'],
     mutationFn: removeLike,
     onSuccess(data, variables, context) {
-      setPressLike(false);
+      // setPressLike(false);
       refetch?.();
     },
   });
 
   const handleAddLike = useCallback(() => {
-    if (!board) return;
-    addLikeMutation.mutate(board.id);
+    // if (!board) return;
+    addLikeMutation.mutate(boardId);
+    setLike(true)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [board]);
+  }, [boardId]);
 
   const handleRemoveLike = useCallback(() => {
-    if (!board) return;
-    removeLikeMutation.mutate(board.id);
+    // if (!board) return;
+    removeLikeMutation.mutate(boardId);
+    setLike(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [board]);
+  }, [boardId]);
 
   const handleRequireLogin = useCallback(() => {
     openModal({
@@ -74,22 +79,22 @@ const LikeButton: React.FC<LikeButtonProps> = ({ board, refetch }) => {
   }, []);
 
   const handler = useMemo(() => {
-    if (!board) {
-      return () => {};
-    }
-    if (!user || isNil(board.liked)) {
+    // if (!board) {
+    //   return () => {};
+    // }
+    if (!user ) {
       return handleRequireLogin;
     }
 
-    if (board.liked === true) {
+    if (like) {
       return handleRemoveLike;
-    } else if (board.liked === false) {
+    } else {
       return handleAddLike;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [board, user]);
+  }, [like, user]);
 
-  if (!board || isNil(board.liked)) return <></>;
+  // if (!board || isNil(board.liked)) return <></>;
 
   return (
     <Stack
@@ -101,12 +106,12 @@ const LikeButton: React.FC<LikeButtonProps> = ({ board, refetch }) => {
       }}
     >
       <Button
-        disabled={pressLike}
+        // disabled={pressLike}
         onClick={() => {
-          setPressLike(true);
-          handler?.();
+          // setPressLike(true);
+          handler();
         }}
-        variant={board.liked ? 'contained' : 'outlined'}
+        variant={like ? 'contained' : 'outlined'}
         sx={{
           ['&,&:disabled']: {
             cursor: 'pointer !important',

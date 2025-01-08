@@ -4,6 +4,7 @@ import {
   ExceptionFilter,
   HttpException,
 } from '@nestjs/common';
+import { ThrottlerException } from '@nestjs/throttler';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import SnapLogger from '@utils/SnapLogger';
 import { Request, Response } from 'express';
@@ -34,8 +35,19 @@ export class HttpExceptionFilter implements ExceptionFilter {
     }
 
     const httpException = exception as HttpException;
+
     const status = httpException?.getStatus?.() || 500;
     const exceptionResponse = httpException?.getResponse?.();
+
+    if (httpException instanceof ThrottlerException) {
+      response.status(status).json({
+        httpCode: status,
+        errorCode: { message: exceptionResponse },
+        path: requestUrl,
+        timestamp,
+      });
+      return;
+    }
 
     const isValidationException =
       typeof exceptionResponse === 'object' &&
