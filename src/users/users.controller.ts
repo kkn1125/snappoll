@@ -67,8 +67,12 @@ export class UsersController {
       });
     }
     const user = await this.prisma.$transaction(async (prisma) => {
-      const { privacyPolicy, serviceAgreement, ...createUserDtoData } =
-        createUserDto;
+      const {
+        masterPass,
+        privacyPolicy,
+        serviceAgreement,
+        ...createUserDtoData
+      } = createUserDto;
       const user = await this.usersService.create(
         privacyPolicy,
         serviceAgreement,
