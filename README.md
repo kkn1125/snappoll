@@ -17,6 +17,9 @@
     - role guard 강화
     - UserController RoleGuard 추가
     - user remove 시 active false 적용
+  - bugfix
+    - 플랜 가드 로직 수정
+      - 생성, 응답 검증 주체 오류 수정
 - 2025-01-07
   - feat
     - Kubernates 테스트
