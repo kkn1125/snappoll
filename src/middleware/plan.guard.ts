@@ -90,7 +90,8 @@ export class PlanGuard implements CanActivate {
 
     if (validateType === 'pollCreate') {
       await this.validateIfMember(registeredUser);
-      const LIMIT_TYPE = registeredUser.subscription.plan.planType;
+      const LIMIT_TYPE =
+        registeredUser.subscription.plan.planType.toUpperCase();
       const count = await this.prisma.poll.count({
         where: { userId: registeredUser.id },
       });
@@ -99,7 +100,8 @@ export class PlanGuard implements CanActivate {
         throw new BadRequestException(errorCode);
       }
     } else if (validateType === 'pollResponse') {
-      const LIMIT_TYPE = pollOrVoteAuthor.subscription.plan.planType;
+      const LIMIT_TYPE =
+        pollOrVoteAuthor.subscription.plan.planType.toUpperCase();
       if ('pollId' in req.body) {
         const count = await this.prisma.response.count({
           where: { pollId },
@@ -138,7 +140,7 @@ export class PlanGuard implements CanActivate {
     } else if (validateType === 'voteCreate') {
       await this.validateIfMember(registeredUser);
       const LIMIT_TYPE =
-        registeredUser.subscription.plan.planType.toUpperCase() as keyof typeof LIMIT;
+        registeredUser.subscription.plan.planType.toUpperCase();
       const count = await this.prisma.vote.count({
         where: { userId: registeredUser.id },
       });
@@ -149,7 +151,7 @@ export class PlanGuard implements CanActivate {
       }
     } else if (validateType === 'voteResponse') {
       const LIMIT_TYPE =
-        pollOrVoteAuthor.subscription.plan.planType.toUpperCase() as keyof typeof LIMIT;
+        pollOrVoteAuthor.subscription.plan.planType.toUpperCase();
       if ('voteId' in req.body) {
         const count = await this.prisma.voteResponse.count({
           where: { voteId },
