@@ -50,6 +50,8 @@ jobs:
                   secret: MASTER_PASS
                 - name: TOSS_SECRET
                   secret: TOSS_SECRET
+                - name: CLIENT_KEY
+                  secret: CLIENT_KEY
               buildenv: []
               strategy: rolling
             context:
