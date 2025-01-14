@@ -32,6 +32,14 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ roles }) => {
       } else if (user && locate.pathname.match(userDisallowPaths)) {
         debug('회원 접근 방지');
         navigate(locate.state?.from || '/');
+      } else if (
+        user &&
+        !user.subscription &&
+        ['/service/poll/create'].some((path) =>
+          locate.pathname.startsWith(path),
+        )
+      ) {
+        debug('접근 거부해야함');
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

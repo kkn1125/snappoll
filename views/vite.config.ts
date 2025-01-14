@@ -22,6 +22,8 @@ export default defineConfig(({ command, mode }) => {
 
   const host = process.env.HOST;
   const port = +(process.env.PORT || 5000);
+  const CLIENT_KEY = process.env.CLIENT_KEY;
+  const TOSS_SECRET = process.env.TOSS_SECRET;
 
   return {
     // vite config
@@ -37,6 +39,8 @@ export default defineConfig(({ command, mode }) => {
         USER_NAME: pkg.author.name,
         USER_BLOG: pkg.author.url,
         USER_PROFILE: pkg.author.profile,
+        CLIENT_KEY,
+        TOSS_SECRET,
       },
     },
     server: {

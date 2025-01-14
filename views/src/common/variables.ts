@@ -23,6 +23,8 @@ export const USER_BLOG = process.env.USER_BLOG as string;
 export const USER_PROFILE = process.env.USER_PROFILE as string;
 export const VERSION = process.env.VERSION as string;
 export const DESCRIPTION = process.env.DESCRIPTION as string;
+export const CLIENT_KEY = process.env.CLIENT_KEY as string;
+export const TOSS_SECRET = process.env.TOSS_SECRET as string;
 
 export const DATE_FORMAT = 'YYYY. MM. DD. HH:mm';
 
@@ -32,7 +34,7 @@ export { default as Illu02 } from '@assets/illustrations/illu-02.svg?react';
 export { default as DefaultProfile } from '@assets/illustrations/default_profile.svg?react';
 
 /* disallow */
-export const guestDisallowPaths = /\/(user|service|notice|panel|graph)\/?(.*)/;
+export const guestDisallowPaths = /\/(user|service|notice|panel|graph|price\/change)\/?(.*)/;
 export const guestAllowPaths = /^\/service\/(poll|vote)\/share(.*)$/g;
 export const userDisallowPaths = /\/(auth)\/?(.*)/;
 

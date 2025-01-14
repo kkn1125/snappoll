@@ -9,6 +9,7 @@ import {
   PORT,
   SECRET_KEY,
   VERSION,
+  TOSS_SECRET,
 } from './variables';
 
 export default registerAs('common', () => ({
@@ -21,4 +22,5 @@ export default registerAs('common', () => ({
   version: VERSION,
   kakaoKey: KAKAO_KEY,
   currentDomain: CURRENT_DOMAIN,
+  tossSecret: TOSS_SECRET,
 }));

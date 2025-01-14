@@ -58,11 +58,13 @@ import MyResponsePage from '@pages/user/MyResponsePage';
 import PasswordPage from '@pages/user/PasswordPage';
 import ProfilePage from '@pages/user/ProfilePage';
 import UserPage from '@pages/user/UserPage';
-import { Logger } from '@utils/Logger';
 import { useLayoutEffect } from 'react';
 import { Route, Routes, useLocation } from 'react-router-dom';
 import WriteNoticePage from '@pages/panel/WriteNoticePage';
 import EditPlanPage from '@pages/panel/EditPlanPage';
+import PriceChangeSuccessPage from '@pages/subscribe/PriceChangeSuccessPage';
+import PriceChangeFailPage from '@pages/subscribe/PriceChangeFailPage';
+import PricePaymentBillingPage from '@pages/subscribe/PricePaymentBillingPage';
 
 interface AppRootProps {}
 const AppRoot: React.FC<AppRootProps> = () => {
@@ -108,7 +110,15 @@ const AppRoot: React.FC<AppRootProps> = () => {
           {/* 구독 결제 기능 연동 후 활성화 예정 */}
           <Route path="price">
             <Route index element={<PricePage />} />
-            <Route path="change" element={<ChangePricePage />} />
+            <Route
+              path="change"
+              element={<ProtectedRoute roles={['User', 'Admin']} />}
+            >
+              <Route index element={<ChangePricePage />} />
+              <Route path="billing" element={<PricePaymentBillingPage />} />
+              <Route path="success" element={<PriceChangeSuccessPage />} />
+              <Route path="fail" element={<PriceChangeFailPage />} />
+            </Route>
           </Route>
           {/* <Route path="price" element={<ReadyAlert />} /> */}
           {/* <Route path="notice" element={<ReadyAlert />} /> */}

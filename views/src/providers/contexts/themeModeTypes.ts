@@ -58,6 +58,9 @@ const lightTheme = createTheme({
       color: '#6C757D',
     },
   },
+  components: {
+    MuiTypography: { defaultProps: { component: 'div' } },
+  },
 });
 
 const darkTheme = createTheme({
@@ -111,6 +114,9 @@ const darkTheme = createTheme({
       fontSize: '0.875rem',
       color: '#B0B0B0',
     },
+  },
+  components: {
+    MuiTypography: { defaultProps: { component: 'div' } },
   },
 });
 

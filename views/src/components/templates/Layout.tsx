@@ -87,6 +87,7 @@ const Layout: React.FC<LayoutProps> = () => {
           '설문',
           '투표',
           'SnapPoll',
+          '스냅폴',
           '온라인 설문',
           '간편한 설문',
           '설문 통계',
@@ -94,6 +95,8 @@ const Layout: React.FC<LayoutProps> = () => {
           '무료 설문',
           '무료 투표',
           '무료 통계 그래프',
+          '설문 만들기',
+          '투표 만들기',
         ]}
         type="website"
         image="/favicon/apple-touch-icon.png"

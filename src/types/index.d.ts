@@ -7,6 +7,63 @@ import {
 } from '@prisma/client';
 
 export declare global {
+  interface SuccessPayment {
+    mId: string;
+    lastTransactionKey: string;
+    paymentKey: string;
+    orderId: string;
+    orderName: string;
+    taxExemptionAmount: number;
+    status: string;
+    requestedAt: string;
+    approvedAt: string;
+    useEscrow: boolean;
+    cultureExpense: boolean;
+    card: {
+      issuerCode: string;
+      acquirerCode: string;
+      number: string;
+      installmentPlanMonths: number;
+      isInterestFree: boolean;
+      interestPayer: null;
+      approveNo: string;
+      useCardPoint: boolean;
+      cardType: string;
+      ownerType: string;
+      acquireStatus: string;
+      amount: number;
+    };
+    virtualAccount: null;
+    transfer: null;
+    mobilePhone: null;
+    giftCertificate: null;
+    cashReceipt: null;
+    cashReceipts: null;
+    discount: null;
+    cancels: null;
+    secret: string;
+    type: string;
+    easyPay: null;
+    country: string;
+    failure: null;
+    isPartialCancelable: true;
+    receipt: {
+      url: string;
+    };
+    checkout: {
+      url: string;
+    };
+    currency: string;
+    totalAmount: number;
+    balanceAmount: number;
+    suppliedAmount: number;
+    vat: number;
+    taxFreeAmount: number;
+    method: string;
+    version: string;
+    metadata: null;
+  }
+
   namespace Express {
     interface Subscription extends PrismaSubscription {
       plan: Plan;

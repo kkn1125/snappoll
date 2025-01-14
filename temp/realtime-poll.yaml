@@ -24,6 +24,8 @@ options:
       secret: KAKAO_KEY
     - name: MASTER_PASS
       secret: MASTER_PASS
+    - name: TOSS_SECRET
+      secret: TOSS_SECRET
   buildenv: []
   strategy: rolling
 context:

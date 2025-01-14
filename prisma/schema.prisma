@@ -88,6 +88,57 @@ model Code {
   @@map("code")
 }
 
+model Payment {
+  id                        Int       @id @default(autoincrement())
+  userId                    String    @map("user_id") @db.Uuid
+  subscriptionId            String    @map("subscription_id") @db.Uuid
+  mId                       String    @map("m_id")
+  paymentKey                String    @map("payment_key")
+  orderId                   String    @map("order_id")
+  orderName                 String    @map("order_name")
+  customerKey               String    @map("customer_key")
+  amount                    Int
+  taxFreeAmount             Int       @map("tax_free_amount")
+  taxExemptionAmount        Int       @map("tax_exemption_amount")
+  lastTransactionKey        String    @map("last_transaction_key")
+  status                    String
+  useEscrow                 Boolean   @map("use_escrow")
+  cultureExpense            Boolean   @map("culture_expense")
+  cardIssuerCode            String    @map("card_issuer_code")
+  cardAcquirerCode          String    @map("card_acquirer_code")
+  cardNumber                String    @map("card_number")
+  cardInstallmentPlanMonths Int       @map("card_installment_plan_months")
+  cardIsInterestFree        Boolean   @map("card_is_interest_free")
+  cardInterestPayer         String?   @map("card_interest_payer")
+  cardApproveNo             String    @map("card_approve_no")
+  useCardPoint              Boolean   @map("use_card_point")
+  cardType                  String    @map("card_type")
+  cardOwnerType             String    @map("card_owner_type")
+  cardAcquireStatus         String    @map("card_acquire_status")
+  cardAmount                Int       @map("card_amount")
+  secret                    String
+  type                      String
+  country                   String
+  isPartialCancelable       Boolean   @map("is_partial_cancelable")
+  receiptUrl                String?   @map("receipt_url")
+  checkoutUrl               String?   @map("checkout_url")
+  currency                  String
+  totalAmount               Int       @map("total_amount")
+  balanceAmount             Int       @map("balance_amount")
+  suppliedAmount            Int       @map("supplied_amount")
+  vat                       Int
+  method                    String
+  version                   String
+  createdAt                 DateTime  @default(now()) @map("created_at")
+  updatedAt                 DateTime  @default(now()) @updatedAt @map("updated_at")
+  deletedAt                 DateTime? @map("deleted_at")
+
+  subscription Subscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("payment")
+}
+
 model UserProfile {
   id        String   @id @default(uuid()) @db.Uuid
   userId    String   @unique @map("user_id") @db.Uuid
@@ -156,6 +207,8 @@ model Subscription {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   plan Plan @relation(fields: [planId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
+  payment Payment[]
+
   @@index([userId])
   @@index([planId])
   @@map("subscription")
@@ -220,6 +273,7 @@ model User {
   allowTerms   AllowTerms[]
   comment      Comment[]
   boardLike    BoardLike[]
+  payment      Payment[]
 
   @@index([username])
   @@index([email])

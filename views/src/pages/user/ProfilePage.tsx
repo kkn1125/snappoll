@@ -1,4 +1,5 @@
 import { logout } from '@apis/logout';
+import { cancelSubscription } from '@apis/plan/cancelSubscription';
 import { removeAccount } from '@apis/removeAccount';
 import { updateProfile } from '@apis/updateProfile';
 import { uploadProfileImage } from '@apis/uploadProfileImage';
@@ -105,6 +106,14 @@ const ProfilePage: React.FC<ProfilePageProps> = () => {
     },
   });
 
+  const cancelSubscriptionMutation = useMutation({
+    mutationKey: ['cancelSubscription'],
+    mutationFn: cancelSubscription,
+    onSuccess(data, variables, context) {
+      refetchGetMe();
+    },
+  });
+
   const isSocial = user?.authProvider !== 'Local';
 
   useEffect(() => {
@@ -184,6 +193,10 @@ const ProfilePage: React.FC<ProfilePageProps> = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [uploadFile],
   );
+
+  function handleCancelSubscription(subscriptionId: string) {
+    cancelSubscriptionMutation.mutate(subscriptionId);
+  }
 
   const currentPlan = useMemo<Subscription | undefined>(() => {
     return user?.subscription;
@@ -285,8 +298,22 @@ const ProfilePage: React.FC<ProfilePageProps> = () => {
         <Divider flexItem />
         <Stack direction="row" alignItems="center" gap={1}>
           <Typography>현재 Plan</Typography>
-          <Chip label={currentPlan?.plan?.name} size="small" />
-          <Chip label={currentPlan?.type} size="small" />
+          {currentPlan ? (
+            <>
+              <Chip label={currentPlan?.plan?.name} size="small" />
+              <Chip label={currentPlan?.type} size="small" />
+              {/* <Button
+                size="small"
+                color="error"
+                variant="outlined"
+                onClick={() => handleCancelSubscription(currentPlan?.id)}
+              >
+                구독 취소
+              </Button> */}
+            </>
+          ) : (
+            <Button onClick={() => navigate('/price')}>구독하기</Button>
+          )}
         </Stack>
         {!isSocial && (
           <Fragment>

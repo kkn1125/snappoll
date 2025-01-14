@@ -46,7 +46,7 @@ const Pricing: React.FC<PricingProps> = ({ plan }) => {
             ],
       callback: () => {
         if (userSubscription) {
-          navigate('/price/change');
+          navigate('/price/change', { state: { plan } });
         } else {
           navigate('/auth/signup');
         }

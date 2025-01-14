@@ -199,6 +199,7 @@ export class PollsService {
             const title = question.title;
             const description = question.description;
             const isMultiple = question.isMultiple;
+            const isRequired = question.isRequired;
             const useEtc = question.useEtc;
             const order = question.order;
             return {
@@ -206,6 +207,7 @@ export class PollsService {
               title,
               description,
               isMultiple,
+              isRequired,
               useEtc,
               order,
               option,
