@@ -14,7 +14,8 @@
     "survey",
     "vote",
     "free",
-    "result-graph"
+    "result-graph",
+    "snappoll"
   ],
   "private": true,
   "license": "MIT",

@@ -17,7 +17,8 @@
     "survey",
     "vote",
     "free",
-    "result-graph"
+    "result-graph",
+    "snappoll"
   ],
   "scripts": {
     "dev": "vite",
