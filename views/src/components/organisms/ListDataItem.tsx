@@ -115,6 +115,7 @@ function ListDataItem<T extends SnapPoll | SnapVote>({
 
   const keyList = useMemo(() => {
     const firstItem = dataList[0];
+    if (isNil(firstItem)) return [];
     const keys = [...Object.keys(firstItem)] as (keyof (SnapPoll | SnapVote))[];
 
     return keys.filter(
@@ -214,7 +215,9 @@ function ListDataItem<T extends SnapPoll | SnapVote>({
         ) : (
           <ListItem>
             <ListItemText>
-              {list.length === 0 ? '찾는 설문이 없습니다.' : emptyComment}
+              {count > 0 && list.length === 0
+                ? '찾는 설문이 없습니다.'
+                : emptyComment}
             </ListItemText>
           </ListItem>
         )}
