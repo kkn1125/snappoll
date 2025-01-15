@@ -1,6 +1,6 @@
 import useModal from '@hooks/useModal';
 import useToken from '@hooks/useToken';
-import { Button, Stack, Typography } from '@mui/material';
+import { Badge, Button, Stack, Typography } from '@mui/material';
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -11,6 +11,10 @@ const Pricing: React.FC<PricingProps> = ({ plan }) => {
   const { user } = useToken();
   const navigate = useNavigate();
   const { openModal, openInteractiveModal } = useModal();
+  const isMyPlan = useMemo(() => {
+    return user?.subscription.plan?.id === plan.id;
+  }, [plan, user]);
+
   const userSubscription = useMemo(() => {
     if (user) {
       return user.subscription;
@@ -22,7 +26,7 @@ const Pricing: React.FC<PricingProps> = ({ plan }) => {
     if (userSubscription?.planId === plan.id) {
       openModal({
         info: {
-          title: '구독',
+          title: '구독 안내',
           content: '이미 구독중인 플랜입니다.',
         },
       });
@@ -60,15 +64,13 @@ const Pricing: React.FC<PricingProps> = ({ plan }) => {
       minWidth={200}
       width="100vw"
       maxWidth="100%"
-      justifyContent="space-between"
-      gap={5}
-      p={2}
       sx={{
         borderRadius: 3,
         transition: '150ms ease',
         borderColor: '#00000026',
         borderWidth: 5,
         borderStyle: 'solid',
+        boxShadow: (theme) => `inset 0 0 0 9999999px ${'inherit'}`,
         ['&:hover']: {
           borderColor: (theme) => theme.palette.text.secondary,
           transform: 'translate(-5px, -5px)',
@@ -76,46 +78,87 @@ const Pricing: React.FC<PricingProps> = ({ plan }) => {
         },
       }}
     >
-      <Stack gap={2}>
-        <Typography fontSize={24} fontWeight={700}>
-          {plan.name}
-        </Typography>
-        <Typography fontSize={15} fontWeight={400} color="textSecondary">
-          {plan.description}
-        </Typography>
-        <Typography fontSize={28} fontWeight={700}>
-          {plan.price.toLocaleString('ko-KR', {
-            style: 'currency',
-            currency: 'KRW',
-          })}
-          /월
-        </Typography>
-        <Stack gap={1}>
-          {plan.feature?.map((feature) => (
-            <Typography
-              key={feature.id}
-              fontSize={14}
-              fontWeight={400}
-              color="textSecondary"
-            >
-              - {feature.feature}
-            </Typography>
-          ))}
-        </Stack>
-      </Stack>
-      <Button
-        variant={isFree ? 'contained' : 'outlined'}
-        sx={{ fontSize: 16 }}
-        onClick={() => handleRequireSignup(plan)}
+      <Badge
+        variant="standard"
+        color="info"
+        badgeContent={isMyPlan ? '✨구독중' : undefined}
+        overlap="rectangular"
+        slotProps={{
+          badge: {
+            style: {
+              fontSize: 14,
+              paddingInline: '5px',
+              borderRadius: 5,
+              fontSizeAdjust: 'ic-width',
+              marginRight: 20,
+            },
+          },
+        }}
+        sx={{ height: '100%' }}
       >
-        {userSubscription?.planId === plan.id
-          ? '구독 중'
-          : userSubscription
-            ? '구독하기'
-            : isFree
-              ? '무료로 시작하기'
-              : '구독하기'}
-      </Button>
+        <Stack gap={5} flex={1} p={2} justifyContent="space-between">
+          <Stack gap={2}>
+            <Typography fontSize={24} fontWeight={700}>
+              {plan.name}
+            </Typography>
+            <Typography fontSize={15} fontWeight={400} color="textSecondary">
+              {plan.description}
+            </Typography>
+            <Typography fontSize={28} fontWeight={700}>
+              {plan.price.toLocaleString('ko-KR', {
+                style: 'currency',
+                currency: 'KRW',
+              })}
+              /월
+            </Typography>
+            <Stack gap={1}>
+              {plan.feature?.map((feature) => (
+                <Typography
+                  key={feature.id}
+                  fontSize={14}
+                  fontWeight={400}
+                  color="textSecondary"
+                >
+                  - {feature.feature}
+                </Typography>
+              ))}
+            </Stack>
+          </Stack>
+          {user && plan.planType !== 'Free' ? (
+            <Button
+              variant={isFree ? 'contained' : 'outlined'}
+              sx={{ fontSize: 16 }}
+              onClick={() => handleRequireSignup(plan)}
+            >
+              {userSubscription?.planId === plan.id
+                ? '구독중'
+                : userSubscription
+                  ? '구독하기'
+                  : isFree
+                    ? '무료로 시작하기'
+                    : '구독하기'}
+            </Button>
+          ) : (
+            <Button
+              variant={isFree ? 'contained' : 'outlined'}
+              sx={{ fontSize: 16 }}
+              onClick={() =>
+                openModal({
+                  info: {
+                    title: '구독 안내',
+                    content: [
+                      '이미 다른 플랜을 구독중입니다.',
+                      '기존 구독을 해지하면 자동으로 무료 플랜이 적용됩니다.',
+                    ],
+                  },
+                })
+              }
+            >
+              다른 플랜을 구독중
+            </Button>
+          )}
+        </Stack>
+      </Badge>
     </Stack>
   );
 };

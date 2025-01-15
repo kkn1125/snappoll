@@ -6,6 +6,7 @@ import { uploadProfileImage } from '@apis/uploadProfileImage';
 import { Message } from '@common/messages';
 import { defaultProfile } from '@common/variables';
 import CustomInput from '@components/atoms/CustomInput';
+import CellProgress from '@components/moleculars/CellProgress';
 import useModal from '@hooks/useModal';
 import useToken from '@hooks/useToken';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
@@ -15,6 +16,7 @@ import {
   Chip,
   Container,
   Divider,
+  LinearProgress,
   Stack,
   Toolbar,
   Typography,
@@ -202,6 +204,29 @@ const ProfilePage: React.FC<ProfilePageProps> = () => {
     return user?.subscription;
   }, [user?.subscription]);
 
+  const pollUseAmount = useMemo(() => {
+    return user?.poll?.length ?? 0;
+  }, [user]);
+
+  const voteUseAmount = useMemo(() => {
+    return user?.vote?.length ?? 0;
+  }, [user]);
+
+  const limit = useMemo(() => {
+    switch (currentPlan?.plan?.planType) {
+      case 'Free':
+        return 3;
+      case 'Basic':
+        return 7;
+      case 'Premium':
+        return 12;
+      case 'Enterprise':
+        return 30;
+      default:
+        return 0;
+    }
+  }, [currentPlan]);
+
   return (
     <Container>
       <Toolbar />
@@ -297,23 +322,40 @@ const ProfilePage: React.FC<ProfilePageProps> = () => {
         </Stack>
         <Divider flexItem />
         <Stack direction="row" alignItems="center" gap={1}>
-          <Typography>현재 Plan</Typography>
           {currentPlan ? (
             <>
+              <Typography>현재 Plan</Typography>
               <Chip label={currentPlan?.plan?.name} size="small" />
               <Chip label={currentPlan?.type} size="small" />
-              {/* <Button
+              {currentPlan.plan?.planType !== 'Free' && (
+                <Button
+                  size="small"
+                  color="error"
+                  variant="outlined"
+                  onClick={() => handleCancelSubscription(currentPlan?.id)}
+                >
+                  구독 취소
+                </Button>
+              )}
+              <Button
                 size="small"
-                color="error"
+                color="info"
                 variant="outlined"
-                onClick={() => handleCancelSubscription(currentPlan?.id)}
+                onClick={() => navigate('/price')}
               >
-                구독 취소
-              </Button> */}
+                구독 변경
+              </Button>
             </>
           ) : (
-            <Button onClick={() => navigate('/price')}>구독하기</Button>
+            <>
+              <Typography>현재 구독 중인 플랜이 없습니다.</Typography>
+              <Button onClick={() => navigate('/price')}>구독하기</Button>
+            </>
           )}
+        </Stack>
+        <Stack gap={2}>
+          <CellProgress title="설문 사용량" count={pollUseAmount} max={limit} />
+          <CellProgress title="투표 사용량" count={voteUseAmount} max={limit} />
         </Stack>
         {!isSocial && (
           <Fragment>

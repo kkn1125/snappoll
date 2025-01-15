@@ -2,6 +2,12 @@
 
 서버사이드 구현
 
+- 2025-01-15
+  - feat
+    - 전체 Console 로그 SnapLogger로 변경
+    - 결제 취소 시 무료 플랜으로 변경
+    - Auth getMe Response 설문, 투표, 응답 데이터 포함
+    - 구독 취소 로직 수정
 - 2025-01-14
   - feat
     - Toss 정기결제 기능 추가

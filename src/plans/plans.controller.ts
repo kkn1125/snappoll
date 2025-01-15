@@ -170,16 +170,6 @@ export class PlansController {
     });
   }
 
-  @Post('subscribe/:planType')
-  subscribe(
-    @Req() req: Request,
-    @Param('planType') planType: PlanType,
-    @Body('type') type: SubscribeType,
-  ) {
-    const userId = req.user.id;
-    return this.plansService.subscribe(userId, planType, type);
-  }
-
   @Post('subscribe/cancel')
   async cancelSubscribe(
     @Req() req: Request,
@@ -188,6 +178,16 @@ export class PlansController {
     const userId = req.user?.id;
     await this.plansService.unsubscribe(subscriptionId);
     return await this.plansService.cancelPayment(userId);
+  }
+
+  @Post('subscribe/:planType')
+  subscribe(
+    @Req() req: Request,
+    @Param('planType') planType: PlanType,
+    @Body('type') type: SubscribeType,
+  ) {
+    const userId = req.user.id;
+    return this.plansService.subscribe(userId, planType, type);
   }
 
   @Patch(':id')

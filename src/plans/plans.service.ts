@@ -183,11 +183,17 @@ export class PlansService {
   }
 
   async unsubscribe(subscriptionId: string) {
+    const freePlan = await this.prisma.plan.findUnique({
+      where: { planType: PlanType.Free },
+    });
+    const freePlanId = freePlan.id;
     return await this.prisma.subscription.update({
       where: { id: subscriptionId },
       data: {
-        state: State.Cancelled,
-        endDate: new Date(),
+        state: State.Active,
+        endDate: null,
+        type: SubscribeType.Infinite,
+        planId: freePlanId,
       },
     });
   }
@@ -252,10 +258,24 @@ export class PlansService {
         }
       }
 
-      return await this.prisma.payment.updateMany({
+      return this.prisma.payment.updateMany({
         where: { id: { in: payments.map((payment) => payment.id) } },
         data: { deletedAt: new Date() },
       });
+
+      // return this.prisma.subscription.updateMany({
+      //   where: {
+      //     payment: {
+      //       some: {
+      //         id: { in: payments.map((payment) => payment.id) },
+      //       },
+      //     },
+      //   },
+      //   data: {
+      //     state: State.Cancelled,
+      //     endDate: new Date(),
+      //   },
+      // });
     });
   }
 
@@ -293,6 +313,7 @@ export class PlansService {
       where: { userId },
       data: { deletedAt: new Date() },
     });
+
     // return { code, message };
   }
 }

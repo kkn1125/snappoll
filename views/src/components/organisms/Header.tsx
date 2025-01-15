@@ -54,6 +54,7 @@ const Header: React.FC<HeaderProps> = () => {
   const menuList = [
     { name: 'Panel', to: '/panel', allow: ['Admin'] },
     { name: 'SnapPoll이란?', to: '/about', allow: ['Guest', 'User', 'Admin'] },
+    { name: '사용방법', to: '/help', allow: ['Guest', 'User', 'Admin'] },
     { name: '요금제', to: '/price', allow: ['Guest', 'User', 'Admin'] },
     { name: '게시판', to: '/board', allow: ['Guest', 'User', 'Admin'] },
     { name: '서비스', to: '/service', allow: ['User', 'Admin'] },

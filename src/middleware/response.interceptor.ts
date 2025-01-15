@@ -4,11 +4,14 @@ import {
   Injectable,
   NestInterceptor,
 } from '@nestjs/common';
+import SnapLogger from '@utils/SnapLogger';
 import { Request, Response } from 'express';
-import { tap, Observable, map } from 'rxjs';
+import { Observable, map, tap } from 'rxjs';
 
 @Injectable()
 export class ResponseInterceptor implements NestInterceptor {
+  logger = new SnapLogger('ResponseInterceptor');
+
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     const now = Date.now();
     const request = context.switchToHttp().getRequest() as Request; // HTTP 요청 객체
@@ -18,7 +21,7 @@ export class ResponseInterceptor implements NestInterceptor {
 
     return next.handle().pipe(
       tap(() => {
-        console.log(
+        this.logger.info(
           `After ... ${Date.now() - now}ms / [${response.statusCode}] <-- Request ${method} ${url}`,
         );
       }),

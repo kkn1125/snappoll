@@ -1,13 +1,16 @@
+import { PrismaService } from '@database/prisma.service';
 import { Injectable } from '@nestjs/common';
+import { EncryptManager } from '@utils/EncryptManager';
+import SnapLogger from '@utils/SnapLogger';
+import dayjs from 'dayjs';
+import { CreateShareVoteDto } from './dto/create-share-vote.dto';
 import { CreateVoteDto } from './dto/create-vote.dto';
 import { UpdateVoteDto } from './dto/update-vote.dto';
-import { PrismaService } from '@database/prisma.service';
-import { CreateShareVoteDto } from './dto/create-share-vote.dto';
-import { EncryptManager } from '@utils/EncryptManager';
-import dayjs from 'dayjs';
 
 @Injectable()
 export class VotesService {
+  logger = new SnapLogger('VoteService');
+
   constructor(
     private readonly prisma: PrismaService,
     private readonly encryptManager: EncryptManager,
@@ -400,7 +403,7 @@ export class VotesService {
   }
 
   remove(id: string) {
-    console.log(id);
+    this.logger.debug(id);
     return this.prisma.vote.delete({ where: { id } });
   }
 }

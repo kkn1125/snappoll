@@ -1,23 +1,23 @@
 import { createSharePoll } from '@apis/poll/share/createSharePoll';
-import { createShareVote } from '@apis/vote/share/createShareVote';
 import { resumeShareUrl as resumeSharePollUrl } from '@apis/poll/share/resumeShareUrl';
-import { resumeShareUrl as resumeShareVoteUrl } from '@apis/vote/share/resumeShareUrl';
 import { revokeShareUrl as revokeSharePollUrl } from '@apis/poll/share/revokeShareUrl';
+import { createShareVote } from '@apis/vote/share/createShareVote';
+import { resumeShareUrl as resumeShareVoteUrl } from '@apis/vote/share/resumeShareUrl';
 import { revokeShareUrl as revokeShareVoteUrl } from '@apis/vote/share/revokeShareUrl';
 import { Message } from '@common/messages';
 import { BASE_CLIENT_URL } from '@common/variables';
 import useModal from '@hooks/useModal';
 import { SnapPoll } from '@models/SnapPoll';
 import { SnapVote } from '@models/SnapVote';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import LinkIcon from '@mui/icons-material/Link';
 import ShareIcon from '@mui/icons-material/Share';
-import { Button, Chip, Stack } from '@mui/material';
+import { Button, Stack } from '@mui/material';
 import { useMutation } from '@tanstack/react-query';
+import QR from 'qrcode';
 import { useCallback, useState } from 'react';
 import { Link } from 'react-router-dom';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import LinkIcon from '@mui/icons-material/Link';
-import QR from 'qrcode';
 
 interface ShareControlButtonProps {
   data?: SnapPoll | SnapVote;
@@ -30,6 +30,7 @@ const ShareControlButton: React.FC<ShareControlButtonProps> = ({
   refetch,
 }) => {
   const [copy, setCopy] = useState(false);
+  const [copyQr, setCopyQr] = useState(false);
   const [createPublicUrl, setCreatePublicUrl] = useState(false);
   const { openModal } = useModal();
   const name = data ? ('sharePoll' in data ? 'poll' : 'vote') : undefined;
@@ -58,7 +59,6 @@ const ShareControlButton: React.FC<ShareControlButtonProps> = ({
     mutationKey: ['createPublicUrl'],
     mutationFn: name === 'poll' ? createSharePoll : createShareVote,
     onSuccess(data, variables, context) {
-      // console.log(data);
       if (data) {
         openModal({ info: Message.Info.CreateShareUrl });
         refetch();
@@ -73,7 +73,6 @@ const ShareControlButton: React.FC<ShareControlButtonProps> = ({
     mutationKey: ['resumePublicUrl'],
     mutationFn: name === 'poll' ? resumeSharePollUrl : resumeShareVoteUrl,
     onSuccess(data, variables, context) {
-      // console.log(data);
       if (data) {
         openModal({ info: Message.Info.ResumeShareUrl });
         refetch();
@@ -88,7 +87,6 @@ const ShareControlButton: React.FC<ShareControlButtonProps> = ({
     mutationKey: ['revokePublicUrl'],
     mutationFn: name === 'poll' ? revokeSharePollUrl : revokeShareVoteUrl,
     onSuccess(data, variables, context) {
-      // console.log(data);
       if (data) {
         openModal({ info: Message.Info.RevokeShareUrl });
         refetch();
@@ -116,6 +114,7 @@ const ShareControlButton: React.FC<ShareControlButtonProps> = ({
   }, []);
 
   function handleCopyQrCodeImage() {
+    setCopyQr(true);
     if (share) {
       const qrCodeUrl = `${BASE_CLIENT_URL}/service/${name}/share/?url=${encodeURIComponent(share.url)}`;
       QR.toDataURL(qrCodeUrl).then((url) => {
@@ -136,6 +135,7 @@ const ShareControlButton: React.FC<ShareControlButtonProps> = ({
                   closeCallback: () => {
                     image.remove();
                     URL.revokeObjectURL(url);
+                    setCopyQr(false);
                   },
                 });
               });
@@ -154,7 +154,7 @@ const ShareControlButton: React.FC<ShareControlButtonProps> = ({
       <Stack>
         <Button
           size="small"
-          startIcon={<ShareIcon />}
+          startIcon={createPublicUrl ? <CheckCircleIcon /> : <ShareIcon />}
           onClick={() => handleCreatePublicUrl(data.id)}
         >
           공유 URL 생성하기
@@ -169,29 +169,34 @@ const ShareControlButton: React.FC<ShareControlButtonProps> = ({
         공유 URL 복구하기
       </Button>
     ) : (
-      <Stack direction="column" alignItems="flex-end">
-        {share.url && (
-          <Button size="small" onClick={handleCopyQrCodeImage}>
-            공유 QR코드 복사
-          </Button>
-        )}
+      <Stack direction="column" alignItems="flex-end" gap={1}>
         {share.url && (
           <Button
             component={Link}
-            color="inherit"
+            color="info"
             size="small"
-            startIcon={<LinkIcon />}
             to={`${BASE_CLIENT_URL}/service/${name}/share/?url=${encodeURIComponent(share.url)}`}
             target="_blank"
           >
-            공유 URL 확인하기
+            공유 {name === 'poll' ? '설문' : '투표'} 확인하기
+          </Button>
+        )}
+
+        {share.url && (
+          <Button
+            size="small"
+            color={copyQr ? 'success' : 'inherit'}
+            startIcon={copyQr ? <CheckCircleIcon /> : <ContentCopyIcon />}
+            onClick={handleCopyQrCodeImage}
+          >
+            공유 QR코드 복사
           </Button>
         )}
 
         <Button
           color={copy ? 'success' : 'inherit'}
           size="small"
-          startIcon={copy ? <CheckCircleIcon /> : <ContentCopyIcon />}
+          startIcon={copy ? <CheckCircleIcon /> : <LinkIcon />}
           onClick={handleCopyUrl}
         >
           공유 URL 복사

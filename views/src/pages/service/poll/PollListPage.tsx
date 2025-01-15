@@ -27,6 +27,9 @@ const PollListPage: React.FC<PollListPageProps> = () => {
       <ListDataItem
         name="poll"
         queryKey="polls"
+        searchbar
+        disableCreateButton
+        disableMyResponse
         dataList={responseData.polls}
         count={responseData.count}
         emptyComment="등록한 설문지가 없습니다."

@@ -22,10 +22,11 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { formattedDate } from '@utils/formattedDate';
 import { getUsernameOr } from '@utils/getUsernameOr';
 import { isNil } from '@utils/isNil';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import ListItemIcons from '../atoms/ListItemIcons';
+import Searchbar from '@components/atoms/Searchbar';
 
 interface ListDataItemProps<T extends SnapPoll | SnapVote> {
   name: 'poll' | 'vote';
@@ -33,7 +34,9 @@ interface ListDataItemProps<T extends SnapPoll | SnapVote> {
   dataList: T[];
   count: number;
   emptyComment?: string;
+  searchbar?: boolean;
   disableCreateButton?: boolean;
+  disableMyResponse?: boolean;
   limit?: number;
 }
 
@@ -43,13 +46,16 @@ function ListDataItem<T extends SnapPoll | SnapVote>({
   dataList,
   count,
   emptyComment = '등록한 데이터가 없습니다.',
+  searchbar = false,
   disableCreateButton = false,
+  disableMyResponse = false,
   limit,
 }: ListDataItemProps<T>) {
   const { openInteractiveModal } = useModal();
   const { user } = useRecoilValue(tokenAtom);
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const [list, setList] = useState(dataList);
   // const [params, setParams] = useSearchParams({ page: '1' });
 
   const removeMutate = useMutation({
@@ -88,8 +94,51 @@ function ListDataItem<T extends SnapPoll | SnapVote>({
     return name === 'poll' ? '설문' : '투표';
   }, [name]);
 
+  function resetList() {
+    setList(dataList);
+  }
+
+  function handleFilter(key: keyof (SnapPoll | SnapVote), value: any) {
+    setList(
+      dataList.filter(
+        (data) =>
+          data[key] === value ||
+          (key === 'userId' &&
+            (data.user?.username === value ||
+              data.user?.username.includes(value))) ||
+          (key in data &&
+            typeof data[key] === 'string' &&
+            data[key].includes(value)),
+      ),
+    );
+  }
+
+  const keyList = useMemo(() => {
+    const firstItem = dataList[0];
+    const keys = [...Object.keys(firstItem)] as (keyof (SnapPoll | SnapVote))[];
+
+    return keys.filter(
+      (key) =>
+        !['id', 'createdAt', 'updatedAt', 'deletedAt', 'expiresAt'].includes(
+          key,
+        ) &&
+        (['string', 'number', 'boolean'].includes(typeof firstItem[key]) ||
+          firstItem[key] instanceof Date ||
+          firstItem[key] === null),
+    );
+  }, [dataList]);
+
   return (
     <Stack>
+      {dataList.length > 0 && searchbar && (
+        <Stack direction="row" justifyContent="space-between">
+          <Searchbar
+            columnList={keyList}
+            handleFilter={handleFilter}
+            resetList={resetList}
+          />
+        </Stack>
+      )}
       <Stack direction="row" justifyContent="space-between">
         {!disableCreateButton && (
           <Button
@@ -101,7 +150,7 @@ function ListDataItem<T extends SnapPoll | SnapVote>({
             등록하기
           </Button>
         )}
-        {user && (
+        {user && !disableMyResponse && (
           <Button
             component={Link}
             to={`/service/${name}/me/response`}
@@ -114,8 +163,8 @@ function ListDataItem<T extends SnapPoll | SnapVote>({
       </Stack>
 
       <List>
-        {dataList && dataList.length > 0 ? (
-          (limit ? dataList.slice(0, limit) : dataList).map((data, i) => (
+        {list && list.length > 0 ? (
+          (limit ? list.slice(0, limit) : list).map((data, i) => (
             <ListItem key={data.id}>
               <ListItemButton
                 onClick={() => navigate(`/service/${name}/${data.id}`)}
@@ -164,7 +213,9 @@ function ListDataItem<T extends SnapPoll | SnapVote>({
           ))
         ) : (
           <ListItem>
-            <ListItemText>{emptyComment}</ListItemText>
+            <ListItemText>
+              {list.length === 0 ? '찾는 설문이 없습니다.' : emptyComment}
+            </ListItemText>
           </ListItem>
         )}
       </List>

@@ -18,7 +18,7 @@ export class WebsocketGateway {
 
   @SubscribeMessage('message')
   async handleMessage(client: any, payload: any) {
-    console.log(client, payload);
+    // console.log(client, payload);
     // if (payload.type === 'pollResponse') {
     //   const sender = await this.prisma.user.findUnique({
     //     where: { id: payload.userId },
@@ -51,7 +51,7 @@ export class WebsocketGateway {
 
   @SubscribeMessage('getMessages')
   async handleGetMessages(client: any, payload: any) {
-    console.log('getMessage payload', payload.userId);
+    // console.log('getMessage payload', payload.userId);
     if (!payload.userId) return [];
     return this.prisma.message.findMany({ where: { toId: payload.userId } });
   }

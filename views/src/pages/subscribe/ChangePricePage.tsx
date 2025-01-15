@@ -45,7 +45,13 @@ const ChangePricePage: React.FC<ChangePricePageProps> = () => {
       justifyContent="center"
       alignItems="center"
     >
-      <Stack p={3} gap={2} maxWidth="50vmin" height="100%">
+      <Stack
+        p={3}
+        gap={2}
+        width="90vw"
+        maxWidth={{ xs: '90vw', md: '60vmin' }}
+        height="100%"
+      >
         <Typography fontSize={24} fontWeight={700}>
           플랜 결제 안내
         </Typography>
@@ -61,10 +67,10 @@ const ChangePricePage: React.FC<ChangePricePageProps> = () => {
         <Stack
           p={3}
           gap={2}
+          width="90vw"
           alignItems="center"
           minWidth={200}
-          width="50vmin"
-          maxWidth="50vmin"
+          maxWidth={{ xs: '90vw', md: '60vmin' }}
         >
           <Typography fontSize={24} fontWeight={700} color="info">
             {plan.name}

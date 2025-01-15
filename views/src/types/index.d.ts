@@ -2,6 +2,8 @@ import '@mui/material/styles';
 import '@mui/material/Button';
 import '@mui/material/AppBar';
 import { SnapBoard } from '@models/SnapBoard';
+import { SnapResponse } from '@models/SnapResponse';
+import { SnapVoteResponse } from '@models/SnapVoteResponse';
 
 export declare module '@mui/material/styles' {
   export declare interface Palette {
@@ -124,6 +126,11 @@ export declare global {
     deletedAt: Date | null;
     userProfile?: Profile;
     subscription: Subscription;
+
+    poll?: SnapPoll[];
+    vote?: SnapVote[];
+    response?: SnapResponse[];
+    voteResponse?: SnapVoteResponse[];
   }
   // interface SnapPlan {
   //   id: string;

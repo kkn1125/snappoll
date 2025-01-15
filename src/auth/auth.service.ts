@@ -9,7 +9,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { $Enums, User } from '@prisma/client';
+import { $Enums, State, User } from '@prisma/client';
 import { UsersService } from '@users/users.service';
 import { EncryptManager } from '@utils/EncryptManager';
 import SnapLogger from '@utils/SnapLogger';
@@ -311,9 +311,25 @@ export class AuthService {
             id: true,
           },
         },
+        poll: true,
+        vote: true,
+        response: true,
+        voteResponse: true,
         subscription: {
           include: {
             plan: true,
+          },
+          where: {
+            plan: {
+              subscription: {
+                some: {
+                  AND: {
+                    endDate: null,
+                    state: State.Active,
+                  },
+                },
+              },
+            },
           },
         },
       },

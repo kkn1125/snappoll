@@ -10,6 +10,7 @@ import { allowOrigins } from '@utils/allowOrigins';
 import compression from 'compression';
 import cookieParser from 'cookie-parser';
 import { AppModule } from './app.module';
+import SnapLogger from '@utils/SnapLogger';
 
 declare const module: any;
 
@@ -23,13 +24,13 @@ async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     bufferLogs: true,
   });
+  const logger = new SnapLogger('bootstrap');
   // app.useLogger(new SnapLogger());
   const { hosts, ports } = whiteList;
   const configService = app.get(ConfigService);
   const common = configService.get<ConfigType<typeof commonConf>>('common');
 
   const allowList = allowOrigins(hosts, ports);
-  console.log('allowList:', allowList);
 
   app.enableCors({
     origin: allowList,
@@ -63,7 +64,8 @@ async function bootstrap() {
       module.hot.dispose(() => app.close());
     }
 
-    console.log(`server listening on ${await app.getUrl()}`);
+    logger.info('allowList:', allowList);
+    logger.info(`server listening on ${await app.getUrl()}`);
   });
 }
 bootstrap();

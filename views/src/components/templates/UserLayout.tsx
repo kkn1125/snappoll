@@ -8,7 +8,7 @@ const UserLayout: React.FC<UserLayoutProps> = () => {
   const isMdUp = useMediaQuery(theme.breakpoints.up('md'));
   return (
     <Container maxWidth={isMdUp ? 'md' : 'xs'}>
-      <Stack height="inherit" pt={5}>
+      <Stack height="inherit" py={5}>
         <Stack direction="row" justifyContent="flex-start" mb={2}>
           <HistoryPrevBtn />
         </Stack>

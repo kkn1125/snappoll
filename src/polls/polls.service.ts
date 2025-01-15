@@ -391,59 +391,64 @@ export class PollsService {
   }
 
   update(id: string, updatePollDto: UpdatePollDto) {
-    return this.prisma.$transaction(async () => {
-      const title = updatePollDto.title;
-      const description = updatePollDto.description;
-      const userId = updatePollDto.userId;
-      const expiresAt = updatePollDto.expiresAt;
-      const questions = updatePollDto.question;
+    return this.prisma.$transaction(
+      async () => {
+        const title = updatePollDto.title;
+        const description = updatePollDto.description;
+        const userId = updatePollDto.userId;
+        const expiresAt = updatePollDto.expiresAt;
+        const questions = updatePollDto.question;
 
-      await this.prisma.poll.update({
-        where: { id },
-        data: {
-          title,
-          description,
-          userId,
-          expiresAt,
-        },
-      });
-
-      await this.prisma.question.deleteMany({
-        where: {
-          pollId: id,
-          id: { notIn: questions.map((question) => question.id) },
-        },
-      });
-
-      for (const { option: options, id, answer, ...question } of questions) {
-        const questionId = id;
-        // this.logger.debug(id, question);
-        await this.prisma.question.upsert({
+        await this.prisma.poll.update({
           where: { id },
-          create: question,
-          update: question,
+          data: {
+            title,
+            description,
+            userId,
+            expiresAt,
+          },
         });
-        if (question.type !== 'text') {
-          for (const { id, ...option } of options) {
-            await this.prisma.option.deleteMany({
-              where: {
-                questionId,
-                id: { notIn: options.map((option) => option.id) },
-              },
-            });
-            await this.prisma.option.upsert({
-              where: { id },
-              create: option,
-              update: option,
-            });
+
+        await this.prisma.question.deleteMany({
+          where: {
+            pollId: id,
+            id: { notIn: questions.map((question) => question.id) },
+          },
+        });
+
+        for (const { option: options, id, answer, ...question } of questions) {
+          const questionId = id;
+          // this.logger.debug(id, question);
+          await this.prisma.question.upsert({
+            where: { id },
+            create: question,
+            update: question,
+          });
+          if (question.type !== 'text') {
+            for (const { id, ...option } of options) {
+              await this.prisma.option.deleteMany({
+                where: {
+                  questionId,
+                  id: { notIn: options.map((option) => option.id) },
+                },
+              });
+              await this.prisma.option.upsert({
+                where: { id },
+                create: option,
+                update: option,
+              });
+            }
           }
         }
-      }
 
-      return this.prisma.poll.findUnique({
-        where: { id },
-      });
-    });
+        return this.prisma.poll.findUnique({
+          where: { id },
+        });
+      },
+      {
+        timeout: 20 * 1000,
+      },
+    );
   }
 
   remove(id: string) {
