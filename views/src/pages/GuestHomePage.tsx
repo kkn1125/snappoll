@@ -1,4 +1,6 @@
 import { guestMainImage, illu01, illu02 } from '@common/variables';
+import Picture from '@components/atoms/Picture';
+import Carousel from '@components/moleculars/Carousel';
 import {
   Box,
   Button,
@@ -10,6 +12,7 @@ import {
 } from '@mui/material';
 
 import { Link } from 'react-router-dom';
+import { Fragment } from 'react/jsx-runtime';
 
 interface GuestHomePageProps {}
 const GuestHomePage: React.FC<GuestHomePageProps> = () => {
@@ -87,7 +90,19 @@ const GuestHomePage: React.FC<GuestHomePageProps> = () => {
               flexWrap="wrap"
             >
               {/* survey */}
-              <Paper component={Stack} flex={1} maxWidth={300} p={3}>
+              <Paper
+                component={Stack}
+                flex={1}
+                maxWidth={300}
+                p={3}
+                sx={{
+                  wordBreak: 'auto-phrase',
+                  transition: 'scale 150ms ease-in-out',
+                  ['&:hover']: {
+                    scale: 1.05,
+                  },
+                }}
+              >
                 <Stack
                   minHeight={170}
                   alignItems="center"
@@ -115,7 +130,19 @@ const GuestHomePage: React.FC<GuestHomePageProps> = () => {
                 </Typography>
               </Paper>
               {/* graph */}
-              <Paper component={Stack} flex={1} maxWidth={300} p={3}>
+              <Paper
+                component={Stack}
+                flex={1}
+                maxWidth={300}
+                p={3}
+                sx={{
+                  wordBreak: 'auto-phrase',
+                  transition: 'scale 150ms ease-in-out',
+                  ['&:hover']: {
+                    scale: 1.05,
+                  },
+                }}
+              >
                 <Stack
                   minHeight={170}
                   alignItems="center"
@@ -137,12 +164,25 @@ const GuestHomePage: React.FC<GuestHomePageProps> = () => {
                   Graph
                 </Typography>
                 <Typography minHeight={80} fontSize={14} fontWeight={500}>
-                  다양한 차트와 그래프로 한눈에 보는 분석 리포트를 제공합니다.
-                  응답자들의 의견을 직관적으로 파악하고 인사이트를 도출하세요.
+                  다양한 그래프와 질문 간 비교 그래프로 한눈에 보는 분석 결과를
+                  제공합니다. 응답자들의 의견을 직관적으로 파악하고 인사이트를
+                  도출하세요.
                 </Typography>
               </Paper>
               {/* share */}
-              <Paper component={Stack} flex={1} maxWidth={300} p={3}>
+              <Paper
+                component={Stack}
+                flex={1}
+                maxWidth={300}
+                p={3}
+                sx={{
+                  wordBreak: 'auto-phrase',
+                  transition: 'scale 150ms ease-in-out',
+                  ['&:hover']: {
+                    scale: 1.05,
+                  },
+                }}
+              >
                 <Stack
                   minHeight={170}
                   alignItems="center"
@@ -175,6 +215,81 @@ const GuestHomePage: React.FC<GuestHomePageProps> = () => {
       </Container>
 
       {/* section 03 */}
+      <Container>
+        <Stack>
+          <Toolbar />
+          <Typography align="center" fontSize={32} fontWeight={700}>
+            쉽고 간편하게 만드는 설문, 투표
+          </Typography>
+          <Toolbar />
+
+          <Box
+            display="inline-block"
+            width="fit-content"
+            maxWidth={450}
+            minHeight={450}
+            mx="auto"
+          >
+            <Carousel
+              slots={[
+                <Fragment>
+                  <Typography variant="h5" fontWeight={700} width={200}>
+                    주간 응답자를 확인하고
+                  </Typography>
+                  <Picture
+                    filename="/sample-01"
+                    img={{ height: 400 }}
+                    sx={{ ml: -1 }}
+                  />
+                </Fragment>,
+                <Fragment>
+                  <Typography variant="h5" fontWeight={700} width={200}>
+                    쉽게 설문과 투표를 만들고
+                  </Typography>
+                  <Picture
+                    filename="/sample-02"
+                    img={{ height: 400 }}
+                    sx={{ ml: -1 }}
+                  />
+                </Fragment>,
+                <Fragment>
+                  <Typography variant="h5" fontWeight={700} width={200}>
+                    함께 참여하고
+                  </Typography>
+                  <Picture
+                    filename="/sample-03"
+                    img={{ height: 400 }}
+                    sx={{ ml: -1 }}
+                  />
+                </Fragment>,
+                <Fragment>
+                  <Typography variant="h5" fontWeight={700} width={200}>
+                    결과를 분석하고
+                  </Typography>
+                  <Picture
+                    filename="/sample-04"
+                    img={{ height: 400 }}
+                    sx={{ ml: -1 }}
+                  />
+                </Fragment>,
+                <Fragment>
+                  <Typography variant="h5" fontWeight={700} width={200}>
+                    고급 비교 기능으로 인사이트를 도출하고
+                  </Typography>
+                  <Picture
+                    filename="/sample-05"
+                    img={{ height: 400 }}
+                    sx={{ ml: -1 }}
+                  />
+                </Fragment>,
+              ]}
+              delay={3000}
+            />
+          </Box>
+        </Stack>
+      </Container>
+
+      {/* section 04 */}
       <Container>
         <Stack>
           <Toolbar />

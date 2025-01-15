@@ -1,4 +1,4 @@
-import { Box, Paper, Stack, Typography } from '@mui/material';
+import { Box, Paper, Stack, SxProps, Typography } from '@mui/material';
 import { isNil } from '@utils/isNil';
 
 interface PictureProps {
@@ -12,6 +12,7 @@ interface PictureProps {
     width?: number | string;
     height?: number | string;
   };
+  sx?: SxProps;
 }
 const Picture: React.FC<PictureProps> = ({
   top,
@@ -21,9 +22,10 @@ const Picture: React.FC<PictureProps> = ({
   filename,
   label,
   img,
+  sx,
 }) => {
   return (
-    <Paper className="img-wrap">
+    <Paper className="img-wrap" elevation={5} sx={sx}>
       <Stack
         sx={{
           position: 'relative',
@@ -48,7 +50,7 @@ const Picture: React.FC<PictureProps> = ({
       >
         <Box
           component="img"
-          src={import.meta.resolve(`/images/howto/${filename}.png`)}
+          src={import.meta.resolve(`/images${filename}.png`)}
           alt={filename}
           width={{ xs: '100%', md: img.width }}
           height={{ xs: 'auto', md: img.height }}

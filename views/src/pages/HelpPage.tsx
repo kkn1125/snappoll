@@ -35,7 +35,7 @@ const HelpPage: React.FC<HelpPageProps> = () => {
             사이드바에서 "나의 설문지" 탭으로 이동합니다.
           </Typography>
           <Picture
-            filename="mypolltab"
+            filename="/howto/mypolltab"
             label="설문지 제작"
             top="3%"
             left={0}
@@ -49,7 +49,7 @@ const HelpPage: React.FC<HelpPageProps> = () => {
             "등록하기" 버튼을 클릭합니다.
           </Typography>
           <Picture
-            filename="mypolllist"
+            filename="/howto/mypolllist"
             label="설문 등록하기"
             top="31.5%"
             left="27.5%"
@@ -63,7 +63,7 @@ const HelpPage: React.FC<HelpPageProps> = () => {
             설문에 필요한 기본 정보를 입력합니다.
           </Typography>
           <Picture
-            filename="createpoll"
+            filename="/howto/createpoll"
             label="기본 정보 입력"
             img={{
               height: 400,
@@ -74,7 +74,7 @@ const HelpPage: React.FC<HelpPageProps> = () => {
             설정됩니다.
           </Typography>
           <Picture
-            filename="setendtime"
+            filename="/howto/setendtime"
             label="설문 기간 설정"
             img={{
               height: 400,
@@ -84,7 +84,7 @@ const HelpPage: React.FC<HelpPageProps> = () => {
             질문 추가 버튼을 클릭하고 질문을 추가할 수 있습니다.
           </Typography>
           <Picture
-            filename="addquestion"
+            filename="/howto/addquestion"
             label="질문 추가"
             img={{
               height: 400,
@@ -96,21 +96,21 @@ const HelpPage: React.FC<HelpPageProps> = () => {
               입니다.
             </Typography>
             <Picture
-              filename="question-input"
+              filename="/howto/question-input"
               label="자유 입력형"
               img={{
                 height: 400,
               }}
             />
             <Picture
-              filename="question-select"
+              filename="/howto/question-select"
               label="선택형"
               img={{
                 height: 400,
               }}
             />
             <Picture
-              filename="question-checkbox"
+              filename="/howto/question-checkbox"
               label="다중 선택형"
               img={{
                 height: 400,
@@ -122,7 +122,7 @@ const HelpPage: React.FC<HelpPageProps> = () => {
             플로피 디스크 아이콘을 클릭하여 저장합니다.
           </Typography>
           <Picture
-            filename="questionsave"
+            filename="/howto/questionsave"
             label="저장하기"
             img={{
               height: 400,
@@ -135,7 +135,7 @@ const HelpPage: React.FC<HelpPageProps> = () => {
             그래프에만 적용됩니다.
           </Typography>
           <Picture
-            filename="graph"
+            filename="/howto/graph"
             label="그래프 유형 선택"
             img={{
               height: 400,
@@ -145,7 +145,7 @@ const HelpPage: React.FC<HelpPageProps> = () => {
             설문 그래프를 선택하고 그래프 결과 보기를 원하는 설문을 선택합니다.
           </Typography>
           <Picture
-            filename="graph-select"
+            filename="/howto/graph-select"
             label="그래프 분석 선택"
             img={{
               height: 400,
@@ -160,7 +160,7 @@ const HelpPage: React.FC<HelpPageProps> = () => {
               아래는 전체 그래프 페이지 입니다.
             </Typography>
             <Picture
-              filename="fullshot"
+              filename="/howto/fullshot"
               label="그래프 페이지"
               img={{
                 width: '100vmin',
@@ -175,14 +175,14 @@ const HelpPage: React.FC<HelpPageProps> = () => {
           </Typography>
           <Details title="1.3.1 고급 그래프">
             <Picture
-              filename="graph-compare01"
+              filename="/howto/graph-compare01"
               label="그래프 기준 질문 선택"
               img={{
                 width: '100vmin',
               }}
             />
             <Picture
-              filename="graph-compare02"
+              filename="/howto/graph-compare02"
               label="그래프 비교 질문 선택"
               img={{
                 width: '100vmin',
@@ -193,7 +193,7 @@ const HelpPage: React.FC<HelpPageProps> = () => {
               응답자가 다른 질문에 어떻게 응답했는지 추이를 볼 수 있습니다.
             </Typography>
             <Picture
-              filename="graph-ex-select"
+              filename="/howto/graph-ex-select"
               label="직종/분야 기준"
               img={{
                 width: '100vmin',
@@ -207,14 +207,14 @@ const HelpPage: React.FC<HelpPageProps> = () => {
               기준 질문을 다시 선택하면 초기화 됩니다.
             </Typography>
             <Picture
-              filename="graph-ex-job-hope"
+              filename="/howto/graph-ex-job-hope"
               label="직종/분야 ⇄ 원하는 주제"
               img={{
                 width: '100vmin',
               }}
             />
             <Picture
-              filename="graph-ex-job-hope-value"
+              filename="/howto/graph-ex-job-hope-value"
               label="비교 그래프 보는 방법"
               img={{
                 width: '100vmin',
@@ -225,14 +225,14 @@ const HelpPage: React.FC<HelpPageProps> = () => {
               한눈에 볼 수 있습니다.
             </Typography>
             <Picture
-              filename="graph-ex-job-feat"
+              filename="/howto/graph-ex-job-feat"
               label="직종/분야 ⇄ 개선사항"
               img={{
                 width: '100vmin',
               }}
             />
             <Picture
-              filename="graph-ex-job-uncomfortable"
+              filename="/howto/graph-ex-job-uncomfortable"
               label="직종/분야 ⇄ 불편한 점"
               img={{
                 width: '100vmin',
@@ -254,7 +254,7 @@ const HelpPage: React.FC<HelpPageProps> = () => {
               막대 그래프로 전환하면 보기 편합니다.
             </Typography>
             <Picture
-              filename="graph-toggle-type"
+              filename="/howto/graph-toggle-type"
               label="그래프 질문 비교 선택"
               img={{
                 width: '100vmin',
@@ -266,7 +266,7 @@ const HelpPage: React.FC<HelpPageProps> = () => {
               있습니다.
             </Typography>
             <Picture
-              filename="graph-toggle-type"
+              filename="/howto/graph-toggle-type"
               label="그래프 질문 비교 선택"
               top="34.5%"
               left="80.1%"
@@ -301,7 +301,7 @@ const HelpPage: React.FC<HelpPageProps> = () => {
         component={Link}
         to={`mailto:${USER_EMAIL}`}
         color="text.secondary"
-        sx={{textDecoration:'none'}}
+        sx={{ textDecoration: 'none' }}
       >
         문의메일: {USER_EMAIL}
       </Typography>
