@@ -4,7 +4,7 @@
 
 - 2025-01-15
   - feat
-    - 전체 Console 로그 SnapLogger로 변경
+    - 전체 로그 기능 SnapLogger로 교체
     - 결제 취소 시 무료 플랜으로 변경
     - Auth getMe Response 설문, 투표, 응답 데이터 포함
     - 구독 취소 로직 수정

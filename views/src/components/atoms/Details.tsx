@@ -8,7 +8,7 @@ interface DetailsProps {
 const Details: React.FC<DetailsProps> = ({ title, children, defaultOpen }) => {
   return (
     <Box component="details" open={defaultOpen} sx={{ ml: 3 }}>
-      <Typography component="summary" variant="body1" gutterBottom>
+      <Typography component="summary" variant="h6" gutterBottom>
         {title}
       </Typography>
       <Stack justifyContent="center" gap={3}>

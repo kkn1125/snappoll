@@ -37,6 +37,7 @@ export default defineConfig(({ command, mode }) => {
         DESCRIPTION: pkg.description,
         VERSION: pkg.version,
         USER_NAME: pkg.author.name,
+        USER_EMAIL: pkg.author.email,
         USER_BLOG: pkg.author.url,
         USER_PROFILE: pkg.author.profile,
         CLIENT_KEY,
