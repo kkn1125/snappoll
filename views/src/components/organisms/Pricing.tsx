@@ -124,37 +124,47 @@ const Pricing: React.FC<PricingProps> = ({ plan }) => {
               ))}
             </Stack>
           </Stack>
-          {user && plan.planType !== 'Free' ? (
+          {user ? (
+            plan.planType !== 'Free' ? (
+              <Button
+                variant="outlined"
+                sx={{ fontSize: 16 }}
+                onClick={() => handleRequireSignup(plan)}
+              >
+                {userSubscription?.planId === plan.id
+                  ? '구독중'
+                  : userSubscription
+                    ? '구독하기'
+                    : isFree
+                      ? '무료로 시작하기'
+                      : '구독하기'}
+              </Button>
+            ) : (
+              <Button
+                variant={isFree ? 'contained' : 'outlined'}
+                sx={{ fontSize: 16 }}
+                onClick={() =>
+                  openModal({
+                    info: {
+                      title: '구독 안내',
+                      content: [
+                        '이미 다른 플랜을 구독중입니다.',
+                        '기존 구독을 해지하면 자동으로 무료 플랜이 적용됩니다.',
+                      ],
+                    },
+                  })
+                }
+              >
+                다른 플랜을 구독중
+              </Button>
+            )
+          ) : (
             <Button
               variant={isFree ? 'contained' : 'outlined'}
               sx={{ fontSize: 16 }}
               onClick={() => handleRequireSignup(plan)}
             >
-              {userSubscription?.planId === plan.id
-                ? '구독중'
-                : userSubscription
-                  ? '구독하기'
-                  : isFree
-                    ? '무료로 시작하기'
-                    : '구독하기'}
-            </Button>
-          ) : (
-            <Button
-              variant={isFree ? 'contained' : 'outlined'}
-              sx={{ fontSize: 16 }}
-              onClick={() =>
-                openModal({
-                  info: {
-                    title: '구독 안내',
-                    content: [
-                      '이미 다른 플랜을 구독중입니다.',
-                      '기존 구독을 해지하면 자동으로 무료 플랜이 적용됩니다.',
-                    ],
-                  },
-                })
-              }
-            >
-              다른 플랜을 구독중
+              구독하기
             </Button>
           )}
         </Stack>
