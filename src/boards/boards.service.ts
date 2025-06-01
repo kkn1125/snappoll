@@ -231,7 +231,7 @@ export class BoardsService {
       }
     }
 
-    const content = `${createBoardDto.title} 게시글이 작성되었습니다.\n작성자: ${author}\n카테고리: ${createBoardDto.category}\n링크: https://snappoll.kro.kr/boards/${createBoardDto.category}/${newBoard.id}`;
+    const content = `${createBoardDto.title} 게시글이 작성되었습니다.\n작성자: ${author}\n카테고리: ${createBoardDto.category}\n링크: https://snappoll.kro.kr/board/${createBoardDto.category}/${newBoard.id}`;
 
     await this.eventsService.notifyWebhook('discord', 'new-board', content);
 
