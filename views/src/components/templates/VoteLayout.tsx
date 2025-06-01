@@ -143,7 +143,12 @@ const VoteLayout: React.FC<VoteLayoutProps> = ({
           </Stack>
 
           {!isShare && (
-            <ShareControlButton data={vote} user={user} refetch={refetchVote} />
+            <ShareControlButton
+              data={vote}
+              user={user}
+              refetch={refetchVote}
+              expired={expired}
+            />
           )}
         </Stack>
       </Stack>

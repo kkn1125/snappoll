@@ -1,10 +1,4 @@
-import { Role } from '@common/enums/Role';
-import {
-  User as PrismaUser,
-  Subscription as PrismaSubscription,
-  UserProfile,
-  Plan,
-} from '@prisma/client';
+import { GetMeResponseDto } from '@auth/dto/get-me-response.dto';
 
 export declare global {
   interface SuccessPayment {
@@ -68,9 +62,9 @@ export declare global {
     interface Subscription extends PrismaSubscription {
       plan: Plan;
     }
-    interface User extends Omit<PrismaUser, 'password'> {
-      userProfile?: Partial<UserProfile>;
-      subscription?: Subscription;
+    interface User extends GetMeResponseDto {
+      // userProfile?: Pick<UserProfile, 'id'>;
+      // subscription?: Subscription;
     }
     interface Request {
       user?: User;
@@ -91,6 +85,19 @@ export declare global {
     domain: string;
     errorStatus: number;
     message: string;
+  }
+
+  export declare interface CustomErrorResponse {
+    httpCode: number;
+    errorCode: {
+      domainStatus: number;
+      errorStatus: number;
+      domain: string;
+      message: string;
+    };
+    method: string;
+    path: string;
+    timestamp: string;
   }
 }
 

@@ -12,11 +12,13 @@ import {
   Put,
   UseGuards,
 } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { CreateResponseDto } from './dto/create-response.dto';
 import { UpdateResponseDto } from './dto/update-response.dto';
 import { ResponseService } from './response.service';
 
 @UseGuards(RoleGuard)
+@ApiTags('설문 응답')
 @Controller('response')
 export class ResponseController {
   constructor(private readonly responseService: ResponseService) {}

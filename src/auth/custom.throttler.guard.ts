@@ -1,3 +1,4 @@
+import SnapLoggerService from '@logger/logger.service';
 import { ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import {
@@ -14,23 +15,22 @@ import {
   ErrorMessage,
   ErrorMessageType,
 } from '@utils/codes';
-import SnapLogger from '@utils/SnapLogger';
 
 @Injectable()
 export class CustomThrottlerGuard extends ThrottlerGuard {
   prisma = new PrismaClient();
-  logger = new SnapLogger(this);
 
   constructor(
     protected readonly options: ThrottlerModuleOptions, // Throttler 옵션 추가
     protected readonly storageService: ThrottlerStorage, // 스토리지 서비스 추가
     protected readonly reflector: Reflector, // Reflector 추가
+    private readonly logger: SnapLoggerService,
   ) {
     super(options, storageService, reflector); // 부모 클래스 생성자 호출
   }
 
   canActivate(context: ExecutionContext): Promise<boolean> {
-    this.logger.info('리플렉터', this.reflector);
+    // this.logger.info('리플렉터', this.reflector);
     // 1. `@SkipThrottle` 메타데이터 확인
     const isThrottled = this.reflector.get<boolean>(
       'THROTTLER:IGNORE',
@@ -40,7 +40,7 @@ export class CustomThrottlerGuard extends ThrottlerGuard {
 
     // this.logger.info('스로틀 무시 ?', isThrottled);
     if (isThrottled) {
-      this.logger.info('스로틀 무시');
+      // this.logger.info('스로틀 무시');
       return Promise.resolve(true); // 스로틀링 검사 건너뛰기
     }
 

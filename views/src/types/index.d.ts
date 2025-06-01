@@ -1,9 +1,9 @@
-import '@mui/material/styles';
-import '@mui/material/Button';
-import '@mui/material/AppBar';
 import { SnapBoard } from '@models/SnapBoard';
 import { SnapResponse } from '@models/SnapResponse';
 import { SnapVoteResponse } from '@models/SnapVoteResponse';
+import '@mui/material/AppBar';
+import '@mui/material/Button';
+import '@mui/material/styles';
 
 export declare module '@mui/material/styles' {
   export declare interface Palette {
@@ -100,7 +100,7 @@ export declare global {
     id: string;
     name: string;
     description: string;
-    planType: 'Free' | 'Basic' | 'Premium' | 'Enterprise';
+    planType: 'Free' | 'Basic' | 'Pro' | 'Premium';
     price: number;
     discount: number;
     createdAt: Date;
@@ -131,6 +131,16 @@ export declare global {
     vote?: SnapVote[];
     response?: SnapResponse[];
     voteResponse?: SnapVoteResponse[];
+
+    limit: {
+      poll: number;
+      vote: number;
+    };
+
+    totalUsage: {
+      poll: number;
+      vote: number;
+    };
   }
   // interface SnapPlan {
   //   id: string;
@@ -164,17 +174,17 @@ export declare global {
     user?: User;
     plan?: Plan;
   }
-  interface Plan {
-    id: string;
-    name: string;
-    description?: string;
-    planType: 'Free' | 'Basic' | 'Pro' | 'Premium';
-    price: number;
-    createdAt: Date;
-    updatedAt: Date;
-    subscription?: Subscription[];
-    feature?: Feature[];
-  }
+  // interface Plan {
+  //   id: string;
+  //   name: string;
+  //   description?: string;
+  //   planType: 'Free' | 'Basic' | 'Pro' | 'Premium';
+  //   price: number;
+  //   createdAt: Date;
+  //   updatedAt: Date;
+  //   subscription?: Subscription[];
+  //   feature?: Feature[];
+  // }
   // interface UserPoll {
   //   id: string;
   //   title: string;

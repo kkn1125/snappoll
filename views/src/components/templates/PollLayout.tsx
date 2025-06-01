@@ -73,7 +73,12 @@ const PollLayout: React.FC<PollLayoutProps> = ({
             (문항 {poll.question.length}개)
           </Typography>
           {!isShare && (
-            <ShareControlButton data={poll} user={user} refetch={refetchPoll} />
+            <ShareControlButton
+              data={poll}
+              user={user}
+              refetch={refetchPoll}
+              expired={expired}
+            />
           )}
         </Stack>
       </Stack>

@@ -47,6 +47,7 @@ interface WriteBoardProps {
   category: string;
   password?: string;
   isPrivate: boolean;
+  isNotice: boolean;
 }
 interface WriteBoardPageProps {}
 const WriteBoardPage: React.FC<WriteBoardPageProps> = () => {
@@ -62,6 +63,7 @@ const WriteBoardPage: React.FC<WriteBoardPageProps> = () => {
     category: board?.category || params?.category || 'community',
     password: undefined,
     isPrivate: false,
+    isNotice: false,
   });
   const { isMaster, user } = useToken();
   const validateType = user ? 'writeBoardForUser' : 'writeBoard';
@@ -143,6 +145,7 @@ const WriteBoardPage: React.FC<WriteBoardPageProps> = () => {
         category: params?.category || 'community',
         password: undefined,
         isPrivate: false,
+        isNotice: false,
       });
     }
   }, [board, params?.category]);
@@ -248,13 +251,22 @@ const WriteBoardPage: React.FC<WriteBoardPageProps> = () => {
         </FormHelperText>
       )}
       {user && (
-        <FormControlLabel
-          name="isPrivate"
-          checked={data?.isPrivate}
-          onChange={handleCheckboxChange}
-          control={<Checkbox />}
-          label="익명으로 게시"
-        />
+        <>
+          <FormControlLabel
+            name="isPrivate"
+            checked={data?.isPrivate}
+            onChange={handleCheckboxChange}
+            control={<Checkbox />}
+            label="익명으로 게시"
+          />
+          <FormControlLabel
+            name="isNotice"
+            checked={data?.isNotice}
+            onChange={handleCheckboxChange}
+            control={<Checkbox />}
+            label="상단 고정"
+          />
+        </>
       )}
       {!user && (
         <CustomInput

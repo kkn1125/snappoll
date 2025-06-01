@@ -1,11 +1,10 @@
-import { Module } from '@nestjs/common';
-import { PlansService } from './plans.service';
-import { PlansController } from './plans.controller';
-import { DatabaseModule } from '@database/database.module';
 import { HttpModule } from '@nestjs/axios';
+import { Module } from '@nestjs/common';
+import { PlansController } from './plans.controller';
+import { PlansService } from './plans.service';
 
 @Module({
-  imports: [DatabaseModule, HttpModule],
+  imports: [HttpModule],
   controllers: [PlansController],
   providers: [PlansService],
 })

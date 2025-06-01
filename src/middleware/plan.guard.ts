@@ -1,5 +1,6 @@
 import { LIMIT } from '@common/variables';
 import { PrismaService } from '@database/prisma.service';
+import SnapLoggerService from '@logger/logger.service';
 import {
   BadRequestException,
   CanActivate,
@@ -8,18 +9,17 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { $Enums, Plan, Subscription, User } from '@prisma/client';
-import SnapLogger from '@utils/SnapLogger';
+import { Plan, Subscription, User } from '@prisma/client';
+import dayjs from 'dayjs';
 import { Request } from 'express';
 import { PlanValidate, ValidateType } from './plan-validate.decorator';
 
 @Injectable()
 export class PlanGuard implements CanActivate {
-  logger = new SnapLogger(this);
-
   constructor(
-    private reflector: Reflector,
+    private readonly reflector: Reflector,
     private readonly prisma: PrismaService,
+    private readonly logger: SnapLoggerService,
   ) {}
 
   async validateIfMember(registeredUser: Express.Request['user']) {
@@ -89,11 +89,19 @@ export class PlanGuard implements CanActivate {
     this.logger.info(`${validateType} 작업 진행`);
 
     if (validateType === 'pollCreate') {
+      console.log(dayjs().startOf('m').toISOString());
+      console.log(dayjs().endOf('m').toISOString());
       await this.validateIfMember(registeredUser);
       const LIMIT_TYPE =
-        registeredUser.subscription.plan.planType.toUpperCase();
+        registeredUser.subscription.plan.planType.toUpperCase() as keyof typeof LIMIT;
       const count = await this.prisma.poll.count({
-        where: { userId: registeredUser.id },
+        where: {
+          userId: registeredUser.id,
+          createdAt: {
+            gte: dayjs().startOf('m').toISOString(),
+            lte: dayjs().endOf('m').toISOString(),
+          },
+        },
       });
       if (count >= LIMIT[LIMIT_TYPE].CREATE.POLL) {
         const errorCode = await this.prisma.getErrorCode('poll', 'PollLimit');
@@ -101,7 +109,7 @@ export class PlanGuard implements CanActivate {
       }
     } else if (validateType === 'pollResponse') {
       const LIMIT_TYPE =
-        pollOrVoteAuthor.subscription.plan.planType.toUpperCase();
+        pollOrVoteAuthor.subscription.plan.planType.toUpperCase() as keyof typeof LIMIT;
       if ('pollId' in req.body) {
         const count = await this.prisma.response.count({
           where: { pollId },

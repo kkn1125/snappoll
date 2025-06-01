@@ -1,8 +1,9 @@
+import { LIMIT } from '@common/variables';
 import { PrismaService } from '@database/prisma.service';
+import SnapLoggerService from '@logger/logger.service';
 import { Injectable } from '@nestjs/common';
 import { Option } from '@prisma/client';
 import { EncryptManager } from '@utils/EncryptManager';
-import SnapLogger from '@utils/SnapLogger';
 import dayjs from 'dayjs';
 import { CreatePollDto } from './dto/create-poll.dto';
 import { CreateSharePollDto } from './dto/create-share-poll.dto';
@@ -10,10 +11,9 @@ import { UpdatePollDto } from './dto/update-poll.dto';
 
 @Injectable()
 export class PollsService {
-  logger = new SnapLogger(this);
-
   constructor(
     private readonly prisma: PrismaService,
+    private readonly logger: SnapLoggerService,
     private readonly encryptManager: EncryptManager,
   ) {}
 
@@ -114,7 +114,13 @@ export class PollsService {
 
     // 나의 설문 수
     const pollCount = await this.prisma.poll.count({
-      where: { userId: id },
+      where: {
+        userId: id,
+        createdAt: {
+          gte: dayjs().startOf('M').toISOString(),
+          lte: dayjs().endOf('M').toISOString(),
+        },
+      },
     });
 
     // 나의 응답 수
@@ -132,6 +138,10 @@ export class PollsService {
       where: {
         poll: {
           userId: id,
+          createdAt: {
+            gte: dayjs().startOf('M').toISOString(),
+            lte: dayjs().endOf('M').toISOString(),
+          },
         },
       },
     });
@@ -165,12 +175,20 @@ export class PollsService {
         },
         Array.from({ length: 7 }, () => 0),
       ) ?? [];
+
+    const totalUsage = await this.prisma.poll.count({
+      where: {
+        userId: id,
+      },
+    });
+
     return {
       weeks,
       pollCount,
       pollResponseCount,
       responsesWeek,
       respondentWeek,
+      totalUsage,
     };
   }
 
@@ -291,8 +309,8 @@ export class PollsService {
     return { polls, count };
   }
 
-  findOne(id: string) {
-    return this.prisma.poll.findUnique({
+  async findOne(id: string) {
+    const poll = await this.prisma.poll.findUnique({
       where: { id },
       include: {
         user: {
@@ -302,6 +320,15 @@ export class PollsService {
             username: true,
             createdAt: true,
             updatedAt: true,
+            subscription: {
+              include: {
+                plan: {
+                  select: {
+                    planType: true,
+                  },
+                },
+              },
+            },
           },
         },
         question: {
@@ -321,6 +348,18 @@ export class PollsService {
         sharePoll: true,
       },
     });
+
+    const convertedPoll = { ...poll, limit: 0 };
+    if (convertedPoll.user.subscription.plan.planType === 'Free') {
+      convertedPoll.limit = LIMIT.FREE.RESPONSE.POLL;
+    } else if (convertedPoll.user.subscription.plan.planType === 'Basic') {
+      convertedPoll.limit = LIMIT.BASIC.RESPONSE.POLL;
+    } else if (convertedPoll.user.subscription.plan.planType === 'Pro') {
+      convertedPoll.limit = LIMIT.PRO.RESPONSE.POLL;
+    } else if (convertedPoll.user.subscription.plan.planType === 'Premium') {
+      convertedPoll.limit = LIMIT.PREMIUM.RESPONSE.POLL;
+    }
+    return convertedPoll;
   }
 
   async findResponses(id: string, page: number) {

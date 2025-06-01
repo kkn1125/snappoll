@@ -3,15 +3,16 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as crypto from 'crypto';
 import * as CryptoJS from 'crypto-js';
-import ms from 'ms';
-import SnapLogger from './SnapLogger';
 import jwt from 'jsonwebtoken';
+import ms from 'ms';
+import SnapLoggerService from '../logger/logger.service';
 
 @Injectable()
 export class EncryptManager {
-  logger = new SnapLogger(this);
-
-  constructor(private readonly configService: ConfigService) {}
+  constructor(
+    private readonly logger: SnapLoggerService,
+    private readonly configService: ConfigService,
+  ) {}
 
   randomHex() {
     return crypto.randomBytes(10).toString('hex');
@@ -67,12 +68,12 @@ export class EncryptManager {
     const secretKey = this.configService.get<string>('common.secretKey');
     const TOKEN_EXPIRED_AT = ms(EXPIRED_TOKEN_TIME);
     const REFRESH_TOKEN_EXPIRED_AT = ms(EXPIRED_TOKEN_TIME * 2);
-    this.logger.info('만료시간 체크:', TOKEN_EXPIRED_AT);
+    this.logger.debug('만료시간 체크:', TOKEN_EXPIRED_AT);
     const token = jwt.sign(userData, secretKey, {
-      expiresIn: TOKEN_EXPIRED_AT,
       issuer: 'snapPoll',
       algorithm: 'HS256',
-    });
+      expiresIn: TOKEN_EXPIRED_AT,
+    } as jwt.SignOptions);
     const refreshToken = jwt.sign(
       {
         ...userData,
@@ -84,7 +85,7 @@ export class EncryptManager {
         expiresIn: REFRESH_TOKEN_EXPIRED_AT,
         issuer: 'snapPoll',
         algorithm: 'HS256',
-      },
+      } as jwt.SignOptions,
     );
     return { token, refreshToken };
   }

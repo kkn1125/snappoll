@@ -1,17 +1,16 @@
 import { PrismaService } from '@database/prisma.service';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
-import SnapLogger from '@utils/SnapLogger';
+import SnapLoggerService from '@logger/logger.service';
 import { Strategy } from 'passport-local';
 import { AuthService } from './auth.service';
 
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy) {
-  logger = new SnapLogger(this);
-
   constructor(
-    private prisma: PrismaService,
-    private authService: AuthService,
+    private readonly prisma: PrismaService,
+    private readonly authService: AuthService,
+    private readonly logger: SnapLoggerService,
   ) {
     super({ usernameField: 'email' });
   }

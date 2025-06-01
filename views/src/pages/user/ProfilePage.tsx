@@ -212,20 +212,28 @@ const ProfilePage: React.FC<ProfilePageProps> = () => {
     return user?.vote?.length ?? 0;
   }, [user]);
 
-  const limit = useMemo(() => {
-    switch (currentPlan?.plan?.planType) {
-      case 'Free':
-        return 3;
-      case 'Basic':
-        return 7;
-      case 'Premium':
-        return 12;
-      case 'Enterprise':
-        return 30;
-      default:
-        return 0;
-    }
-  }, [currentPlan]);
+  const pollLimit = useMemo(() => {
+    return user?.limit.poll ?? 0;
+  }, [user]);
+
+  const voteLimit = useMemo(() => {
+    return user?.limit.vote ?? 0;
+  }, [user]);
+
+  // const limit = useMemo(() => {
+  //   switch (currentPlan?.plan?.planType) {
+  //     case 'Free':
+  //       return 3;
+  //     case 'Basic':
+  //       return 7;
+  //     case 'Pro':
+  //       return 12;
+  //     case 'Premium':
+  //       return 30;
+  //     default:
+  //       return 0;
+  //   }
+  // }, [currentPlan]);
 
   return (
     <Container>
@@ -353,9 +361,25 @@ const ProfilePage: React.FC<ProfilePageProps> = () => {
             </>
           )}
         </Stack>
+
+        <Stack direction="row" gap={2}>
+          <Typography>누적 설문 사용량:</Typography>
+          <Typography>{user?.totalUsage.poll ?? 0}</Typography>
+          <Typography>누적 투표 사용량:</Typography>
+          <Typography>{user?.totalUsage.vote ?? 0}</Typography>
+        </Stack>
+
         <Stack gap={2}>
-          <CellProgress title="설문 사용량" count={pollUseAmount} max={limit} />
-          <CellProgress title="투표 사용량" count={voteUseAmount} max={limit} />
+          <CellProgress
+            title="이번 달 설문 사용량"
+            count={pollUseAmount}
+            max={pollLimit}
+          />
+          <CellProgress
+            title="이번 달 투표 사용량"
+            count={voteUseAmount}
+            max={voteLimit}
+          />
         </Stack>
         {!isSocial && (
           <Fragment>

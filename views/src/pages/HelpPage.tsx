@@ -283,16 +283,29 @@ const HelpPage: React.FC<HelpPageProps> = () => {
         </Typography>
         <Details title="2.1 회원가입">
           <Typography variant="body2" color="text.secondary">
-            현재 회원가입은 제한된 인원에게 테스트 계정을 발급하여 이용되고
-            있습니다. 사용을 원하신다면 최하단의 메일로 문의 주시기 바랍니다.
+            <del>
+              현재 회원가입은 제한된 인원에게 테스트 계정을 발급하여 이용되고
+              있습니다. 사용을 원하신다면 최하단의 메일로 문의 주시기 바랍니다.
+            </del>
+            <Typography variant="body2" color="text.secondary">
+              현재 회원가입은 모두 가능합니다. 회원가입 후 로그인하여 이용할 수
+              있습니다.
+            </Typography>
           </Typography>
         </Details>
         <Details title="2.2 요금제 이용">
           <Typography variant="body2" color="text.secondary">
-            요금제 정기 결제 기능은 테스트용으로 연결만 해두었습니다. 상업적
-            이용 계획은 현재까지 없습니다. 각 플랜별 기능 제한을 풀어둔
-            상태이며, 모든 계정이 무제한으로 생성하고 그래프를 이용할 수
-            있습니다.
+            <del>
+              요금제 정기 결제 기능은 테스트용으로 연결만 해두었습니다. 상업적
+              이용 계획은 현재까지 없습니다. 각 플랜별 기능 제한을 풀어둔
+              상태이며, 모든 계정이 무제한으로 생성하고 그래프를 이용할 수
+              있습니다.
+            </del>
+            <Typography variant="body2" color="text.secondary">
+              SnapPoll의 구독 결제 기능을 검토중이며, 회원 모두에게 기본 Free
+              플랜이 적용됩니다. 피드백을 수용하여 플랜 옵션, 기능 제한 등에
+              대해 개선해 나갈 예정입니다.
+            </Typography>
           </Typography>
         </Details>
       </Stack>

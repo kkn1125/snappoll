@@ -10,5 +10,5 @@ export default {
   hosts: DEV
     ? ['localhost', 'snappoll.kro.kr', '172.16.101.163', ipv4.address]
     : ['snappoll.kro.kr'],
-  ports: DEV ? [8080, 5000, 80] : [80],
+  ports: DEV ? [8080, 5000, 80] : [80, 443],
 };

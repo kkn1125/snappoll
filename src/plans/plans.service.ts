@@ -1,22 +1,20 @@
 import { PrismaService } from '@database/prisma.service';
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { Payment, PlanType, State, SubscribeType } from '@prisma/client';
-import { UpdatePlanDto } from './dto/update-plan.dto';
-import { SubscriptionPlanDto } from './dto/subscription-plan.dto';
-import { snakeToCamel } from '@utils/snakeToCamel';
-import SnapLogger from '@utils/SnapLogger';
+import SnapLoggerService from '@logger/logger.service';
 import { HttpService } from '@nestjs/axios';
-import { catchError, firstValueFrom } from 'rxjs';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { PlanType, State, SubscribeType } from '@prisma/client';
+import { snakeToCamel } from '@utils/snakeToCamel';
+import { firstValueFrom } from 'rxjs';
+import { UpdatePlanDto } from './dto/update-plan.dto';
 
 @Injectable()
 export class PlansService {
-  logger = new SnapLogger(this);
-
   constructor(
-    private readonly configService: ConfigService,
-    private readonly httpService: HttpService,
     public readonly prisma: PrismaService,
+    private readonly httpService: HttpService,
+    private readonly logger: SnapLoggerService,
+    private readonly configService: ConfigService,
   ) {}
 
   // create(createPlanDto: CreatePlanDto) {

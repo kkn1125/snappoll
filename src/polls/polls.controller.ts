@@ -14,12 +14,14 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
 import { CreatePollDto } from './dto/create-poll.dto';
 import { CreateSharePollDto } from './dto/create-share-poll.dto';
 import { UpdatePollDto } from './dto/update-poll.dto';
 import { PollsService } from './polls.service';
 
+@ApiTags('설문')
 @UseGuards(RoleGuard)
 @Controller('polls')
 export class PollsController {

@@ -31,7 +31,7 @@ interface DetailPollGraphPageProps {}
 const DetailPollGraphPage: React.FC<DetailPollGraphPageProps> = () => {
   const theme = useTheme();
   const { id } = useParams();
-  const { data } = useQuery<SnapResponseType<SnapPoll>>({
+  const { data } = useQuery<SnapResponseType<SnapPoll & { limit: number }>>({
     queryKey: ['getPoll', id],
     queryFn: () => getPoll(id),
   });
@@ -144,6 +144,16 @@ const DetailPollGraphPage: React.FC<DetailPollGraphPageProps> = () => {
               </TableCell>
               <TableCell align="right">
                 {responseData.response?.length ?? 0}명
+              </TableCell>
+            </TableRow>
+            <TableRow
+              sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+            >
+              <TableCell sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <ThreePIcon fontSize="small" color="info" /> 참여 제한
+              </TableCell>
+              <TableCell align="right">
+                {responseData.limit}명
               </TableCell>
             </TableRow>
           </TableBody>

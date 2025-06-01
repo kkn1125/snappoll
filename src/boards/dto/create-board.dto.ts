@@ -14,5 +14,6 @@ export class CreateBoardDto
   title: string;
   content: string;
   isPrivate: boolean;
+  isNotice: boolean;
   isOnlyCrew: boolean;
 }

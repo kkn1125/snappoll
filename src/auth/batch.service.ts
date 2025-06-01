@@ -1,12 +1,11 @@
 import { PrismaService } from '@database/prisma.service';
+import SnapLoggerService from '@logger/logger.service';
 import { Injectable } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
-import SnapLogger from '@utils/SnapLogger';
 import dayjs from 'dayjs';
 
 @Injectable()
 export class BatchService {
-  logger = new SnapLogger(this);
   cacheTime: number = 1 * 60 * 1000;
   mapper: Map<
     string,
@@ -18,7 +17,10 @@ export class BatchService {
     }
   > = new Map();
 
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly logger: SnapLoggerService,
+  ) {}
 
   @Cron('*/30 * * * * *', {
     name: 'expiresToken',

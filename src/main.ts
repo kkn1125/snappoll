@@ -10,7 +10,8 @@ import { allowOrigins } from '@utils/allowOrigins';
 import compression from 'compression';
 import cookieParser from 'cookie-parser';
 import { AppModule } from './app.module';
-import SnapLogger from '@utils/SnapLogger';
+import SnapLoggerService from '@logger/logger.service';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
 declare const module: any;
 
@@ -24,7 +25,8 @@ async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     bufferLogs: true,
   });
-  const logger = new SnapLogger('bootstrap');
+  const snapLoggerService = app.get(SnapLoggerService);
+  const logger = new SnapLoggerService('bootstrap');
   // app.useLogger(new SnapLogger());
   const { hosts, ports } = whiteList;
   const configService = app.get(ConfigService);
@@ -56,7 +58,20 @@ async function bootstrap() {
   app.use(cookieParser());
   app.use(compression());
   app.useGlobalInterceptors(new ResponseInterceptor());
-  app.useGlobalFilters(new HttpExceptionFilter());
+  app.useGlobalFilters(new HttpExceptionFilter(snapLoggerService));
+
+  const config = new DocumentBuilder()
+    .setTitle('SnapPoll API')
+    .setDescription('SnapPoll API Description')
+    .setVersion('1.0')
+    .build();
+
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('docs', app, document, {
+    swaggerOptions: {
+      docExpansion: 'none',
+    },
+  });
 
   await app.listen(common.port, common.host, async () => {
     if (module.hot) {

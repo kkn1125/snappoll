@@ -1,19 +1,13 @@
 import { MailerService } from '@/mailer/mailer.service';
 import { IgnoreCookie } from '@auth/ignore-cookie.decorator';
-import {
-  Controller,
-  Get,
-  Header,
-  HttpCode,
-  HttpStatus,
-  Param,
-  Res,
-} from '@nestjs/common';
+import { Controller, Get, Param, Res } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
 import * as path from 'path';
 import { BasicService } from './basic.service';
 
+@ApiTags('기본')
 @Controller()
 export class BasicController {
   constructor(

@@ -1,3 +1,4 @@
+import SnapLoggerService from '@logger/logger.service';
 import {
   CanActivate,
   ExecutionContext,
@@ -5,14 +6,14 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import SnapLogger from '@utils/SnapLogger';
+import { $Enums } from '@prisma/client';
 import { Request } from 'express';
 import { Roles } from './roles.decorator';
-import { $Enums } from '@prisma/client';
 
+/* UseGuards(RoleGuard)로 사용해야 함. */
 @Injectable()
 export class RoleGuard implements CanActivate {
-  logger = new SnapLogger(this);
+  logger = new SnapLoggerService(this);
 
   constructor(private reflector: Reflector) {}
 

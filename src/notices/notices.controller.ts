@@ -1,4 +1,5 @@
 import { Roles } from '@auth/roles.decorator';
+import SnapLoggerService from '@logger/logger.service';
 import {
   Body,
   Controller,
@@ -9,16 +10,18 @@ import {
   Post,
   Query,
 } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { CreateNoticeDto } from './dto/create-notice.dto';
 import { UpdateNoticeDto } from './dto/update-notice.dto';
 import { NoticesService } from './notices.service';
-import SnapLogger from '@utils/SnapLogger';
 
+@ApiTags('공지사항')
 @Controller('notices')
 export class NoticesController {
-  logger = new SnapLogger(this);
-
-  constructor(private readonly noticesService: NoticesService) {}
+  constructor(
+    private readonly logger: SnapLoggerService,
+    private readonly noticesService: NoticesService,
+  ) {}
 
   @Roles(['Admin'])
   @Post()

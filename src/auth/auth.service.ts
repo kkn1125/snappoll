@@ -1,6 +1,7 @@
 import { MailerService } from '@/mailer/mailer.service';
-import { CURRENT_DOMAIN } from '@common/variables';
+import { CURRENT_DOMAIN, LIMIT } from '@common/variables';
 import { PrismaService } from '@database/prisma.service';
+import SnapLoggerService from '@logger/logger.service';
 import { HttpService } from '@nestjs/axios';
 import {
   BadRequestException,
@@ -12,15 +13,14 @@ import { ConfigService } from '@nestjs/config';
 import { $Enums, State, User } from '@prisma/client';
 import { UsersService } from '@users/users.service';
 import { EncryptManager } from '@utils/EncryptManager';
-import SnapLogger from '@utils/SnapLogger';
+import dayjs from 'dayjs';
 import * as jwt from 'jsonwebtoken';
 import * as path from 'path';
 import { firstValueFrom } from 'rxjs';
+import { GetMeResponseDto } from './dto/get-me-response.dto';
 
 @Injectable()
 export class AuthService {
-  logger = new SnapLogger(this);
-
   constructor(
     public readonly prisma: PrismaService,
     private readonly configService: ConfigService,
@@ -28,6 +28,7 @@ export class AuthService {
     private readonly usersService: UsersService,
     private readonly mailer: MailerService,
     private readonly encryptManager: EncryptManager,
+    private readonly logger: SnapLoggerService,
   ) {}
 
   async createOrIgnore(data: any, userData: jwt.JwtPayload) {
@@ -302,17 +303,34 @@ export class AuthService {
     return leftExpiredTime;
   }
 
-  getMe(email: string) {
-    return this.prisma.user.findUnique({
-      where: { email, deletedAt: null },
+  async getMe(email: string): Promise<GetMeResponseDto> {
+    const user = await this.prisma.user.findUnique({
+      where: {
+        email,
+        deletedAt: null,
+      },
       include: {
         userProfile: {
           select: {
             id: true,
           },
         },
-        poll: true,
-        vote: true,
+        poll: {
+          where: {
+            createdAt: {
+              gte: dayjs().startOf('M').toISOString(),
+              lte: dayjs().endOf('M').toISOString(),
+            },
+          },
+        },
+        vote: {
+          where: {
+            createdAt: {
+              gte: dayjs().startOf('M').toISOString(),
+              lte: dayjs().endOf('M').toISOString(),
+            },
+          },
+        },
         response: true,
         voteResponse: true,
         subscription: {
@@ -323,10 +341,8 @@ export class AuthService {
             plan: {
               subscription: {
                 some: {
-                  AND: {
-                    endDate: null,
-                    state: State.Active,
-                  },
+                  endDate: null,
+                  state: State.Active,
                 },
               },
             },
@@ -334,6 +350,45 @@ export class AuthService {
         },
       },
     });
+
+    const limit = {
+      poll: 0,
+      vote: 0,
+    };
+
+    const totalUsage = {
+      poll: 0,
+      vote: 0,
+    };
+
+    const pollCount = await this.prisma.poll.count({
+      where: {
+        userId: user.id,
+      },
+    });
+    const voteCount = await this.prisma.vote.count({
+      where: {
+        userId: user.id,
+      },
+    });
+    totalUsage.poll = pollCount;
+    totalUsage.vote = voteCount;
+
+    if (user.subscription.plan.planType === 'Free') {
+      limit.poll = LIMIT.FREE.CREATE.POLL;
+      limit.vote = LIMIT.FREE.CREATE.VOTE;
+    } else if (user.subscription.plan.planType === 'Basic') {
+      limit.poll = LIMIT.BASIC.CREATE.POLL;
+      limit.vote = LIMIT.BASIC.CREATE.VOTE;
+    } else if (user.subscription.plan.planType === 'Pro') {
+      limit.poll = LIMIT.PRO.CREATE.POLL;
+      limit.vote = LIMIT.PRO.CREATE.VOTE;
+    } else if (user.subscription.plan.planType === 'Premium') {
+      limit.poll = LIMIT.PREMIUM.CREATE.POLL;
+      limit.vote = LIMIT.PREMIUM.CREATE.VOTE;
+    }
+
+    return { ...user, limit, totalUsage } as GetMeResponseDto;
   }
 
   async requestLoginKakao() {

@@ -1,3 +1,4 @@
+import { IgnoreCookie } from '@auth/ignore-cookie.decorator';
 import { RoleGuard } from '@auth/role.guard';
 import { PlanValidate } from '@middleware/plan-validate.decorator';
 import { PlanGuard } from '@middleware/plan.guard';
@@ -11,12 +12,13 @@ import {
   Put,
   UseGuards,
 } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { CreateVoteResponseDto } from './dto/create-vote-response.dto';
 import { UpdateVoteResponseDto } from './dto/update-vote-response.dto';
 import { VoteResponsesService } from './vote-responses.service';
-import { IgnoreCookie } from '@auth/ignore-cookie.decorator';
 
 @UseGuards(RoleGuard)
+@ApiTags('투표 응답')
 @Controller('response')
 export class VoteResponsesController {
   constructor(private readonly voteResponsesService: VoteResponsesService) {}

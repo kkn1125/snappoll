@@ -1,3 +1,4 @@
+import SnapLoggerService from '@logger/logger.service';
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PrismaClient } from '@prisma/client';
@@ -7,15 +8,15 @@ import {
   ErrorMessage,
   ErrorMessageType,
 } from '@utils/codes';
-import SnapLogger from '@utils/SnapLogger';
 
 @Injectable()
 export class PrismaService extends PrismaClient implements OnModuleInit {
-  logger = new SnapLogger(this);
-
-  constructor(private readonly configService: ConfigService) {
+  constructor(
+    private readonly configService: ConfigService,
+    private readonly logger: SnapLoggerService,
+  ) {
     super({
-      // log: ['query', 'info', 'error'],
+      log: ['query', 'info', 'error'],
     });
   }
 

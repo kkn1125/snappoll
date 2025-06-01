@@ -1,5 +1,5 @@
-import { BASE_CLIENT_URL, BRAND_NAME } from '@common/variables';
-import { Stack, Typography } from '@mui/material';
+import { BASE_CLIENT_URL, BRAND_NAME, VERSION } from '@common/variables';
+import { Box, Stack, Typography } from '@mui/material';
 import { joinElement } from '@utils/joinElement';
 import { Link } from 'react-router-dom';
 import { Fragment } from 'react/jsx-runtime';
@@ -57,6 +57,11 @@ const Footer: React.FC<FooterProps> = () => {
       <Typography align="center" sx={{ fontSize: 'inherit' }}>
         &copy; 2024. {BRAND_NAME} All rights reserved.
       </Typography>
+      <Box sx={{ position: 'absolute', bottom: 5, left: 5 }}>
+        <Typography variant="caption" color="text.secondary">
+          version {VERSION}
+        </Typography>
+      </Box>
     </Stack>
   );
 };

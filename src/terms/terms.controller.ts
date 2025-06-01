@@ -1,9 +1,10 @@
 import { IgnoreCookie } from '@auth/ignore-cookie.decorator';
-import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
-import { AgreeDto } from './dto/agree.dto';
+import { Body, Controller, Get, Param, Patch } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { UpdateTermDto } from './dto/update-term.dto';
 import { TermsService } from './terms.service';
 
+@ApiTags('약관')
 @Controller('terms')
 export class TermsController {
   constructor(private readonly termsService: TermsService) {}

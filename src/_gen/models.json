@@ -1,0 +1,5811 @@
+[
+  {
+    "name": "AllowTerms",
+    "dbName": "allow_terms",
+    "schema": null,
+    "fields": [
+      {
+        "name": "id",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": true,
+        "isReadOnly": false,
+        "hasDefaultValue": true,
+        "type": "String",
+        "nativeType": [
+          "Uuid",
+          []
+        ],
+        "default": {
+          "name": "uuid",
+          "args": [
+            4
+          ]
+        },
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "termsId",
+        "dbName": "terms_id",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": true,
+        "hasDefaultValue": false,
+        "type": "String",
+        "nativeType": [
+          "Uuid",
+          []
+        ],
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "userId",
+        "dbName": "user_id",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": true,
+        "hasDefaultValue": false,
+        "type": "String",
+        "nativeType": [
+          "Uuid",
+          []
+        ],
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "createdAt",
+        "dbName": "created_at",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": true,
+        "type": "DateTime",
+        "nativeType": null,
+        "default": {
+          "name": "now",
+          "args": []
+        },
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "user",
+        "kind": "object",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "User",
+        "nativeType": null,
+        "relationName": "AllowTermsToUser",
+        "relationFromFields": [
+          "userId"
+        ],
+        "relationToFields": [
+          "id"
+        ],
+        "relationOnDelete": "Cascade",
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "terms",
+        "kind": "object",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "Terms",
+        "nativeType": null,
+        "relationName": "AllowTermsToTerms",
+        "relationFromFields": [
+          "termsId"
+        ],
+        "relationToFields": [
+          "id"
+        ],
+        "relationOnDelete": "Cascade",
+        "isGenerated": false,
+        "isUpdatedAt": false
+      }
+    ],
+    "primaryKey": null,
+    "uniqueFields": [],
+    "uniqueIndexes": [],
+    "isGenerated": false
+  },
+  {
+    "name": "Terms",
+    "dbName": "terms",
+    "schema": null,
+    "fields": [
+      {
+        "name": "id",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": true,
+        "isReadOnly": false,
+        "hasDefaultValue": true,
+        "type": "String",
+        "nativeType": [
+          "Uuid",
+          []
+        ],
+        "default": {
+          "name": "uuid",
+          "args": [
+            4
+          ]
+        },
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "version",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": true,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "String",
+        "nativeType": [
+          "VarChar",
+          [
+            "20"
+          ]
+        ],
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "isActive",
+        "dbName": "is_active",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": true,
+        "type": "Boolean",
+        "nativeType": null,
+        "default": true,
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "createdAt",
+        "dbName": "created_at",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": true,
+        "type": "DateTime",
+        "nativeType": null,
+        "default": {
+          "name": "now",
+          "args": []
+        },
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "updatedAt",
+        "dbName": "updated_at",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": true,
+        "type": "DateTime",
+        "nativeType": null,
+        "default": {
+          "name": "now",
+          "args": []
+        },
+        "isGenerated": false,
+        "isUpdatedAt": true
+      },
+      {
+        "name": "termsSection",
+        "kind": "object",
+        "isList": true,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "TermsSection",
+        "nativeType": null,
+        "relationName": "TermsToTermsSection",
+        "relationFromFields": [],
+        "relationToFields": [],
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "allowTerms",
+        "kind": "object",
+        "isList": true,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "AllowTerms",
+        "nativeType": null,
+        "relationName": "AllowTermsToTerms",
+        "relationFromFields": [],
+        "relationToFields": [],
+        "isGenerated": false,
+        "isUpdatedAt": false
+      }
+    ],
+    "primaryKey": null,
+    "uniqueFields": [],
+    "uniqueIndexes": [],
+    "isGenerated": false
+  },
+  {
+    "name": "TermsSection",
+    "dbName": "terms_section",
+    "schema": null,
+    "fields": [
+      {
+        "name": "id",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": true,
+        "isReadOnly": false,
+        "hasDefaultValue": true,
+        "type": "String",
+        "nativeType": [
+          "Uuid",
+          []
+        ],
+        "default": {
+          "name": "uuid",
+          "args": [
+            4
+          ]
+        },
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "termsId",
+        "dbName": "terms_id",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": true,
+        "hasDefaultValue": false,
+        "type": "String",
+        "nativeType": [
+          "Uuid",
+          []
+        ],
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "title",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "String",
+        "nativeType": [
+          "VarChar",
+          [
+            "100"
+          ]
+        ],
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "content",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "String",
+        "nativeType": null,
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "createdAt",
+        "dbName": "created_at",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": true,
+        "type": "DateTime",
+        "nativeType": null,
+        "default": {
+          "name": "now",
+          "args": []
+        },
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "updatedAt",
+        "dbName": "updated_at",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": true,
+        "type": "DateTime",
+        "nativeType": null,
+        "default": {
+          "name": "now",
+          "args": []
+        },
+        "isGenerated": false,
+        "isUpdatedAt": true
+      },
+      {
+        "name": "terms",
+        "kind": "object",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "Terms",
+        "nativeType": null,
+        "relationName": "TermsToTermsSection",
+        "relationFromFields": [
+          "termsId"
+        ],
+        "relationToFields": [
+          "id"
+        ],
+        "relationOnDelete": "Cascade",
+        "isGenerated": false,
+        "isUpdatedAt": false
+      }
+    ],
+    "primaryKey": null,
+    "uniqueFields": [],
+    "uniqueIndexes": [],
+    "isGenerated": false
+  },
+  {
+    "name": "ErrorMessage",
+    "dbName": "error_message",
+    "schema": null,
+    "fields": [
+      {
+        "name": "id",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": true,
+        "isReadOnly": false,
+        "hasDefaultValue": true,
+        "type": "Int",
+        "nativeType": null,
+        "default": {
+          "name": "autoincrement",
+          "args": []
+        },
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "codeDomain",
+        "dbName": "code_domain",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": true,
+        "hasDefaultValue": false,
+        "type": "String",
+        "nativeType": [
+          "VarChar",
+          [
+            "100"
+          ]
+        ],
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "status",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "Int",
+        "nativeType": null,
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "message",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "String",
+        "nativeType": [
+          "VarChar",
+          [
+            "250"
+          ]
+        ],
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "code",
+        "kind": "object",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "Code",
+        "nativeType": null,
+        "relationName": "CodeToErrorMessage",
+        "relationFromFields": [
+          "codeDomain"
+        ],
+        "relationToFields": [
+          "domain"
+        ],
+        "relationOnDelete": "Cascade",
+        "isGenerated": false,
+        "isUpdatedAt": false
+      }
+    ],
+    "primaryKey": null,
+    "uniqueFields": [],
+    "uniqueIndexes": [],
+    "isGenerated": false
+  },
+  {
+    "name": "Code",
+    "dbName": "code",
+    "schema": null,
+    "fields": [
+      {
+        "name": "id",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": true,
+        "isReadOnly": false,
+        "hasDefaultValue": true,
+        "type": "Int",
+        "nativeType": null,
+        "default": {
+          "name": "autoincrement",
+          "args": []
+        },
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "status",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": true,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "Int",
+        "nativeType": null,
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "domain",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": true,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "String",
+        "nativeType": [
+          "VarChar",
+          [
+            "100"
+          ]
+        ],
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "errorMessage",
+        "kind": "object",
+        "isList": true,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "ErrorMessage",
+        "nativeType": null,
+        "relationName": "CodeToErrorMessage",
+        "relationFromFields": [],
+        "relationToFields": [],
+        "isGenerated": false,
+        "isUpdatedAt": false
+      }
+    ],
+    "primaryKey": null,
+    "uniqueFields": [],
+    "uniqueIndexes": [],
+    "isGenerated": false
+  },
+  {
+    "name": "Webhook",
+    "dbName": "webhook",
+    "schema": null,
+    "fields": [
+      {
+        "name": "id",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": true,
+        "isReadOnly": false,
+        "hasDefaultValue": true,
+        "type": "Int",
+        "nativeType": null,
+        "default": {
+          "name": "autoincrement",
+          "args": []
+        },
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "domain",
+        "dbName": "domain",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "String",
+        "nativeType": [
+          "VarChar",
+          [
+            "100"
+          ]
+        ],
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "type",
+        "dbName": "type",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "String",
+        "nativeType": [
+          "VarChar",
+          [
+            "100"
+          ]
+        ],
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "webhookUrl",
+        "dbName": "webhook_url",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": true,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "String",
+        "nativeType": [
+          "VarChar",
+          [
+            "300"
+          ]
+        ],
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "active",
+        "dbName": "active",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": true,
+        "type": "Boolean",
+        "nativeType": null,
+        "default": true,
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "createdAt",
+        "dbName": "created_at",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": true,
+        "type": "DateTime",
+        "nativeType": null,
+        "default": {
+          "name": "now",
+          "args": []
+        },
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "updatedAt",
+        "dbName": "updated_at",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": true,
+        "type": "DateTime",
+        "nativeType": null,
+        "default": {
+          "name": "now",
+          "args": []
+        },
+        "isGenerated": false,
+        "isUpdatedAt": true
+      },
+      {
+        "name": "deletedAt",
+        "dbName": "deleted_at",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": false,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "DateTime",
+        "nativeType": null,
+        "isGenerated": false,
+        "isUpdatedAt": false
+      }
+    ],
+    "primaryKey": null,
+    "uniqueFields": [],
+    "uniqueIndexes": [],
+    "isGenerated": false
+  },
+  {
+    "name": "Payment",
+    "dbName": "payment",
+    "schema": null,
+    "fields": [
+      {
+        "name": "id",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": true,
+        "isReadOnly": false,
+        "hasDefaultValue": true,
+        "type": "Int",
+        "nativeType": null,
+        "default": {
+          "name": "autoincrement",
+          "args": []
+        },
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "userId",
+        "dbName": "user_id",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": true,
+        "hasDefaultValue": false,
+        "type": "String",
+        "nativeType": [
+          "Uuid",
+          []
+        ],
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "subscriptionId",
+        "dbName": "subscription_id",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": true,
+        "hasDefaultValue": false,
+        "type": "String",
+        "nativeType": [
+          "Uuid",
+          []
+        ],
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "mId",
+        "dbName": "m_id",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "String",
+        "nativeType": null,
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "paymentKey",
+        "dbName": "payment_key",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "String",
+        "nativeType": null,
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "orderId",
+        "dbName": "order_id",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "String",
+        "nativeType": null,
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "orderName",
+        "dbName": "order_name",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "String",
+        "nativeType": null,
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "customerKey",
+        "dbName": "customer_key",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "String",
+        "nativeType": null,
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "amount",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "Int",
+        "nativeType": null,
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "taxFreeAmount",
+        "dbName": "tax_free_amount",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "Int",
+        "nativeType": null,
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "taxExemptionAmount",
+        "dbName": "tax_exemption_amount",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "Int",
+        "nativeType": null,
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "lastTransactionKey",
+        "dbName": "last_transaction_key",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "String",
+        "nativeType": null,
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "status",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "String",
+        "nativeType": null,
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "useEscrow",
+        "dbName": "use_escrow",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "Boolean",
+        "nativeType": null,
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "cultureExpense",
+        "dbName": "culture_expense",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "Boolean",
+        "nativeType": null,
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "cardIssuerCode",
+        "dbName": "card_issuer_code",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "String",
+        "nativeType": null,
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "cardAcquirerCode",
+        "dbName": "card_acquirer_code",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "String",
+        "nativeType": null,
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "cardNumber",
+        "dbName": "card_number",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "String",
+        "nativeType": null,
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "cardInstallmentPlanMonths",
+        "dbName": "card_installment_plan_months",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "Int",
+        "nativeType": null,
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "cardIsInterestFree",
+        "dbName": "card_is_interest_free",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "Boolean",
+        "nativeType": null,
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "cardInterestPayer",
+        "dbName": "card_interest_payer",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": false,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "String",
+        "nativeType": null,
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "cardApproveNo",
+        "dbName": "card_approve_no",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "String",
+        "nativeType": null,
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "useCardPoint",
+        "dbName": "use_card_point",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "Boolean",
+        "nativeType": null,
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "cardType",
+        "dbName": "card_type",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "String",
+        "nativeType": null,
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "cardOwnerType",
+        "dbName": "card_owner_type",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "String",
+        "nativeType": null,
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "cardAcquireStatus",
+        "dbName": "card_acquire_status",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "String",
+        "nativeType": null,
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "cardAmount",
+        "dbName": "card_amount",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "Int",
+        "nativeType": null,
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "secret",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "String",
+        "nativeType": null,
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "type",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "String",
+        "nativeType": null,
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "country",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "String",
+        "nativeType": null,
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "isPartialCancelable",
+        "dbName": "is_partial_cancelable",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "Boolean",
+        "nativeType": null,
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "receiptUrl",
+        "dbName": "receipt_url",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": false,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "String",
+        "nativeType": null,
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "checkoutUrl",
+        "dbName": "checkout_url",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": false,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "String",
+        "nativeType": null,
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "currency",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "String",
+        "nativeType": null,
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "totalAmount",
+        "dbName": "total_amount",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "Int",
+        "nativeType": null,
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "balanceAmount",
+        "dbName": "balance_amount",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "Int",
+        "nativeType": null,
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "suppliedAmount",
+        "dbName": "supplied_amount",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "Int",
+        "nativeType": null,
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "vat",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "Int",
+        "nativeType": null,
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "method",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "String",
+        "nativeType": null,
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "version",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "String",
+        "nativeType": null,
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "createdAt",
+        "dbName": "created_at",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": true,
+        "type": "DateTime",
+        "nativeType": null,
+        "default": {
+          "name": "now",
+          "args": []
+        },
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "updatedAt",
+        "dbName": "updated_at",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": true,
+        "type": "DateTime",
+        "nativeType": null,
+        "default": {
+          "name": "now",
+          "args": []
+        },
+        "isGenerated": false,
+        "isUpdatedAt": true
+      },
+      {
+        "name": "deletedAt",
+        "dbName": "deleted_at",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": false,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "DateTime",
+        "nativeType": null,
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "subscription",
+        "kind": "object",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "Subscription",
+        "nativeType": null,
+        "relationName": "PaymentToSubscription",
+        "relationFromFields": [
+          "subscriptionId"
+        ],
+        "relationToFields": [
+          "id"
+        ],
+        "relationOnDelete": "Cascade",
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "user",
+        "kind": "object",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "User",
+        "nativeType": null,
+        "relationName": "PaymentToUser",
+        "relationFromFields": [
+          "userId"
+        ],
+        "relationToFields": [
+          "id"
+        ],
+        "relationOnDelete": "Cascade",
+        "isGenerated": false,
+        "isUpdatedAt": false
+      }
+    ],
+    "primaryKey": null,
+    "uniqueFields": [],
+    "uniqueIndexes": [],
+    "isGenerated": false
+  },
+  {
+    "name": "UserProfile",
+    "dbName": "user_profile",
+    "schema": null,
+    "fields": [
+      {
+        "name": "id",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": true,
+        "isReadOnly": false,
+        "hasDefaultValue": true,
+        "type": "String",
+        "nativeType": [
+          "Uuid",
+          []
+        ],
+        "default": {
+          "name": "uuid",
+          "args": [
+            4
+          ]
+        },
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "userId",
+        "dbName": "user_id",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": true,
+        "isId": false,
+        "isReadOnly": true,
+        "hasDefaultValue": false,
+        "type": "String",
+        "nativeType": [
+          "Uuid",
+          []
+        ],
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "filename",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "String",
+        "nativeType": [
+          "VarChar",
+          [
+            "200"
+          ]
+        ],
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "image",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "Bytes",
+        "nativeType": [
+          "ByteA",
+          []
+        ],
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "mimetype",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "String",
+        "nativeType": [
+          "VarChar",
+          [
+            "50"
+          ]
+        ],
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "createdAt",
+        "dbName": "created_at",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": true,
+        "type": "DateTime",
+        "nativeType": null,
+        "default": {
+          "name": "now",
+          "args": []
+        },
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "user",
+        "kind": "object",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "User",
+        "nativeType": null,
+        "relationName": "UserToUserProfile",
+        "relationFromFields": [
+          "userId"
+        ],
+        "relationToFields": [
+          "id"
+        ],
+        "relationOnDelete": "Cascade",
+        "isGenerated": false,
+        "isUpdatedAt": false
+      }
+    ],
+    "primaryKey": null,
+    "uniqueFields": [],
+    "uniqueIndexes": [],
+    "isGenerated": false
+  },
+  {
+    "name": "SocialUser",
+    "dbName": "social_user",
+    "schema": null,
+    "fields": [
+      {
+        "name": "id",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": true,
+        "isReadOnly": false,
+        "hasDefaultValue": true,
+        "type": "String",
+        "nativeType": [
+          "Uuid",
+          []
+        ],
+        "default": {
+          "name": "uuid",
+          "args": [
+            4
+          ]
+        },
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "userId",
+        "dbName": "user_id",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": true,
+        "isId": false,
+        "isReadOnly": true,
+        "hasDefaultValue": false,
+        "type": "String",
+        "nativeType": [
+          "Uuid",
+          []
+        ],
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "provider",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "String",
+        "nativeType": null,
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "createdAt",
+        "dbName": "created_at",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": true,
+        "type": "DateTime",
+        "nativeType": null,
+        "default": {
+          "name": "now",
+          "args": []
+        },
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "updatedAt",
+        "dbName": "updated_at",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": true,
+        "type": "DateTime",
+        "nativeType": null,
+        "default": {
+          "name": "now",
+          "args": []
+        },
+        "isGenerated": false,
+        "isUpdatedAt": true
+      },
+      {
+        "name": "deletedAt",
+        "dbName": "deleted_at",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": false,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "DateTime",
+        "nativeType": null,
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "user",
+        "kind": "object",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "User",
+        "nativeType": null,
+        "relationName": "SocialUserToUser",
+        "relationFromFields": [
+          "userId"
+        ],
+        "relationToFields": [
+          "id"
+        ],
+        "relationOnDelete": "Cascade",
+        "isGenerated": false,
+        "isUpdatedAt": false
+      }
+    ],
+    "primaryKey": null,
+    "uniqueFields": [],
+    "uniqueIndexes": [],
+    "isGenerated": false
+  },
+  {
+    "name": "LocalUser",
+    "dbName": "local_user",
+    "schema": null,
+    "fields": [
+      {
+        "name": "id",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": true,
+        "isReadOnly": false,
+        "hasDefaultValue": true,
+        "type": "String",
+        "nativeType": [
+          "Uuid",
+          []
+        ],
+        "default": {
+          "name": "uuid",
+          "args": [
+            4
+          ]
+        },
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "userId",
+        "dbName": "user_id",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": true,
+        "isId": false,
+        "isReadOnly": true,
+        "hasDefaultValue": false,
+        "type": "String",
+        "nativeType": [
+          "Uuid",
+          []
+        ],
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "password",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "String",
+        "nativeType": [
+          "VarChar",
+          [
+            "200"
+          ]
+        ],
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "signupDate",
+        "dbName": "signup_date",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": true,
+        "type": "DateTime",
+        "nativeType": null,
+        "default": {
+          "name": "now",
+          "args": []
+        },
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "user",
+        "kind": "object",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "User",
+        "nativeType": null,
+        "relationName": "LocalUserToUser",
+        "relationFromFields": [
+          "userId"
+        ],
+        "relationToFields": [
+          "id"
+        ],
+        "relationOnDelete": "Cascade",
+        "isGenerated": false,
+        "isUpdatedAt": false
+      }
+    ],
+    "primaryKey": null,
+    "uniqueFields": [],
+    "uniqueIndexes": [],
+    "isGenerated": false
+  },
+  {
+    "name": "Subscription",
+    "dbName": "subscription",
+    "schema": null,
+    "fields": [
+      {
+        "name": "id",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": true,
+        "isReadOnly": false,
+        "hasDefaultValue": true,
+        "type": "String",
+        "nativeType": [
+          "Uuid",
+          []
+        ],
+        "default": {
+          "name": "uuid",
+          "args": [
+            4
+          ]
+        },
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "userId",
+        "dbName": "user_id",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": true,
+        "isId": false,
+        "isReadOnly": true,
+        "hasDefaultValue": false,
+        "type": "String",
+        "nativeType": [
+          "Uuid",
+          []
+        ],
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "planId",
+        "dbName": "plan_id",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": true,
+        "hasDefaultValue": false,
+        "type": "String",
+        "nativeType": [
+          "Uuid",
+          []
+        ],
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "type",
+        "kind": "enum",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "SubscribeType",
+        "nativeType": null,
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "state",
+        "kind": "enum",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": true,
+        "type": "State",
+        "nativeType": null,
+        "default": "Active",
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "startDate",
+        "dbName": "start_date",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": true,
+        "type": "DateTime",
+        "nativeType": null,
+        "default": {
+          "name": "now",
+          "args": []
+        },
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "endDate",
+        "dbName": "end_date",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": false,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "DateTime",
+        "nativeType": null,
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "user",
+        "kind": "object",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "User",
+        "nativeType": null,
+        "relationName": "SubscriptionToUser",
+        "relationFromFields": [
+          "userId"
+        ],
+        "relationToFields": [
+          "id"
+        ],
+        "relationOnDelete": "Cascade",
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "plan",
+        "kind": "object",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "Plan",
+        "nativeType": null,
+        "relationName": "PlanToSubscription",
+        "relationFromFields": [
+          "planId"
+        ],
+        "relationToFields": [
+          "id"
+        ],
+        "relationOnDelete": "Cascade",
+        "relationOnUpdate": "Cascade",
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "payment",
+        "kind": "object",
+        "isList": true,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "Payment",
+        "nativeType": null,
+        "relationName": "PaymentToSubscription",
+        "relationFromFields": [],
+        "relationToFields": [],
+        "isGenerated": false,
+        "isUpdatedAt": false
+      }
+    ],
+    "primaryKey": null,
+    "uniqueFields": [],
+    "uniqueIndexes": [],
+    "isGenerated": false
+  },
+  {
+    "name": "Plan",
+    "dbName": "plan",
+    "schema": null,
+    "fields": [
+      {
+        "name": "id",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": true,
+        "isReadOnly": false,
+        "hasDefaultValue": true,
+        "type": "String",
+        "nativeType": [
+          "Uuid",
+          []
+        ],
+        "default": {
+          "name": "uuid",
+          "args": [
+            4
+          ]
+        },
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "planType",
+        "dbName": "plan_type",
+        "kind": "enum",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": true,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": true,
+        "type": "PlanType",
+        "nativeType": null,
+        "default": "Free",
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "name",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "String",
+        "nativeType": [
+          "VarChar",
+          [
+            "50"
+          ]
+        ],
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "description",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": false,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "String",
+        "nativeType": null,
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "price",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "Int",
+        "nativeType": [
+          "Integer",
+          []
+        ],
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "discount",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": true,
+        "type": "Int",
+        "nativeType": null,
+        "default": 0,
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "createdAt",
+        "dbName": "created_at",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": true,
+        "type": "DateTime",
+        "nativeType": null,
+        "default": {
+          "name": "now",
+          "args": []
+        },
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "updatedAt",
+        "dbName": "updated_at",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": true,
+        "type": "DateTime",
+        "nativeType": null,
+        "default": {
+          "name": "now",
+          "args": []
+        },
+        "isGenerated": false,
+        "isUpdatedAt": true
+      },
+      {
+        "name": "subscription",
+        "kind": "object",
+        "isList": true,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "Subscription",
+        "nativeType": null,
+        "relationName": "PlanToSubscription",
+        "relationFromFields": [],
+        "relationToFields": [],
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "feature",
+        "kind": "object",
+        "isList": true,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "Feature",
+        "nativeType": null,
+        "relationName": "FeatureToPlan",
+        "relationFromFields": [],
+        "relationToFields": [],
+        "isGenerated": false,
+        "isUpdatedAt": false
+      }
+    ],
+    "primaryKey": null,
+    "uniqueFields": [],
+    "uniqueIndexes": [],
+    "isGenerated": false
+  },
+  {
+    "name": "Feature",
+    "dbName": "feature",
+    "schema": null,
+    "fields": [
+      {
+        "name": "id",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": true,
+        "isReadOnly": false,
+        "hasDefaultValue": true,
+        "type": "String",
+        "nativeType": [
+          "Uuid",
+          []
+        ],
+        "default": {
+          "name": "uuid",
+          "args": [
+            4
+          ]
+        },
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "planId",
+        "dbName": "plan_id",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": true,
+        "hasDefaultValue": false,
+        "type": "String",
+        "nativeType": [
+          "Uuid",
+          []
+        ],
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "feature",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "String",
+        "nativeType": null,
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "createdAt",
+        "dbName": "created_at",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": true,
+        "type": "DateTime",
+        "nativeType": null,
+        "default": {
+          "name": "now",
+          "args": []
+        },
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "updatedAt",
+        "dbName": "updated_at",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": true,
+        "type": "DateTime",
+        "nativeType": null,
+        "default": {
+          "name": "now",
+          "args": []
+        },
+        "isGenerated": false,
+        "isUpdatedAt": true
+      },
+      {
+        "name": "plan",
+        "kind": "object",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "Plan",
+        "nativeType": null,
+        "relationName": "FeatureToPlan",
+        "relationFromFields": [
+          "planId"
+        ],
+        "relationToFields": [
+          "id"
+        ],
+        "relationOnDelete": "Cascade",
+        "relationOnUpdate": "Cascade",
+        "isGenerated": false,
+        "isUpdatedAt": false
+      }
+    ],
+    "primaryKey": null,
+    "uniqueFields": [],
+    "uniqueIndexes": [],
+    "isGenerated": false
+  },
+  {
+    "name": "User",
+    "dbName": "user",
+    "schema": null,
+    "fields": [
+      {
+        "name": "id",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": true,
+        "isReadOnly": false,
+        "hasDefaultValue": true,
+        "type": "String",
+        "nativeType": [
+          "Uuid",
+          []
+        ],
+        "default": {
+          "name": "uuid",
+          "args": [
+            4
+          ]
+        },
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "email",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": true,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "String",
+        "nativeType": null,
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "username",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": true,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "String",
+        "nativeType": null,
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "isActive",
+        "dbName": "is_active",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": true,
+        "type": "Boolean",
+        "nativeType": null,
+        "default": true,
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "lastLogin",
+        "dbName": "last_login",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": false,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "DateTime",
+        "nativeType": null,
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "authProvider",
+        "dbName": "auth_provider",
+        "kind": "enum",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": true,
+        "type": "AuthProvider",
+        "nativeType": null,
+        "default": "Local",
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "group",
+        "kind": "enum",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": true,
+        "type": "Group",
+        "nativeType": null,
+        "default": "Normal",
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "role",
+        "kind": "enum",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": true,
+        "type": "Role",
+        "nativeType": null,
+        "default": "User",
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "receiveMail",
+        "dbName": "receive_mail",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": true,
+        "type": "Boolean",
+        "nativeType": null,
+        "default": false,
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "createdAt",
+        "dbName": "created_at",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": true,
+        "type": "DateTime",
+        "nativeType": null,
+        "default": {
+          "name": "now",
+          "args": []
+        },
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "updatedAt",
+        "dbName": "updated_at",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": true,
+        "type": "DateTime",
+        "nativeType": null,
+        "default": {
+          "name": "now",
+          "args": []
+        },
+        "isGenerated": false,
+        "isUpdatedAt": true
+      },
+      {
+        "name": "deletedAt",
+        "dbName": "deleted_at",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": false,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "DateTime",
+        "nativeType": null,
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "sendMessage",
+        "kind": "object",
+        "isList": true,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "Message",
+        "nativeType": null,
+        "relationName": "sendMessage",
+        "relationFromFields": [],
+        "relationToFields": [],
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "receiveMessage",
+        "kind": "object",
+        "isList": true,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "Message",
+        "nativeType": null,
+        "relationName": "receiveMessage",
+        "relationFromFields": [],
+        "relationToFields": [],
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "userProfile",
+        "kind": "object",
+        "isList": false,
+        "isRequired": false,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "UserProfile",
+        "nativeType": null,
+        "relationName": "UserToUserProfile",
+        "relationFromFields": [],
+        "relationToFields": [],
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "localUser",
+        "kind": "object",
+        "isList": false,
+        "isRequired": false,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "LocalUser",
+        "nativeType": null,
+        "relationName": "LocalUserToUser",
+        "relationFromFields": [],
+        "relationToFields": [],
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "socialUser",
+        "kind": "object",
+        "isList": false,
+        "isRequired": false,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "SocialUser",
+        "nativeType": null,
+        "relationName": "SocialUserToUser",
+        "relationFromFields": [],
+        "relationToFields": [],
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "poll",
+        "kind": "object",
+        "isList": true,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "Poll",
+        "nativeType": null,
+        "relationName": "PollToUser",
+        "relationFromFields": [],
+        "relationToFields": [],
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "vote",
+        "kind": "object",
+        "isList": true,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "Vote",
+        "nativeType": null,
+        "relationName": "UserToVote",
+        "relationFromFields": [],
+        "relationToFields": [],
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "response",
+        "kind": "object",
+        "isList": true,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "Response",
+        "nativeType": null,
+        "relationName": "ResponseToUser",
+        "relationFromFields": [],
+        "relationToFields": [],
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "voteResponse",
+        "kind": "object",
+        "isList": true,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "VoteResponse",
+        "nativeType": null,
+        "relationName": "UserToVoteResponse",
+        "relationFromFields": [],
+        "relationToFields": [],
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "board",
+        "kind": "object",
+        "isList": true,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "Board",
+        "nativeType": null,
+        "relationName": "BoardToUser",
+        "relationFromFields": [],
+        "relationToFields": [],
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "subscription",
+        "kind": "object",
+        "isList": false,
+        "isRequired": false,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "Subscription",
+        "nativeType": null,
+        "relationName": "SubscriptionToUser",
+        "relationFromFields": [],
+        "relationToFields": [],
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "allowTerms",
+        "kind": "object",
+        "isList": true,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "AllowTerms",
+        "nativeType": null,
+        "relationName": "AllowTermsToUser",
+        "relationFromFields": [],
+        "relationToFields": [],
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "comment",
+        "kind": "object",
+        "isList": true,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "Comment",
+        "nativeType": null,
+        "relationName": "CommentToUser",
+        "relationFromFields": [],
+        "relationToFields": [],
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "boardLike",
+        "kind": "object",
+        "isList": true,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "BoardLike",
+        "nativeType": null,
+        "relationName": "BoardLikeToUser",
+        "relationFromFields": [],
+        "relationToFields": [],
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "payment",
+        "kind": "object",
+        "isList": true,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "Payment",
+        "nativeType": null,
+        "relationName": "PaymentToUser",
+        "relationFromFields": [],
+        "relationToFields": [],
+        "isGenerated": false,
+        "isUpdatedAt": false
+      }
+    ],
+    "primaryKey": null,
+    "uniqueFields": [],
+    "uniqueIndexes": [],
+    "isGenerated": false
+  },
+  {
+    "name": "SharePoll",
+    "dbName": "share_poll",
+    "schema": null,
+    "fields": [
+      {
+        "name": "id",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": true,
+        "isReadOnly": false,
+        "hasDefaultValue": true,
+        "type": "String",
+        "nativeType": [
+          "Uuid",
+          []
+        ],
+        "default": {
+          "name": "uuid",
+          "args": [
+            4
+          ]
+        },
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "pollId",
+        "dbName": "poll_id",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": true,
+        "isId": false,
+        "isReadOnly": true,
+        "hasDefaultValue": false,
+        "type": "String",
+        "nativeType": [
+          "Uuid",
+          []
+        ],
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "url",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": true,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "String",
+        "nativeType": null,
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "createdAt",
+        "dbName": "created_at",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": true,
+        "type": "DateTime",
+        "nativeType": null,
+        "default": {
+          "name": "now",
+          "args": []
+        },
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "deletedAt",
+        "dbName": "deleted_at",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": false,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "DateTime",
+        "nativeType": null,
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "poll",
+        "kind": "object",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "Poll",
+        "nativeType": null,
+        "relationName": "PollToSharePoll",
+        "relationFromFields": [
+          "pollId"
+        ],
+        "relationToFields": [
+          "id"
+        ],
+        "isGenerated": false,
+        "isUpdatedAt": false
+      }
+    ],
+    "primaryKey": null,
+    "uniqueFields": [],
+    "uniqueIndexes": [],
+    "isGenerated": false
+  },
+  {
+    "name": "ShareVote",
+    "dbName": "share_vote",
+    "schema": null,
+    "fields": [
+      {
+        "name": "id",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": true,
+        "isReadOnly": false,
+        "hasDefaultValue": true,
+        "type": "String",
+        "nativeType": [
+          "Uuid",
+          []
+        ],
+        "default": {
+          "name": "uuid",
+          "args": [
+            4
+          ]
+        },
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "voteId",
+        "dbName": "vote_id",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": true,
+        "isId": false,
+        "isReadOnly": true,
+        "hasDefaultValue": false,
+        "type": "String",
+        "nativeType": [
+          "Uuid",
+          []
+        ],
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "url",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": true,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "String",
+        "nativeType": null,
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "createdAt",
+        "dbName": "created_at",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": true,
+        "type": "DateTime",
+        "nativeType": null,
+        "default": {
+          "name": "now",
+          "args": []
+        },
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "deletedAt",
+        "dbName": "deleted_at",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": false,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "DateTime",
+        "nativeType": null,
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "vote",
+        "kind": "object",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "Vote",
+        "nativeType": null,
+        "relationName": "ShareVoteToVote",
+        "relationFromFields": [
+          "voteId"
+        ],
+        "relationToFields": [
+          "id"
+        ],
+        "isGenerated": false,
+        "isUpdatedAt": false
+      }
+    ],
+    "primaryKey": null,
+    "uniqueFields": [],
+    "uniqueIndexes": [],
+    "isGenerated": false
+  },
+  {
+    "name": "Poll",
+    "dbName": "poll",
+    "schema": null,
+    "fields": [
+      {
+        "name": "id",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": true,
+        "isReadOnly": false,
+        "hasDefaultValue": true,
+        "type": "String",
+        "nativeType": [
+          "Uuid",
+          []
+        ],
+        "default": {
+          "name": "uuid",
+          "args": [
+            4
+          ]
+        },
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "title",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "String",
+        "nativeType": [
+          "VarChar",
+          [
+            "30"
+          ]
+        ],
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "description",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": false,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "String",
+        "nativeType": null,
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "userId",
+        "dbName": "user_id",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": true,
+        "hasDefaultValue": false,
+        "type": "String",
+        "nativeType": [
+          "Uuid",
+          []
+        ],
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "expiresAt",
+        "dbName": "expires_at",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": false,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "DateTime",
+        "nativeType": null,
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "createdAt",
+        "dbName": "created_at",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": true,
+        "type": "DateTime",
+        "nativeType": null,
+        "default": {
+          "name": "now",
+          "args": []
+        },
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "updatedAt",
+        "dbName": "updated_at",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": true,
+        "type": "DateTime",
+        "nativeType": null,
+        "default": {
+          "name": "now",
+          "args": []
+        },
+        "isGenerated": false,
+        "isUpdatedAt": true
+      },
+      {
+        "name": "user",
+        "kind": "object",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "User",
+        "nativeType": null,
+        "relationName": "PollToUser",
+        "relationFromFields": [
+          "userId"
+        ],
+        "relationToFields": [
+          "id"
+        ],
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "question",
+        "kind": "object",
+        "isList": true,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "Question",
+        "nativeType": null,
+        "relationName": "PollToQuestion",
+        "relationFromFields": [],
+        "relationToFields": [],
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "response",
+        "kind": "object",
+        "isList": true,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "Response",
+        "nativeType": null,
+        "relationName": "PollToResponse",
+        "relationFromFields": [],
+        "relationToFields": [],
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "sharePoll",
+        "kind": "object",
+        "isList": false,
+        "isRequired": false,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "SharePoll",
+        "nativeType": null,
+        "relationName": "PollToSharePoll",
+        "relationFromFields": [],
+        "relationToFields": [],
+        "isGenerated": false,
+        "isUpdatedAt": false
+      }
+    ],
+    "primaryKey": null,
+    "uniqueFields": [],
+    "uniqueIndexes": [],
+    "isGenerated": false
+  },
+  {
+    "name": "Question",
+    "dbName": "question",
+    "schema": null,
+    "fields": [
+      {
+        "name": "id",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": true,
+        "isReadOnly": false,
+        "hasDefaultValue": true,
+        "type": "String",
+        "nativeType": [
+          "Uuid",
+          []
+        ],
+        "default": {
+          "name": "uuid",
+          "args": [
+            4
+          ]
+        },
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "pollId",
+        "dbName": "poll_id",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": true,
+        "hasDefaultValue": false,
+        "type": "String",
+        "nativeType": [
+          "Uuid",
+          []
+        ],
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "type",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": true,
+        "type": "String",
+        "nativeType": [
+          "VarChar",
+          [
+            "20"
+          ]
+        ],
+        "default": "input",
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "title",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "String",
+        "nativeType": [
+          "VarChar",
+          [
+            "30"
+          ]
+        ],
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "description",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": false,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "String",
+        "nativeType": null,
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "order",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": false,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "Int",
+        "nativeType": null,
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "isRequired",
+        "dbName": "is_required",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": true,
+        "type": "Boolean",
+        "nativeType": null,
+        "default": false,
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "isMultiple",
+        "dbName": "is_multiple",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": true,
+        "type": "Boolean",
+        "nativeType": null,
+        "default": false,
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "useEtc",
+        "dbName": "use_etc",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": true,
+        "type": "Boolean",
+        "nativeType": null,
+        "default": false,
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "createdAt",
+        "dbName": "created_at",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": true,
+        "type": "DateTime",
+        "nativeType": null,
+        "default": {
+          "name": "now",
+          "args": []
+        },
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "updatedAt",
+        "dbName": "updated_at",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": true,
+        "type": "DateTime",
+        "nativeType": null,
+        "default": {
+          "name": "now",
+          "args": []
+        },
+        "isGenerated": false,
+        "isUpdatedAt": true
+      },
+      {
+        "name": "poll",
+        "kind": "object",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "Poll",
+        "nativeType": null,
+        "relationName": "PollToQuestion",
+        "relationFromFields": [
+          "pollId"
+        ],
+        "relationToFields": [
+          "id"
+        ],
+        "relationOnDelete": "Cascade",
+        "relationOnUpdate": "Cascade",
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "answer",
+        "kind": "object",
+        "isList": true,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "Answer",
+        "nativeType": null,
+        "relationName": "AnswerToQuestion",
+        "relationFromFields": [],
+        "relationToFields": [],
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "option",
+        "kind": "object",
+        "isList": true,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "Option",
+        "nativeType": null,
+        "relationName": "OptionToQuestion",
+        "relationFromFields": [],
+        "relationToFields": [],
+        "isGenerated": false,
+        "isUpdatedAt": false
+      }
+    ],
+    "primaryKey": null,
+    "uniqueFields": [],
+    "uniqueIndexes": [],
+    "isGenerated": false
+  },
+  {
+    "name": "Response",
+    "dbName": "response",
+    "schema": null,
+    "fields": [
+      {
+        "name": "id",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": true,
+        "isReadOnly": false,
+        "hasDefaultValue": true,
+        "type": "String",
+        "nativeType": [
+          "Uuid",
+          []
+        ],
+        "default": {
+          "name": "uuid",
+          "args": [
+            4
+          ]
+        },
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "userId",
+        "dbName": "user_id",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": false,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": true,
+        "hasDefaultValue": false,
+        "type": "String",
+        "nativeType": [
+          "Uuid",
+          []
+        ],
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "pollId",
+        "dbName": "poll_id",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": true,
+        "hasDefaultValue": false,
+        "type": "String",
+        "nativeType": [
+          "Uuid",
+          []
+        ],
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "createdAt",
+        "dbName": "created_at",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": true,
+        "type": "DateTime",
+        "nativeType": null,
+        "default": {
+          "name": "now",
+          "args": []
+        },
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "updatedAt",
+        "dbName": "updated_at",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": true,
+        "type": "DateTime",
+        "nativeType": null,
+        "default": {
+          "name": "now",
+          "args": []
+        },
+        "isGenerated": false,
+        "isUpdatedAt": true
+      },
+      {
+        "name": "user",
+        "kind": "object",
+        "isList": false,
+        "isRequired": false,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "User",
+        "nativeType": null,
+        "relationName": "ResponseToUser",
+        "relationFromFields": [
+          "userId"
+        ],
+        "relationToFields": [
+          "id"
+        ],
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "poll",
+        "kind": "object",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "Poll",
+        "nativeType": null,
+        "relationName": "PollToResponse",
+        "relationFromFields": [
+          "pollId"
+        ],
+        "relationToFields": [
+          "id"
+        ],
+        "relationOnDelete": "Cascade",
+        "relationOnUpdate": "Cascade",
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "answer",
+        "kind": "object",
+        "isList": true,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "Answer",
+        "nativeType": null,
+        "relationName": "AnswerToResponse",
+        "relationFromFields": [],
+        "relationToFields": [],
+        "isGenerated": false,
+        "isUpdatedAt": false
+      }
+    ],
+    "primaryKey": null,
+    "uniqueFields": [],
+    "uniqueIndexes": [],
+    "isGenerated": false
+  },
+  {
+    "name": "Answer",
+    "dbName": "answer",
+    "schema": null,
+    "fields": [
+      {
+        "name": "id",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": true,
+        "isReadOnly": false,
+        "hasDefaultValue": true,
+        "type": "String",
+        "nativeType": [
+          "Uuid",
+          []
+        ],
+        "default": {
+          "name": "uuid",
+          "args": [
+            4
+          ]
+        },
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "responseId",
+        "dbName": "response_id",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": false,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": true,
+        "hasDefaultValue": false,
+        "type": "String",
+        "nativeType": [
+          "Uuid",
+          []
+        ],
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "questionId",
+        "dbName": "question_id",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": true,
+        "hasDefaultValue": false,
+        "type": "String",
+        "nativeType": [
+          "Uuid",
+          []
+        ],
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "optionId",
+        "dbName": "option_id",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": false,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": true,
+        "hasDefaultValue": false,
+        "type": "String",
+        "nativeType": [
+          "Uuid",
+          []
+        ],
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "value",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": false,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "String",
+        "nativeType": [
+          "VarChar",
+          [
+            "100"
+          ]
+        ],
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "createdAt",
+        "dbName": "created_at",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": true,
+        "type": "DateTime",
+        "nativeType": null,
+        "default": {
+          "name": "now",
+          "args": []
+        },
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "updatedAt",
+        "dbName": "updated_at",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": true,
+        "type": "DateTime",
+        "nativeType": null,
+        "default": {
+          "name": "now",
+          "args": []
+        },
+        "isGenerated": false,
+        "isUpdatedAt": true
+      },
+      {
+        "name": "response",
+        "kind": "object",
+        "isList": false,
+        "isRequired": false,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "Response",
+        "nativeType": null,
+        "relationName": "AnswerToResponse",
+        "relationFromFields": [
+          "responseId"
+        ],
+        "relationToFields": [
+          "id"
+        ],
+        "relationOnDelete": "Cascade",
+        "relationOnUpdate": "Cascade",
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "question",
+        "kind": "object",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "Question",
+        "nativeType": null,
+        "relationName": "AnswerToQuestion",
+        "relationFromFields": [
+          "questionId"
+        ],
+        "relationToFields": [
+          "id"
+        ],
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "option",
+        "kind": "object",
+        "isList": false,
+        "isRequired": false,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "Option",
+        "nativeType": null,
+        "relationName": "AnswerToOption",
+        "relationFromFields": [
+          "optionId"
+        ],
+        "relationToFields": [
+          "id"
+        ],
+        "isGenerated": false,
+        "isUpdatedAt": false
+      }
+    ],
+    "primaryKey": null,
+    "uniqueFields": [],
+    "uniqueIndexes": [],
+    "isGenerated": false
+  },
+  {
+    "name": "Option",
+    "dbName": "option",
+    "schema": null,
+    "fields": [
+      {
+        "name": "id",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": true,
+        "isReadOnly": false,
+        "hasDefaultValue": true,
+        "type": "String",
+        "nativeType": [
+          "Uuid",
+          []
+        ],
+        "default": {
+          "name": "uuid",
+          "args": [
+            4
+          ]
+        },
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "questionId",
+        "dbName": "question_id",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": true,
+        "hasDefaultValue": false,
+        "type": "String",
+        "nativeType": [
+          "Uuid",
+          []
+        ],
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "content",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "String",
+        "nativeType": [
+          "VarChar",
+          [
+            "150"
+          ]
+        ],
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "order",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": false,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "Int",
+        "nativeType": null,
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "question",
+        "kind": "object",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "Question",
+        "nativeType": null,
+        "relationName": "OptionToQuestion",
+        "relationFromFields": [
+          "questionId"
+        ],
+        "relationToFields": [
+          "id"
+        ],
+        "relationOnDelete": "Cascade",
+        "relationOnUpdate": "Cascade",
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "answer",
+        "kind": "object",
+        "isList": true,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "Answer",
+        "nativeType": null,
+        "relationName": "AnswerToOption",
+        "relationFromFields": [],
+        "relationToFields": [],
+        "isGenerated": false,
+        "isUpdatedAt": false
+      }
+    ],
+    "primaryKey": null,
+    "uniqueFields": [],
+    "uniqueIndexes": [],
+    "isGenerated": false
+  },
+  {
+    "name": "Vote",
+    "dbName": "vote",
+    "schema": null,
+    "fields": [
+      {
+        "name": "id",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": true,
+        "isReadOnly": false,
+        "hasDefaultValue": true,
+        "type": "String",
+        "nativeType": [
+          "Uuid",
+          []
+        ],
+        "default": {
+          "name": "uuid",
+          "args": [
+            4
+          ]
+        },
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "userId",
+        "dbName": "user_id",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": true,
+        "hasDefaultValue": false,
+        "type": "String",
+        "nativeType": [
+          "Uuid",
+          []
+        ],
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "title",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "String",
+        "nativeType": [
+          "VarChar",
+          [
+            "30"
+          ]
+        ],
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "description",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "String",
+        "nativeType": null,
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "isMultiple",
+        "dbName": "is_multiple",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "Boolean",
+        "nativeType": null,
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "useEtc",
+        "dbName": "use_etc",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": true,
+        "type": "Boolean",
+        "nativeType": null,
+        "default": false,
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "expiresAt",
+        "dbName": "expires_at",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": false,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "DateTime",
+        "nativeType": null,
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "createdAt",
+        "dbName": "created_at",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": true,
+        "type": "DateTime",
+        "nativeType": null,
+        "default": {
+          "name": "now",
+          "args": []
+        },
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "updatedAt",
+        "dbName": "updated_at",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": true,
+        "type": "DateTime",
+        "nativeType": null,
+        "default": {
+          "name": "now",
+          "args": []
+        },
+        "isGenerated": false,
+        "isUpdatedAt": true
+      },
+      {
+        "name": "user",
+        "kind": "object",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "User",
+        "nativeType": null,
+        "relationName": "UserToVote",
+        "relationFromFields": [
+          "userId"
+        ],
+        "relationToFields": [
+          "id"
+        ],
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "voteOption",
+        "kind": "object",
+        "isList": true,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "VoteOption",
+        "nativeType": null,
+        "relationName": "VoteToVoteOption",
+        "relationFromFields": [],
+        "relationToFields": [],
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "voteResponse",
+        "kind": "object",
+        "isList": true,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "VoteResponse",
+        "nativeType": null,
+        "relationName": "VoteToVoteResponse",
+        "relationFromFields": [],
+        "relationToFields": [],
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "shareVote",
+        "kind": "object",
+        "isList": false,
+        "isRequired": false,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "ShareVote",
+        "nativeType": null,
+        "relationName": "ShareVoteToVote",
+        "relationFromFields": [],
+        "relationToFields": [],
+        "isGenerated": false,
+        "isUpdatedAt": false
+      }
+    ],
+    "primaryKey": null,
+    "uniqueFields": [],
+    "uniqueIndexes": [],
+    "isGenerated": false
+  },
+  {
+    "name": "VoteResponse",
+    "dbName": "vote_response",
+    "schema": null,
+    "fields": [
+      {
+        "name": "id",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": true,
+        "isReadOnly": false,
+        "hasDefaultValue": true,
+        "type": "String",
+        "nativeType": [
+          "Uuid",
+          []
+        ],
+        "default": {
+          "name": "uuid",
+          "args": [
+            4
+          ]
+        },
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "userId",
+        "dbName": "user_id",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": false,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": true,
+        "hasDefaultValue": false,
+        "type": "String",
+        "nativeType": [
+          "Uuid",
+          []
+        ],
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "voteId",
+        "dbName": "vote_id",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": true,
+        "hasDefaultValue": false,
+        "type": "String",
+        "nativeType": [
+          "Uuid",
+          []
+        ],
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "createdAt",
+        "dbName": "created_at",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": true,
+        "type": "DateTime",
+        "nativeType": null,
+        "default": {
+          "name": "now",
+          "args": []
+        },
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "updatedAt",
+        "dbName": "updated_at",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": true,
+        "type": "DateTime",
+        "nativeType": null,
+        "default": {
+          "name": "now",
+          "args": []
+        },
+        "isGenerated": false,
+        "isUpdatedAt": true
+      },
+      {
+        "name": "user",
+        "kind": "object",
+        "isList": false,
+        "isRequired": false,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "User",
+        "nativeType": null,
+        "relationName": "UserToVoteResponse",
+        "relationFromFields": [
+          "userId"
+        ],
+        "relationToFields": [
+          "id"
+        ],
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "vote",
+        "kind": "object",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "Vote",
+        "nativeType": null,
+        "relationName": "VoteToVoteResponse",
+        "relationFromFields": [
+          "voteId"
+        ],
+        "relationToFields": [
+          "id"
+        ],
+        "relationOnDelete": "Cascade",
+        "relationOnUpdate": "Cascade",
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "voteAnswer",
+        "kind": "object",
+        "isList": true,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "VoteAnswer",
+        "nativeType": null,
+        "relationName": "VoteAnswerToVoteResponse",
+        "relationFromFields": [],
+        "relationToFields": [],
+        "isGenerated": false,
+        "isUpdatedAt": false
+      }
+    ],
+    "primaryKey": null,
+    "uniqueFields": [],
+    "uniqueIndexes": [],
+    "isGenerated": false
+  },
+  {
+    "name": "VoteAnswer",
+    "dbName": "vote_answer",
+    "schema": null,
+    "fields": [
+      {
+        "name": "id",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": true,
+        "isReadOnly": false,
+        "hasDefaultValue": true,
+        "type": "String",
+        "nativeType": [
+          "Uuid",
+          []
+        ],
+        "default": {
+          "name": "uuid",
+          "args": [
+            4
+          ]
+        },
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "voteResponseId",
+        "dbName": "vote_response_id",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": false,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": true,
+        "hasDefaultValue": false,
+        "type": "String",
+        "nativeType": [
+          "Uuid",
+          []
+        ],
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "voteOptionId",
+        "dbName": "vote_option_id",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": false,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": true,
+        "hasDefaultValue": false,
+        "type": "String",
+        "nativeType": [
+          "Uuid",
+          []
+        ],
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "value",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": false,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "String",
+        "nativeType": [
+          "VarChar",
+          [
+            "100"
+          ]
+        ],
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "createdAt",
+        "dbName": "created_at",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": true,
+        "type": "DateTime",
+        "nativeType": null,
+        "default": {
+          "name": "now",
+          "args": []
+        },
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "updatedAt",
+        "dbName": "updated_at",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": true,
+        "type": "DateTime",
+        "nativeType": null,
+        "default": {
+          "name": "now",
+          "args": []
+        },
+        "isGenerated": false,
+        "isUpdatedAt": true
+      },
+      {
+        "name": "voteResponse",
+        "kind": "object",
+        "isList": false,
+        "isRequired": false,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "VoteResponse",
+        "nativeType": null,
+        "relationName": "VoteAnswerToVoteResponse",
+        "relationFromFields": [
+          "voteResponseId"
+        ],
+        "relationToFields": [
+          "id"
+        ],
+        "relationOnDelete": "Cascade",
+        "relationOnUpdate": "Cascade",
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "voteOption",
+        "kind": "object",
+        "isList": false,
+        "isRequired": false,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "VoteOption",
+        "nativeType": null,
+        "relationName": "VoteAnswerToVoteOption",
+        "relationFromFields": [
+          "voteOptionId"
+        ],
+        "relationToFields": [
+          "id"
+        ],
+        "isGenerated": false,
+        "isUpdatedAt": false
+      }
+    ],
+    "primaryKey": null,
+    "uniqueFields": [],
+    "uniqueIndexes": [],
+    "isGenerated": false
+  },
+  {
+    "name": "VoteOption",
+    "dbName": "vote_option",
+    "schema": null,
+    "fields": [
+      {
+        "name": "id",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": true,
+        "isReadOnly": false,
+        "hasDefaultValue": true,
+        "type": "String",
+        "nativeType": [
+          "Uuid",
+          []
+        ],
+        "default": {
+          "name": "uuid",
+          "args": [
+            4
+          ]
+        },
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "voteId",
+        "dbName": "vote_id",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": true,
+        "hasDefaultValue": false,
+        "type": "String",
+        "nativeType": [
+          "Uuid",
+          []
+        ],
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "content",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "String",
+        "nativeType": [
+          "VarChar",
+          [
+            "100"
+          ]
+        ],
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "order",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": false,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "Int",
+        "nativeType": null,
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "createdAt",
+        "dbName": "created_at",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": true,
+        "type": "DateTime",
+        "nativeType": null,
+        "default": {
+          "name": "now",
+          "args": []
+        },
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "updatedAt",
+        "dbName": "updated_at",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": true,
+        "type": "DateTime",
+        "nativeType": null,
+        "default": {
+          "name": "now",
+          "args": []
+        },
+        "isGenerated": false,
+        "isUpdatedAt": true
+      },
+      {
+        "name": "vote",
+        "kind": "object",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "Vote",
+        "nativeType": null,
+        "relationName": "VoteToVoteOption",
+        "relationFromFields": [
+          "voteId"
+        ],
+        "relationToFields": [
+          "id"
+        ],
+        "relationOnDelete": "Cascade",
+        "relationOnUpdate": "Cascade",
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "voteAnswer",
+        "kind": "object",
+        "isList": true,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "VoteAnswer",
+        "nativeType": null,
+        "relationName": "VoteAnswerToVoteOption",
+        "relationFromFields": [],
+        "relationToFields": [],
+        "isGenerated": false,
+        "isUpdatedAt": false
+      }
+    ],
+    "primaryKey": null,
+    "uniqueFields": [],
+    "uniqueIndexes": [],
+    "isGenerated": false
+  },
+  {
+    "name": "Message",
+    "dbName": "message",
+    "schema": null,
+    "fields": [
+      {
+        "name": "id",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": true,
+        "isReadOnly": false,
+        "hasDefaultValue": true,
+        "type": "String",
+        "nativeType": [
+          "Uuid",
+          []
+        ],
+        "default": {
+          "name": "uuid",
+          "args": [
+            4
+          ]
+        },
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "fromId",
+        "dbName": "from_id",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": true,
+        "hasDefaultValue": false,
+        "type": "String",
+        "nativeType": [
+          "Uuid",
+          []
+        ],
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "toId",
+        "dbName": "to_id",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": true,
+        "hasDefaultValue": false,
+        "type": "String",
+        "nativeType": [
+          "Uuid",
+          []
+        ],
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "message",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "String",
+        "nativeType": null,
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "checked",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": true,
+        "type": "Boolean",
+        "nativeType": null,
+        "default": false,
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "createdAt",
+        "dbName": "created_at",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": true,
+        "type": "DateTime",
+        "nativeType": null,
+        "default": {
+          "name": "now",
+          "args": []
+        },
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "sender",
+        "kind": "object",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "User",
+        "nativeType": null,
+        "relationName": "sendMessage",
+        "relationFromFields": [
+          "fromId"
+        ],
+        "relationToFields": [
+          "id"
+        ],
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "receiver",
+        "kind": "object",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "User",
+        "nativeType": null,
+        "relationName": "receiveMessage",
+        "relationFromFields": [
+          "toId"
+        ],
+        "relationToFields": [
+          "id"
+        ],
+        "isGenerated": false,
+        "isUpdatedAt": false
+      }
+    ],
+    "primaryKey": null,
+    "uniqueFields": [],
+    "uniqueIndexes": [],
+    "isGenerated": false
+  },
+  {
+    "name": "BoardLike",
+    "dbName": "board_like",
+    "schema": null,
+    "fields": [
+      {
+        "name": "id",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": true,
+        "isReadOnly": false,
+        "hasDefaultValue": true,
+        "type": "String",
+        "nativeType": [
+          "Uuid",
+          []
+        ],
+        "default": {
+          "name": "uuid",
+          "args": [
+            4
+          ]
+        },
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "boardId",
+        "dbName": "board_id",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": true,
+        "hasDefaultValue": false,
+        "type": "String",
+        "nativeType": [
+          "Uuid",
+          []
+        ],
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "userId",
+        "dbName": "user_id",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": false,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": true,
+        "hasDefaultValue": false,
+        "type": "String",
+        "nativeType": [
+          "Uuid",
+          []
+        ],
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "createdAt",
+        "dbName": "created_at",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": true,
+        "type": "DateTime",
+        "nativeType": null,
+        "default": {
+          "name": "now",
+          "args": []
+        },
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "board",
+        "kind": "object",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "Board",
+        "nativeType": null,
+        "relationName": "BoardToBoardLike",
+        "relationFromFields": [
+          "boardId"
+        ],
+        "relationToFields": [
+          "id"
+        ],
+        "relationOnDelete": "Cascade",
+        "relationOnUpdate": "Cascade",
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "user",
+        "kind": "object",
+        "isList": false,
+        "isRequired": false,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "User",
+        "nativeType": null,
+        "relationName": "BoardLikeToUser",
+        "relationFromFields": [
+          "userId"
+        ],
+        "relationToFields": [
+          "id"
+        ],
+        "relationOnDelete": "SetNull",
+        "relationOnUpdate": "Cascade",
+        "isGenerated": false,
+        "isUpdatedAt": false
+      }
+    ],
+    "primaryKey": null,
+    "uniqueFields": [],
+    "uniqueIndexes": [],
+    "isGenerated": false
+  },
+  {
+    "name": "Board",
+    "dbName": "board",
+    "schema": null,
+    "fields": [
+      {
+        "name": "id",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": true,
+        "isReadOnly": false,
+        "hasDefaultValue": true,
+        "type": "String",
+        "nativeType": [
+          "Uuid",
+          []
+        ],
+        "default": {
+          "name": "uuid",
+          "args": [
+            4
+          ]
+        },
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "userId",
+        "dbName": "user_id",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": false,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": true,
+        "hasDefaultValue": false,
+        "type": "String",
+        "nativeType": [
+          "Uuid",
+          []
+        ],
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "order",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": false,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "Int",
+        "nativeType": null,
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "category",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "String",
+        "nativeType": [
+          "VarChar",
+          [
+            "50"
+          ]
+        ],
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "password",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": false,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "String",
+        "nativeType": [
+          "VarChar",
+          [
+            "200"
+          ]
+        ],
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "title",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "String",
+        "nativeType": [
+          "VarChar",
+          [
+            "100"
+          ]
+        ],
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "content",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "String",
+        "nativeType": null,
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "viewCount",
+        "dbName": "view_count",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": true,
+        "type": "Int",
+        "nativeType": null,
+        "default": 0,
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "isNotice",
+        "dbName": "is_notice",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": true,
+        "type": "Boolean",
+        "nativeType": null,
+        "default": false,
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "isPrivate",
+        "dbName": "is_private",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": true,
+        "type": "Boolean",
+        "nativeType": null,
+        "default": false,
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "isOnlyCrew",
+        "dbName": "is_only_crew",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": true,
+        "type": "Boolean",
+        "nativeType": null,
+        "default": false,
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "createdAt",
+        "dbName": "created_at",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": true,
+        "type": "DateTime",
+        "nativeType": null,
+        "default": {
+          "name": "now",
+          "args": []
+        },
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "updatedAt",
+        "dbName": "updated_at",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": true,
+        "type": "DateTime",
+        "nativeType": null,
+        "default": {
+          "name": "now",
+          "args": []
+        },
+        "isGenerated": false,
+        "isUpdatedAt": true
+      },
+      {
+        "name": "deletedAt",
+        "dbName": "deleted_at",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": false,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "DateTime",
+        "nativeType": null,
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "author",
+        "kind": "object",
+        "isList": false,
+        "isRequired": false,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "User",
+        "nativeType": null,
+        "relationName": "BoardToUser",
+        "relationFromFields": [
+          "userId"
+        ],
+        "relationToFields": [
+          "id"
+        ],
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "comment",
+        "kind": "object",
+        "isList": true,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "Comment",
+        "nativeType": null,
+        "relationName": "BoardToComment",
+        "relationFromFields": [],
+        "relationToFields": [],
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "boardLike",
+        "kind": "object",
+        "isList": true,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "BoardLike",
+        "nativeType": null,
+        "relationName": "BoardToBoardLike",
+        "relationFromFields": [],
+        "relationToFields": [],
+        "isGenerated": false,
+        "isUpdatedAt": false
+      }
+    ],
+    "primaryKey": null,
+    "uniqueFields": [],
+    "uniqueIndexes": [],
+    "isGenerated": false
+  },
+  {
+    "name": "Comment",
+    "dbName": "comment",
+    "schema": null,
+    "fields": [
+      {
+        "name": "id",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": true,
+        "isReadOnly": false,
+        "hasDefaultValue": true,
+        "type": "Int",
+        "nativeType": null,
+        "default": {
+          "name": "autoincrement",
+          "args": []
+        },
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "boardId",
+        "dbName": "board_id",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": true,
+        "hasDefaultValue": false,
+        "type": "String",
+        "nativeType": [
+          "Uuid",
+          []
+        ],
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "userId",
+        "dbName": "user_id",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": false,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": true,
+        "hasDefaultValue": false,
+        "type": "String",
+        "nativeType": [
+          "Uuid",
+          []
+        ],
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "content",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "String",
+        "nativeType": null,
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "isAuthorOnly",
+        "dbName": "is_author_only",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": true,
+        "type": "Boolean",
+        "nativeType": null,
+        "default": false,
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "group",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": false,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "Int",
+        "nativeType": null,
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "layer",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": true,
+        "type": "Int",
+        "nativeType": null,
+        "default": 0,
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "order",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": true,
+        "type": "Int",
+        "nativeType": null,
+        "default": 0,
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "likeCount",
+        "dbName": "like_count",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": true,
+        "type": "Int",
+        "nativeType": null,
+        "default": 0,
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "createdAt",
+        "dbName": "created_at",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": true,
+        "type": "DateTime",
+        "nativeType": null,
+        "default": {
+          "name": "now",
+          "args": []
+        },
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "updatedAt",
+        "dbName": "updated_at",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": true,
+        "type": "DateTime",
+        "nativeType": null,
+        "default": {
+          "name": "now",
+          "args": []
+        },
+        "isGenerated": false,
+        "isUpdatedAt": true
+      },
+      {
+        "name": "deletedAt",
+        "dbName": "deleted_at",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": false,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "DateTime",
+        "nativeType": null,
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "user",
+        "kind": "object",
+        "isList": false,
+        "isRequired": false,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "User",
+        "nativeType": null,
+        "relationName": "CommentToUser",
+        "relationFromFields": [
+          "userId"
+        ],
+        "relationToFields": [
+          "id"
+        ],
+        "relationOnDelete": "SetNull",
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "board",
+        "kind": "object",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "Board",
+        "nativeType": null,
+        "relationName": "BoardToComment",
+        "relationFromFields": [
+          "boardId"
+        ],
+        "relationToFields": [
+          "id"
+        ],
+        "relationOnDelete": "Cascade",
+        "relationOnUpdate": "Cascade",
+        "isGenerated": false,
+        "isUpdatedAt": false
+      }
+    ],
+    "primaryKey": null,
+    "uniqueFields": [],
+    "uniqueIndexes": [],
+    "isGenerated": false
+  },
+  {
+    "name": "Notice",
+    "dbName": "notice",
+    "schema": null,
+    "fields": [
+      {
+        "name": "id",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": true,
+        "isReadOnly": false,
+        "hasDefaultValue": true,
+        "type": "String",
+        "nativeType": [
+          "Uuid",
+          []
+        ],
+        "default": {
+          "name": "uuid",
+          "args": [
+            4
+          ]
+        },
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "type",
+        "kind": "enum",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": true,
+        "type": "NoticeType",
+        "nativeType": null,
+        "default": "Normal",
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "cover",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": false,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "String",
+        "nativeType": null,
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "title",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "String",
+        "nativeType": [
+          "VarChar",
+          [
+            "30"
+          ]
+        ],
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "content",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "String",
+        "nativeType": null,
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "createdAt",
+        "dbName": "created_at",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": true,
+        "type": "DateTime",
+        "nativeType": null,
+        "default": {
+          "name": "now",
+          "args": []
+        },
+        "isGenerated": false,
+        "isUpdatedAt": false
+      },
+      {
+        "name": "updatedAt",
+        "dbName": "updated_at",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": true,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": true,
+        "type": "DateTime",
+        "nativeType": null,
+        "default": {
+          "name": "now",
+          "args": []
+        },
+        "isGenerated": false,
+        "isUpdatedAt": true
+      },
+      {
+        "name": "sendAt",
+        "dbName": "send_at",
+        "kind": "scalar",
+        "isList": false,
+        "isRequired": false,
+        "isUnique": false,
+        "isId": false,
+        "isReadOnly": false,
+        "hasDefaultValue": false,
+        "type": "DateTime",
+        "nativeType": null,
+        "isGenerated": false,
+        "isUpdatedAt": false
+      }
+    ],
+    "primaryKey": null,
+    "uniqueFields": [],
+    "uniqueIndexes": [],
+    "isGenerated": false
+  }
+]

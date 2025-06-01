@@ -4,6 +4,7 @@ import {
   CURRENT_DOMAIN,
   EXPIRED_TOKEN_TIME,
 } from '@common/variables';
+import SnapLoggerService from '@logger/logger.service';
 import {
   Body,
   Controller,
@@ -21,23 +22,23 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { AuthGuard } from '@nestjs/passport';
-import SnapLogger from '@utils/SnapLogger';
+import { ApiTags } from '@nestjs/swagger';
+import { EncryptManager } from '@utils/EncryptManager';
 import { Request, Response } from 'express';
 import { AuthService } from './auth.service';
 import { BatchService } from './batch.service';
 import { IgnoreCookie } from './ignore-cookie.decorator';
-import { EncryptManager } from '@utils/EncryptManager';
 
+@ApiTags('인증/인가')
 @Controller('auth')
 export class AuthController {
-  logger = new SnapLogger(this);
-
   constructor(
     private readonly encryptManager: EncryptManager,
     private readonly authService: AuthService,
     private readonly batchService: BatchService,
     private readonly configService: ConfigService,
     private readonly mailerService: MailerService,
+    private readonly logger: SnapLoggerService,
   ) {}
 
   @IgnoreCookie()

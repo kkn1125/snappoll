@@ -36,12 +36,14 @@ export const TOSS_SECRET = process.env.TOSS_SECRET as string;
 export const EXPIRED_TOKEN_TIME = 30 * 60 * 1000;
 export const BUFFER_TIME = 5;
 
+export const LOG_LEVEL = +(process.env?.LOG_LEVEL || 1);
+
 /* plan feature limits */
 export const LIMIT = {
   FREE: {
     CREATE: {
-      POLL: 30 /* 3 */,
-      VOTE: 30 /* 3 */,
+      POLL: 3 /* 3 */,
+      VOTE: 3 /* 3 */,
     },
     RESPONSE: {
       POLL: 100,

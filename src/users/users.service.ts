@@ -1,4 +1,5 @@
 import { PrismaService } from '@database/prisma.service';
+import SnapLoggerService from '@logger/logger.service';
 import { HttpService } from '@nestjs/axios';
 import {
   BadRequestException,
@@ -8,7 +9,6 @@ import {
 import { $Enums } from '@prisma/client';
 import { EncryptManager } from '@utils/EncryptManager';
 import { snakeToCamel } from '@utils/snakeToCamel';
-import SnapLogger from '@utils/SnapLogger';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserPasswordDto } from './dto/update-user-password.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -25,13 +25,12 @@ export class UsersService {
 
   //   return data;
   // }
-  logger = new SnapLogger(this);
 
   constructor(
-    private readonly httpService: HttpService,
-    private readonly encryptManager: EncryptManager,
-    // private readonly logger: SnapLogger,
     private readonly prisma: PrismaService,
+    private readonly httpService: HttpService,
+    private readonly logger: SnapLoggerService,
+    private readonly encryptManager: EncryptManager,
   ) {}
 
   findOneByEmail(email: string) {

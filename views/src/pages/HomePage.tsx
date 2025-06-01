@@ -1,11 +1,7 @@
 import { getMyPollResults } from '@apis/poll/getMyPollResults';
-import { getPolls } from '@apis/poll/getPolls';
 import { getMyVoteResults } from '@apis/vote/getMyVoteResults';
-import { getVotes } from '@apis/vote/getVotes';
 import ResponsiveChart from '@components/atoms/ResponsiveChart';
 import useToken from '@hooks/useToken';
-import { SnapPoll } from '@models/SnapPoll';
-import { SnapVote } from '@models/SnapVote';
 import {
   Divider,
   Paper,
@@ -14,7 +10,6 @@ import {
   useMediaQuery,
   useTheme,
 } from '@mui/material';
-import { BarChart, ChartsReferenceLine } from '@mui/x-charts';
 import { useQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import { useMemo } from 'react';
@@ -30,6 +25,7 @@ const HomePage = () => {
       pollResponseCount: number;
       responsesWeek: number[];
       respondentWeek: number[];
+      totalUsage: number;
     }>
   >({
     queryKey: ['polls'],
@@ -42,6 +38,7 @@ const HomePage = () => {
       voteResponseCount: number;
       responsesWeek: number[];
       respondentWeek: number[];
+      totalUsage: number;
     }>
   >({
     queryKey: ['votes'],
@@ -80,10 +77,67 @@ const HomePage = () => {
             }}
           >
             <Typography variant="h4" fontWeight="bold">
+              {pollData?.totalUsage ?? 0}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              누적 생성한 설문 수
+            </Typography>
+          </Paper>
+          <Paper
+            sx={{
+              p: 2,
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 1,
+              alignItems: 'center',
+              width: '100%',
+            }}
+          >
+            <Typography variant="h4" fontWeight="bold">
               {pollData?.pollCount}
             </Typography>
             <Typography variant="body2" color="text.secondary">
               생성한 설문 수
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              ({dayjs().startOf('M').format('YYYY-MM-DD')} ~{' '}
+              {dayjs().endOf('M').format('YYYY-MM-DD')})
+            </Typography>
+          </Paper>
+          <Paper
+            sx={{
+              p: 2,
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 1,
+              alignItems: 'center',
+              width: '100%',
+            }}
+          >
+            <Typography variant="h4" fontWeight="bold">
+              {pollData?.pollResponseCount}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              응답한 설문 수
+            </Typography>
+          </Paper>
+        </Stack>
+        <Stack direction={{ xs: 'column', md: 'row' }} gap={{ xs: 2, md: 5 }}>
+          <Paper
+            sx={{
+              p: 2,
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 1,
+              alignItems: 'center',
+              width: '100%',
+            }}
+          >
+            <Typography variant="h4" fontWeight="bold">
+              {voteData?.totalUsage ?? 0}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              누적 생성한 투표 수
             </Typography>
           </Paper>
           <Paper
@@ -102,22 +156,9 @@ const HomePage = () => {
             <Typography variant="body2" color="text.secondary">
               생성한 투표 수
             </Typography>
-          </Paper>
-          <Paper
-            sx={{
-              p: 2,
-              display: 'flex',
-              flexDirection: 'column',
-              gap: 1,
-              alignItems: 'center',
-              width: '100%',
-            }}
-          >
-            <Typography variant="h4" fontWeight="bold">
-              {pollData?.pollResponseCount}
-            </Typography>
             <Typography variant="body2" color="text.secondary">
-              응답한 설문 수
+              ({dayjs().startOf('M').format('YYYY-MM-DD')} ~{' '}
+              {dayjs().endOf('M').format('YYYY-MM-DD')})
             </Typography>
           </Paper>
           <Paper

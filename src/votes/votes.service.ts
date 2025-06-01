@@ -1,7 +1,7 @@
 import { PrismaService } from '@database/prisma.service';
+import SnapLoggerService from '@logger/logger.service';
 import { Injectable } from '@nestjs/common';
 import { EncryptManager } from '@utils/EncryptManager';
-import SnapLogger from '@utils/SnapLogger';
 import dayjs from 'dayjs';
 import { CreateShareVoteDto } from './dto/create-share-vote.dto';
 import { CreateVoteDto } from './dto/create-vote.dto';
@@ -9,10 +9,9 @@ import { UpdateVoteDto } from './dto/update-vote.dto';
 
 @Injectable()
 export class VotesService {
-  logger = new SnapLogger('VoteService');
-
   constructor(
     private readonly prisma: PrismaService,
+    private readonly logger: SnapLoggerService,
     private readonly encryptManager: EncryptManager,
   ) {}
 
@@ -101,7 +100,13 @@ export class VotesService {
 
     // 나의 투표 수
     const voteCount = await this.prisma.vote.count({
-      where: { userId: id },
+      where: {
+        userId: id,
+        createdAt: {
+          gte: dayjs().startOf('M').toISOString(),
+          lte: dayjs().endOf('M').toISOString(),
+        },
+      },
     });
 
     // 나의 응답 수
@@ -119,6 +124,10 @@ export class VotesService {
       where: {
         vote: {
           userId: id,
+          createdAt: {
+            gte: dayjs().startOf('M').toISOString(),
+            lte: dayjs().endOf('M').toISOString(),
+          },
         },
       },
     });
@@ -152,12 +161,18 @@ export class VotesService {
         },
         Array.from({ length: 7 }, () => 0),
       ) ?? [];
+
+    const totalUsage = await this.prisma.vote.count({
+      where: { userId: id },
+    });
+
     return {
       weeks,
       voteCount,
       voteResponseCount,
       responsesWeek,
       respondentWeek,
+      totalUsage,
     };
   }
 

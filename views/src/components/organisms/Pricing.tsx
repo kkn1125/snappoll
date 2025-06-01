@@ -23,39 +23,48 @@ const Pricing: React.FC<PricingProps> = ({ plan }) => {
   }, [user]);
   const isFree = plan.planType === 'Free';
   function handleRequireSignup(plan: Plan) {
-    if (userSubscription?.planId === plan.id) {
-      openModal({
-        info: {
-          title: '구독 안내',
-          content: '이미 구독중인 플랜입니다.',
-        },
-      });
-      return;
-    }
-
-    openInteractiveModal({
-      content: userSubscription
-        ? [
-            `현재 ${userSubscription.plan?.name}을 구독 중입니다.`,
-            `${plan.name}으로 변경하시겠습니까?`,
-          ]
-        : isFree
-          ? [
-              '무료로 시작하기 위해 회원가입이 필요합니다.',
-              '회원가입 페이지로 이동하시겠습니까?',
-            ]
-          : [
-              `${plan.name}을 구독하기 위해 회원가입이 필요합니다.`,
-              '회원가입 페이지로 이동하시겠습니까?',
-            ],
-      callback: () => {
-        if (userSubscription) {
-          navigate('/price/change', { state: { plan } });
-        } else {
-          navigate('/auth/signup');
-        }
+    /* 현재 결재 기능 연동이 테스트로 연결되어 있어 추후 개봉 */
+    openModal({
+      info: {
+        title: '구독 안내',
+        content: '준비중인 기능입니다.',
       },
     });
+    return;
+
+    // if (userSubscription?.planId === plan.id) {
+    //   openModal({
+    //     info: {
+    //       title: '구독 안내',
+    //       content: '이미 구독중인 플랜입니다.',
+    //     },
+    //   });
+    //   return;
+    // }
+
+    // openInteractiveModal({
+    //   content: userSubscription
+    //     ? [
+    //         `현재 ${userSubscription.plan?.name}을 구독 중입니다.`,
+    //         `${plan.name}으로 변경하시겠습니까?`,
+    //       ]
+    //     : isFree
+    //       ? [
+    //           '무료로 시작하기 위해 회원가입이 필요합니다.',
+    //           '회원가입 페이지로 이동하시겠습니까?',
+    //         ]
+    //       : [
+    //           `${plan.name}을 구독하기 위해 회원가입이 필요합니다.`,
+    //           '회원가입 페이지로 이동하시겠습니까?',
+    //         ],
+    //   callback: () => {
+    //     if (userSubscription) {
+    //       navigate('/price/change', { state: { plan } });
+    //     } else {
+    //       navigate('/auth/signup');
+    //     }
+    //   },
+    // });
   }
 
   return (
@@ -131,13 +140,15 @@ const Pricing: React.FC<PricingProps> = ({ plan }) => {
                 sx={{ fontSize: 16 }}
                 onClick={() => handleRequireSignup(plan)}
               >
-                {userSubscription?.planId === plan.id
-                  ? '구독중'
-                  : userSubscription
-                    ? '구독하기'
-                    : isFree
-                      ? '무료로 시작하기'
-                      : '구독하기'}
+                {
+                  userSubscription?.planId === plan.id
+                    ? '구독중'
+                    : userSubscription
+                      ? '준비중 입니다.' /* '구독하기' */
+                      : isFree
+                        ? '무료로 시작하기'
+                        : '준비중 입니다.' /* '구독하기' */
+                }
               </Button>
             ) : (
               <Button

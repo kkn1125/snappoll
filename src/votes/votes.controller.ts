@@ -1,4 +1,7 @@
 import { RoleGuard } from '@/auth/role.guard';
+import { IgnoreCookie } from '@auth/ignore-cookie.decorator';
+import { PlanValidate } from '@middleware/plan-validate.decorator';
+import { PlanGuard } from '@middleware/plan.guard';
 import {
   Body,
   Controller,
@@ -11,15 +14,14 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
+import { CreateShareVoteDto } from './dto/create-share-vote.dto';
 import { CreateVoteDto } from './dto/create-vote.dto';
 import { UpdateVoteDto } from './dto/update-vote.dto';
 import { VotesService } from './votes.service';
-import { CreateShareVoteDto } from './dto/create-share-vote.dto';
-import { IgnoreCookie } from '@auth/ignore-cookie.decorator';
-import { PlanValidate } from '@middleware/plan-validate.decorator';
-import { PlanGuard } from '@middleware/plan.guard';
 
+@ApiTags('투표')
 @UseGuards(RoleGuard)
 @Controller('votes')
 export class VotesController {

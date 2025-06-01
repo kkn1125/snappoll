@@ -80,7 +80,16 @@ const BoardListPage: React.FC<BoardListPageProps> = () => {
                   to={`/board/${category.category}/${category.id}`}
                 >
                   <ListItemText
-                    primary={category.title}
+                    primary={
+                      category.isNotice ? (
+                        <Stack direction="row" alignItems="center" gap={1}>
+                          <Chip label="공지" color="primary" />
+                          {category.title}
+                        </Stack>
+                      ) : (
+                        category.title
+                      )
+                    }
                     secondary={`작성자: ${getUsernameOr(category.isPrivate ? UnknownName : category.author?.username)} | 생성일: ${formattedDate(category.createdAt)}`}
                   />
                 </ListItemButton>

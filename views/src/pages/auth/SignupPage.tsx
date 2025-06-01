@@ -4,11 +4,9 @@ import { getTerms } from '@apis/terms/getTerms';
 import { Message } from '@common/messages';
 import CustomInput from '@components/atoms/CustomInput';
 import HistoryPrevBtn from '@components/atoms/HistoryPrevBtn';
-import SignupNotice from '@components/moleculars/SignupNotice';
 import useModal from '@hooks/useModal';
 import useValidate from '@hooks/useValidate';
 import { SnapTerms } from '@models/SnapTerms';
-import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import AutorenewIcon from '@mui/icons-material/Autorenew';
 import CasinoIcon from '@mui/icons-material/Casino';
 import ForwardToInboxIcon from '@mui/icons-material/ForwardToInbox';
@@ -16,8 +14,6 @@ import MarkEmailReadIcon from '@mui/icons-material/MarkEmailRead';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import {
-  Alert,
-  AlertTitle,
   Button,
   Checkbox,
   Divider,
@@ -425,7 +421,7 @@ const SignupPage: React.FC<SignupPageProps> = () => {
       width={{ xs: '100%', md: '50%' }}
       mx="auto"
     >
-      <SignupNotice />
+      {/* <SignupNotice /> */}
       <Stack
         component="form"
         gap={1}

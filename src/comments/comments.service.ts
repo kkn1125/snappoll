@@ -2,13 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
 import { PrismaService } from '@database/prisma.service';
-import SnapLogger from '@utils/SnapLogger';
+import SnapLoggerService from '@logger/logger.service';
 
 @Injectable()
 export class CommentsService {
-  logger = new SnapLogger(this);
-
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly logger: SnapLoggerService,
+  ) {}
 
   async create(boardId: string, createCommentDto: CreateCommentDto) {
     // 하위 댓글을 달 때

@@ -1,24 +1,24 @@
 import { IgnoreCookie } from '@auth/ignore-cookie.decorator';
+import { Roles } from '@auth/roles.decorator';
 import {
   Body,
   Controller,
-  Delete,
   Get,
   Param,
-  ParseIntPipe,
   Patch,
   Post,
   Put,
   Query,
   Req,
 } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
+import { Throttle } from '@nestjs/throttler';
+import { Request } from 'express';
 import { BoardsService } from './boards.service';
 import { CreateBoardDto } from './dto/create-board.dto';
 import { UpdateBoardDto } from './dto/update-board.dto';
-import { Request } from 'express';
-import { Throttle } from '@nestjs/throttler';
-import { Roles } from '@auth/roles.decorator';
 
+@ApiTags('게시판')
 @Controller('boards')
 export class BoardsController {
   constructor(private readonly boardsService: BoardsService) {}

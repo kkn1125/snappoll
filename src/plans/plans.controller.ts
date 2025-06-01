@@ -1,4 +1,5 @@
 import { IgnoreCookie } from '@auth/ignore-cookie.decorator';
+import SnapLoggerService from '@logger/logger.service';
 import { HttpService } from '@nestjs/axios';
 import {
   BadRequestException,
@@ -13,6 +14,7 @@ import {
   Req,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { ApiTags } from '@nestjs/swagger';
 import { PlanType, SubscribeType } from '@prisma/client';
 import CryptoJS from 'crypto-js';
 import { Request } from 'express';
@@ -21,20 +23,20 @@ import { BuillingPrepareDto } from './dto/builling-prepare.dto';
 import { BuillingDto } from './dto/builling.dto';
 import { UpdatePlanDto } from './dto/update-plan.dto';
 import { PlansService } from './plans.service';
-import SnapLogger from '@utils/SnapLogger';
 
+@ApiTags('요금제')
 @Controller('plans')
 export class PlansController {
-  logger = new SnapLogger(this);
   orderIdManager = new Map<
     string,
     { orderId: string; amount: number; planName: string }
   >();
 
   constructor(
-    private readonly configService: ConfigService,
-    private readonly plansService: PlansService,
     private readonly httpService: HttpService,
+    private readonly logger: SnapLoggerService,
+    private readonly plansService: PlansService,
+    private readonly configService: ConfigService,
   ) {}
 
   // @Post()
@@ -147,7 +149,7 @@ export class PlansController {
         },
       ),
     );
-    this.logger.info(data);
+
     // 사용자가 선택한 플랜
     const plan = await this.plansService.findOneByName(planName);
     this.orderIdManager.delete(user.id);

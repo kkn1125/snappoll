@@ -1,24 +1,23 @@
 import { MailerService } from '@/mailer/mailer.service';
 import { PrismaService } from '@database/prisma.service';
+import SnapLoggerService from '@logger/logger.service';
 import {
   BadRequestException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { snakeToCamel } from '@utils/snakeToCamel';
 import * as path from 'path';
 import { CreateNoticeDto } from './dto/create-notice.dto';
 import { UpdateNoticeDto } from './dto/update-notice.dto';
-import SnapLogger from '@utils/SnapLogger';
-import { snakeToCamel } from '@utils/snakeToCamel';
 
 @Injectable()
 export class NoticesService {
-  logger = new SnapLogger(this);
-
   constructor(
-    private readonly configService: ConfigService,
     private readonly prisma: PrismaService,
+    private readonly logger: SnapLoggerService,
+    private readonly configService: ConfigService,
     private readonly mailerService: MailerService,
   ) {}
 

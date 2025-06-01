@@ -1,10 +1,10 @@
+import SnapLoggerService from '@logger/logger.service';
 import { Injectable, NestMiddleware } from '@nestjs/common';
-import SnapLogger from '@utils/SnapLogger';
-import { Request, Response, NextFunction } from 'express';
+import { NextFunction, Request, Response } from 'express';
 
 @Injectable()
 export class SnapLoggerMiddleware implements NestMiddleware {
-  logger: SnapLogger = new SnapLogger('Middleware');
+  logger: SnapLoggerService = new SnapLoggerService('Middleware');
 
   use(req: Request, res: Response, next: NextFunction) {
     const method = req.method;

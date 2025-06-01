@@ -1,4 +1,5 @@
 import { PrismaService } from '@database/prisma.service';
+import SnapLoggerService from '@logger/logger.service';
 import {
   BadRequestException,
   ForbiddenException,
@@ -6,15 +7,13 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { Board, Prisma } from '@prisma/client';
+import { EncryptManager } from '@utils/EncryptManager';
+import { snakeToCamel } from '@utils/snakeToCamel';
 import { CreateBoardDto } from './dto/create-board.dto';
 import { UpdateBoardDto } from './dto/update-board.dto';
-import SnapLogger from '@utils/SnapLogger';
-import { snakeToCamel } from '@utils/snakeToCamel';
-import { EncryptManager } from '@utils/EncryptManager';
 
 @Injectable()
 export class BoardsService {
-  logger = new SnapLogger(this);
   boardSelect: Prisma.BoardSelect = {
     id: true,
     userId: true,
@@ -26,6 +25,7 @@ export class BoardsService {
     order: true,
     isOnlyCrew: true,
     isPrivate: true,
+    isNotice: true,
     createdAt: true,
     updatedAt: true,
     deletedAt: true,
@@ -47,6 +47,7 @@ export class BoardsService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly encryptManager: EncryptManager,
+    private readonly logger: SnapLoggerService,
   ) {}
 
   async findAllCategories(eachAmount: number) {
@@ -82,7 +83,7 @@ export class BoardsService {
     const boards = await this.prisma.board.findMany({
       take: 10,
       skip: (page - 1) * 10,
-      orderBy: { createdAt: 'desc' },
+      orderBy: { isNotice: 'desc', createdAt: 'desc' },
       select: this.boardSelect,
     });
     const count = await this.prisma.board.count();
@@ -150,16 +151,23 @@ export class BoardsService {
   }
 
   async findCategory(category: string, page: number = 1) {
+    console.time('✨ findCategory');
+    // 성능을 고려하여 쿼리를 최적화하는 방법으로는
+    // 필요한 데이터만 선택하고, 정렬 조건을 최소화하는 것이 좋습니다.
+    // 또한, 페이징을 사용하여 한 번에 가져오는 데이터의 양을 제한합니다.
     const boards = await this.prisma.board.findMany({
-      where: { category, deletedAt: null },
-      take: 10,
-      skip: (page - 1) * 10,
-      orderBy: { createdAt: 'desc' },
-      select: this.boardSelect,
+      where: { category, deletedAt: null }, // 필요한 조건만으로 데이터를 필터링합니다.
+      take: 10, // 한 번에 가져오는 데이터의 양을 제한합니다.
+      skip: (page - 1) * 10, // 페이징을 사용하여 필요한 데이터만 가져옵니다.
+      // orderBy: [{ isNotice: 'desc' }, { createdAt: 'desc' }], // 정렬 조건을 최소화하여 쿼리 성능을 향상시킵니다.
+      select: this.boardSelect, // 필요한 데이터만 선택하여 가져옵니다.
     });
+    // 데이터의 총 개수를 가져오는 쿼리도 최적화가 필요합니다.
+    // 필요한 조건만으로 데이터의 총 개수를 계산합니다.
     const count = await this.prisma.board.count({
-      where: { category, deletedAt: null },
+      where: { category, deletedAt: null }, // 필요한 조건만으로 데이터의 총 개수를 계산합니다.
     });
+    console.timeEnd('✨ findCategory');
     return { board: boards, count };
   }
 

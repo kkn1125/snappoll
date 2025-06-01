@@ -1,10 +1,12 @@
-import { Body, Controller, Get, Param, Post, Res } from '@nestjs/common';
-import { MailerService } from './mailer.service';
 import { IgnoreCookie } from '@auth/ignore-cookie.decorator';
-import { Response } from 'express';
+import { Body, Controller, Get, Param, Post, Res } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { ApiTags } from '@nestjs/swagger';
+import { Response } from 'express';
 import * as path from 'path';
+import { MailerService } from './mailer.service';
 
+@ApiTags('메일')
 @Controller('mailer')
 export class MailerController {
   constructor(

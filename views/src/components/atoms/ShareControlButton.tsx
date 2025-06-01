@@ -13,7 +13,7 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import LinkIcon from '@mui/icons-material/Link';
 import ShareIcon from '@mui/icons-material/Share';
-import { Button, Stack } from '@mui/material';
+import { Button, Stack, Typography } from '@mui/material';
 import { useMutation } from '@tanstack/react-query';
 import QR from 'qrcode';
 import { useCallback, useState } from 'react';
@@ -23,11 +23,13 @@ interface ShareControlButtonProps {
   data?: SnapPoll | SnapVote;
   user?: Pick<User, 'id' | 'email' | 'username' | 'userProfile'>;
   refetch: () => void;
+  expired: boolean;
 }
 const ShareControlButton: React.FC<ShareControlButtonProps> = ({
   data,
   user,
   refetch,
+  expired,
 }) => {
   const [copy, setCopy] = useState(false);
   const [copyQr, setCopyQr] = useState(false);
@@ -147,6 +149,14 @@ const ShareControlButton: React.FC<ShareControlButtonProps> = ({
   }
 
   if (!data || !user || data.user?.id !== user.id) return <></>;
+
+  if (expired) {
+    return (
+      <Typography color="error" fontSize={14} fontWeight={700}>
+        마감된 설문입니다. 공유 URL 생성 불가능합니다.
+      </Typography>
+    );
+  }
 
   return (
     user.id === data.user.id &&

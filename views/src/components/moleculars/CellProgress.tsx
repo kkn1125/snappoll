@@ -13,7 +13,18 @@ const CellProgress: React.FC<CellProgressProps> = ({ title, count, max }) => {
         {title}
       </Typography>
       <Stack direction="row" gap={3} alignItems="center">
-        <Stack direction="row" gap={0.2} alignItems="center" flex={1}>
+        <Stack
+          direction="row"
+          gap={0.2}
+          alignItems="center"
+          flex={1}
+          sx={{
+            borderRadius: 1,
+            backgroundColor: '#efefef',
+            minHeight: 24,
+            px: 0.5,
+          }}
+        >
           {Array.from(Array(max), (_, index) => (
             <Cell key={index} active={count > index} />
           ))}

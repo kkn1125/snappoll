@@ -1,4 +1,5 @@
 import { PrismaService } from '@database/prisma.service';
+import SnapLoggerService from '@logger/logger.service';
 import {
   BadRequestException,
   CanActivate,
@@ -9,22 +10,20 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Reflector } from '@nestjs/core';
-import SnapLogger from '@utils/SnapLogger';
+import { EncryptManager } from '@utils/EncryptManager';
 import { Request, Response } from 'express';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import { AuthService } from './auth.service';
-import { EncryptManager } from '@utils/EncryptManager';
 
 @Injectable()
 export class CookieGuard implements CanActivate {
-  logger = new SnapLogger(this);
-
   constructor(
     private readonly reflector: Reflector,
     private readonly configService: ConfigService,
     private readonly prisma: PrismaService,
     private readonly authService: AuthService,
     private readonly encryptManager: EncryptManager,
+    private readonly logger: SnapLoggerService,
   ) {}
 
   async canActivate(context: ExecutionContext) {
@@ -37,8 +36,6 @@ export class CookieGuard implements CanActivate {
         'isPublic',
         context.getClass(), // 클래스에서 메타데이터를 가져옴
       );
-
-    // this.logger.info(isPublic);
 
     if (isPublic) {
       this.logger.debug('쿠키 통과');

@@ -15,16 +15,18 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { PollsModule } from '@polls/polls.module';
 import { UsersModule } from '@users/users.module';
+import { EncryptManager } from '@utils/EncryptManager';
 import { VotesModule } from '@votes/votes.module';
 import { WebsocketGateway } from '@websocket/websocket.gateway';
 import path from 'path';
 import { BasicModule } from './basic/basic.module';
-import { MailerModule } from './mailer/mailer.module';
-import { PlansModule } from './plans/plans.module';
-import { EncryptManager } from '@utils/EncryptManager';
-import { TermsModule } from './terms/terms.module';
 import { CommentsModule } from './comments/comments.module';
+import { EventsModule } from './events/events.module';
+import { MailerModule } from './mailer/mailer.module';
 import { NoticesModule } from './notices/notices.module';
+import { PlansModule } from './plans/plans.module';
+import { TermsModule } from './terms/terms.module';
+import { LoggerModule } from './logger/logger.module';
 
 @Module({
   imports: [
@@ -65,7 +67,8 @@ import { NoticesModule } from './notices/notices.module';
     TermsModule,
     CommentsModule,
     NoticesModule,
-    // ViewsModule,
+    EventsModule,
+    LoggerModule,
   ],
   controllers: [],
   providers: [

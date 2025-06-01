@@ -1,19 +1,16 @@
+import SnapLoggerService from '@logger/logger.service';
 import {
   ArgumentsHost,
   Catch,
   ExceptionFilter,
   HttpException,
 } from '@nestjs/common';
-import { ThrottlerException } from '@nestjs/throttler';
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
-import SnapLogger from '@utils/SnapLogger';
 import { Request, Response } from 'express';
 
+/* 모든 예외 처리 */
 @Catch()
 export class HttpExceptionFilter implements ExceptionFilter {
-  logger = new SnapLogger(this);
-
-  constructor() {}
+  constructor(private readonly logger: SnapLoggerService) {}
 
   catch(exception: unknown, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
@@ -22,63 +19,45 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const timestamp = new Date().toISOString();
     const requestUrl = request.url;
     const method = request.method;
+    const httpCode =
+      exception instanceof HttpException ? exception.getStatus() : 500;
 
     this.logger.error('에러 확인 필요', exception);
 
-    if (exception instanceof PrismaClientKnownRequestError) {
-      response.status(400).json({
-        statusCode: exception.name,
-        message: exception.code,
-        method,
-        path: requestUrl,
-        timestamp,
-      });
-      return;
-    }
+    let data: CustomErrorResponse;
 
-    const httpException = exception as HttpException;
-
-    const status = httpException?.getStatus?.() || 500;
-    const exceptionResponse = httpException?.getResponse?.();
-
-    if (httpException instanceof ThrottlerException) {
-      response.status(status).json({
-        httpCode: status,
-        errorCode: { message: exceptionResponse },
-        method,
-        path: requestUrl,
-        timestamp,
-      });
-      return;
-    }
-
-    const isValidationException =
-      typeof exceptionResponse === 'object' &&
-      'message' in exceptionResponse &&
-      Array.isArray(exceptionResponse.message);
-
-    if (isValidationException) {
-      this.logger.error('ValidationError', exceptionResponse.message);
-      response.status(status).json({
-        httpCode: status,
+    /* NestJS 예외 처리리 */
+    if (exception instanceof HttpException) {
+      const { status, domain, errorStatus, message } =
+        exception.getResponse() as CustomErrorFormat;
+      data = {
+        httpCode: httpCode,
         errorCode: {
-          status: 400,
-          domain: 'user',
-          errorStatus: -999,
-          message: '잘못된 요청입니다.',
+          domainStatus: status,
+          errorStatus,
+          domain,
+          message,
         },
         method,
         path: requestUrl,
         timestamp,
-      });
+      };
     } else {
-      response.status(status).json({
-        httpCode: status,
-        errorCode: exceptionResponse ?? -999,
+      /* 불특정 예외 처리 */
+      const error = exception as any;
+      data = {
+        httpCode: 500,
+        errorCode: {
+          domainStatus: 500,
+          errorStatus: -999,
+          domain: 'server',
+          message: error.message || 'Internal Server Error',
+        },
         method,
         path: requestUrl,
         timestamp,
-      });
+      };
     }
+    response.status(data.httpCode).json(data);
   }
 }

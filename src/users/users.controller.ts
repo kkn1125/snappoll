@@ -1,12 +1,15 @@
 import { TermsService } from '@/terms/terms.service';
 import { IgnoreCookie } from '@auth/ignore-cookie.decorator';
 import { IgnoreThrottle } from '@auth/ignore-throttle.decorator';
+import { LoginUser } from '@auth/login-user.decorator';
+import { RoleGuard } from '@auth/role.guard';
+import { Roles } from '@auth/roles.decorator';
 import { PrismaService } from '@database/prisma.service';
+import SnapLoggerService from '@logger/logger.service';
 import {
   Body,
   Controller,
   Delete,
-  ForbiddenException,
   Get,
   HttpStatus,
   Param,
@@ -21,55 +24,54 @@ import {
   UseInterceptors,
   ValidationPipe,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { FileInterceptor } from '@nestjs/platform-express';
-import SnapLogger from '@utils/SnapLogger';
+import { ApiTags } from '@nestjs/swagger';
 import { Request, Response } from 'express';
 import { memoryStorage } from 'multer';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserPasswordDto } from './dto/update-user-password.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersService } from './users.service';
-import { ConfigService } from '@nestjs/config';
-import { RoleGuard } from '@auth/role.guard';
-import { Roles } from '@auth/roles.decorator';
 
 @UseGuards(RoleGuard)
+@ApiTags('사용자')
 @Controller('users')
 export class UsersController {
-  logger = new SnapLogger(this);
-
   constructor(
+    private readonly prisma: PrismaService,
+    private readonly logger: SnapLoggerService,
     private readonly usersService: UsersService,
     private readonly termsService: TermsService,
-    private readonly prisma: PrismaService,
     private readonly configService: ConfigService,
   ) {}
 
-  @Roles(['Admin'])
+  /* 회원가입 활성화 */
+  // @Roles(['Admin'])
   @IgnoreCookie()
   @Post()
   async create(
-    @Body('masterPass') masterPass: string,
+    // @Body('masterPass') masterPass: string,
     @Body(new ValidationPipe({ transform: true }))
     createUserDto: CreateUserDto & {
       privacyPolicy: boolean;
       serviceAgreement: boolean;
     },
   ) {
-    const master = this.configService.get('email.masterPass');
-    if (!masterPass || masterPass !== master) {
-      throw new ForbiddenException({
-        status: 403,
-        domain: 'server',
-        errorStatus: -999,
-        message:
-          '현재 회원가입을 허용하지 않고 있습니다.\n제한된 인원에게 계정을 발급하고 있으니 양해바랍니다.\n\n문의사항은 "회원 가입 안내" 하단의 대표 이메일로 문의 주시기 바랍니다.',
-      });
-    }
+    // const master = this.configService.get('email.masterPass');
+    // if (!masterPass || masterPass !== master) {
+    //   throw new ForbiddenException({
+    //     status: 403,
+    //     domain: 'server',
+    //     errorStatus: -999,
+    //     message:
+    //       '현재 회원가입을 허용하지 않고 있습니다.\n제한된 인원에게 계정을 발급하고 있으니 양해바랍니다.\n\n문의사항은 "회원 가입 안내" 하단의 대표 이메일로 문의 주시기 바랍니다.',
+    //   });
+    // }
     const user = await this.prisma.$transaction(async (prisma) => {
-      if ('masterPass' in createUserDto) {
-        delete createUserDto.masterPass;
-      }
+      // if ('masterPass' in createUserDto) {
+      //   delete createUserDto.masterPass;
+      // }
       const { privacyPolicy, serviceAgreement, ...createUserDtoData } =
         createUserDto;
       const user = await this.usersService.create(
@@ -77,10 +79,9 @@ export class UsersController {
         serviceAgreement,
         createUserDtoData,
       );
-      this.logger.info('user data:', user);
+
       const terms = await this.termsService.findLatestVersion();
       for (const section of terms.termsSection) {
-        this.logger.debug(section.termsId);
         await this.termsService.agreeTerm({
           userId: user.id,
           termsId: section.termsId,
@@ -97,8 +98,8 @@ export class UsersController {
   }
 
   @Get('me')
-  findMe(@Req() req: Request) {
-    return req.user;
+  findMe(@LoginUser() user: UserTokenData) {
+    return user;
   }
 
   @Get(':id')

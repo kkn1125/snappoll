@@ -1,0 +1,2 @@
+default: 'table=pascal; mapTable=snake; field=camel; mapField=snake; enum=pascal; mapEnum=pascal'
+uses_next_auth: false
