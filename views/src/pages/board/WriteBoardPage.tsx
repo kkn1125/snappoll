@@ -259,13 +259,15 @@ const WriteBoardPage: React.FC<WriteBoardPageProps> = () => {
             control={<Checkbox />}
             label="익명으로 게시"
           />
-          <FormControlLabel
-            name="isNotice"
-            checked={data?.isNotice}
-            onChange={handleCheckboxChange}
-            control={<Checkbox />}
-            label="상단 고정"
-          />
+          {isMaster && (
+            <FormControlLabel
+              name="isNotice"
+              checked={data?.isNotice}
+              onChange={handleCheckboxChange}
+              control={<Checkbox />}
+              label="상단 고정"
+            />
+          )}
         </>
       )}
       {!user && (
