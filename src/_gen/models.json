@@ -670,7 +670,7 @@
         "kind": "scalar",
         "isList": false,
         "isRequired": true,
-        "isUnique": true,
+        "isUnique": false,
         "isId": false,
         "isReadOnly": false,
         "hasDefaultValue": false,

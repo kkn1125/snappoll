@@ -1,3 +1,4 @@
+import { EventsService } from '@/events/events.service';
 import { PrismaService } from '@database/prisma.service';
 import SnapLoggerService from '@logger/logger.service';
 import {
@@ -46,8 +47,9 @@ export class BoardsService {
 
   constructor(
     private readonly prisma: PrismaService,
-    private readonly encryptManager: EncryptManager,
     private readonly logger: SnapLoggerService,
+    private readonly eventsService: EventsService,
+    private readonly encryptManager: EncryptManager,
   ) {}
 
   async findAllCategories(eachAmount: number) {
@@ -202,7 +204,7 @@ export class BoardsService {
     return board.password === encryptedPassword;
   }
 
-  create(createBoardDto: CreateBoardDto, isUser: boolean) {
+  async create(createBoardDto: CreateBoardDto, isUser: boolean) {
     if (!isUser && createBoardDto.password) {
       createBoardDto.password = this.encryptManager.encryptData(
         createBoardDto.password,
@@ -211,7 +213,27 @@ export class BoardsService {
     if (isUser) {
       delete createBoardDto['password'];
     }
-    return this.prisma.board.create({ data: createBoardDto });
+
+    const newBoard = await this.prisma.board.create({ data: createBoardDto });
+
+    let author = '익명';
+    if (isUser) {
+      const user = await this.prisma.user.findUnique({
+        where: { id: createBoardDto.userId },
+        select: {
+          username: true,
+        },
+      });
+      if (user) {
+        author = user.username;
+      }
+    }
+
+    const content = `${createBoardDto.title} 게시글이 작성되었습니다.\n작성자: ${author}\n카테고리: ${createBoardDto.category}\n링크: https://snappoll.kro.kr/boards/${createBoardDto.category}/${newBoard.id}`;
+
+    await this.eventsService.notifyWebhook('discord', 'new-board', content);
+
+    return newBoard;
   }
 
   async update(id: string, updateBoardDto: UpdateBoardDto, isUser: boolean) {

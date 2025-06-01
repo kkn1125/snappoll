@@ -1,3 +1,4 @@
+import { EventsService } from '@/events/events.service';
 import { TermsService } from '@/terms/terms.service';
 import { IgnoreCookie } from '@auth/ignore-cookie.decorator';
 import { IgnoreThrottle } from '@auth/ignore-throttle.decorator';
@@ -24,7 +25,6 @@ import {
   UseInterceptors,
   ValidationPipe,
 } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiTags } from '@nestjs/swagger';
 import { Request, Response } from 'express';
@@ -43,7 +43,7 @@ export class UsersController {
     private readonly logger: SnapLoggerService,
     private readonly usersService: UsersService,
     private readonly termsService: TermsService,
-    private readonly configService: ConfigService,
+    private readonly eventsService: EventsService,
   ) {}
 
   /* 회원가입 활성화 */
@@ -89,6 +89,11 @@ export class UsersController {
       }
       return user;
     });
+
+    const content = `새로운 회원이 가입했습니다.\n이름: ${user.username}\n이메일: ${user.email}\n가입일: ${user.createdAt}`;
+
+    await this.eventsService.notifyWebhook('discord', 'signup', content);
+
     return user;
   }
 
