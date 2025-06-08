@@ -22,7 +22,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { formattedDate } from '@utils/formattedDate';
 import { getUsernameOr } from '@utils/getUsernameOr';
 import { isNil } from '@utils/isNil';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import ListItemIcons from '../atoms/ListItemIcons';
@@ -57,6 +57,10 @@ function ListDataItem<T extends SnapPoll | SnapVote>({
   const queryClient = useQueryClient();
   const [list, setList] = useState(dataList);
   // const [params, setParams] = useSearchParams({ page: '1' });
+
+  useEffect(() => {
+    setList(dataList);
+  }, [dataList]);
 
   const removeMutate = useMutation({
     mutationKey: [`remove${name}`],
