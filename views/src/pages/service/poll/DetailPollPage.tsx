@@ -50,10 +50,8 @@ const DetailPollPage: React.FC<DetailPollPageProps> = ({
   });
   const responseData = data?.data;
   const alreadyResponded = useMemo(() => {
-    return responseData?.response.some(
-      (response) => response.userId === user?.id,
-    );
-  }, [responseData?.response, user?.id]);
+    return (responseData?._count?.response || 0) > 0;
+  }, [responseData?._count?.response]);
   const saveResponseMutate = useMutation({
     mutationKey: ['saveResponse'],
     mutationFn: savePollResult,

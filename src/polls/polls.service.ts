@@ -1,7 +1,7 @@
 import { LIMIT } from '@common/variables';
 import { PrismaService } from '@database/prisma.service';
 import SnapLoggerService from '@logger/logger.service';
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { Option } from '@prisma/client';
 import { EncryptManager } from '@utils/EncryptManager';
 import dayjs from 'dayjs';
@@ -310,6 +310,74 @@ export class PollsService {
   }
 
   async findOne(id: string) {
+    const validPoll = await this.prisma.poll.findUnique({
+      where: { id },
+    });
+
+    const isExpired =
+      validPoll.expiresAt && dayjs(validPoll.expiresAt).isBefore(dayjs());
+
+    const poll = await this.prisma.poll.findUnique({
+      where: { id },
+      include: {
+        user: {
+          select: {
+            id: true,
+            email: true,
+            username: true,
+            createdAt: true,
+            updatedAt: true,
+            subscription: {
+              include: {
+                plan: {
+                  select: {
+                    planType: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+        question: isExpired
+          ? undefined
+          : {
+              include: {
+                option: true,
+                _count: true,
+              },
+              orderBy: {
+                order: 'asc',
+              },
+            },
+        sharePoll: true,
+        _count: true,
+      },
+    });
+
+    const convertedPoll = { ...poll, limit: 0 };
+    if (convertedPoll.user.subscription.plan.planType === 'Free') {
+      convertedPoll.limit = LIMIT.FREE.RESPONSE.POLL;
+    } else if (convertedPoll.user.subscription.plan.planType === 'Basic') {
+      convertedPoll.limit = LIMIT.BASIC.RESPONSE.POLL;
+    } else if (convertedPoll.user.subscription.plan.planType === 'Pro') {
+      convertedPoll.limit = LIMIT.PRO.RESPONSE.POLL;
+    } else if (convertedPoll.user.subscription.plan.planType === 'Premium') {
+      convertedPoll.limit = LIMIT.PREMIUM.RESPONSE.POLL;
+    }
+    return convertedPoll;
+  }
+
+  async getGraphData(id: string, userId: string) {
+    const validPoll = await this.prisma.poll.findUnique({
+      where: { id },
+    });
+
+    if (validPoll.userId !== userId) {
+      throw new UnauthorizedException(
+        'You are not allowed to access this poll',
+      );
+    }
+
     const poll = await this.prisma.poll.findUnique({
       where: { id },
       include: {
@@ -335,16 +403,13 @@ export class PollsService {
           include: {
             option: true,
             answer: true,
+            _count: true,
           },
           orderBy: {
             order: 'asc',
           },
         },
-        response: {
-          include: {
-            answer: true,
-          },
-        },
+        response: { include: { answer: true } },
         sharePoll: true,
       },
     });

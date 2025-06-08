@@ -22,6 +22,7 @@ export class SnapVote {
   voteResponse: SnapVoteResponse[] = [];
   voteOption: SnapVoteOption[] = [];
   shareVote?: SnapShareVote;
+  _count!: { voteOption: number; voteResponse: number };
 
   constructor(props?: SnapVote) {
     if (props) {

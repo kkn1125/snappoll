@@ -52,10 +52,8 @@ const DetailVotePage: React.FC<DetailVotePageProps> = ({
   });
   const responseData = data?.data;
   const alreadyResponded = useMemo(() => {
-    return responseData?.voteResponse.some(
-      (response) => response.userId === user?.id,
-    );
-  }, [responseData?.voteResponse, user?.id]);
+    return (responseData?._count?.voteResponse || 0) > 0;
+  }, [responseData?._count?.voteResponse]);
   const saveResponseMutate = useMutation({
     mutationKey: ['saveResponse'],
     mutationFn: saveVoteResult,

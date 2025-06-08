@@ -1,7 +1,7 @@
 {
   "name": "snappoll-view",
   "private": true,
-  "version": "0.0.63",
+  "version": "0.0.64",
   "type": "module",
   "license": "MIT",
   "description": "SnapPoll(스냅폴)은 사용자들이 설문, 투표를 쉽게 만들고 참여할 수 있는 플랫폼입니다.",

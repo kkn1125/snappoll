@@ -1,5 +1,5 @@
-import { getVote } from '@apis/vote/getVote';
 import { snapVoteAtom } from '@/recoils/snapVote.atom';
+import { getGraphVoteData } from '@apis/vote/getGraphVoteData';
 import SkeletonCreatePoll from '@components/moleculars/SkeletonCreatePoll';
 import { SnapVote } from '@models/SnapVote';
 import { useMutation } from '@tanstack/react-query';
@@ -18,8 +18,8 @@ const EditVotePage: React.FC<EditVotePageProps> = () => {
     Error,
     string | undefined
   >({
-    mutationKey: ['getVote', id],
-    mutationFn: getVote,
+    mutationKey: ['getGraphVoteData', id],
+    mutationFn: getGraphVoteData,
     onSuccess(data, variables, context) {
       if (data.data) {
         setSnapVote(data.data);

@@ -70,7 +70,7 @@ const PollLayout: React.FC<PollLayoutProps> = ({
             fontWeight={400}
             color="#777"
           >
-            (문항 {poll.question.length}개)
+            (문항 {poll._count?.question || 0}개)
           </Typography>
           {!isShare && (
             <ShareControlButton

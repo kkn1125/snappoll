@@ -1,4 +1,4 @@
-import { getPoll } from '@apis/poll/getPoll';
+import { getGraphPollData } from '@apis/poll/getGraphPollData';
 import { CHART_COLORS, GRAPH } from '@common/variables';
 import ResponsiveChart from '@components/atoms/ResponsiveChart';
 import CorrelationChart from '@components/organisms/CorrelationChart';
@@ -32,8 +32,8 @@ const DetailPollGraphPage: React.FC<DetailPollGraphPageProps> = () => {
   const theme = useTheme();
   const { id } = useParams();
   const { data } = useQuery<SnapResponseType<SnapPoll & { limit: number }>>({
-    queryKey: ['getPoll', id],
-    queryFn: () => getPoll(id),
+    queryKey: ['getGraphPollData', id],
+    queryFn: () => getGraphPollData(id),
   });
   const responseData = data?.data;
   const getCounter = useCallback((question?: SnapPollQuestion) => {
@@ -152,9 +152,7 @@ const DetailPollGraphPage: React.FC<DetailPollGraphPageProps> = () => {
               <TableCell sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                 <ThreePIcon fontSize="small" color="info" /> 참여 제한
               </TableCell>
-              <TableCell align="right">
-                {responseData.limit}명
-              </TableCell>
+              <TableCell align="right">{responseData.limit}명</TableCell>
             </TableRow>
           </TableBody>
         </Table>

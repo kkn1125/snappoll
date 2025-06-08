@@ -55,6 +55,12 @@ export class VotesController {
     return this.votesService.findOne(id);
   }
 
+  @Get('graph/:id')
+  getGraphData(@Req() req: Request, @Param('id') id: string) {
+    const { id: userId } = req.user;
+    return this.votesService.getGraphData(id, userId);
+  }
+
   @Get('me/response')
   findOneResponsesMe(@Req() req: Request, @Query('page') page: number = 1) {
     const id = req.user.id;

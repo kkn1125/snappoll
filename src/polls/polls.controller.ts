@@ -56,6 +56,12 @@ export class PollsController {
     return this.pollsService.findOne(id);
   }
 
+  @Get('graph/:id')
+  getGraphData(@Req() req: Request, @Param('id') id: string) {
+    const { id: userId } = req.user;
+    return this.pollsService.getGraphData(id, userId);
+  }
+
   @Get('me/response')
   findOneResponsesMe(@Req() req: Request, @Query('page') page: number = 1) {
     const id = req.user.id;

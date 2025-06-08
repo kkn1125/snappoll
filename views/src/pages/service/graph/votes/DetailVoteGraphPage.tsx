@@ -1,4 +1,4 @@
-import { getVote } from '@apis/vote/getVote';
+import { getGraphVoteData } from '@apis/vote/getGraphVoteData';
 import { CHART_COLORS, GRAPH } from '@common/variables';
 import ResponsiveChart from '@components/atoms/ResponsiveChart';
 import { SnapVote } from '@models/SnapVote';
@@ -25,8 +25,8 @@ interface DetailVoteGraphPageProps {}
 const DetailVoteGraphPage: React.FC<DetailVoteGraphPageProps> = () => {
   const { id } = useParams();
   const { data } = useQuery<SnapResponseType<SnapVote>>({
-    queryKey: ['getVote', id],
-    queryFn: () => getVote(id),
+    queryKey: ['getGraphVoteData', id],
+    queryFn: () => getGraphVoteData(id),
   });
   const responseData = data?.data;
   const getCounter = useCallback((option?: SnapVoteOption) => {

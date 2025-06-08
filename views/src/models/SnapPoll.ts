@@ -20,6 +20,7 @@ export class SnapPoll {
   user?: User;
   response: SnapResponse[] = [];
   sharePoll?: SnapSharePoll;
+  _count?: { question: number; response: number };
 
   constructor(props?: SnapPoll) {
     if (props) {

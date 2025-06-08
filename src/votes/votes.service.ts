@@ -1,6 +1,7 @@
+import { LIMIT } from '@common/variables';
 import { PrismaService } from '@database/prisma.service';
 import SnapLoggerService from '@logger/logger.service';
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { EncryptManager } from '@utils/EncryptManager';
 import dayjs from 'dayjs';
 import { CreateShareVoteDto } from './dto/create-share-vote.dto';
@@ -279,8 +280,15 @@ export class VotesService {
     return { votes, count };
   }
 
-  findOne(id: string) {
-    return this.prisma.vote.findUnique({
+  async findOne(id: string) {
+    const validVote = await this.prisma.vote.findUnique({
+      where: { id },
+    });
+
+    const isExpired =
+      validVote.expiresAt && dayjs(validVote.expiresAt).isBefore(dayjs());
+
+    const vote = await this.prisma.vote.findUnique({
       where: { id },
       include: {
         user: {
@@ -290,21 +298,54 @@ export class VotesService {
             username: true,
             createdAt: true,
             updatedAt: true,
+            subscription: {
+              include: {
+                plan: {
+                  select: {
+                    planType: true,
+                  },
+                },
+              },
+            },
           },
         },
-        voteOption: {
-          include: {
-            voteAnswer: true,
-          },
-        },
-        voteResponse: {
-          include: {
-            voteAnswer: true,
-          },
-        },
+        voteOption: isExpired
+          ? undefined
+          : {
+              include: {
+                voteAnswer: true,
+              },
+            },
+        voteResponse: isExpired
+          ? undefined
+          : {
+              include: {
+                voteAnswer: true,
+              },
+            },
         shareVote: true,
       },
     });
+
+    const convertedVote = { ...vote, limit: 0 };
+    if (convertedVote.user.subscription.plan.planType === 'Free') {
+      convertedVote.limit = LIMIT.FREE.RESPONSE.VOTE;
+    } else if (convertedVote.user.subscription.plan.planType === 'Basic') {
+      convertedVote.limit = LIMIT.BASIC.RESPONSE.VOTE;
+    } else if (convertedVote.user.subscription.plan.planType === 'Pro') {
+      convertedVote.limit = LIMIT.PRO.RESPONSE.VOTE;
+    }
+    return convertedVote;
+  }
+
+  async getGraphData(id: string, userId: string) {
+    const vote = await this.prisma.vote.findUnique({ where: { id } });
+    if (vote.userId !== userId) {
+      throw new UnauthorizedException(
+        'You are not allowed to access this vote',
+      );
+    }
+    return vote;
   }
 
   async findResponses(id: string, page: number) {

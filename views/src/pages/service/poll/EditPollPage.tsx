@@ -1,12 +1,12 @@
-import { useSetRecoilState } from 'recoil';
-import CreatePollPage from './CreatePollPage';
 import { snapPollAtom } from '@/recoils/snapPoll.atom';
-import { useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import { useMutation } from '@tanstack/react-query';
-import { getPoll } from '@apis/poll/getPoll';
+import { getGraphPollData } from '@apis/poll/getGraphPollData';
 import SkeletonCreatePoll from '@components/moleculars/SkeletonCreatePoll';
 import { SnapPoll } from '@models/SnapPoll';
+import { useMutation } from '@tanstack/react-query';
+import { useEffect } from 'react';
+import { useParams } from 'react-router-dom';
+import { useSetRecoilState } from 'recoil';
+import CreatePollPage from './CreatePollPage';
 
 interface EditPollPageProps {}
 const EditPollPage: React.FC<EditPollPageProps> = () => {
@@ -18,8 +18,8 @@ const EditPollPage: React.FC<EditPollPageProps> = () => {
     Error,
     string | undefined
   >({
-    mutationKey: ['getPoll', id],
-    mutationFn: getPoll,
+    mutationKey: ['getGraphPollData', id],
+    mutationFn: getGraphPollData,
     onSuccess(data, variables, context) {
       if (data.data) {
         setSnapPoll(data.data);

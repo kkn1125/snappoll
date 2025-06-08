@@ -104,22 +104,24 @@ const QuestionItem: React.FC<QuestionItemProps> = ({ question }) => {
         <Typography className="font-maru" fontSize={24} fontWeight={700}>
           {question.title}
         </Typography>
-        <Typography
-          className="font-maru"
-          variant="subtitle2"
-          // fontSize={14}
-          // fontWeight={100}
-          sx={{
-            p: 1,
-            backgroundColor: grey['100'],
-            borderRadius: 1,
-            borderLeft: '2px solid #aaa',
-            mt: 1,
-            mb: 2,
-          }}
-        >
-          {question.description}
-        </Typography>
+        {question.description && (
+          <Typography
+            className="font-maru"
+            variant="subtitle2"
+            // fontSize={14}
+            // fontWeight={100}
+            sx={{
+              p: 1,
+              backgroundColor: grey['100'],
+              borderRadius: 1,
+              borderLeft: '2px solid #aaa',
+              mt: 1,
+              mb: 2,
+            }}
+          >
+            {question.description}
+          </Typography>
+        )}
         <Stack direction="row" my={1} gap={1}>
           {question.type !== 'text' && (
             <Chip
